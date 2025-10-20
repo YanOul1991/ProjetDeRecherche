@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Global">
+      <UniqueIdentifier>{a55a071c-23c7-4408-9888-caa13e7bb8ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{46579ce3-3110-4966-9315-2579a9940c23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectX">
+      <UniqueIdentifier>{04a650c4-c321-4b27-af08-aaa8f494e10e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectX\Direct2D">
+      <UniqueIdentifier>{c073f9dc-fc65-4935-8bbe-7a63fd2d8a94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Event">
+      <UniqueIdentifier>{a25be415-5d5c-447c-8828-39fe7027e243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Event\Public">
+      <UniqueIdentifier>{6df65a43-4570-4ced-936f-e416294d2669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Event\Private">
+      <UniqueIdentifier>{a3acf0ea-d6ea-477f-a2b6-48dd662ceeaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Random">
+      <UniqueIdentifier>{b89b9fda-d0c9-4c6d-92a3-fa471260de1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Random\Private">
+      <UniqueIdentifier>{65088401-3fd1-48ea-a65f-1227a6b9b713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Random\Public">
+      <UniqueIdentifier>{4910a590-f2fe-4cd9-932e-a3dc4e18af04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectX\Direct2D\Private">
+      <UniqueIdentifier>{c6e12cb6-2d46-4157-b4e0-25f6aed3c2a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DirectX\Direct2D\Public">
+      <UniqueIdentifier>{a82c0d0b-7a6a-41e8-be9e-0f392a356cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{cf15a1b7-92ce-45f0-8998-558c4c4585f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{a556c2fe-8a02-4cf4-9fa7-0a40a35ed798}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows\Shell">
+      <UniqueIdentifier>{476738ca-44aa-4ed6-961a-dde16b066218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows\Shell\Public">
+      <UniqueIdentifier>{b3783a6d-0352-4d50-ac10-09dc326ad531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows\Shell\Private">
+      <UniqueIdentifier>{50e18876-0e74-4c94-bb14-1424d084fa3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorWindows">
+      <UniqueIdentifier>{bf2a2490-b1ef-4109-87ab-81aec873665e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorWindows\Private">
+      <UniqueIdentifier>{48c6cfc4-3cff-4386-b9d1-61f823a91e6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorWindows\Public">
+      <UniqueIdentifier>{ba6d3690-587a-4c16-8769-03ac0ab187e2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\Global\OptimEngineGlobal.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Global\WindowsSettings.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\MainWindow.h">
+      <Filter>EditorWindows\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\BaseWindow.h">
+      <Filter>EditorWindows\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Object\Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Event\Event.h">
+      <Filter>Event\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Random\Random.h">
+      <Filter>Random\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\DirectX\Direct2D\Direct2D.h">
+      <Filter>DirectX\Direct2D\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\DirectX\Direct2D\EllipseRenderer.h">
+      <Filter>DirectX\Direct2D\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\DirectX\Direct2D\RectangleRenderer.h">
+      <Filter>DirectX\Direct2D\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\DirectX\Direct2D\Renderer.h">
+      <Filter>DirectX\Direct2D\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Platform\Windows\WindowsShell.h">
+      <Filter>Platform\Windows\Shell\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Platform\Windows\WindowsShellTools.h">
+      <Filter>Platform\Windows\Shell\Private</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\Editor\MainWindow.cpp">
+      <Filter>EditorWindows\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Object\Object.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Event\Event.cpp">
+      <Filter>Event\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Random\Random.cpp">
+      <Filter>Random\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DirectX\Direct2D\Direct2D.cpp">
+      <Filter>DirectX\Direct2D\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DirectX\Direct2D\EllipseRenderer.cpp">
+      <Filter>DirectX\Direct2D\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DirectX\Direct2D\RectangleRenderer.cpp">
+      <Filter>DirectX\Direct2D\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\DirectX\Direct2D\Renderer.cpp">
+      <Filter>DirectX\Direct2D\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Windows\WindowsShell.cpp">
+      <Filter>Platform\Windows\Shell\Private</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+</Project>
