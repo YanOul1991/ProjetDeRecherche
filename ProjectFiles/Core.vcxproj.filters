@@ -61,6 +61,27 @@
     <Filter Include="EditorWindows\Public">
       <UniqueIdentifier>{ba6d3690-587a-4c16-8769-03ac0ab187e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Private">
+      <UniqueIdentifier>{da436556-93de-49f9-8cf3-6cfd334c5f6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Public">
+      <UniqueIdentifier>{b7b2ef23-745f-4acf-aa8e-7b81310d97d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Components">
+      <UniqueIdentifier>{6383da12-9596-4229-8aa2-ccc6a2664acd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Components\Rendering">
+      <UniqueIdentifier>{87e50931-00e0-4ca9-a68c-fdfae33c3b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Components\Rendering\Public">
+      <UniqueIdentifier>{41213642-cd1b-460c-8408-a282eeac6f06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Components\Rendering\Private">
+      <UniqueIdentifier>{24f46276-cc71-4767-a9fd-3c22bfb47505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices">
+      <UniqueIdentifier>{c7c086ac-7843-4d56-8d9e-618cf0480716}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h">
@@ -75,9 +96,6 @@
     <ClInclude Include="..\Source\Editor\BaseWindow.h">
       <Filter>EditorWindows\Private</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Object\Object.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Event\Event.h">
       <Filter>Event\Public</Filter>
     </ClInclude>
@@ -87,28 +105,34 @@
     <ClInclude Include="..\Source\DirectX\Direct2D\Direct2D.h">
       <Filter>DirectX\Direct2D\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\DirectX\Direct2D\EllipseRenderer.h">
-      <Filter>DirectX\Direct2D\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\DirectX\Direct2D\RectangleRenderer.h">
-      <Filter>DirectX\Direct2D\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\DirectX\Direct2D\Renderer.h">
-      <Filter>DirectX\Direct2D\Public</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Platform\Windows\WindowsShell.h">
       <Filter>Platform\Windows\Shell\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Platform\Windows\WindowsShellTools.h">
       <Filter>Platform\Windows\Shell\Private</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Object\Object.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Object\Components\Rendering\EllipseRenderer.h">
+      <Filter>Object\Components\Rendering\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Object\Components\Rendering\RectangleRenderer.h">
+      <Filter>Object\Components\Rendering\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Object\Components\Rendering\Renderer.h">
+      <Filter>Object\Components\Rendering\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Object\Component.h">
+      <Filter>Object\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Devices\Mouse.h">
+      <Filter>Devices</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Editor\MainWindow.cpp">
       <Filter>EditorWindows\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Object\Object.cpp">
-      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Event\Event.cpp">
       <Filter>Event\Private</Filter>
@@ -119,17 +143,26 @@
     <ClCompile Include="..\Source\DirectX\Direct2D\Direct2D.cpp">
       <Filter>DirectX\Direct2D\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\DirectX\Direct2D\EllipseRenderer.cpp">
-      <Filter>DirectX\Direct2D\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\DirectX\Direct2D\RectangleRenderer.cpp">
-      <Filter>DirectX\Direct2D\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\DirectX\Direct2D\Renderer.cpp">
-      <Filter>DirectX\Direct2D\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Platform\Windows\WindowsShell.cpp">
       <Filter>Platform\Windows\Shell\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Object\Object.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Object\Component.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Object\Components\Rendering\EllipseRenderer.cpp">
+      <Filter>Object\Components\Rendering\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Object\Components\Rendering\RectangleRenderer.cpp">
+      <Filter>Object\Components\Rendering\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Object\Components\Rendering\Renderer.cpp">
+      <Filter>Object\Components\Rendering\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Devices\Mouse.cpp">
+      <Filter>Devices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

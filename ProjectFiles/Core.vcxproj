@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -130,27 +130,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\Devices\Mouse.h" />
     <ClInclude Include="..\Source\DirectX\Direct2D\Direct2D.h" />
-    <ClInclude Include="..\Source\DirectX\Direct2D\EllipseRenderer.h" />
-    <ClInclude Include="..\Source\DirectX\Direct2D\RectangleRenderer.h" />
-    <ClInclude Include="..\Source\DirectX\Direct2D\Renderer.h" />
     <ClInclude Include="..\Source\Editor\BaseWindow.h" />
     <ClInclude Include="..\Source\Editor\MainWindow.h" />
     <ClInclude Include="..\Source\Event\Event.h" />
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h" />
     <ClInclude Include="..\Source\Global\WindowsSettings.h" />
+    <ClInclude Include="..\Source\Object\Component.h" />
+    <ClInclude Include="..\Source\Object\Components\Rendering\EllipseRenderer.h" />
+    <ClInclude Include="..\Source\Object\Components\Rendering\RectangleRenderer.h" />
+    <ClInclude Include="..\Source\Object\Components\Rendering\Renderer.h" />
     <ClInclude Include="..\Source\Object\Object.h" />
     <ClInclude Include="..\Source\Platform\Windows\WindowsShell.h" />
     <ClInclude Include="..\Source\Platform\Windows\WindowsShellTools.h" />
     <ClInclude Include="..\Source\Random\Random.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Devices\Mouse.cpp" />
     <ClCompile Include="..\Source\DirectX\Direct2D\Direct2D.cpp" />
-    <ClCompile Include="..\Source\DirectX\Direct2D\EllipseRenderer.cpp" />
-    <ClCompile Include="..\Source\DirectX\Direct2D\RectangleRenderer.cpp" />
-    <ClCompile Include="..\Source\DirectX\Direct2D\Renderer.cpp" />
     <ClCompile Include="..\Source\Editor\MainWindow.cpp" />
     <ClCompile Include="..\Source\Event\Event.cpp" />
+    <ClCompile Include="..\Source\Object\Component.cpp" />
+    <ClCompile Include="..\Source\Object\Components\Rendering\EllipseRenderer.cpp" />
+    <ClCompile Include="..\Source\Object\Components\Rendering\RectangleRenderer.cpp" />
+    <ClCompile Include="..\Source\Object\Components\Rendering\Renderer.cpp" />
     <ClCompile Include="..\Source\Object\Object.cpp" />
     <ClCompile Include="..\Source\Platform\Windows\WindowsShell.cpp" />
     <ClCompile Include="..\Source\Random\Random.cpp" />

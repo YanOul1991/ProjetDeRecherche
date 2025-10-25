@@ -13,6 +13,7 @@
 // Forward declarations
 class Object;
 class Event;
+class Delegate;
 
 // EVENT MACRO
 

@@ -1,14 +1,12 @@
 #pragma once
 
-#if defined(_WIN64) | defined(_WIN32)
-  #include <Global/WindowsSettings.h>
-#endif
+#include <Global/WindowsSettings.h>
 
 #include <iostream>
 
 #pragma warning(disable: 4251)
 
-// Typedef
+// Typedefs
 
 typedef int8_t int8;
 typedef int16_t int16;
