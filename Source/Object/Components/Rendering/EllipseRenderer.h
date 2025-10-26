@@ -22,6 +22,5 @@ public:
   float radius;
 
 private:
-  D2D1_ELLIPSE m_ellipse;
   void update();
 };

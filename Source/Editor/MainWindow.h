@@ -9,7 +9,7 @@
 #include "BaseWindow.h"
 #include "Event/Event.h"
 
-class CORE_API MainWindow final : public BaseWindow<MainWindow>
+class CORE_API MainWindow final : public Window<MainWindow>
 {
 public:
   static MainWindow* Handle();
@@ -18,7 +18,8 @@ public:
   ~MainWindow();
   PCWSTR ClassName() const override { return L"MainWindow"; }               // Get the class name of the main window.
   float GetDpiScale() const;                                                // Get the main window's DPI scale
-  bool running{ false };                                                    // Running state of the window
+  bool running{ false };  
+  // Running state of the window
   LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;  // Function to handle Windows messages
 
   // Window Resizing event.

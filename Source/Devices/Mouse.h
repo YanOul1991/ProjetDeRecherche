@@ -1,3 +1,4 @@
+#pragma once
 
 #ifdef DLL_LIB
   #define MOUSE_API __declspec(dllexport)

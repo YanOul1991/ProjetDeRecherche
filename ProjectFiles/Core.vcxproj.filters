@@ -7,12 +7,6 @@
     <Filter Include="Object">
       <UniqueIdentifier>{46579ce3-3110-4966-9315-2579a9940c23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DirectX">
-      <UniqueIdentifier>{04a650c4-c321-4b27-af08-aaa8f494e10e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DirectX\Direct2D">
-      <UniqueIdentifier>{c073f9dc-fc65-4935-8bbe-7a63fd2d8a94}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Event">
       <UniqueIdentifier>{a25be415-5d5c-447c-8828-39fe7027e243}</UniqueIdentifier>
     </Filter>
@@ -31,26 +25,8 @@
     <Filter Include="Random\Public">
       <UniqueIdentifier>{4910a590-f2fe-4cd9-932e-a3dc4e18af04}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DirectX\Direct2D\Private">
-      <UniqueIdentifier>{c6e12cb6-2d46-4157-b4e0-25f6aed3c2a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DirectX\Direct2D\Public">
-      <UniqueIdentifier>{a82c0d0b-7a6a-41e8-be9e-0f392a356cf5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Platform">
       <UniqueIdentifier>{cf15a1b7-92ce-45f0-8998-558c4c4585f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform\Windows">
-      <UniqueIdentifier>{a556c2fe-8a02-4cf4-9fa7-0a40a35ed798}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform\Windows\Shell">
-      <UniqueIdentifier>{476738ca-44aa-4ed6-961a-dde16b066218}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform\Windows\Shell\Public">
-      <UniqueIdentifier>{b3783a6d-0352-4d50-ac10-09dc326ad531}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform\Windows\Shell\Private">
-      <UniqueIdentifier>{50e18876-0e74-4c94-bb14-1424d084fa3c}</UniqueIdentifier>
     </Filter>
     <Filter Include="EditorWindows">
       <UniqueIdentifier>{bf2a2490-b1ef-4109-87ab-81aec873665e}</UniqueIdentifier>
@@ -82,6 +58,27 @@
     <Filter Include="Devices">
       <UniqueIdentifier>{c7c086ac-7843-4d56-8d9e-618cf0480716}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform\Shell">
+      <UniqueIdentifier>{476738ca-44aa-4ed6-961a-dde16b066218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Shell\Public">
+      <UniqueIdentifier>{b3783a6d-0352-4d50-ac10-09dc326ad531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Shell\Private">
+      <UniqueIdentifier>{50e18876-0e74-4c94-bb14-1424d084fa3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{9c1167a4-ca3b-4a08-976c-44ce71a0fcea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Private">
+      <UniqueIdentifier>{99dbfb31-ce3c-4e43-9db5-42289aa3fcde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{874f529c-1d31-44a3-a63a-c33bd1b0ba71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\Private">
+      <UniqueIdentifier>{6b6b2e44-75d2-4886-9c31-a0193fcdd822}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h">
@@ -102,14 +99,11 @@
     <ClInclude Include="..\Source\Random\Random.h">
       <Filter>Random\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\DirectX\Direct2D\Direct2D.h">
-      <Filter>DirectX\Direct2D\Public</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Platform\Windows\WindowsShell.h">
-      <Filter>Platform\Windows\Shell\Public</Filter>
+      <Filter>Platform\Shell\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Platform\Windows\WindowsShellTools.h">
-      <Filter>Platform\Windows\Shell\Private</Filter>
+      <Filter>Platform\Shell\Private</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Object\Object.h">
       <Filter>Object\Public</Filter>
@@ -129,6 +123,12 @@
     <ClInclude Include="..\Source\Devices\Mouse.h">
       <Filter>Devices</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Application\Application.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Rendering\IRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Editor\MainWindow.cpp">
@@ -140,11 +140,8 @@
     <ClCompile Include="..\Source\Random\Random.cpp">
       <Filter>Random\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\DirectX\Direct2D\Direct2D.cpp">
-      <Filter>DirectX\Direct2D\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Platform\Windows\WindowsShell.cpp">
-      <Filter>Platform\Windows\Shell\Private</Filter>
+      <Filter>Platform\Shell\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Object\Object.cpp">
       <Filter>Object\Private</Filter>
@@ -163,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Devices\Mouse.cpp">
       <Filter>Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Application\Application.cpp">
+      <Filter>Application\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

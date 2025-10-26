@@ -1,8 +1,9 @@
 #include "WindowsShell.h"
 #include "WindowsShellTools.h"
+#include <atlbase.h>
 
 /////////////////////////////////////////////////////////////// FUNCTION : createDesktopShortcut
-HRESULT OShell::createDesktopShortcut(
+HRESULT op::win::shell::createDesktopShortcut(
   const std::wstring& _filePath,
   const std::wstring& _shortcutPath,
   const std::wstring& _description)
@@ -10,6 +11,9 @@ HRESULT OShell::createDesktopShortcut(
   // COM initialization
   HRESULT hr{ CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) };
   if (FAILED(hr))return hr;
+
+  //CComPtr<IFileOpenDialog> comFileOpen;
+  //hr = comFileOpen.CoCreateInstance(CLSID_FileOpenDialog);
 
   // Instantiation of COM object: ShellLink -> IShellLink
   CoObj<IShellLinkW> coShellLink{};
@@ -35,35 +39,36 @@ HRESULT OShell::createDesktopShortcut(
 } // FUNCTION END: createDesktopShortcut
 
 /////////////////////////////////////////////////////////////// FUNCTION : getFilePath
-HRESULT OShell::getFilePath(std::wstring* _str)
+// Get the location of a file selected through the File Open Dialog
+HRESULT op::win::shell::getFilePath(std::wstring* _str)
 {
-  // Get the location of a file selected through the File Open Dialog
-
   // Initialize COM
   HRESULT hr{ CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) };
-
   if (FAILED(hr)) return hr;
 
-  // Create a FileOpenDialog COM object, with IFileOpenDialog interface
-  CoObj<IFileOpenDialog> coFileOpenDialog;
-  hr = coFileOpenDialog.CreateInstance(CLSID_FileOpenDialog, IID_IFileOpenDialog);
-
+  // Create Smart COM Object of type FileOpenDialog
+  CComPtr<IFileOpenDialog> comFileOpenDialog;
+  hr = comFileOpenDialog.CoCreateInstance(CLSID_FileOpenDialog);
+  //CoObj<IFileOpenDialog> coFileOpenDialog;
+  //hr = coFileOpenDialog.CreateInstance(CLSID_FileOpenDialog, IID_IFileOpenDialog);
   if (FAILED(hr)) return hr;
 
-  // Show the file selection dialog window
-  hr = coFileOpenDialog->Show(NULL);
-
+  // Open the Window's File Open Dialog
+  comFileOpenDialog->Show(NULL);
+  //hr = coFileOpenDialog->Show(NULL);
   if (FAILED(hr)) return hr;
 
   // Create a ShellItem COM object
-  CoObj<IShellItem> coShellItem;
-  hr = coFileOpenDialog->GetResult(coShellItem.ptrAddr());
-
+  //CoObj<IShellItem> coShellItem;
+  CComPtr<IShellItem> comShellItem;
+  comFileOpenDialog->GetResult(&comShellItem);
+  //hr = coFileOpenDialog->GetResult(coShellItem.ptrAddr());
   if (FAILED(hr)) return hr;
 
   // Get the directory
   PWSTR pszDirectoryPath;
-  hr = coShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszDirectoryPath);
+  //hr = coShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszDirectoryPath);
+  hr = comShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszDirectoryPath);
 
   if (FAILED(hr))
   {
@@ -81,7 +86,7 @@ HRESULT OShell::getFilePath(std::wstring* _str)
 
 // @brief   Get the path of a chosen directory through Window's file opem dialog.
 // @param   std::wstring* _str - dwbhj
-HRESULT OShell::getDirPath(std::wstring* _str)
+HRESULT op::win::shell::getDirPath(std::wstring* _str)
 {
   // Initialize COM
   HRESULT hr{ CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) };

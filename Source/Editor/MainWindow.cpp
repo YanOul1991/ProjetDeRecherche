@@ -32,19 +32,11 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     m_dpiScale = static_cast<float>(GetDpiForWindow(hWindowHandle)) / USER_DEFAULT_SCREEN_DPI;
     return 0;
   case WM_LBUTTONDOWN:
-    //const int posX{ GET_X_LPARAM(lParam) };
-    //const int posY{ GET_Y_LPARAM(lParam) };
-    //Mouse::m_posX = posX;
-    //Mouse::m_posY = posY;
     return 0;
   case WM_MOUSEMOVE:
-  {
-    int xPos{ GET_X_LPARAM(lParam) };
-    int yPos{ GET_Y_LPARAM(lParam) };
-    Mouse::m_posX = xPos;
-    Mouse::m_posY = yPos;
+    Mouse::m_posX = GET_X_LPARAM(lParam);
+    Mouse::m_posY = GET_Y_LPARAM(lParam);
     return 0;
-  }
   case WM_SIZE:
     m_OnWindowResize.broadcast();
     return 0;

@@ -6,41 +6,27 @@
   #define DIRECT2D_API __declspec(dllimport)
 #endif
 
-#include "Global/OptimEngineGlobal.h"
-#include <vector>
+#include "Global/WindowsSettings.h"
 
-class Renderer;
-class MainWindow;
-class Component;
-
-class DIRECT2D_API OpDirect2D final
+class Direct2DRenderer final
 {
 public:
-  static OpDirect2D* Handle();
-
-  OpDirect2D();
-  ~OpDirect2D();
-  OpDirect2D(const OpDirect2D&) = delete;
-  OpDirect2D(const OpDirect2D&&) = delete;
-  OpDirect2D& operator=(const OpDirect2D&) = delete;
-  OpDirect2D& operator=(const OpDirect2D&&) = delete;
+  Direct2DRenderer();
+  ~Direct2DRenderer();
+  Direct2DRenderer(const Direct2DRenderer&) = delete;
+  Direct2DRenderer(const Direct2DRenderer&&) = delete;
+  Direct2DRenderer& operator=(const Direct2DRenderer&) = delete;
+  Direct2DRenderer& operator=(const Direct2DRenderer&&) = delete;
 
   HRESULT createGraphicsResources();
   void discardGraphicsResources();
   void resize();
   void draw();
 
-  Component* comp;
-
 private:
-  static OpDirect2D* pSelf;
-
-  ID2D1Factory*           pFactory;           // Factory interface
-  ID2D1HwndRenderTarget*  pRenderTarget;      // Window render target
-  ID2D1SolidColorBrush*   pSolidColorBrush;   // Solid brush ressource
-
-  D2D1_ELLIPSE m_ellipse;
-  D2D1_RECT_F m_rect;
-
-  
+  ID2D1Factory*               pFactory;           // Factory interface
+  ID2D1HwndRenderTarget*      pRenderTarget;      // Window render target
+  ID2D1SolidColorBrush*       pSolidColorBrush;   // Solid brush ressource
 };
+
+extern "C" DIRECT2D_API Direct2DRenderer* CreateDirect2DRenderer();

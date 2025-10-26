@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Direct2D">
+      <UniqueIdentifier>{4dfc05b1-0395-4e63-982c-96fbc890826c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Direct2D\Private">
+      <UniqueIdentifier>{6afb2682-9501-4d9d-9562-6b3cadb01894}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Direct2D\Public">
+      <UniqueIdentifier>{ec065a2e-85c4-4e57-9a6b-1a0196281e8d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\DirectX\Direct2D\Direct2D.cpp">
+      <Filter>Direct2D\Private</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\DirectX\Direct2D\Direct2D.h">
+      <Filter>Direct2D\Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

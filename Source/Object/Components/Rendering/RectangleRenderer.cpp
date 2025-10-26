@@ -6,7 +6,3 @@ RectangleRenderer::RectangleRenderer(float _posX, float _posY, float _width, flo
   width       { _width }, 
   height      { _height } 
 { }
-
-void RectangleRenderer::Draw(ID2D1HwndRenderTarget* renderTarget)
-{ }
-

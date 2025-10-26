@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Global/WindowsSettings.h>
-
 #include <iostream>
 
 #pragma warning(disable: 4251)

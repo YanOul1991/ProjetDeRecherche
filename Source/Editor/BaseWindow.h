@@ -1,11 +1,16 @@
 #pragma once
 
 #include "Global/OptimEngineGlobal.h"
+#if defined(_WIN32) || defined(_WIN64)
+#define WIN_API
+#include "Global/WindowsSettings.h"
+#endif
 
 // Base window class template.
 template<class DERIVED>
-class BaseWindow
+class Window
 {
+#if defined(WIN_API)
 protected:
   virtual PCWSTR ClassName() const = 0;
   virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
@@ -39,7 +44,7 @@ public:
   }
 
   // Class constructor
-  BaseWindow() : hWindowHandle{ NULL } {};
+  Window() : hWindowHandle{ NULL } {};
 
   // Create Window function
   BOOL Create(
@@ -76,5 +81,7 @@ public:
   }
 
   // Returns a handle to the Window.
-  HWND Window() const { return hWindowHandle; }
+  HWND GetHandle() const { return hWindowHandle; }
+
+#endif
 };

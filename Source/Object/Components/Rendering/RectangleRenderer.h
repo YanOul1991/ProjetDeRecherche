@@ -22,8 +22,4 @@ public:
   float positionY{ 0 };
   float width{ 0 };
   float height{ 0 };
-
-  D2D1_COLOR_F color{ D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f) };
-
-  void Draw(ID2D1HwndRenderTarget* renderTarget) override;
 };

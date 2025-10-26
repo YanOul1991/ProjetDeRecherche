@@ -1,10 +1,10 @@
 #pragma once
 
-namespace OShell
+namespace op::win::shell
 {
   // Call the release function of COM objects
   template <class T>
-  void safeRelease(T** ppT)
+  void SafeRelease(T** ppT)
   {
     if (*ppT)
     {
@@ -19,7 +19,7 @@ namespace OShell
   {
   public:
     explicit CoObj() {};
-    ~CoObj() { safeRelease(&m_ptr); }
+    ~CoObj() { SafeRelease(&m_ptr); }
 
     // No copy
     CoObj(const CoObj&) = delete;

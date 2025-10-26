@@ -18,11 +18,17 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\DirectX\Direct2D\Direct2D.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\DirectX\Direct2D\Direct2D.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{1f3d07f2-9311-493c-a85c-5c8e3d93a7bc}</ProjectGuid>
-    <RootNamespace>Core</RootNamespace>
+    <ProjectGuid>{5d71d11c-69bc-4a8e-9ef0-52204c4451e0}</ProjectGuid>
+    <RootNamespace>Direct2DOEI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -72,7 +78,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Builds\</OutDir>
-    <IntDir>$(SolutionDir)Intermediate\Core\</IntDir>
+    <IntDir>$(SolutionDir)Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,8 +119,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,40 +138,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Source\Application\Application.h" />
-    <ClInclude Include="..\Source\Devices\Mouse.h" />
-    <ClInclude Include="..\Source\Editor\BaseWindow.h" />
-    <ClInclude Include="..\Source\Editor\MainWindow.h" />
-    <ClInclude Include="..\Source\Event\Event.h" />
-    <ClInclude Include="..\Source\Global\OptimEngineGlobal.h" />
-    <ClInclude Include="..\Source\Global\WindowsSettings.h" />
-    <ClInclude Include="..\Source\Object\Component.h" />
-    <ClInclude Include="..\Source\Object\Components\Rendering\EllipseRenderer.h" />
-    <ClInclude Include="..\Source\Object\Components\Rendering\RectangleRenderer.h" />
-    <ClInclude Include="..\Source\Object\Components\Rendering\Renderer.h" />
-    <ClInclude Include="..\Source\Object\Object.h" />
-    <ClInclude Include="..\Source\Platform\Windows\WindowsShell.h" />
-    <ClInclude Include="..\Source\Platform\Windows\WindowsShellTools.h" />
-    <ClInclude Include="..\Source\Random\Random.h" />
-    <ClInclude Include="..\Source\Rendering\IRenderer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Source\Application\Application.cpp" />
-    <ClCompile Include="..\Source\Devices\Mouse.cpp" />
-    <ClCompile Include="..\Source\Editor\MainWindow.cpp" />
-    <ClCompile Include="..\Source\Event\Event.cpp" />
-    <ClCompile Include="..\Source\Object\Component.cpp" />
-    <ClCompile Include="..\Source\Object\Components\Rendering\EllipseRenderer.cpp" />
-    <ClCompile Include="..\Source\Object\Components\Rendering\RectangleRenderer.cpp" />
-    <ClCompile Include="..\Source\Object\Components\Rendering\Renderer.cpp" />
-    <ClCompile Include="..\Source\Object\Object.cpp" />
-    <ClCompile Include="..\Source\Platform\Windows\WindowsShell.cpp" />
-    <ClCompile Include="..\Source\Random\Random.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

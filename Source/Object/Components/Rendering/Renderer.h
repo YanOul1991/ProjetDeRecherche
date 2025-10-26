@@ -15,5 +15,4 @@ class RENDERER_API Renderer
   friend class Graphics;
 public:
   virtual ~Renderer() = default;
-  virtual void Draw(ID2D1HwndRenderTarget* renderTarget) = 0;
 };
