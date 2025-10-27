@@ -136,6 +136,8 @@
     <ClInclude Include="..\Source\Devices\Mouse.h" />
     <ClInclude Include="..\Source\Editor\BaseWindow.h" />
     <ClInclude Include="..\Source\Editor\MainWindow.h" />
+    <ClInclude Include="..\Source\Editor\IWindow.h" />
+    <ClInclude Include="..\Source\Editor\EditorSystemWindow.h" />
     <ClInclude Include="..\Source\Event\Event.h" />
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h" />
     <ClInclude Include="..\Source\Global\WindowsSettings.h" />
@@ -152,6 +154,8 @@
   <ItemGroup>
     <ClCompile Include="..\Source\Application\Application.cpp" />
     <ClCompile Include="..\Source\Devices\Mouse.cpp" />
+    <ClCompile Include="..\Source\Editor\IWindow.cpp" />
+    <ClCompile Include="..\Source\Editor\EditorSystemWindow.cpp" />
     <ClCompile Include="..\Source\Editor\MainWindow.cpp" />
     <ClCompile Include="..\Source\Event\Event.cpp" />
     <ClCompile Include="..\Source\Object\Component.cpp" />

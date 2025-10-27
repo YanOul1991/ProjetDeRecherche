@@ -90,9 +90,6 @@
     <ClInclude Include="..\Source\Editor\MainWindow.h">
       <Filter>EditorWindows\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Editor\BaseWindow.h">
-      <Filter>EditorWindows\Private</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Event\Event.h">
       <Filter>Event\Public</Filter>
     </ClInclude>
@@ -129,11 +126,17 @@
     <ClInclude Include="..\Source\Rendering\IRenderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Editor\IWindow.h">
+      <Filter>EditorWindows\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\EditorSystemWindow.h">
+      <Filter>EditorWindows\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\BaseWindow.h">
+      <Filter>EditorWindows\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\Editor\MainWindow.cpp">
-      <Filter>EditorWindows\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Event\Event.cpp">
       <Filter>Event\Private</Filter>
     </ClCompile>
@@ -163,6 +166,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Application\Application.cpp">
       <Filter>Application\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Editor\EditorSystemWindow.cpp">
+      <Filter>EditorWindows\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Editor\IWindow.cpp">
+      <Filter>EditorWindows\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Editor\MainWindow.cpp">
+      <Filter>EditorWindows\Public</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

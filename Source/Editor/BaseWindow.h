@@ -82,6 +82,5 @@ public:
 
   // Returns a handle to the Window.
   HWND GetHandle() const { return hWindowHandle; }
-
 #endif
 };

@@ -1,12 +1,28 @@
 #include "Editor/MainWindow.h"
+#include "Editor/EditorSystemWindow.h"
 #include "Application/Application.h"
 
 #pragma warning(disable: 4100)
+#pragma warning(disable: 4702)
 
 // Application Entry Point
 int main() {
   Application application{};
   MainWindow window;
+
+  EditorSystemWindow* testWin{ EditorSystemWindow::CreateEditorSystemWindow()};
+
+  if (!testWin)
+  {
+    MessageBoxA(0, "Window Creation has failed", "DEBUG", MB_OK);
+    return 1;
+  }
+
+  if (!testWin->Create(L"Modular Engine", 0, 0, 1000, 1000, nullptr))
+  {
+    MessageBoxA(0, "Window Creation has failed", "DEBUG", MB_OK);
+    return 1;
+  }
 
   // Basic main window style 
   constexpr DWORD windowStyle{
@@ -38,18 +54,23 @@ int main() {
   }
 
   ShowWindow(window.GetHandle(), SW_MAXIMIZE);
+  ShowWindow(reinterpret_cast<HWND>(testWin->GetHandle()), SW_MAXIMIZE);
   window.running = true;
 
-  application.ApplicationStart();
+  //application.ApplicationStart();
 
   MSG msg{};
-  while (window.running) {
-    while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE) > 0) {
+  while (window.running) 
+  {
+    while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE) > 0) 
+    {
       TranslateMessage(&msg);
       DispatchMessageW(&msg);
     }
   }
 
-  application.ApplicationQuit();
+  delete(testWin);
+
+  //application.ApplicationQuit();
   return 0;
 }

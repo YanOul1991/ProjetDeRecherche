@@ -22,5 +22,6 @@
 #pragma comment(lib, "Ole32")
 #pragma comment(lib, "d2d1")
 
+
 // The window's current DPI.
 #define DEBUG_DPI GetAwarenessFromDpiAwarenessContext(GetThreadDpiAwarenessContext())
