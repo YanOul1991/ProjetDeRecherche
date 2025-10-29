@@ -11,7 +11,6 @@
 #include <iostream>
 #include <unordered_map>
 
-class MainWindow;
 class Component;
 
 class OBJECT_API Object
@@ -26,7 +25,6 @@ public:
   guid_t getInstanceID() const;
 
 private:
-  MainWindow* pMainWindow;
   void update();
   const guid_t m_guid;
   static std::unordered_map<guid_t, Object*> sm_registery;

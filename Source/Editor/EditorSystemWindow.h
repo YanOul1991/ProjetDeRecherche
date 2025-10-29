@@ -6,12 +6,15 @@
 #define EDITOR_WINDOW_API __declspec(dllimport)
 #endif
 
+#include "Global/OptimEngineGlobal.h"
 #include "IWindow.h"
+
+class Application;
 
 class EDITOR_WINDOW_API EditorSystemWindow final : public IWindow
 {
 public:
-  static EditorSystemWindow* CreateEditorSystemWindow();
+  static EditorSystemWindow* CreateEditorSystemWindow(Application* _pApplication);
   ~EditorSystemWindow();
 
 private:

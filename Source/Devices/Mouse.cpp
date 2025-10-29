@@ -1,5 +1,4 @@
 #include "Mouse.h"
-#include "Editor/MainWindow.h"
 
 int32 Mouse::m_posX{ 0 };
 int32 Mouse::m_posY{ 0 };

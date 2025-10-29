@@ -2,6 +2,7 @@
 
 #include "Global/OptimEngineGlobal.h"
 #include "Global/WindowsSettings.h"
+#include "d2d1.h"
 #include <wincodec.h>
 
 #ifdef DLL_LIB

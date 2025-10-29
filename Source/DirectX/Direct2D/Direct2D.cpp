@@ -1,54 +1,68 @@
 #include "Direct2D.h"
-//#include "Platform/Windows/WindowsShell.h"
 #include "Platform/Windows/WindowsShellTools.h"
 
 extern "C" {
-  DIRECT2D_API Direct2DRenderer* CreateDirect2DRenderer() {
-    return new Direct2DRenderer{};
+  DIRECT2D_API IRenderingModule* CreateDirect2DRenderer() {
+    return new Direct2DRenderer();
   }
 }
 
 Direct2DRenderer::Direct2DRenderer() :
-  pFactory{ nullptr },
-  pRenderTarget{ nullptr },
-  pSolidColorBrush{ nullptr }
+  pFactory          { nullptr },
+  pRenderTarget     { nullptr },
+  pSolidColorBrush  { nullptr },
+  m_hTargetWindow   { nullptr }
 {
   if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pFactory))) 
   {
     MessageBoxA(0, "Failed to create factory!", "Error Message", MB_OK + MB_ICONERROR);
   }
-  MessageBoxA(0, "Created Direct2D instance!", "Direct2D module", MB_OK);
+  std::cout << "Instanciated Direct2D Renderer Class !!!\n";
 }
 
 Direct2DRenderer::~Direct2DRenderer() {
   discardGraphicsResources();
-  MessageBoxA(0, "Deleted Direct2D instance!", "Direct2D module", MB_OK);
+  std::cout << "Discarded Direct2D class!!!\n";
 }
+
+/*
+  Interface Overrides Definitions
+*/
+void Direct2DRenderer::SetContext(void* _targetWindow) 
+{ 
+  m_hTargetWindow = reinterpret_cast<HWND>(_targetWindow);
+  std::cout << "Direct2D context has been initialized!!!\n";
+}
+
+/*
+  Direct2D Class definitions
+*/
 
 // Allocate Ressources on the GPU.
 HRESULT Direct2DRenderer::createGraphicsResources() {
   HRESULT hr{ S_OK };
-  //MainWindow* pMainWindow{ MainWindow::Handle() };
 
-  //if (pRenderTarget == NULL && pMainWindow != nullptr) {
-  //  RECT rc;
-  //  GetClientRect(pMainWindow->Window(), &rc);
+  // If no render target
+  if (pRenderTarget == nullptr)
+  {
+    std::cout << "Creating graphics resources.\n";
+    // Get the target window size.
+    RECT rc;
+    GetClientRect(m_hTargetWindow, &rc);
+    D2D1_SIZE_U size{ D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top) };
 
-  //  // Get size of window
-  //  D2D1_SIZE_U size{ D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top) };
+    hr = pFactory->CreateHwndRenderTarget(
+      D2D1::RenderTargetProperties(),
+      D2D1::HwndRenderTargetProperties(m_hTargetWindow, size),
+      &pRenderTarget
+    );
 
-  //  // Allocate ressources on the GPU
-  //  hr = pFactory->CreateHwndRenderTarget(
-  //    D2D1::RenderTargetProperties(),
-  //    D2D1::HwndRenderTargetProperties(pMainWindow->Window(), size),
-  //    &pRenderTarget
-  //  );
-
-  //  if (SUCCEEDED(hr)) {
-  //    const D2D1_COLOR_F color{ D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f) };
-  //    hr = pRenderTarget->CreateSolidColorBrush(color, &pSolidColorBrush);
-  //  }
-  //}
+    if (SUCCEEDED(hr))
+    {
+      const D2D1_COLOR_F color{ D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f) };
+      hr = pRenderTarget->CreateSolidColorBrush(color, &pSolidColorBrush);
+    }
+  }
   return hr;
 }
 
@@ -62,43 +76,49 @@ void Direct2DRenderer::discardGraphicsResources() {
 void Direct2DRenderer::resize() {
   if (!pRenderTarget) return;
 
-  //RECT rc;
-  //GetClientRect(MainWindow::Handle()->Window(), &rc);
-  //D2D1_SIZE_U size{ D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top) };
+  RECT rc;
+  GetClientRect(m_hTargetWindow, &rc);
+  D2D1_SIZE_U size{ D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top) };
 
   //// Update the render target size
-  //pRenderTarget->Resize(size);
-  //InvalidateRect(MainWindow::Handle()->Window(), &rc, FALSE);
+  pRenderTarget->Resize(size);
+  InvalidateRect(m_hTargetWindow, &rc, FALSE);
 }
 
 // Draw Call
-void Direct2DRenderer::draw() {
+void Direct2DRenderer::Draw() {
   HRESULT hr{ createGraphicsResources() };
 
-  //if (SUCCEEDED(hr)) {
-  //  PAINTSTRUCT ps;
+  resize();
 
-  //  BeginPaint(MainWindow::Handle()->Window(), &ps);
+  if (SUCCEEDED(hr)) {
+    PAINTSTRUCT ps;
 
-  //  // Begin draw call
-  //  pRenderTarget->BeginDraw();
+    BeginPaint(m_hTargetWindow, &ps);
 
-  //  // Clear Render target
-  //  pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+    // Begin draw call
+    pRenderTarget->BeginDraw();
 
-  //  pSolidColorBrush->SetColor({ D2D1::ColorF::Cyan });
-  //  m_ellipse.point = { 250.0f, 250.0f };
-  //  m_ellipse.radiusX = 50;
-  //  m_ellipse.radiusY = 50;
-  //  pRenderTarget->FillEllipse(m_ellipse, pSolidColorBrush);
-  //  pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
-  //  hr = pRenderTarget->EndDraw();
+    // Clear Render target
+    pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::DarkCyan));
 
-  //  if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
-  //  {
-  //    discardGraphicsResources();
-  //  }
+    D2D1_ELLIPSE m_ellipse{ D2D1::Ellipse(
+      D2D1::Point2F(300.0f, 300.0f),
+      100.0f,
+      100.0f
+    )};
 
-  //  EndPaint(MainWindow::Handle()->Window(), &ps);
-  //}
+    m_ellipse.point = D2D1::Point2F(1800.0f, 800.0f);
+
+    pRenderTarget->FillEllipse(m_ellipse, pSolidColorBrush);
+
+    hr = pRenderTarget->EndDraw();
+
+    if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
+    {
+      discardGraphicsResources();
+    }
+
+    EndPaint(m_hTargetWindow, &ps);
+  }
 }

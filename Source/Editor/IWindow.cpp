@@ -1,8 +1,14 @@
 #pragma once
 
 #include "IWindow.h"
-#include "Global/OptimEngineGlobal.h"
-#include <sstream>
+#include "Application/Application.h"
+
+#if defined(WINDOWS_OS)
+
+#include <dwmapi.h>
+#pragma comment(lib, "Dwmapi.lib")
+
+#endif
 
 void* IWindow::GetHandle() const { return m_pHandle; }
 
@@ -18,7 +24,7 @@ bool IWindow::Create(const wstring& _title, int32 _positionX, int32 _positionY, 
     /*
       Windows OS specific window creation
     */
-#if defined(WINDOWS_PLATFORM)
+#if defined(WINDOWS_OS)
     int32 screenWidth{ GetSystemMetrics(SM_CXSCREEN) };
     int32 screenHeight{ GetSystemMetrics(SM_CYSCREEN) };
 
@@ -55,10 +61,17 @@ bool IWindow::Create(const wstring& _title, int32 _positionX, int32 _positionY, 
 #endif
 }
 
+void IWindow::Display() const
+{
+#if defined(WINDOWS_OS)
+  ShowWindow(reinterpret_cast<HWND>(m_pHandle), SW_MAXIMIZE);
+#endif
+}
+
 /*
   Windows Specific Window Procedure
 */
-#if defined(WINDOWS_PLATFORM)
+#if defined(WINDOWS_OS)
 LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   // Pointer to the apporpriate IWindowInstance
@@ -83,23 +96,96 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
     {
       BOOL useDarkMode = TRUE;
       DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDarkMode, sizeof(useDarkMode));
-
-      MARGINS margins = { 0, 0, 200, 0 };
-      DwmExtendFrameIntoClientArea(hwnd, &margins);
     }
     return 0;
+
   case WM_DPICHANGED:
     pThis->dpi = static_cast<float>(GetDpiForWindow(hwnd)) / USER_DEFAULT_SCREEN_DPI;
     return 0;
-  case WM_NCCALCSIZE:
-    if (wParam == TRUE)
+
+  case WM_CLOSE:
+    pThis->m_pApplication->Quit();
+    DestroyWindow(hwnd);
+    return 0;
+
+  case WM_DESTROY:
+    PostQuitMessage(0);
+    return 0;
+
+  /*
+    Windows Raw Input  
+  */
+
+  case WM_INPUT:
+  {
+    UINT size = 0;
+    GetRawInputData((HRAWINPUT)lParam, RID_INPUT, nullptr, &size, sizeof(RAWINPUTHEADER));
+    BYTE* buffer = new BYTE[size];
+
+    if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, buffer, &size, sizeof(RAWINPUTHEADER)) == size)
     {
-      NCCALCSIZE_PARAMS* param{ reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam) };
-      param->rgrc[0].top += 200;
+      RAWINPUT* raw = (RAWINPUT*)buffer;
+
+      if (raw->header.dwType == RIM_TYPEMOUSE)
+      {
+        RAWMOUSE& mouse = raw->data.mouse;
+
+        if (mouse.usFlags == MOUSE_MOVE_RELATIVE)
+        {
+          int dx = mouse.lLastX;
+          int dy = mouse.lLastY;
+
+          std::cout << "Mouse delta: " << dx << ", " << dy << '\n';
+        }
+
+        if (mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
+        {
+          //std::cout << "Mouse Left Button Down\n";
+        }
+        if (mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP)
+        {
+          //std::cout << "Mouse Left Button Up\n";
+        }
+        if (mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
+        {
+          //std::cout << "Mouse Right Button Down\n";
+        }
+        if (mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
+        {
+          //std::cout << "Mouse Right Button Up\n";
+        }
+      }
+    
+      if (raw->header.dwType == RIM_TYPEHID)
+      {
+        RAWHID& controller = raw->data.hid;
+        //std::cout << "Controller "<< raw->header.dwSize << "\n";
+        //std::cout << "Controller Input: " << (int)(controller.bRawData[1]) << ", " << (int)(controller.bRawData[2]) << '\n';
+  
+
+        //char dualShockTriangle = 0b1000;
+        //char dualShockCircle = 0b0100;
+        //char dualShockCross = 0b0010;
+        //char dualShockBox = 0b0001;
+
+        //char iconsInput = (controller.bRawData[8] & 0xF0) >> 4;
+
+        //std::cout << "Controller "<< static_cast<bool>(iconsInput & (1 << 3)) << "\n";
+
+        //if (iconsInput & dualShockTriangle)
+        //  std::cout << "Dualshock Triangle Press!\n";
+        //if (iconsInput & dualShockCircle)
+        //  std::cout << "Dualshock Circle Press!\n";
+        //if (iconsInput & dualShockCross)
+        //  std::cout << "Dualshock Cross Press!\n";
+        //if (iconsInput & dualShockBox)
+        //  std::cout << "Dualshock Box Press!\n";
+      }
     }
-    return 0;
-  case WM_LBUTTONDOWN:
-    return 0;
+    delete[] buffer;
+    break;
+  }
+
   default:
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
   }

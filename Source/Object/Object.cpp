@@ -1,5 +1,4 @@
 #include "Object.h"
-#include "Editor/MainWindow.h"
 #include "Random/Random.h"
 #include <sstream>
 
@@ -8,7 +7,6 @@ Object::Object() :
   m_guid{ get_random_id() }
 {
   sm_registery.insert({ m_guid, this });
-  pMainWindow = MainWindow::Handle();
 }
 
 std::unordered_map<guid_t, Object*> Object::sm_registery{};
@@ -41,5 +39,4 @@ std::string Object::id() const
 void Object::update()
 {
   std::string strId = id();
-  MessageBoxA(0, strId.c_str(), "An Object's update was called! ", MB_OK);
 }

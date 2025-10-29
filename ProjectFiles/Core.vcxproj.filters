@@ -79,6 +79,15 @@
     <Filter Include="Rendering\Private">
       <UniqueIdentifier>{6b6b2e44-75d2-4886-9c31-a0193fcdd822}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{62ef49ce-0816-494e-b19d-3b711b093c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Private">
+      <UniqueIdentifier>{4f4d8109-73c4-49e7-a7e7-9bf5e1ffb5d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Devices\Input">
+      <UniqueIdentifier>{93b68fc2-ed9b-45f4-8845-47624a2a2150}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h">
@@ -86,9 +95,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\Global\WindowsSettings.h">
       <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Editor\MainWindow.h">
-      <Filter>EditorWindows\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Event\Event.h">
       <Filter>Event\Public</Filter>
@@ -123,17 +129,23 @@
     <ClInclude Include="..\Source\Application\Application.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Rendering\IRenderer.h">
+    <ClInclude Include="..\Source\Rendering\IRenderingModule.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Editor\IWindow.h">
-      <Filter>EditorWindows\Private</Filter>
+    <ClInclude Include="..\Source\Utilities\FileStream.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Editor\EditorSystemWindow.h">
       <Filter>EditorWindows\Private</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Editor\BaseWindow.h">
-      <Filter>EditorWindows\Public</Filter>
+    <ClInclude Include="..\Source\Editor\IWindow.h">
+      <Filter>EditorWindows\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Global\PlatformSystem.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Devices\Input\Input.h">
+      <Filter>Devices\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,11 +185,11 @@
     <ClCompile Include="..\Source\Editor\IWindow.cpp">
       <Filter>EditorWindows\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Editor\MainWindow.cpp">
-      <Filter>EditorWindows\Public</Filter>
+    <ClCompile Include="..\Source\Utilities\FileStream.cpp">
+      <Filter>Utilities\Private</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
+    <ClCompile Include="..\Source\Devices\Input\Input.cpp">
+      <Filter>Devices\Input</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

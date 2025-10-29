@@ -6,16 +6,16 @@ EditorSystemWindow* EditorSystemWindow::sm_pSingleton{ nullptr };
 EditorSystemWindow::EditorSystemWindow() { }
 EditorSystemWindow::~EditorSystemWindow() { }
 
-EditorSystemWindow* EditorSystemWindow::CreateEditorSystemWindow()
+EditorSystemWindow* EditorSystemWindow::CreateEditorSystemWindow(Application* _pApplication)
 {
 	if (sm_pSingleton == nullptr)
 	{
 		sm_pSingleton = new EditorSystemWindow;
+		sm_pSingleton->m_pApplication = _pApplication;
 		return sm_pSingleton;
 	}
 	else
 	{
-		MessageBoxA(0, "A BaseSystemWindow Class already exists.", "BaseSystemWindow Class Debug", MB_OK + MB_ICONASTERISK);
 		return nullptr;
 	}
 }
