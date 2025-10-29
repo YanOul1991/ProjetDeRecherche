@@ -88,6 +88,9 @@
     <Filter Include="Devices\Input">
       <UniqueIdentifier>{93b68fc2-ed9b-45f4-8845-47624a2a2150}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Devices\Private">
+      <UniqueIdentifier>{6b0119bb-10f2-408b-b805-1c7b93790287}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h">
@@ -173,9 +176,6 @@
     <ClCompile Include="..\Source\Object\Components\Rendering\Renderer.cpp">
       <Filter>Object\Components\Rendering\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Devices\Mouse.cpp">
-      <Filter>Devices</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Application\Application.cpp">
       <Filter>Application\Private</Filter>
     </ClCompile>
@@ -190,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Devices\Input\Input.cpp">
       <Filter>Devices\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Devices\Mouse.cpp">
+      <Filter>Devices\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

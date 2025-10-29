@@ -51,11 +51,25 @@ Input* Input::Initalize(Application* _pApplication, void* _hWindowHandle)
 	delete[] deviceList;
 
 	// Instanciate Raw Input
-	RAWINPUTDEVICE rid[1];
+	RAWINPUTDEVICE rid[3];
+
+	// Mouse
 	rid[0].usUsagePage = 0x01;
-	rid[0].usUsage = 0x05;
+	rid[0].usUsage = 0x02;
 	rid[0].dwFlags = RIDEV_INPUTSINK;
 	rid[0].hwndTarget = reinterpret_cast<HWND>(_hWindowHandle);
+
+	// Keyboard
+	rid[1].usUsagePage = 0x01;
+	rid[1].usUsage = 0x06;
+	rid[1].dwFlags = RIDEV_INPUTSINK;
+	rid[1].hwndTarget = reinterpret_cast<HWND>(_hWindowHandle);
+
+	// Gamepad
+	rid[2].usUsagePage = 0x01;
+	rid[2].usUsage = 0x05;
+	rid[2].dwFlags = RIDEV_INPUTSINK;
+	rid[2].hwndTarget = reinterpret_cast<HWND>(_hWindowHandle);
 
 	// On success return Input instance pointer
 	// On Failure delete Input class instance and return nullptr
@@ -73,6 +87,5 @@ Input* Input::Initalize(Application* _pApplication, void* _hWindowHandle)
 	}
 
 	return sm_pSingleton;
-
 #endif
 }

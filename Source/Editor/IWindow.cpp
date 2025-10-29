@@ -126,60 +126,59 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
     {
       RAWINPUT* raw = (RAWINPUT*)buffer;
 
+      if (raw->header.dwType == RIM_TYPEKEYBOARD)
+      {
+        RAWKEYBOARD& keyboard = raw->data.keyboard;
+      }
+
       if (raw->header.dwType == RIM_TYPEMOUSE)
       {
         RAWMOUSE& mouse = raw->data.mouse;
 
-        if (mouse.usFlags == MOUSE_MOVE_RELATIVE)
-        {
-          int dx = mouse.lLastX;
-          int dy = mouse.lLastY;
-
-          std::cout << "Mouse delta: " << dx << ", " << dy << '\n';
-        }
+        //if (mouse.usFlags == MOUSE_MOVE_RELATIVE)
+        //{
+        //  int dx = mouse.lLastX;
+        //  int dy = mouse.lLastY;
+        //  std::cout << "Mouse delta: " << dx << ", " << dy << '\n';
+        //}
 
         if (mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
         {
-          //std::cout << "Mouse Left Button Down\n";
+          std::cout << "Mouse Left Button Down\n";
         }
         if (mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP)
         {
-          //std::cout << "Mouse Left Button Up\n";
+          std::cout << "Mouse Left Button Up\n";
         }
         if (mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
         {
-          //std::cout << "Mouse Right Button Down\n";
+          std::cout << "Mouse Right Button Down\n";
         }
         if (mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
         {
-          //std::cout << "Mouse Right Button Up\n";
+          std::cout << "Mouse Right Button Up\n";
         }
       }
     
       if (raw->header.dwType == RIM_TYPEHID)
       {
         RAWHID& controller = raw->data.hid;
-        //std::cout << "Controller "<< raw->header.dwSize << "\n";
-        //std::cout << "Controller Input: " << (int)(controller.bRawData[1]) << ", " << (int)(controller.bRawData[2]) << '\n';
-  
 
-        //char dualShockTriangle = 0b1000;
-        //char dualShockCircle = 0b0100;
-        //char dualShockCross = 0b0010;
-        //char dualShockBox = 0b0001;
+        char dualShockTriangle = 0b1000;
+        char dualShockCircle = 0b0100;
+        char dualShockCross = 0b0010;
+        char dualShockBox = 0b0001;
 
-        //char iconsInput = (controller.bRawData[8] & 0xF0) >> 4;
+        char iconsInput = (controller.bRawData[8] & 0xF0) >> 4;
 
-        //std::cout << "Controller "<< static_cast<bool>(iconsInput & (1 << 3)) << "\n";
-
-        //if (iconsInput & dualShockTriangle)
-        //  std::cout << "Dualshock Triangle Press!\n";
-        //if (iconsInput & dualShockCircle)
-        //  std::cout << "Dualshock Circle Press!\n";
-        //if (iconsInput & dualShockCross)
-        //  std::cout << "Dualshock Cross Press!\n";
-        //if (iconsInput & dualShockBox)
-        //  std::cout << "Dualshock Box Press!\n";
+        if (iconsInput & dualShockTriangle)
+          std::cout << "Dualshock Triangle Press!\n";
+        if (iconsInput & dualShockCircle)
+          std::cout << "Dualshock Circle Press!\n";
+        if (iconsInput & dualShockCross)
+          std::cout << "Dualshock Cross Press!\n";
+        if (iconsInput & dualShockBox)
+          std::cout << "Dualshock Box Press!\n";
       }
     }
     delete[] buffer;
