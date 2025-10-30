@@ -2,14 +2,18 @@
 #include "Application/Application.h"
 
 int main() {
+#if defined(OPTIMENGINE_EDITOR_CONSOLE_DEBUG)
 #if defined(WINDOWS_OS)
+
   AllocConsole();
   FILE* fp;
   freopen_s(&fp, "CONOUT$", "w", stdout);
   freopen_s(&fp, "CONOUT$", "w", stderr);
 #endif
 
-  std::cout << "Hello, Console!\n";
+#endif
+
+  std::cout << "***************** Console Debug Started *****************\n\n";
 
   Application application{};
 

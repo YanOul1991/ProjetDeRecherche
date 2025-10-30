@@ -1,5 +1,7 @@
 #pragma once
 
+#define OPTIMENGINE_EDITOR_CONSOLE_DEBUG
+
 #include <iostream>
 
 #pragma warning(disable: 4251)
