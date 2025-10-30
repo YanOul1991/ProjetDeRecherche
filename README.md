@@ -1,6 +1,5 @@
 # Small Game Engine Project
 
-
 ## Example of intput/output a std::vector into a binary file
 ```cpp
     std::vector<int32> dataWrite = { 33, 43444, 434343, 4, 389, 433333333 };

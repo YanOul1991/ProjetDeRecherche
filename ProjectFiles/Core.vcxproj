@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClInclude Include="..\Source\Application\Application.h" />
     <ClInclude Include="..\Source\Devices\Input\Input.h" />
+    <ClInclude Include="..\Source\Devices\Input\InputBase.h" />
     <ClInclude Include="..\Source\Devices\Mouse.h" />
     <ClInclude Include="..\Source\Editor\IWindow.h" />
     <ClInclude Include="..\Source\Editor\EditorSystemWindow.h" />

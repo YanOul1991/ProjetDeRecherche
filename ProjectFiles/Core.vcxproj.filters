@@ -150,6 +150,9 @@
     <ClInclude Include="..\Source\Devices\Input\Input.h">
       <Filter>Devices\Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Devices\Input\InputBase.h">
+      <Filter>Devices\Private</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Event\Event.cpp">
