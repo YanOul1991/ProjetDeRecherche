@@ -14,6 +14,7 @@
 #include "Global/WindowsSettings.h"
 #include "Rendering/IRenderingModule.h"
 #include "d2d1.h"
+#pragma comment(lib, "d2d1.lib")
 
 class Direct2DRenderer : public IRenderingModule
 {
@@ -33,7 +34,7 @@ public:
     Overrides 
   */
 
-  void SetContext(void* _targetWindow) override;
+  void Initialize(void* _targetWindow) override;
   void Draw() override;
 
 private:

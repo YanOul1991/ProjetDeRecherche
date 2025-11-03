@@ -37,6 +37,7 @@ private:
 
   bool m_shouldRun; // Should the application continue running/looping.
   EditorSystemWindow* m_pEditorOsWindow; //Pointer to the editor OS managed main window.
-  IRenderingModule*   m_pDirect2dModule;  // Pointer to the direct 2D module
+  IRenderingModule* m_pDirect2dModule;  // Pointer to the direct 2D module
+  IRenderingModule* m_pGraphicsRenderingModule;
   Input* m_pInput;
 };

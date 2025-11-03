@@ -17,14 +17,14 @@ class Delegate;
 
 // EVENT MACRO
 
-#define DECLARE_EVENT(OwnerType, EventName) \
-class EventName : Event { \
-  friend class OwnerType; \
-private:\
-  void broadcast() { invoke(); }\
-public:\
-  void subscribe(std::function<void()> function) { add(function); }\
-};\
+#define DECLARE_EVENT(OwnerType, EventName)                                   \
+class EventName : Event {                                                     \
+  friend class OwnerType;                                                     \
+private:                                                                      \
+  void broadcast() { invoke(); }                                              \
+public:                                                                       \
+  void subscribe(std::function<void()> function) { add(function); }           \
+};                                                                            \
 
 class EVENT_API Delegate
 {

@@ -6,6 +6,6 @@ class IRenderingModule
 {
 public:
   virtual ~IRenderingModule() {};
-  virtual void SetContext(void* _WindowHandle) = 0;
+  virtual void Initialize(void* _WindowHandle) = 0;
   virtual void Draw() = 0;
 };

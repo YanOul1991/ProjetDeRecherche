@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Builds\</OutDir>
-    <IntDir>$(SolutionDir)Intermediate\Core\</IntDir>
+    <IntDir>$(SolutionDir)Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -108,12 +108,12 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\Users\yanis\Documents\code\cpp\Optim Engine\Source;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -141,6 +141,8 @@
     <ClInclude Include="..\Source\Event\Event.h" />
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h" />
     <ClInclude Include="..\Source\Global\PlatformSystem.h" />
+    <ClInclude Include="..\Source\Global\Types\Color.h" />
+    <ClInclude Include="..\Source\Global\Types\OptimEngineTypeLayers.h" />
     <ClInclude Include="..\Source\Global\WindowsSettings.h" />
     <ClInclude Include="..\Source\Object\Component.h" />
     <ClInclude Include="..\Source\Object\Components\Rendering\EllipseRenderer.h" />

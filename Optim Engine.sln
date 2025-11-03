@@ -10,7 +10,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Optim Engine", "ProjectFile
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entry", "Entry", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{E3CAF81C-6FA2-48E3-8FE0-A0C4A278101F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{E3CAF81C-6FA2-48E3-8FE0-A0C4A278101F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "ProjectFiles\Core.vcxproj", "{1F3D07F2-9311-493C-A85C-5C8E3D93A7BC}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -34,6 +34,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageWICOEI", "ProjectFiles\ImageWICOEI\ImageWICOEI.vcxproj", "{16DE1AB4-A461-438A-A566-E0C614DDB4A1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Direct2DOEI", "ProjectFiles\Direct2DOEI\Direct2DOEI.vcxproj", "{5D71D11C-69BC-4A8E-9EF0-52204C4451E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{B11EEA28-EC2B-4918-A651-948C11F05276}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +100,7 @@ Global
 		{00DD9CE7-AA46-4B6C-B133-26F54AFAC508} = {E3CAF81C-6FA2-48E3-8FE0-A0C4A278101F}
 		{16DE1AB4-A461-438A-A566-E0C614DDB4A1} = {00DD9CE7-AA46-4B6C-B133-26F54AFAC508}
 		{5D71D11C-69BC-4A8E-9EF0-52204C4451E0} = {00DD9CE7-AA46-4B6C-B133-26F54AFAC508}
+		{B11EEA28-EC2B-4918-A651-948C11F05276} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65A34DE5-7D7C-496A-99A9-A61392DB2D96}

@@ -5,14 +5,16 @@
 
 #if defined(WINDOWS_OS)
 #include "DirectX/Direct2D/Direct2D.h"
+#include "Direct3D11/OpDirect3d11.h"
 
-typedef IRenderingModule* (*CreateD2DRendererFunc)();
+typedef IRenderingModule* (*CreateRenderingModuleProc)();
 #endif
 
 Application::Application() :
   m_shouldRun{ false },
   m_pEditorOsWindow { nullptr },
   m_pDirect2dModule { nullptr },
+  m_pGraphicsRenderingModule { nullptr },
   m_pInput { nullptr }
 { }
 
@@ -54,17 +56,31 @@ void Application::ApplicationStart()
   HMODULE hmodDirect2d = LoadLibraryA("Direct2DOEI.dll");
   if (hmodDirect2d)
   {
-    CreateD2DRendererFunc pProcCreateD2DRenderer = (CreateD2DRendererFunc)GetProcAddress(hmodDirect2d, "CreateDirect2DRenderer");
+    CreateRenderingModuleProc pProcCreateD2DRenderer = (CreateRenderingModuleProc)GetProcAddress(hmodDirect2d, "CreateDirect2DRenderer");
     if (pProcCreateD2DRenderer)
     {
       m_pDirect2dModule = pProcCreateD2DRenderer();
-      m_pDirect2dModule->SetContext(m_pEditorOsWindow->m_pHandle);
+      m_pDirect2dModule->Initialize(m_pEditorOsWindow->m_pHandle);
+    }
+  }
+
+  /*
+    Initialize the Direct3D dll module
+  */
+
+  HMODULE hmodDirect3d = LoadLibraryA("D3D11OEI.dll");
+  if (hmodDirect3d)
+  {
+    CreateRenderingModuleProc pProcCreateDirect3DRenderer = (CreateRenderingModuleProc)GetProcAddress(hmodDirect3d, "CreateDirect3D11Module");
+    if (pProcCreateDirect3DRenderer)
+    {
+      m_pGraphicsRenderingModule = pProcCreateDirect3DRenderer();
+      m_pGraphicsRenderingModule->Initialize(m_pEditorOsWindow->m_pHandle);
     }
   }
 #endif
 
   m_pInput = Input::Initalize(this, m_pEditorOsWindow->GetHandle());
-
   m_shouldRun = true;
 }
 
@@ -78,8 +94,12 @@ void Application::ApplicationLoop()
     DispatchMessageW(&m_windowsMsg);
   }
 #endif
-  m_pDirect2dModule->Draw();
+  //m_pDirect2dModule->Draw();
+  m_pGraphicsRenderingModule->Draw();
 }
 
 void Application::ApplicationQuit()
-{ }
+{ 
+  delete(m_pDirect2dModule);
+  delete(m_pGraphicsRenderingModule);
+}

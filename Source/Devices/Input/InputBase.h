@@ -26,11 +26,4 @@ namespace op::input
     int32 yPosition;
     EMouseAction action;
   };
-
-  struct GamepadInputData
-  {
-    uint32  sticks;
-    uint8   padAndSymbols;
-    uint8   buttons;
-  };
 }

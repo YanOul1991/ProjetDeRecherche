@@ -64,7 +64,7 @@ bool IWindow::Create(const wstring& _title, int32 _positionX, int32 _positionY, 
 void IWindow::Display() const
 {
 #if defined(WINDOWS_OS)
-  ShowWindow(reinterpret_cast<HWND>(m_pHandle), SW_MAXIMIZE);
+  ShowWindow(reinterpret_cast<HWND>(m_pHandle), SW_NORMAL);
 #endif
 }
 
@@ -96,8 +96,16 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
     {
       BOOL useDarkMode = TRUE;
       DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDarkMode, sizeof(useDarkMode));
+
+      return 0;
     }
+
+  case WM_ACTIVATE:
+  {
+    MARGINS margin{ 0, 0, -20, 0 };
+    DwmExtendFrameIntoClientArea(hwnd, &margin);
     return 0;
+  }
 
   case WM_DPICHANGED:
     pThis->dpi = static_cast<float>(GetDpiForWindow(hwnd)) / USER_DEFAULT_SCREEN_DPI;
@@ -142,6 +150,7 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
         //  std::cout << "Mouse delta: " << dx << ", " << dy << '\n';
         //}
 
+        /*
         if (mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
         {
           std::cout << "Mouse Left Button Down\n";
@@ -158,6 +167,7 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
         {
           std::cout << "Mouse Right Button Up\n";
         }
+        */
       }
     
       if (raw->header.dwType == RIM_TYPEHID)
@@ -171,6 +181,7 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
 
         char iconsInput = (controller.bRawData[8] & 0xF0) >> 4;
 
+        /*
         if (iconsInput & dualShockTriangle)
           std::cout << "Dualshock Triangle Press!\n";
         if (iconsInput & dualShockCircle)
@@ -179,10 +190,11 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
           std::cout << "Dualshock Cross Press!\n";
         if (iconsInput & dualShockBox)
           std::cout << "Dualshock Box Press!\n";
+        */
       }
     }
     delete[] buffer;
-    break;
+    return 0;
   }
 
   default:

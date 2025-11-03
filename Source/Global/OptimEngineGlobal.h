@@ -2,19 +2,10 @@
 
 #define OPTIMENGINE_EDITOR_CONSOLE_DEBUG
 
-#include <iostream>
-
 #pragma warning(disable: 4251)
+#pragma warning(disable: 4275)
+#pragma warning(disable: 4100)
 
-// Typedefs
-
-typedef int8_t int8;
-typedef int16_t int16;
-typedef int32_t int32;
-typedef int64_t int64;
-typedef uint8_t uint8;
-typedef uint16_t uint16;
-typedef uint32_t uint32;
-typedef uint64_t uint64;
-typedef std::string string;
-typedef std::wstring wstring;
+#include <iostream>
+#include "Types/OptimEngineTypeLayers.h"
+#include "Types/Color.h"

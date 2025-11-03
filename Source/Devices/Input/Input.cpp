@@ -18,6 +18,7 @@ Input* Input::Initalize(Application* _pApplication, void* _hWindowHandle)
 		Windows OS specifics
 	*/
 #if defined(WINDOWS_OS)
+	/*
 	UINT deviceCount{ 0 };
 	GetRawInputDeviceList(nullptr, &deviceCount, sizeof(RAWINPUTDEVICELIST));
 
@@ -49,6 +50,7 @@ Input* Input::Initalize(Application* _pApplication, void* _hWindowHandle)
 	}
 
 	delete[] deviceList;
+	*/
 
 	// Instanciate Raw Input
 	RAWINPUTDEVICE rid[3];

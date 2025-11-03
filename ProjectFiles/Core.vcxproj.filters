@@ -91,6 +91,9 @@
     <Filter Include="Devices\Private">
       <UniqueIdentifier>{6b0119bb-10f2-408b-b805-1c7b93790287}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Global\Private">
+      <UniqueIdentifier>{7b947617-8b14-419d-ae24-561f29e092a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Global\OptimEngineGlobal.h">
@@ -138,9 +141,6 @@
     <ClInclude Include="..\Source\Utilities\FileStream.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Editor\EditorSystemWindow.h">
-      <Filter>EditorWindows\Private</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Editor\IWindow.h">
       <Filter>EditorWindows\Private</Filter>
     </ClInclude>
@@ -152,6 +152,15 @@
     </ClInclude>
     <ClInclude Include="..\Source\Devices\Input\InputBase.h">
       <Filter>Devices\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Editor\EditorSystemWindow.h">
+      <Filter>EditorWindows\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Global\Types\OptimEngineTypeLayers.h">
+      <Filter>Global\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Global\Types\Color.h">
+      <Filter>Global\Private</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

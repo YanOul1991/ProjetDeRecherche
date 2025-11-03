@@ -28,7 +28,7 @@ Direct2DRenderer::~Direct2DRenderer() {
 /*
   Interface Overrides Definitions
 */
-void Direct2DRenderer::SetContext(void* _targetWindow) 
+void Direct2DRenderer::Initialize(void* _targetWindow)
 { 
   m_hTargetWindow = reinterpret_cast<HWND>(_targetWindow);
   std::cout << "Direct2D context has been initialized!!!\n";
@@ -101,6 +101,7 @@ void Direct2DRenderer::Draw() {
 
     // Clear Render target
     pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::DarkCyan));
+    pSolidColorBrush->SetColor(D2D1::ColorF(D2D1::ColorF::White));
 
     D2D1_ELLIPSE m_ellipse{ D2D1::Ellipse(
       D2D1::Point2F(300.0f, 300.0f),
@@ -108,7 +109,7 @@ void Direct2DRenderer::Draw() {
       100.0f
     )};
 
-    m_ellipse.point = D2D1::Point2F(1800.0f, 800.0f);
+    m_ellipse.point = D2D1::Point2F(0, 0);
 
     pRenderTarget->FillEllipse(m_ellipse, pSolidColorBrush);
 
