@@ -123,3 +123,7 @@ void Direct2DRenderer::Draw() {
     EndPaint(m_hTargetWindow, &ps);
   }
 }
+
+void Direct2DRenderer::Clean()
+{
+}

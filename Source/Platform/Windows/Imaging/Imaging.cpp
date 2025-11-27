@@ -61,28 +61,3 @@ HRESULT op::Windows::Imaging::LoadBitMapFromFile(
 
   return hr;
 }
-
-
-//HRESULT op::Windows::Imaging::LoadResourceBitmap(
-//  ID2D1RenderTarget*    pRenderTarget,
-//  IWICImagingFactory*   pIwicFactory,
-//  PCWSTR                resourceName,
-//  PCWSTR                resourceType,
-//  uint32                destinationWidth,
-//  uint32                destinationHeight,
-//  ID2D1Bitmap**         ppBitmap
-//) {
-//  IWICBitmapDecoder* pDecoder{ nullptr };
-//  IWICBitmapFrameDecode* pSource{ nullptr };
-//  IWICStream* pStream{ nullptr };
-//  IWICFormatConverter* pConverter{ nullptr };
-//  IWICBitmapScaler* pScaler{ nullptr };
-//
-//  HRSRC imgResHandle{ nullptr };
-//  HGLOBAL imgResDataHandle{ nullptr };
-//  void* pImageFile{ nullptr };
-//  DWORD imgFileSize{ 0 };
-//
-//  // Locate the resource
-//  imgResHandle = FindResourceW(resourceName, resourceType);
-//}

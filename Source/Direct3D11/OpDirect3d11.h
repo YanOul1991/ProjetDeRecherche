@@ -11,16 +11,20 @@
 
 class OpDirect3d11Base;
 
+/*
+  Direct3D11 Class Interface
+*/
 class OP_D3D11_API OpDirect3D11Module final : IRenderingModule
 {
 public:
   OpDirect3D11Module();
   void Initialize(void* _WindowHandle) override;
   void Draw() override;
+  void Clean() override;
 
 private:
-  void* m_hTargetWindow;
-  OpDirect3d11Base* m_pBase;
+  void* m_hTargetWindow;      // Target Window.
+  OpDirect3d11Base* m_pBase;  
 };
 
 extern "C" {

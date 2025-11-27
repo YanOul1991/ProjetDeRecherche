@@ -1,21 +1,30 @@
 #pragma once
+
 #include "OptimEngineTypeLayers.h"
 
 namespace op::color
 { 
+  enum class EChannel : uint32
+  {
+    red     = 0xFF000000u,
+    green   = 0x00FF0000u,
+    blue    = 0x0000FF00u,
+    alpha   = 0x000000FFu
+  };
+
   enum class EColor : uint32
   {
-    white = 0xFFFFFFFF,
-    black = 0x000000FF,
-    red   = 0xFF0000FF,
-    green = 0x00FF00FF,
-    blue  = 0x0000FFFF
+    white = 0xFFFFFFFFu,
+    black = 0x000000FFu,
+    red   = 0xFF0000FFu,
+    green = 0x00FF00FFu,
+    blue  = 0x0000FFFFu
   };
 
   struct ColorRgb
   {
     float r;
-    float g; 
+    float g;
     float b;
     float a;
   };
@@ -29,7 +38,7 @@ namespace op::color
 
   struct ColorHex
   {
-    uint32 value;
+    uint32 value = static_cast<uint32>(EColor::black);
   };
 
   inline ColorRgb ConvertColorHexToRgba(const ColorHex& _color8bit)
@@ -40,6 +49,13 @@ namespace op::color
       (float)(((_color8bit.value & 0x0000FF00u) >> 8)  / 255.0f) / 1.0f,
       (float)(((_color8bit.value & 0x000000FFu) >> 0)  / 255.0f) / 1.0f
     };
+
+    //return{
+    //  (((float)((_color8bit.value >> 24)  & 0xFFu)) / 255.0f) / 1.0f,
+    //  (((float)((_color8bit.value >> 16)  & 0xFFu)) / 255.0f) / 1.0f,
+    //  (((float)((_color8bit.value >> 8)   & 0xFFu)) / 255.0f) / 1.0f,
+    //  (((float)((_color8bit.value)        & 0xFFu)) / 255.0f) / 1.0f
+    //};
   }
 
   inline void SetHexArray(float* _arr, const ColorHex& _color8bit)
@@ -48,6 +64,9 @@ namespace op::color
     _arr[1] = (float)(((_color8bit.value & 0x00FF0000u) >> 16) / 255.0f) / 1.0f;
     _arr[2] = (float)(((_color8bit.value & 0x0000FF00u) >> 8)  / 255.0f) / 1.0f;
     _arr[3] = (float)(((_color8bit.value & 0x000000FFu) >> 0)  / 255.0f) / 1.0f;
+
+    // for (int i = 0; i < 4; i++) 
+    //   _arr[i] = (((float)((_color8bit.value >> (8 * i)) & 0xFFu)) / 255.0f) / 1.0f;
   }
 
   inline ColorHex GetColorHex(const float r, const float g, const float b, const float a)
@@ -56,7 +75,7 @@ namespace op::color
       (uint32)( 
         ((uint8)(r * 255u)) << 24 |
         ((uint8)(g * 255u)) << 16 |
-        ((uint8)(b * 255u)) << 8 |
+        ((uint8)(b * 255u)) << 8  |
         ((uint8)(a * 255u)) << 0
         )
     };

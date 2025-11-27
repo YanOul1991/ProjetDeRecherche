@@ -15,34 +15,12 @@ public:
   OpDirect3d11Base& operator=(const OpDirect3d11Base&) = delete;
   OpDirect3d11Base& operator=(const OpDirect3d11Base&&) = delete;
 
-  //void CreateReferenceDevice(HWND _outputWindow);
   DXGI_SWAP_CHAIN_DESC m_swapChainDesc;
 
-  /*======================== FUNCTIONS ========================*/
-
   bool Initialize(HWND _outputWindow);    // Initialize Direct3d11.
-
-  /*
-    Present the rendered pixels to the screen.
-  */
   void EndFrame();
-
-  /*
-    Clear the Render buffer.
-  */
-
-  void ClearBuffer(float red, float green, float blue) noexcept 
-  {
-    const float color[] = { red, green, blue, 1.0f };
-    m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
-  }
-
-  void ClearBuffer(const op::color::ColorHex fillColor) noexcept
-  {
-    float color[4]{};
-    op::color::SetHexArray(color, fillColor);
-     m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
-  }
+  void ClearBuffer(float red, float green, float blue) noexcept;
+  void ClearBuffer(const op::color::ColorHex fillColor) noexcept;
 
 private:
   ID3D11Device* m_pDevice;

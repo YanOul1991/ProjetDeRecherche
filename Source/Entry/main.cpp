@@ -3,6 +3,7 @@
 
 int main() {
 #if defined(OPTIMENGINE_EDITOR_CONSOLE_DEBUG)
+
 #if defined(WINDOWS_OS)
 
   AllocConsole();
@@ -15,14 +16,19 @@ int main() {
 
   std::cout << "***************** Console Debug Started *****************\n\n";
 
+  // Create Application instance
   Application application{};
 
+  // Initialize application
   application.ApplicationStart();
 
+  // Excecute Application running loop
   while (application.ShouldRun())
   {
     application.ApplicationLoop();
   }
+
+  // Perform cleanup
   application.ApplicationQuit();
 
   return 0;

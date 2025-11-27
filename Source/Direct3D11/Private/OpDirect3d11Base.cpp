@@ -22,10 +22,17 @@ OpDirect3d11Base::~OpDirect3d11Base() {
   if (m_pRenderTargetView)  m_pRenderTargetView->Release();
 }
 
+/*
+  @brief Initializes Direct3D11. create a Device and a swap chain.
+  @param HWND _outputWindow - Window handle to the draw area.
+  @return bool - Did D3D11 initialized successfully.
+*/
 bool OpDirect3d11Base::Initialize(HWND _outputWindow)
 {
+  // Empty Memory
   ZeroMemory(&m_swapChainDesc, sizeof(m_swapChainDesc));
 
+  // Set Swap chain description
   m_swapChainDesc.BufferDesc.Width = 0;
   m_swapChainDesc.BufferDesc.Height = 0;
   m_swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -45,6 +52,7 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
   m_swapChainDesc.Flags = 0;
 
   HRESULT hr{ S_OK };
+
   hr = D3D11CreateDeviceAndSwapChain(
     nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
@@ -60,8 +68,10 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
     &m_pDeviceContext
   );
 
-  ID3D11Resource* pBackBuffer{ nullptr };
-  m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
+  ID3D11Resource* pBackBuffer{ 0 };
+  m_pSwapChain->GetBuffer(0, _In_ __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
+
+  if (pBackBuffer == nullptr) return false;
 
   m_pDevice->CreateRenderTargetView(
     pBackBuffer,
@@ -80,9 +90,22 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
     std::cout << "\n-------------- Direct3D RefereDevice And Swap Chain creation has failed. Error code: " << GetLastError() << " -------------- \n";
   }
 
-
-  return SUCCEEDED(hr);
+  return SUCCEEDED(hr) == TRUE;
 }
+
+void OpDirect3d11Base::ClearBuffer(float red, float green, float blue) noexcept
+{
+  const float color[] = { red, green, blue, 1.0f };
+  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+}
+
+void OpDirect3d11Base::ClearBuffer(const op::color::ColorHex fillColor) noexcept
+{
+  float color[4]{};
+  op::color::SetHexArray(color, fillColor);
+  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+}
+
 
 void OpDirect3d11Base::EndFrame()
 {

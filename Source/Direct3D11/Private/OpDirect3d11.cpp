@@ -18,9 +18,7 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
   m_hTargetWindow =_WindowHandle;
 
   if (m_hTargetWindow != nullptr)
-  {
     std::cout << "\n ------- Direct3D11 Was Successfully initalized! ------- \n";
-  }
 
   m_pBase = new OpDirect3d11Base{};
 
@@ -31,26 +29,20 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
   }
 }
 
+/*
+  Excecute Drawing Instructions
+*/
 void OpDirect3D11Module::Draw()
 {
-  //op::color::Color color{};
-  //color = op::color::ConvertColorHexToRgba(col8bit);
-
-  //float colorArr[4]{};
-  op::color::ColorHex color1{ 0x000000FF };
-
-  //op::color::SetHexArray(colorArr, color1);
-  //op::color::ColorHex color2{ op::color::GetColorHex(0.0f, 1.0f, 0.0f, 1.0f) };
-
+  op::color::ColorHex color1{ 0x00ffffff };
   op::color::ColorHSV colorHsv{ op::color::RgbToHsv(op::color::ConvertColorHexToRgba(color1)) };
 
-  std::cout << "Color HSV Value \n"
-    << "\tH: " << colorHsv.h << "\n"
-    << "\tS: " << colorHsv.s << '\n'
-    << "\tV: " << colorHsv.v << "\n";
-
+  // Clear the Buffer witg
   m_pBase->ClearBuffer(color1);
-  //m_pBase->ClearBuffer(color.r, color.g, color.b);
-
   m_pBase->EndFrame();
+}
+
+void OpDirect3D11Module::Clean()
+{
+  std::cout << "Direct3D11 module cleanning...\n";
 }

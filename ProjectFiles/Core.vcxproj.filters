@@ -73,12 +73,6 @@
     <Filter Include="Application\Private">
       <UniqueIdentifier>{99dbfb31-ce3c-4e43-9db5-42289aa3fcde}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering">
-      <UniqueIdentifier>{874f529c-1d31-44a3-a63a-c33bd1b0ba71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Rendering\Private">
-      <UniqueIdentifier>{6b6b2e44-75d2-4886-9c31-a0193fcdd822}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{62ef49ce-0816-494e-b19d-3b711b093c7f}</UniqueIdentifier>
     </Filter>
@@ -93,6 +87,9 @@
     </Filter>
     <Filter Include="Global\Private">
       <UniqueIdentifier>{7b947617-8b14-419d-ae24-561f29e092a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ModuleInterfaces">
+      <UniqueIdentifier>{874f529c-1d31-44a3-a63a-c33bd1b0ba71}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -136,7 +133,7 @@
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Rendering\IRenderingModule.h">
-      <Filter>Rendering</Filter>
+      <Filter>ModuleInterfaces</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Utilities\FileStream.h">
       <Filter>Utilities</Filter>

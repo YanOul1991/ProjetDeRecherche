@@ -94,7 +94,6 @@ void Application::ApplicationLoop()
     DispatchMessageW(&m_windowsMsg);
   }
 #endif
-  //m_pDirect2dModule->Draw();
   m_pGraphicsRenderingModule->Draw();
 }
 

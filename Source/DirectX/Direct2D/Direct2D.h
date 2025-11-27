@@ -36,6 +36,7 @@ public:
 
   void Initialize(void* _targetWindow) override;
   void Draw() override;
+  void Clean() override;
 
 private:
   HWND m_hTargetWindow;
