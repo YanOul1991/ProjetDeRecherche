@@ -1,207 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Global">
-      <UniqueIdentifier>{a55a071c-23c7-4408-9888-caa13e7bb8ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object">
-      <UniqueIdentifier>{46579ce3-3110-4966-9315-2579a9940c23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Event">
-      <UniqueIdentifier>{a25be415-5d5c-447c-8828-39fe7027e243}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Event\Public">
-      <UniqueIdentifier>{6df65a43-4570-4ced-936f-e416294d2669}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Event\Private">
-      <UniqueIdentifier>{a3acf0ea-d6ea-477f-a2b6-48dd662ceeaf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Random">
-      <UniqueIdentifier>{b89b9fda-d0c9-4c6d-92a3-fa471260de1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Random\Private">
-      <UniqueIdentifier>{65088401-3fd1-48ea-a65f-1227a6b9b713}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Random\Public">
-      <UniqueIdentifier>{4910a590-f2fe-4cd9-932e-a3dc4e18af04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform">
-      <UniqueIdentifier>{cf15a1b7-92ce-45f0-8998-558c4c4585f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EditorWindows">
-      <UniqueIdentifier>{bf2a2490-b1ef-4109-87ab-81aec873665e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EditorWindows\Private">
-      <UniqueIdentifier>{48c6cfc4-3cff-4386-b9d1-61f823a91e6d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EditorWindows\Public">
-      <UniqueIdentifier>{ba6d3690-587a-4c16-8769-03ac0ab187e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Private">
-      <UniqueIdentifier>{da436556-93de-49f9-8cf3-6cfd334c5f6d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Public">
-      <UniqueIdentifier>{b7b2ef23-745f-4acf-aa8e-7b81310d97d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Components">
-      <UniqueIdentifier>{6383da12-9596-4229-8aa2-ccc6a2664acd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Components\Rendering">
-      <UniqueIdentifier>{87e50931-00e0-4ca9-a68c-fdfae33c3b1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Components\Rendering\Public">
-      <UniqueIdentifier>{41213642-cd1b-460c-8408-a282eeac6f06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Components\Rendering\Private">
-      <UniqueIdentifier>{24f46276-cc71-4767-a9fd-3c22bfb47505}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices">
-      <UniqueIdentifier>{c7c086ac-7843-4d56-8d9e-618cf0480716}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform\Shell">
-      <UniqueIdentifier>{476738ca-44aa-4ed6-961a-dde16b066218}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform\Shell\Public">
-      <UniqueIdentifier>{b3783a6d-0352-4d50-ac10-09dc326ad531}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform\Shell\Private">
-      <UniqueIdentifier>{50e18876-0e74-4c94-bb14-1424d084fa3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Application">
-      <UniqueIdentifier>{9c1167a4-ca3b-4a08-976c-44ce71a0fcea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Application\Private">
-      <UniqueIdentifier>{99dbfb31-ce3c-4e43-9db5-42289aa3fcde}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utilities">
-      <UniqueIdentifier>{62ef49ce-0816-494e-b19d-3b711b093c7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utilities\Private">
-      <UniqueIdentifier>{4f4d8109-73c4-49e7-a7e7-9bf5e1ffb5d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Input">
-      <UniqueIdentifier>{93b68fc2-ed9b-45f4-8845-47624a2a2150}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Devices\Private">
-      <UniqueIdentifier>{6b0119bb-10f2-408b-b805-1c7b93790287}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Global\Private">
-      <UniqueIdentifier>{7b947617-8b14-419d-ae24-561f29e092a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ModuleInterfaces">
-      <UniqueIdentifier>{874f529c-1d31-44a3-a63a-c33bd1b0ba71}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Source\Global\OptimEngineGlobal.h">
-      <Filter>Global</Filter>
+    <ClInclude Include="..\Source\Core\OptimEngineGlobal.h" />
+    <ClInclude Include="..\Source\Core\System\Application.h">
+      <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Global\WindowsSettings.h">
-      <Filter>Global</Filter>
+    <ClInclude Include="..\Source\Core\System\IWindow.h">
+      <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Event\Event.h">
-      <Filter>Event\Public</Filter>
+    <ClInclude Include="..\Source\Core\Input\Input.h">
+      <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Random\Random.h">
-      <Filter>Random\Public</Filter>
+    <ClInclude Include="..\Source\Core\Rendering\IRenderingModule.h">
+      <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Platform\Windows\WindowsShell.h">
-      <Filter>Platform\Shell\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Platform\Windows\WindowsShellTools.h">
-      <Filter>Platform\Shell\Private</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Object\Object.h">
-      <Filter>Object\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Object\Components\Rendering\EllipseRenderer.h">
-      <Filter>Object\Components\Rendering\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Object\Components\Rendering\RectangleRenderer.h">
-      <Filter>Object\Components\Rendering\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Object\Components\Rendering\Renderer.h">
-      <Filter>Object\Components\Rendering\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Object\Component.h">
-      <Filter>Object\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Devices\Mouse.h">
-      <Filter>Devices</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Application\Application.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Rendering\IRenderingModule.h">
-      <Filter>ModuleInterfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Utilities\FileStream.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Editor\IWindow.h">
-      <Filter>EditorWindows\Private</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Global\PlatformSystem.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Devices\Input\Input.h">
-      <Filter>Devices\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Devices\Input\InputBase.h">
-      <Filter>Devices\Private</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Editor\EditorSystemWindow.h">
-      <Filter>EditorWindows\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Global\Types\OptimEngineTypeLayers.h">
-      <Filter>Global\Private</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Global\Types\Color.h">
-      <Filter>Global\Private</Filter>
+    <ClInclude Include="..\Source\Core\Time\Time.h">
+      <Filter>Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\Event\Event.cpp">
-      <Filter>Event\Private</Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{807bfe2a-813d-4636-bdfa-80153ad5a9f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Private">
+      <UniqueIdentifier>{8aaea374-8363-4c45-8acb-bd93cdbb8b52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{1f89f6f0-c096-4965-bd3f-9038d3bc01f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input\private">
+      <UniqueIdentifier>{49c719f4-1922-4239-920d-6a8356d84c8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{e5fc91cc-ec0b-4f00-be8d-d8b5f5e3a04b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Time">
+      <UniqueIdentifier>{dc7f4020-7457-4671-82ab-65bcf3eafb46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Time\private">
+      <UniqueIdentifier>{05b9865d-7015-410a-bed0-3c90180a1e8e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\Core\System\private\Application.cpp">
+      <Filter>System\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Random\Random.cpp">
-      <Filter>Random\Private</Filter>
+    <ClCompile Include="..\Source\Core\System\private\IWindow.cpp">
+      <Filter>System\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\Windows\WindowsShell.cpp">
-      <Filter>Platform\Shell\Private</Filter>
+    <ClCompile Include="..\Source\Core\Input\private\Input.cpp">
+      <Filter>Input\private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Object\Object.cpp">
-      <Filter>Object\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Object\Component.cpp">
-      <Filter>Object\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Object\Components\Rendering\EllipseRenderer.cpp">
-      <Filter>Object\Components\Rendering\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Object\Components\Rendering\RectangleRenderer.cpp">
-      <Filter>Object\Components\Rendering\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Object\Components\Rendering\Renderer.cpp">
-      <Filter>Object\Components\Rendering\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Application\Application.cpp">
-      <Filter>Application\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Editor\EditorSystemWindow.cpp">
-      <Filter>EditorWindows\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Editor\IWindow.cpp">
-      <Filter>EditorWindows\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Utilities\FileStream.cpp">
-      <Filter>Utilities\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Devices\Input\Input.cpp">
-      <Filter>Devices\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Devices\Mouse.cpp">
-      <Filter>Devices\Private</Filter>
+    <ClCompile Include="..\Source\Core\Time\Time.cpp">
+      <Filter>Time\private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

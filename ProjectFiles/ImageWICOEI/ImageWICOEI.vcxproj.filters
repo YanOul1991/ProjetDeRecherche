@@ -8,14 +8,4 @@
       <UniqueIdentifier>{fc138720-c6c7-43fd-a763-0a6778e26b24}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Source\Platform\Windows\Imaging\Imaging.h">
-      <Filter>Public</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\Source\Platform\Windows\Imaging\Imaging.cpp">
-      <Filter>Private</Filter>
-    </ClCompile>
-  </ItemGroup>
 </Project>

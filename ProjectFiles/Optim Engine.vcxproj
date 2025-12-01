@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\Entry\main.cpp" />
+    <Manifest Include="..\project.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="..\project.manifest" />
+    <ClCompile Include="..\Source\Core\System\entry\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

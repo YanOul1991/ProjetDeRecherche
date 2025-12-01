@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\Direct3D11\OpDirect3d11.h" />
-    <ClInclude Include="..\..\Source\Direct3D11\Private\OpDirect3d11Global.h" />
-    <ClInclude Include="..\..\Source\Direct3D11\Private\OpDirect3d11Base.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\OpDirect3d11.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\OpDirect3d11Base.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\OpDirect3d11Global.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\Direct3D11\Private\OpDirect3d11.cpp" />
-    <ClCompile Include="..\..\Source\Direct3D11\Private\OpDirect3d11Base.cpp" />
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\OpDirect3d11.cpp" />
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\OpDirect3d11Base.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

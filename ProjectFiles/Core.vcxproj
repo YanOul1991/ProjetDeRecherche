@@ -18,6 +18,20 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\Core\Input\Input.h" />
+    <ClInclude Include="..\Source\Core\OptimEngineGlobal.h" />
+    <ClInclude Include="..\Source\Core\Rendering\IRenderingModule.h" />
+    <ClInclude Include="..\Source\Core\System\Application.h" />
+    <ClInclude Include="..\Source\Core\System\IWindow.h" />
+    <ClInclude Include="..\Source\Core\Time\Time.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
+    <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
+    <ClCompile Include="..\Source\Core\System\private\IWindow.cpp" />
+    <ClCompile Include="..\Source\Core\Time\Time.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -109,6 +123,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,46 +146,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Source\Application\Application.h" />
-    <ClInclude Include="..\Source\Devices\Input\Input.h" />
-    <ClInclude Include="..\Source\Devices\Input\InputBase.h" />
-    <ClInclude Include="..\Source\Devices\Mouse.h" />
-    <ClInclude Include="..\Source\Editor\IWindow.h" />
-    <ClInclude Include="..\Source\Editor\EditorSystemWindow.h" />
-    <ClInclude Include="..\Source\Event\Event.h" />
-    <ClInclude Include="..\Source\Global\OptimEngineGlobal.h" />
-    <ClInclude Include="..\Source\Global\PlatformSystem.h" />
-    <ClInclude Include="..\Source\Global\Types\Color.h" />
-    <ClInclude Include="..\Source\Global\Types\OptimEngineTypeLayers.h" />
-    <ClInclude Include="..\Source\Global\WindowsSettings.h" />
-    <ClInclude Include="..\Source\Object\Component.h" />
-    <ClInclude Include="..\Source\Object\Components\Rendering\EllipseRenderer.h" />
-    <ClInclude Include="..\Source\Object\Components\Rendering\RectangleRenderer.h" />
-    <ClInclude Include="..\Source\Object\Components\Rendering\Renderer.h" />
-    <ClInclude Include="..\Source\Object\Object.h" />
-    <ClInclude Include="..\Source\Platform\Windows\WindowsShell.h" />
-    <ClInclude Include="..\Source\Platform\Windows\WindowsShellTools.h" />
-    <ClInclude Include="..\Source\Random\Random.h" />
-    <ClInclude Include="..\Source\Rendering\IRenderingModule.h" />
-    <ClInclude Include="..\Source\Utilities\FileStream.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Source\Application\Application.cpp" />
-    <ClCompile Include="..\Source\Devices\Input\Input.cpp" />
-    <ClCompile Include="..\Source\Devices\Mouse.cpp" />
-    <ClCompile Include="..\Source\Editor\IWindow.cpp" />
-    <ClCompile Include="..\Source\Editor\EditorSystemWindow.cpp" />
-    <ClCompile Include="..\Source\Event\Event.cpp" />
-    <ClCompile Include="..\Source\Object\Component.cpp" />
-    <ClCompile Include="..\Source\Object\Components\Rendering\EllipseRenderer.cpp" />
-    <ClCompile Include="..\Source\Object\Components\Rendering\RectangleRenderer.cpp" />
-    <ClCompile Include="..\Source\Object\Components\Rendering\Renderer.cpp" />
-    <ClCompile Include="..\Source\Object\Object.cpp" />
-    <ClCompile Include="..\Source\Platform\Windows\WindowsShell.cpp" />
-    <ClCompile Include="..\Source\Random\Random.cpp" />
-    <ClCompile Include="..\Source\Utilities\FileStream.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
