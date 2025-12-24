@@ -1,10 +1,11 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      ++ IRenderingModule.h :
-            Abstraction interface for rendering API: Direct3D11
+      + IRenderingModule.h :
+          Interface exposing abstracted functionalities 
+          for rendering modules.
 
-      ++ By:
-            Yanis Oulmane
+      + By:
+          Yanis Oulmane
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
@@ -15,6 +16,6 @@ class IRenderingModule
 public:
   virtual ~IRenderingModule() {};
   virtual void Initialize(void* _WindowHandle) = 0;
-  virtual void Draw() = 0;
+  virtual void draw() = 0;
   virtual void Clean() = 0;
 };

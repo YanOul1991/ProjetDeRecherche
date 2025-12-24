@@ -1,3 +1,13 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      + Application.cpp :
+          Definitions for Application.h
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
 #pragma once
 
 // Optim Engine libraries
@@ -6,6 +16,7 @@
 #include "Core/System/IWindow.h"
 #include "Core/Input/Input.h"
 #include "Core/Time/Time.h"
+#include "Core/Color/Color.h"
 // Standard libraries
 #include <iostream>
 #include <memory>
@@ -33,23 +44,20 @@ bool Application::ShouldRun() const { return m_shouldRun; }
 
 void Application::Quit() 
 { 
-  MessageBoxW(0, STRING("Message quit"), STRING("Debug"), MB_OK);
+  //MessageBoxW(0, STRING("Message quit"), STRING("Debug"), MB_OK);
   m_shouldRun = false;
 }
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart()
 {
-  std::cout << "The application has started.\n";
   // Start by assuming failure
   m_shouldRun = false;
 
   // Allocate resources to create a new system managed Window
   m_pWindow = new IWindow;
-  if (!m_pWindow) 
-    return;
-  if (!m_pWindow->create(this, STRING("Optim Engine"), 0, 0, 500, 500, nullptr)) 
-    return;
+  if (!m_pWindow) return;
+  if (!m_pWindow->create(this, STRING("Optim Engine"), 0, 0, 500, 500, nullptr)) return;
   m_pWindow->display();
 
   // Load Direct3d11 runtime module
@@ -64,35 +72,38 @@ void Application::ApplicationStart()
   // Regitser Inputs
   m_pInput = new op::SInput;
 
-  if (!m_pInput->initialize(reinterpret_cast<void*>(this), m_pWindow->getHandle()))
-    return;
+  if (!m_pInput->initialize(reinterpret_cast<void*>(this), m_pWindow->getHandle())) return;
 
   m_shouldRun = true;
 }
 
 void Application::ApplicationLoop()
 {
-  /*
-    * Application Loop Logic
-    *   - Check if application should still be running.
-    *   - Call system window's loop function for OS specifics
-    *   - Draw Call
-  */
+  static uint64 __now;
+  static uint64 __last = op::time::nowHighFreq();
+  static double __deltaTime{ 1 };
+  static std::stringstream ss{};
 
-  if (!m_shouldRun) 
-    return;
+  if (!m_shouldRun) return;
+
   m_pWindow->windowLoop();
-  m_pGraphicsRenderingModule->Draw();
+  m_pGraphicsRenderingModule->draw();
 
-  std::stringstream ss;
-
-  ss << "Optim Engine | Delta Time: " << Time::getDeltaTime(ETimeUnits::sec) << "fps";
+  ss << "Optim Engine | Framerate: " << 1.0 / __deltaTime;
   SetWindowTextA(reinterpret_cast<HWND>(m_pWindow->getHandle()), ss.str().c_str());
+
+  __now         = op::time::nowHighFreq();
+  __deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
+  __last        = __now;
+  m_runtime     += __deltaTime;
+
+  ss.str("");
 }
 
 void Application::ApplicationQuit()
 { 
-  MessageBoxW(0, STRING("Destroying Application and resources"), STRING("Debug"), MB_OK);
+  //MessageBoxW(0, STRING("Destroying Application and resources"), STRING("Debug"), MB_OK);
+
   // Free resources
   delete(m_pDirect2dModule);
   delete(m_pGraphicsRenderingModule);

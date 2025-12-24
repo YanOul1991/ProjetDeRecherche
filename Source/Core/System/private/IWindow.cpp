@@ -1,9 +1,21 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      + IWindow.cpp :
+          Base system window class definition
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
 #pragma once
 
 // Optim Engine
 #include <Core/OptimEngineGlobal.h>
 #include "Core/System/IWindow.h"
 #include <Core/Time/Time.h>
+#include <Core/System/Application.h>
+
 // Standard Library
 #include <iostream>
 
@@ -172,9 +184,9 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
 
         if (mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
         {
-          std::stringstream ss;
-          ss << "Timestamp: " << Time::getTime();
-          SetWindowTextA(hwnd, ss.str().c_str());
+          //std::stringstream ss;
+          //ss << "Timestamp: " << Time::getTime();
+          //SetWindowTextA(hwnd, ss.str().c_str());
         }
         if (mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP)
         {

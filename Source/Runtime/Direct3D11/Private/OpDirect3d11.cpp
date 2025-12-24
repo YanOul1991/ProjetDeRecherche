@@ -1,5 +1,21 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      + OpDirect3d11.cpp
+          Definitions for OpDirect3d11.h file.
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
+
 #include "Runtime/Direct3D11/OpDirect3d11.h"
 #include "OpDirect3d11Base.h"
+#include "Core/Time/Time.h"
+#include <cmath>
+#include <string>
+#include <sstream>
+
 #include <iostream>
 
 extern "C" {
@@ -18,30 +34,26 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
 {
   m_hTargetWindow =_WindowHandle;
 
-  //if (m_hTargetWindow != nullptr)
-  //  std::cout << "\n ------- Direct3D11 Was Successfully initalized! ------- \n";
-
   m_pBase = new OpDirect3d11Base{};
 
-  if (m_pBase)
-    //std::cout << "Direct3d11 | OpDirect3d11BaseClass has been initalized.\n";
-    m_pBase->Initialize(reinterpret_cast<HWND>(m_hTargetWindow));
+  if (m_pBase) m_pBase->Initialize(reinterpret_cast<HWND>(m_hTargetWindow));
 }
 
 /*
   Excecute Drawing Instructions
 */
-void OpDirect3D11Module::Draw()
+void OpDirect3D11Module::draw()
 {
-  op::color::ColorHex color1{ 0x00ffffff };
-  op::color::ColorHSV colorHsv{ op::color::RgbToHsv(op::color::ConvertColorHexToRgba(color1)) };
+  // Clear buffer and render target with color
+  m_pBase->clearBuffer({ (34.0f / 255.0f), (38.0f / 255.0f), (92.0 / 255.0f) , 1.0f });
+  
+  /* 
+    +++++++++++++++++++++++++++++++++++++++++++++++++ 
+    ++++++++++++++++ RENDERING LOGIC ++++++++++++++++ 
+    +++++++++++++++++++++++++++++++++++++++++++++++++ 
+  */
 
-  // Clear the Buffer witg
-  m_pBase->ClearBuffer(color1);
   m_pBase->EndFrame();
 }
 
-void OpDirect3D11Module::Clean()
-{
-  std::cout << "Direct3D11 module cleanning...\n";
-}
+void OpDirect3D11Module::Clean() { }

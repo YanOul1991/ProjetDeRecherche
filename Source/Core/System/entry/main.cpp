@@ -1,10 +1,10 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      ++ main.cpp :
-            Optim Engine application entry procedure
+      + main.cpp:
+          Optim Engine system application entry point.
 
-      ++ By:
-            Yanis Oulmane
+      + By:
+          Yanis Oulmane
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 

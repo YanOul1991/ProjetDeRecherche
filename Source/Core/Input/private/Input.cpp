@@ -1,3 +1,13 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      + Input.cpp:
+          Definitions for Input.h header.
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
 #include "Core/Input/Input.h"
 #include "Core/OptimEngineGlobal.h"
 #include <Windows.h>

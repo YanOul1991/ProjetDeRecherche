@@ -1,10 +1,10 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+      + Input.h:
+          Interface for system input management.
 
-      ++ Input.h :
-            Optim Engine Input API
-
-      ++ By: 
-            Yanis Oulmane
+      + By:
+          Yanis Oulmane
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 

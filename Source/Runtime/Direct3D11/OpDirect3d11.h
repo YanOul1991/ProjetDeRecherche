@@ -1,16 +1,32 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      + OpDirect3d11.h:
+          Entry point for D3D11 API implementations.
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
 #pragma once
 
 #include "Core/OptimEngineGlobal.h"
 #include "Core/Rendering/IRenderingModule.h"
 
+#ifdef DLL_LIB  
+  #define DIRECTX11API EXPORT
+#else 
+  #define DIRECTX11API IMPORT
+#endif
+
 class OpDirect3d11Base;
 
-class EXPORT OpDirect3D11Module final : IRenderingModule
+class DIRECTX11API OpDirect3D11Module final : IRenderingModule
 {
 public:
   OpDirect3D11Module();
   void Initialize(void* _WindowHandle) override;
-  void Draw() override;
+  void draw() override;
   void Clean() override;
 
 private:
@@ -19,5 +35,5 @@ private:
 };
 
 extern "C" {
-  EXPORT OpDirect3D11Module* CreateDirect3D11Module();
+  DIRECTX11API OpDirect3D11Module* CreateDirect3D11Module();
 }

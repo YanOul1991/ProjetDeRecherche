@@ -1,10 +1,10 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      ++ OptimEngineGlobal.h :
-            Optim Engine Global settings.
+      + OptimEngineGlobal.h :
+          Optim Engine global definitions.
 
-      ++ By:
-            Yanis Oulmane
+      + By:
+          Yanis Oulmane
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
@@ -21,6 +21,7 @@ using uint16  = uint16_t;
 using uint32  = uint32_t;
 using uint64  = uint64_t;
 using wchar   = wchar_t;
+
 
 #define STRING(_TEXT_) L##_TEXT_
 
@@ -59,18 +60,6 @@ using wchar   = wchar_t;
 #elif defined(COMPILER_GNU)     
     #define FORCE_INLINE inline __attribute__((always_inline))
 #endif
-
-//#if defined(OS_WINDOWS) && defined(COMPILER_MSVC) && defined(DLL_LIB) && defined(USING_GRAPHICS_API)
-//    #define GRAPHICS_API EXPORT
-//#endif
-//
-//#if defined(OS_WINDOWS) && defined(COMPILER_MSVC) && defined(DLL_LIB) && defined(USING_APPLICATION_API)
-//    #define APPLICATION_API __declspec(dllexport)
-//#endif
-//
-//#if defined(OS_WINDOWS) && defined(COMPILER_MSVC) && defined(DLL_LIB) && defined(USING_DIRECT3D11_OPTIM_API)
-//    #define DIRECT3D11_OPTIM_API __declspec(dllexport)
-//#endif
 
 #ifdef OS_WINDOWS
     #ifndef UNICODE
@@ -117,5 +106,3 @@ namespace op::system
 #endif // OS_WINDOWS
   }
 }
-
-#include "System/Application.h"

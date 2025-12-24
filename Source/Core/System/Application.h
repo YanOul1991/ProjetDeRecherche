@@ -1,12 +1,13 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-      ++ application.h :
-            This class serves as a central module that managed lifetimes of 
-            other Engine implemented modules, and manages the life time of 
-            the application.
+      + Application.h :
+          This class serves as a central module that 
+          managed lifetimes of other Engine implemented 
+          modules, and manages the life time of the 
+          application.
 
-      ++ By:
-            Yanis Oulmane
+      + By:
+          Yanis Oulmane
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
@@ -17,6 +18,7 @@
 class SystemWindow;
 class IRenderingModule;
 class IWindow;
+
 namespace op 
 {
   struct SInput;
@@ -44,6 +46,8 @@ private:
   IRenderingModule* m_pGraphicsRenderingModule;
   op::SInput* m_pInput;
   //MSG m_msg;
+
+  float m_runtime{ 0 };
 };
 
 extern "C" {

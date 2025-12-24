@@ -1,3 +1,17 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~ MAY BE REMOVED/REFORMATTED ~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      + OpDirect3d11.h:
+          Definitions for OpDirect3d11Base.h file
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
 #include "OpDirect3d11Base.h"
 
 /*
@@ -35,8 +49,8 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
   m_swapChainDesc.BufferDesc.Width = 0;
   m_swapChainDesc.BufferDesc.Height = 0;
   m_swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-  m_swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
-  m_swapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
+  m_swapChainDesc.BufferDesc.RefreshRate.Numerator = 1;
+  m_swapChainDesc.BufferDesc.RefreshRate.Denominator = 500;
   m_swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
   m_swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 
@@ -83,19 +97,24 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
   return SUCCEEDED(hr) == TRUE;
 }
 
-void OpDirect3d11Base::ClearBuffer(float red, float green, float blue) noexcept
+void OpDirect3d11Base::clearBuffer(float red, float green, float blue) noexcept
 {
   const float color[] = { red, green, blue, 1.0f };
   m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 }
 
-void OpDirect3d11Base::ClearBuffer(const op::color::ColorHex fillColor) noexcept
+void OpDirect3d11Base::clearBuffer(const op::color::ColorHex fillColor) noexcept
 {
   float color[4]{};
-  op::color::SetHexArray(color, fillColor);
+  op::color::setHexArray(color, fillColor);
   m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
 }
 
+void OpDirect3d11Base::clearBuffer(const op::color::ColorRgb fillColor) noexcept
+{
+  float color[4]{fillColor.r, fillColor.g, fillColor.b, fillColor.a};
+  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+}
 
 void OpDirect3d11Base::EndFrame()
 {
@@ -104,21 +123,3 @@ void OpDirect3d11Base::EndFrame()
   */
   m_pSwapChain->Present(1u, 0u);;
 }
-
-/*
-void OpDirect3d11Base::CreateReferenceDevice(HWND _outputWindow)
-{
-  D3D_FEATURE_LEVEL levels[]{
-    D3D_FEATURE_LEVEL_11_1,
-    D3D_FEATURE_LEVEL_11_0,
-    D3D_FEATURE_LEVEL_10_1,
-    D3D_FEATURE_LEVEL_10_0,
-    D3D_FEATURE_LEVEL_9_3,
-    D3D_FEATURE_LEVEL_9_2,
-    D3D_FEATURE_LEVEL_9_1,
-  };
-  // Define inital parameters of swap chain
-  // Request feature level implementing application's features needs.
-  D3D_FEATURE_LEVEL FeatureLevels = D3D_FEATURE_LEVEL_11_0;
-}
-*/

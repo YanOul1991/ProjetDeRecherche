@@ -1,11 +1,12 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+      + application.h :
+          Base Class Interface for system managed 
+          windows. This class defines global system 
+          window functionalities.
 
-      ++ application.h :
-            Base Class Interface for system managed windows. This class
-            defines global system window functionalities.
-
-      ++ By:
-            Yanis Oulmane
+      + By:
+          Yanis Oulmane
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 

@@ -1,3 +1,13 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      + OpDirect3d11Global.h:
+          Global setting for all files using D3D11 API.
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
 #pragma once
 #include "d3d11.h"
 #include "DirectXMath.h"

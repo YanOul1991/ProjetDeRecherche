@@ -1,7 +1,24 @@
+/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ~~~~~~~~~~ MAY BE REMOVED/REFORMATTED ~~~~~~~~~~
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      
+      + OpDirect3d11.h:
+          Abstracting class for OpDirect3D11Module.
+
+      + By:
+          Yanis Oulmane
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+
+
 #pragma once
 
 #include "OpDirect3d11Global.h"
 #include "Core/Color/Color.h"
+
+//namespace op::
 
 class OpDirect3d11Base final
 {
@@ -19,8 +36,9 @@ public:
 
   bool Initialize(HWND _outputWindow);    // Initialize Direct3d11.
   void EndFrame();
-  void ClearBuffer(float red, float green, float blue) noexcept;
-  void ClearBuffer(const op::color::ColorHex fillColor) noexcept;
+  void clearBuffer(float red, float green, float blue) noexcept;
+  void clearBuffer(const op::color::ColorHex fillColor) noexcept;
+  void clearBuffer(const op::color::ColorRgb fillColor) noexcept;
 
 private:
   ID3D11Device* m_pDevice;

@@ -41,35 +41,39 @@ namespace op::color
     uint32 value = static_cast<uint32>(EColor::black);
   };
 
-  inline ColorRgb ConvertColorHexToRgba(const ColorHex& _color8bit)
+  inline ColorRgb convertColorHexToRgba(const ColorHex& _color8bit)
   {
+    /*
     return {
       (float)(((_color8bit.value & 0xFF000000u) >> 24) / 255.0f) / 1.0f,
       (float)(((_color8bit.value & 0x00FF0000u) >> 16) / 255.0f) / 1.0f,
       (float)(((_color8bit.value & 0x0000FF00u) >> 8)  / 255.0f) / 1.0f,
       (float)(((_color8bit.value & 0x000000FFu) >> 0)  / 255.0f) / 1.0f
     };
+    */
 
-    //return{
-    //  (((float)((_color8bit.value >> 24)  & 0xFFu)) / 255.0f) / 1.0f,
-    //  (((float)((_color8bit.value >> 16)  & 0xFFu)) / 255.0f) / 1.0f,
-    //  (((float)((_color8bit.value >> 8)   & 0xFFu)) / 255.0f) / 1.0f,
-    //  (((float)((_color8bit.value)        & 0xFFu)) / 255.0f) / 1.0f
-    //};
+    return{
+      (((float)((_color8bit.value >> 24)  & 0xFFu)) / 255.0f) / 1.0f,
+      (((float)((_color8bit.value >> 16)  & 0xFFu)) / 255.0f) / 1.0f,
+      (((float)((_color8bit.value >> 8)   & 0xFFu)) / 255.0f) / 1.0f,
+      (((float)((_color8bit.value)        & 0xFFu)) / 255.0f) / 1.0f
+    };
   }
 
-  inline void SetHexArray(float* _arr, const ColorHex& _color8bit)
+  inline void setHexArray(float* _arr, const ColorHex& _color8bit)
   {
+    /*
     _arr[0] = (float)(((_color8bit.value & 0xFF000000u) >> 24) / 255.0f) / 1.0f;
     _arr[1] = (float)(((_color8bit.value & 0x00FF0000u) >> 16) / 255.0f) / 1.0f;
     _arr[2] = (float)(((_color8bit.value & 0x0000FF00u) >> 8)  / 255.0f) / 1.0f;
     _arr[3] = (float)(((_color8bit.value & 0x000000FFu) >> 0)  / 255.0f) / 1.0f;
+    */
 
-    // for (int i = 0; i < 4; i++) 
-    //   _arr[i] = (((float)((_color8bit.value >> (8 * i)) & 0xFFu)) / 255.0f) / 1.0f;
+    for (int i = 0; i < 4; i++)
+      _arr[i] = (float)((_color8bit.value >> (24 - (8 * i))) & 0xFFu) / 255.0f / 1.0f;
   }
 
-  inline ColorHex GetColorHex(const float r, const float g, const float b, const float a)
+  inline ColorHex getColorHex(const float r, const float g, const float b, const float a)
   {
     return{
       (uint32)( 
@@ -81,14 +85,14 @@ namespace op::color
     };
   }
 
-  inline ColorHex GetColorHex(const EColor eColor)
+  inline ColorHex getColorHex(const EColor eColor)
   {
     return{
       (uint32)eColor
     };
   }
 
-  inline ColorHSV RgbToHsv(const ColorRgb& _color)
+  inline ColorHSV rgbToHsv(const ColorRgb& _color)
   {
     float channels[]{ _color.r, _color.g, _color.b };
     float max{ 0.0f };
@@ -122,9 +126,120 @@ namespace op::color
         max == _color.r ? 60 * ((int)((_color.g - _color.b) / diff) % 6) : 
         max == _color.g ? 60 * (((_color.b - _color.r) / diff) + 2) :
         max == _color.b ? 60 * (((_color.r - _color.g) / diff) + 4) : 0,
-        (diff / max) * 100,
-        max * 100
+        (diff / max),
+        max
       };
     }
+  }
+
+  inline void hsvToRgb(ColorHSV &_colorHsv, ColorRgb &_rgbValue)
+  {
+    float hue { _colorHsv.h };
+
+    float fC{ _colorHsv.v * _colorHsv.s };
+    float fX{ fC * (1 - fabsf(fmodf(hue / 60, 2.0f) - 1)) };
+    float fM{ _colorHsv.v - fC };
+
+    float rPrime{};
+    float gPrime{};
+    float bPrime{};
+
+    if (hue >= 0 && hue < 60.0f)
+    {
+      rPrime = fC;
+      gPrime = fX;
+      bPrime = 0;
+    }
+    else if (hue >= 60.0f && hue < 120.0f)
+    {
+      rPrime = fX;
+      gPrime = fC;
+      bPrime = 0;
+    }
+    else if (hue >= 120.0f && hue < 180.0f)
+    {
+      rPrime = 0;
+      gPrime = fC;
+      bPrime = fX;
+    }
+    else if (hue >= 180.0f && hue < 240.0f)
+    {
+      rPrime = 0;
+      gPrime = fX;
+      bPrime = fC;
+    }
+    else if (hue >= 240.0f && hue < 300.0f)
+    {
+      rPrime = fX;
+      gPrime = 0;
+      bPrime = fC;
+    }
+    else if (hue >= 300.0f && hue < 360.0f)
+    {
+      rPrime = fC;
+      gPrime = 0;
+      bPrime = fX;
+    }
+    
+    _rgbValue.r = rPrime + fM;
+    _rgbValue.g = gPrime + fM;
+    _rgbValue.b = bPrime + fM;
+  }
+
+  inline ColorRgb hsvToRgb(ColorHSV& _colorHsv)
+  {
+    float hue{ _colorHsv.h };
+
+    float fC{ _colorHsv.v * _colorHsv.s };
+    float fX{ fC * (1 - fabsf(fmodf(hue / 60, 2.0f) - 1)) };
+    float fM{ _colorHsv.v - fC };
+
+    float rPrime{};
+    float gPrime{};
+    float bPrime{};
+
+    if (hue >= 0 && hue < 60.0f)
+    {
+      rPrime = fC;
+      gPrime = fX;
+      bPrime = 0;
+    }
+    else if (hue >= 60.0f && hue < 120.0f)
+    {
+      rPrime = fX;
+      gPrime = fC;
+      bPrime = 0;
+    }
+    else if (hue >= 120.0f && hue < 180.0f)
+    {
+      rPrime = 0;
+      gPrime = fC;
+      bPrime = fX;
+    }
+    else if (hue >= 180.0f && hue < 240.0f)
+    {
+      rPrime = 0;
+      gPrime = fX;
+      bPrime = fC;
+    }
+    else if (hue >= 240.0f && hue < 300.0f)
+    {
+      rPrime = fX;
+      gPrime = 0;
+      bPrime = fC;
+    }
+    else if (hue >= 300.0f && hue < 360.0f)
+    {
+      rPrime = fC;
+      gPrime = 0;
+      bPrime = fX;
+    }
+
+    return {
+      rPrime + fM,
+      gPrime + fM,
+      bPrime + fM,
+      1.0f
+    };
   }
 };

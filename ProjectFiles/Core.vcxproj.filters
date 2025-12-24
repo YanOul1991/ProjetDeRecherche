@@ -17,6 +17,9 @@
     <ClInclude Include="..\Source\Core\Time\Time.h">
       <Filter>Time</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Color\Color.h">
+      <Filter>Color</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -39,6 +42,9 @@
     </Filter>
     <Filter Include="Time\private">
       <UniqueIdentifier>{05b9865d-7015-410a-bed0-3c90180a1e8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Color">
+      <UniqueIdentifier>{5c58de70-61d3-40a3-9ca3-fc5977722f8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
