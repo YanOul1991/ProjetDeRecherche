@@ -45,7 +45,7 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
 void OpDirect3D11Module::draw()
 {
   // Clear buffer and render target with color
-  m_pBase->clearBuffer({ (34.0f / 255.0f), (38.0f / 255.0f), (92.0 / 255.0f) , 1.0f });
+  m_pBase->clearBuffer({ (34.0f / 255.0f), (38.0f / 255.0f), (92.0f / 255.0f) , 1.0f });
   
   /* 
     +++++++++++++++++++++++++++++++++++++++++++++++++ 

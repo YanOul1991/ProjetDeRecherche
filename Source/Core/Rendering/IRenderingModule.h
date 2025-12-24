@@ -11,7 +11,14 @@
 
 #pragma once
 
-class IRenderingModule
+#ifdef DLL_LIB
+#define OPTIMENGINE_API __declspec(dllexport)
+#else
+#define OPTIMENGINE_API __declspec(dllimport)
+#endif // DLL_LIB
+
+
+class OPTIMENGINE_API IRenderingModule
 {
 public:
   virtual ~IRenderingModule() {};

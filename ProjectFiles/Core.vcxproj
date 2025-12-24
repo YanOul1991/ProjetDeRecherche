@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Color\Color.h" />
+    <ClInclude Include="..\Source\Core\Exception\exception.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
     <ClInclude Include="..\Source\Core\OptimEngineGlobal.h" />
     <ClInclude Include="..\Source\Core\Rendering\IRenderingModule.h" />

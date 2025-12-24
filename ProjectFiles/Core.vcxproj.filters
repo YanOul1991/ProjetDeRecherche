@@ -20,6 +20,9 @@
     <ClInclude Include="..\Source\Core\Color\Color.h">
       <Filter>Color</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Exception\exception.h">
+      <Filter>Exception</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -45,6 +48,9 @@
     </Filter>
     <Filter Include="Color">
       <UniqueIdentifier>{5c58de70-61d3-40a3-9ca3-fc5977722f8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Exception">
+      <UniqueIdentifier>{9f83be35-06fb-40f5-82fc-bc85568bd095}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

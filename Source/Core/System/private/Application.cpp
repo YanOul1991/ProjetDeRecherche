@@ -81,16 +81,22 @@ void Application::ApplicationLoop()
 {
   static uint64 __now;
   static uint64 __last = op::time::nowHighFreq();
-  static double __deltaTime{ 1 };
+  static float __deltaTime{ 1.0f };
   static std::stringstream ss{};
+  static std::wstringstream wss{};
 
   if (!m_shouldRun) return;
 
   m_pWindow->windowLoop();
   m_pGraphicsRenderingModule->draw();
 
-  ss << "Optim Engine | Framerate: " << 1.0 / __deltaTime;
-  SetWindowTextA(reinterpret_cast<HWND>(m_pWindow->getHandle()), ss.str().c_str());
+  String _myStr = String(STRING("This is a String class object"));
+  _myStr + STRING("_Appending String");
+  _myStr + STRING(" This is a second append");
+
+  wss << STRING("Optim Engine") << STRING(" | String: ") << _myStr.value() << STRING(" | Size: ") << _myStr.length();
+
+  SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), wss.str().c_str());
 
   __now         = op::time::nowHighFreq();
   __deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
@@ -98,12 +104,11 @@ void Application::ApplicationLoop()
   m_runtime     += __deltaTime;
 
   ss.str("");
+  wss.str(STRING(""));
 }
 
 void Application::ApplicationQuit()
 { 
-  //MessageBoxW(0, STRING("Destroying Application and resources"), STRING("Debug"), MB_OK);
-
   // Free resources
   delete(m_pDirect2dModule);
   delete(m_pGraphicsRenderingModule);
