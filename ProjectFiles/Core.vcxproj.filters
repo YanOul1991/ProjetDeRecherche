@@ -23,6 +23,9 @@
     <ClInclude Include="..\Source\Core\Exception\exception.h">
       <Filter>Exception</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Types\string.h">
+      <Filter>Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -52,6 +55,12 @@
     <Filter Include="Exception">
       <UniqueIdentifier>{9f83be35-06fb-40f5-82fc-bc85568bd095}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Types">
+      <UniqueIdentifier>{1f66d834-874a-4915-aacb-5f0508594f10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Types\private">
+      <UniqueIdentifier>{d1f1af6b-370b-402a-8c81-136540fa8c30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -65,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Time\Time.cpp">
       <Filter>Time\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Types\Private\string.cpp">
+      <Filter>Types\private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

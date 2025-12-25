@@ -27,12 +27,14 @@
     <ClInclude Include="..\Source\Core\System\Application.h" />
     <ClInclude Include="..\Source\Core\System\IWindow.h" />
     <ClInclude Include="..\Source\Core\Time\Time.h" />
+    <ClInclude Include="..\Source\Core\Types\string.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
     <ClCompile Include="..\Source\Core\System\private\IWindow.cpp" />
     <ClCompile Include="..\Source\Core\Time\Time.cpp" />
+    <ClCompile Include="..\Source\Core\Types\Private\string.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

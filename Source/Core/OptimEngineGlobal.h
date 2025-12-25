@@ -85,6 +85,10 @@ using wchar       = wchar_t;
   #define STRING(_TEXT_) _TEXT_ 
 #endif
 
+#if defined(UNICODE) & !defined(TEXT)
+  #define TEXT(_VALUE_) L##_VALUE_
+#endif
+
 #define PROC_PTR(T) T*(*)()
 #define PROC_PTR_PARAMS(T)
 
@@ -109,189 +113,214 @@ namespace op::system
 }
 
 
-/*
-  Custom String class for optimized and more controled operations 
-  with the Optime Engine APIs.
-*/
-class String final
-{
-public:
-  // STATIC FIELDS
-  inline static int32 getLiteralSize(const wchar* str)
-  {
-    if (str == nullptr)
-      return 0;
-
-    int32 i{ 0 };
-    while (str[i] != STRING('\0')) i++;
-    return i;
-  }
-
-  inline String() noexcept :
-    m_length{ 0 },
-    m_buffer{ nullptr }
-  {
-    allocate(STRING(""));
-  }
-
-  inline String(const wchar* str) noexcept :
-    m_length{ String::getLiteralSize(str) },
-    m_buffer{ nullptr }
-  {
-    allocate(str);
-  }
-
-  inline String(String&& other) noexcept :
-    m_length { 0 },
-    m_buffer { nullptr }
-  {
-    m_buffer = other.m_buffer;
-    other.freeBuffer();
-  }
-
-  inline ~String()
-  { 
-    freeBuffer();
-  }
-
-  inline int32 length() const 
-  { 
-    return m_length; 
-  }
-
-  inline const wchar* value() const 
-  {
-    return m_buffer;
-  }
-
-  inline bool isAllocated() const
-  {
-    return m_buffer != nullptr;
-  }
-
-  /////////////////////////
-  //// OPERATOR OVERLOADING
-  /////////////////////////
-
-  inline void operator=(const wchar* str) noexcept
-  {
-    freeBuffer();
-    allocate(str);
-  }
-
-  inline String& operator=(const String& other) noexcept
-  {
-    if (this != &other)
-    {
-      freeBuffer();
-      if (other.m_buffer != nullptr)
-      {
-        allocate(other.m_buffer);
-      }
-    }
-    return *this;
-  }
-
-  inline String& operator=(String&& other) noexcept
-  {
-    if (this != &other)
-    {
-      freeBuffer();
-      m_buffer = other.m_buffer;
-      other.freeBuffer();
-    }
-    return *this;
-  }
-
-  inline String& operator+(const wchar* str) noexcept
-  {
-    int32 strSize{ String::getLiteralSize(str) };
-
-    if (strSize > 0 && str != nullptr)
-    {
-      int32 _bufferStrLength{ m_length + strSize };
-
-      // Alloc new buffer memeory
-      wchar* newbuffer = new wchar[_bufferStrLength + 1];
-
-      int32 readIndex = 0;
-      int32 outindex  = 0;
-
-      // Move original string to new location
-      //while (m_buffer[readIndex])
-      //{
-      //  newbuffer[outindex] = m_buffer[readIndex];
-      //  readIndex++;
-      //  outindex++;
-      //}
-
-      copyToBuffer(0, newbuffer, m_buffer);
-      copyToBuffer(m_length, newbuffer, str);
-
-      //outindex = m_length;
-
-      //readIndex = 0;
-
-      //// Append new string to new location
-      //while (str[readIndex] != L'\0')
-      //{
-      //  newbuffer[outindex] = str[readIndex];
-      //  readIndex++;
-      //  outindex++;
-      //}
-
-      newbuffer[_bufferStrLength] = '\0';
-
-      // Free old buffer
-      freeBuffer();
-
-      m_buffer    = newbuffer;
-      m_length    = _bufferStrLength;
-      newbuffer   = nullptr;
-    }
-    return *this;
-  }
-
-private:
-  wchar* m_buffer;
-  int32 m_length;
-
-  inline void allocate(const wchar* str)
-  {
-    m_length = String::getLiteralSize(str);
-    m_buffer = new wchar[m_length + 1];
-
-    if (m_length > 0)
-    {
-      for (int i = 0; i < m_length; i++) m_buffer[i] = str[i];
-    }
-
-    m_buffer[m_length] = L'\0';
-  }
-
-  inline void freeBuffer()
-  {
-    delete[] m_buffer;
-    m_buffer = nullptr;
-    m_length = 0;
-  }
-
-  inline void copyToBuffer(int writeBufferStartIndex, wchar* writeBuffer, const wchar* readBuffer)
-  {
-    int32 outIndex            = writeBufferStartIndex;
-    int32 readBufferLength    = String::getLiteralSize(readBuffer);
-    int32 writeBufferLength   = String::getLiteralSize(writeBuffer);
-
-    if (outIndex > writeBufferLength) 
-      return;
-
-    int32 readIndex{ 0 };
-
-    while (readBuffer[readIndex] != L'\0')
-    {
-      writeBuffer[outIndex] = readBuffer[readIndex];
-      outIndex++;
-      readIndex++;
-    }
-  }
-};
+//#include <cwchar>
+//
+///*
+//  Custom String class for optimized and more controled operations 
+//  with the Optime Engine APIs.
+//*/
+//class String final
+//{
+//public:
+//  // STATIC FIELDS
+//  inline static int32 getLiteralSize(const wchar* str)
+//  {
+//    if (str == nullptr) return 0;
+//
+//    int32 i{ 0 };
+//    while (str[i] != STRING('\0')) i++;
+//    return i;
+//  }
+//
+//  //;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; CONSTRUCTORS
+//
+//  inline String() noexcept :
+//    m_length{ 0 },
+//    m_buffer{ nullptr }
+//  {
+//    allocate(TEXT(""));
+//  }
+//
+//  inline String(const wchar* str) noexcept :
+//    m_length{ String::getLiteralSize(str) },
+//    m_buffer{ nullptr }
+//  {
+//    allocate(str);
+//  }
+//
+//  inline String(const String& other) noexcept :
+//    m_length{ 0 },
+//    m_buffer{ nullptr }
+//  { 
+//    allocate(other.value());
+//  }
+//
+//  inline String(String&& other) noexcept :
+//    m_length { other.m_length },
+//    m_buffer { other.m_buffer }
+//  {
+//    other.m_buffer = nullptr;
+//    other.m_length = 0;
+//  }
+//
+//  inline String(int value) : 
+//    m_length{0}, 
+//    m_buffer{nullptr}
+//  {
+//    wchar temp[32];
+//    _itow_s(value, temp, 10);
+//    allocate(temp);
+//  }
+//
+//  inline String(double value) :
+//    m_length{ 0 }, m_buffer{ nullptr }
+//  {
+//    wchar temp[64];
+//    swprintf_s(temp, L"%f", value);
+//    allocate(temp);
+//  }
+//
+//
+//  inline ~String()
+//  { 
+//    freeBuffer();
+//  }
+//
+//  //;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; MEMBER FUNCTIONS
+//
+//  inline int32 length() const 
+//  { 
+//    return m_length; 
+//  }
+//
+//  inline const wchar* value() const 
+//  {
+//    return m_buffer;
+//  }
+//
+//  inline bool isAllocated() const
+//  {
+//    return m_buffer != nullptr;
+//  }
+//  
+//  // ;;;;;;;;;;;;;;;;;;;;;;;;;;;;; OPERATOR OVERLOADS
+//
+//  inline void operator=(const wchar* str) noexcept
+//  {
+//    freeBuffer();
+//    allocate(str);
+//  }
+//
+//  inline String& operator=(const String& other)
+//  {
+//    if (this != &other)
+//    {
+//      freeBuffer();
+//      allocate(other.m_buffer);
+//    }
+//    return *this;
+//  }
+//
+//  inline String& operator=(String&& other) noexcept
+//  {
+//    if (this != &other)
+//    {
+//      freeBuffer();
+//      m_buffer = other.m_buffer;
+//      m_length = other.m_length;
+//      other.m_buffer = nullptr;
+//      other.m_length = 0;
+//    }
+//    return *this;
+//  }
+//
+//  inline String& operator+=(const wchar* str)
+//  {
+//    int32 strSize{ String::getLiteralSize(str) };
+//
+//    if (strSize > 0 && str != nullptr)
+//    {
+//      int32 _bufferStrLength{ m_length + strSize };
+//
+//      // Alloc new buffer memeory
+//      wchar* newbuffer = new wchar[_bufferStrLength + 1];
+//
+//      copyToBuffer(0, newbuffer, m_buffer);
+//      copyToBuffer(m_length, newbuffer, str);
+//
+//      newbuffer[_bufferStrLength] = '\0';
+//
+//      // Free old buffer
+//      freeBuffer();
+//
+//      m_buffer    = newbuffer;
+//      m_length    = _bufferStrLength;
+//      newbuffer   = nullptr;
+//    }
+//    return *this;
+//  }
+//
+//  inline String& operator+=(const String& other)
+//  {
+//    int32 otherSize{ other.length() };
+//    if (otherSize > 0 && other.m_buffer != nullptr)
+//    {
+//      *this += other.m_buffer;
+//    }
+//    return *this;
+//  }
+//
+//  inline String operator+(String& other)
+//  {
+//    String _newStr = String(this->value());
+//    _newStr += other;
+//    return _newStr;
+//  }
+//
+//  inline String operator+(const wchar* str)
+//  {
+//    String _newStr = String(this->value());
+//    _newStr += str;
+//    return _newStr;
+//  }
+//
+//private:
+//  wchar* m_buffer;
+//  int32 m_length;
+//
+//  inline void allocate(const wchar* str)
+//  {
+//    m_length = String::getLiteralSize(str);
+//    m_buffer = new wchar[m_length + 1];
+//
+//    if (m_length > 0)
+//    {
+//      for (int i = 0; i < m_length; i++) m_buffer[i] = str[i];
+//    }
+//
+//    m_buffer[m_length] = L'\0';
+//  }
+//
+//  inline void freeBuffer()
+//  {
+//    delete[] m_buffer;
+//    m_buffer = nullptr;
+//    m_length = 0;
+//  }
+//
+//  inline void copyToBuffer(int writeBufferStartIndex, wchar* writeBuffer, const wchar* readBuffer)
+//  {
+//    int32 writeIndex          = writeBufferStartIndex;
+//    //int32 readBufferLength    = String::getLiteralSize(readBuffer);
+//    //int32 writeBufferLength   = String::getLiteralSize(writeBuffer);
+//
+//    int32 readIndex{ 0 };
+//
+//    while (readBuffer[readIndex] != L'\0')
+//    {
+//      writeBuffer[writeIndex] = readBuffer[readIndex];
+//      writeIndex++;
+//      readIndex++;
+//    }
+//  }
+//};

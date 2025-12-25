@@ -17,6 +17,8 @@
 #include "Core/Input/Input.h"
 #include "Core/Time/Time.h"
 #include "Core/Color/Color.h"
+#include "Core/Types/string.h"
+
 // Standard libraries
 #include <iostream>
 #include <memory>
@@ -44,7 +46,6 @@ bool Application::ShouldRun() const { return m_shouldRun; }
 
 void Application::Quit() 
 { 
-  //MessageBoxW(0, STRING("Message quit"), STRING("Debug"), MB_OK);
   m_shouldRun = false;
 }
 
@@ -82,29 +83,20 @@ void Application::ApplicationLoop()
   static uint64 __now;
   static uint64 __last = op::time::nowHighFreq();
   static float __deltaTime{ 1.0f };
-  static std::stringstream ss{};
-  static std::wstringstream wss{};
 
   if (!m_shouldRun) return;
 
   m_pWindow->windowLoop();
   m_pGraphicsRenderingModule->draw();
 
-  String _myStr = String(STRING("This is a String class object"));
-  _myStr + STRING("_Appending String");
-  _myStr + STRING(" This is a second append");
+  String winText = String(TEXT("Optim Engine - DirectX11"));
 
-  wss << STRING("Optim Engine") << STRING(" | String: ") << _myStr.value() << STRING(" | Size: ") << _myStr.length();
-
-  SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), wss.str().c_str());
+  SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
 
   __now         = op::time::nowHighFreq();
   __deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
   __last        = __now;
   m_runtime     += __deltaTime;
-
-  ss.str("");
-  wss.str(STRING(""));
 }
 
 void Application::ApplicationQuit()
