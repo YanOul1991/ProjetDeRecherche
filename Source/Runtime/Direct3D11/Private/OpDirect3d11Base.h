@@ -30,13 +30,12 @@ public:
   void presentBuffer();
   void clearBuffer(float red, float green, float blue);
   void clearBuffer(const op::color::ColorRgb fillColor);
-  //void clearBuffer(const op::color::ColorHex fillColor);
 
 private:
-  ID3D11Device*           m_pDevice;
-  IDXGISwapChain*         m_pSwapChain;
-  ID3D11DeviceContext*    m_pDeviceContext;
-  ID3D11RenderTargetView* m_pRenderTargetView; 
+  ComPtr<ID3D11Device>            m_pDevice;
+  ComPtr<IDXGISwapChain>          m_pSwapChain;
+  ComPtr<ID3D11DeviceContext>     m_pDeviceContext;
+  ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
 
   /*
   ID3D11Texture2D* m_pDepthStencilBuffer;

@@ -16,6 +16,9 @@
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
 
+#define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw op::Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
+
+
 OpDirect3d11Base::OpDirect3d11Base() :
   m_pSwapChain{ nullptr },
   m_pDevice{ nullptr },
@@ -25,17 +28,12 @@ OpDirect3d11Base::OpDirect3d11Base() :
 {}
 
 OpDirect3d11Base::~OpDirect3d11Base() {
-  if (m_pDeviceContext)     m_pDeviceContext->Release();
-  if (m_pSwapChain)         m_pSwapChain->Release();
-  if (m_pRenderTargetView)  m_pRenderTargetView->Release();
-  if (m_pDevice)            m_pDevice->Release();
+  //if (m_pDeviceContext)     m_pDeviceContext->Release();
+  //if (m_pSwapChain)         m_pSwapChain->Release();
+  //if (m_pRenderTargetView)  m_pRenderTargetView->Release();
+  //if (m_pDevice)            m_pDevice->Release();
 }
 
-/*
-  @brief Initializes Direct3D11. create a Device and a swap chain.
-  @param HWND _outputWindow - Window handle to the draw area.
-  @return bool - Did D3D11 initialized successfully.
-*/
 bool OpDirect3d11Base::Initialize(HWND _outputWindow)
 {
   // Empty Memory
@@ -69,8 +67,7 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
   HRESULT hr{ S_OK };
 
   // D3D_DRIVER_TYPE_HARDWARE
-
-  hr = D3D11CreateDeviceAndSwapChain(
+  OPTIM_TRY_DX(D3D11CreateDeviceAndSwapChain(
     nullptr,
     D3D_DRIVER_TYPE_HARDWARE,
     nullptr,
@@ -83,30 +80,12 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
     &m_pDevice,
     nullptr,
     &m_pDeviceContext
-  );
+  ));
 
-  if (FAILED(hr))
-    throw op::Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr));
-    //THROW_EXCEPTION(op::sys::windows::translateError(hr));
-
-  ID3D11Resource* pBackBuffer{ 0 };
-
-  hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), RCAST(void**, &pBackBuffer));
-
-  if (FAILED(hr)) 
-    THROW_EXCEPTION(op::sys::windows::translateError(hr));
-
-  if (pBackBuffer == nullptr) throw op::Exception(__LINE__, __FILEW__, TEXT("Pointer to back buffer is nullptr"));
-
-  hr = m_pDevice->CreateRenderTargetView(
-    pBackBuffer,
-    nullptr,
-    &m_pRenderTargetView
-  );
-
-  if (FAILED(hr)) THROW_EXCEPTION(op::sys::windows::translateError(hr));
-
-  pBackBuffer->Release();
+  // Get pointer to backbuffer
+  ComPtr<ID3D11Resource> _pBackbuffer;
+  OPTIM_TRY_DX(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &_pBackbuffer));
+  OPTIM_TRY_DX(m_pDevice->CreateRenderTargetView(_pBackbuffer.Get(), nullptr, &m_pRenderTargetView));
 
   return SUCCEEDED(hr) == TRUE;
 }
@@ -114,20 +93,13 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
 void OpDirect3d11Base::clearBuffer(float red, float green, float blue)
 {
   const float color[] = { red, green, blue, 1.0f };
-  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
 }
-
-//void OpDirect3d11Base::clearBuffer(const op::color::ColorHex fillColor)
-//{
-//  float color[4]{};
-//  op::color::setHexArray(color, fillColor);
-//  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
-//}
 
 void OpDirect3d11Base::clearBuffer(const op::color::ColorRgb fillColor)
 {
   float color[4]{fillColor.r, fillColor.g, fillColor.b, fillColor.a};
-  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, color);
+  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
 }
 
 void OpDirect3d11Base::presentBuffer()
@@ -135,11 +107,12 @@ void OpDirect3d11Base::presentBuffer()
   HRESULT hr{ S_OK };
   hr = m_pSwapChain->Present(1u, 0u);
 
-  if (FAILED(hr))
-  {
-    if (hr == DXGI_ERROR_DEVICE_REMOVED)
+  if (FAILED(hr)) {
+    if (hr == DXGI_ERROR_DEVICE_REMOVED) {
       THROW_EXCEPTION(op::sys::windows::translateError(m_pDevice->GetDeviceRemovedReason()));
-    else
+    }
+    else {
       THROW_EXCEPTION(op::sys::windows::translateError(hr));
+    }
   }
 }
