@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include "Core/OptimEngineGlobal.h"
+#include "Core/Defines/Windows/windowsAPI.h"
+
 #include <chrono>
 
 namespace op::time
@@ -96,6 +99,4 @@ namespace op::time
     return delta;
 #endif
   }
-
-
 }

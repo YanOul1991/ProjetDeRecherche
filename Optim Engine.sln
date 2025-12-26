@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Optim Engine", "ProjectFiles\Optim Engine.vcxproj", "{1AA709DD-AB34-444D-A82C-5E69DE35CF05}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1F3D07F2-9311-493C-A85C-5C8E3D93A7BC} = {1F3D07F2-9311-493C-A85C-5C8E3D93A7BC}
+		{91A23E96-659C-458B-ACF3-23C580C7F29A} = {91A23E96-659C-458B-ACF3-23C580C7F29A}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application Entry", "Application Entry", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
@@ -13,9 +14,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Optim Engine", "Optim Engine", "{E3CAF81C-6FA2-48E3-8FE0-A0C4A278101F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "ProjectFiles\Core.vcxproj", "{1F3D07F2-9311-493C-A85C-5C8E3D93A7BC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{91A23E96-659C-458B-ACF3-23C580C7F29A} = {91A23E96-659C-458B-ACF3-23C580C7F29A}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,6 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3D11OEI", "ProjectFiles\D3D11OEI\D3D11OEI.vcxproj", "{91A23E96-659C-458B-ACF3-23C580C7F29A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1F3D07F2-9311-493C-A85C-5C8E3D93A7BC} = {1F3D07F2-9311-493C-A85C-5C8E3D93A7BC}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{6B5A12D5-4B79-4482-9FB8-7AED433BC56A}"
 EndProject

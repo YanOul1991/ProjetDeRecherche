@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <Core/OptimEngineGlobal.h>
+#include "Core/OptimEngineGlobal.h"
 
 class SystemWindow;
 class IRenderingModule;
@@ -24,7 +24,7 @@ namespace op
   struct SInput;
 }
 
-class EXPORT Application final
+class CORE_API Application final
 {
 public:
   Application();
@@ -51,5 +51,5 @@ private:
 };
 
 extern "C" {
-  EXPORT Application* CreateApplicationProc();
+  CORE_API Application* CreateApplicationProc();
 }

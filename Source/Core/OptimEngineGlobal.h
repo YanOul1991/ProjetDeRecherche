@@ -1,12 +1,16 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      + OptimEngineGlobal.h :
-          Optim Engine global definitions.
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+/* ======================================================================================
+ *  OptimEngineGlobal.h:
+ *
+ *  By:
+ *    Yanis Oulmane
+ *
+ * --------------------------------------------------------------------------------------
+ *  TODO
+ *    - Improve THROW_EXCEPTION macro so that the line argument, is set to the line 
+ *      in the file containing the error. For now it only shows from where the
+ *      exception was thrown.
+ *
+====================================================================================== */
 
 #pragma once
 
@@ -56,271 +60,50 @@ using wchar       = wchar_t;
     #define FORCE_INLINE inline __attribute__((always_inline))
 #endif
 
-#ifdef OS_WINDOWS
-    #ifndef UNICODE
-        #define UNICODE
-    #endif // !UNICODE
+//#ifdef OS_WINDOWS
+//    #include <Windows.h>
+//    #pragma comment(lib, "kernel32")
+//    #pragma comment(lib, "user32")
+//    #pragma comment(lib, "gdi32")
+//
+//    #include <ShObjIdl.h>
+//    #include <ShlGuid.h>
+//    #include <objbase.h>
+//    #include <ShellScalingApi.h>
+//
+//    #pragma comment(lib, "Shell32")
+//    #pragma comment(lib, "Ole32")
+//
+//#endif // OS_WINDOWS
 
-    #ifndef WIN_32_LEAN_AND_MEAN
-        #define WIN_32_LEAN_AND_MEAN
-    #endif // !WIN_32_LEAN_AND_MEAN
-    
-    #include <Windows.h>
-    #include <ShObjIdl.h>
-    #include <ShlGuid.h>
-    #include <objbase.h>
-    #include <ShellScalingApi.h>
+#pragma warning(disable : 4005)
+#define TEXT(_VALUE_) L##_VALUE_
 
-    #pragma comment(lib, "kernel32")
-    #pragma comment(lib, "user32")
-    #pragma comment(lib, "gdi32")
-    #pragma comment(lib, "Shell32")
-    #pragma comment(lib, "Ole32")
-
-#endif // OS_WINDOWS
-
-#if defined(UNICODE)
-  #define STRING(_TEXT_) L##_TEXT_
+#if defined(CORE_EXPORT)
+  #define CORE_API EXPORT
 #else
-  #define STRING(_TEXT_) _TEXT_ 
+  #define CORE_API IMPORT
 #endif
 
-#if defined(UNICODE) & !defined(TEXT)
-  #define TEXT(_VALUE_) L##_VALUE_
+#if defined(DIRECTX11_EXPORT)
+  #define DIRECTX11_API EXPORT
+#else
+  #define DIRECTX11_API IMPORT
 #endif
 
 #define PROC_PTR(T) T*(*)()
 #define PROC_PTR_PARAMS(T)
 
-namespace op::system
-{
-  template <typename T>
-  inline T LOAD_LIB_PROC(const char* _path_, const char* _proc_name_)
-  {
-    // WINDOWS DEFINITION
-#if defined(OS_WINDOWS) 
-    HMODULE pMod = LoadLibraryA(_path_);
-    if (!pMod)
-      return 0;
-
-    T proc = (T)GetProcAddress(pMod, _proc_name_);
-
-    if (!proc)
-      return nullptr;
-    return proc;
-#endif // OS_WINDOWS
-  }
-}
+#if defined(UNICODE)
+  #define STRINGIFY2(x) L#x
+#else
+  #define STRINGIFY2(x) #x
+#endif
 
 
-//#include <cwchar>
-//
-///*
-//  Custom String class for optimized and more controled operations 
-//  with the Optime Engine APIs.
-//*/
-//class String final
-//{
-//public:
-//  // STATIC FIELDS
-//  inline static int32 getLiteralSize(const wchar* str)
-//  {
-//    if (str == nullptr) return 0;
-//
-//    int32 i{ 0 };
-//    while (str[i] != STRING('\0')) i++;
-//    return i;
-//  }
-//
-//  //;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; CONSTRUCTORS
-//
-//  inline String() noexcept :
-//    m_length{ 0 },
-//    m_buffer{ nullptr }
-//  {
-//    allocate(TEXT(""));
-//  }
-//
-//  inline String(const wchar* str) noexcept :
-//    m_length{ String::getLiteralSize(str) },
-//    m_buffer{ nullptr }
-//  {
-//    allocate(str);
-//  }
-//
-//  inline String(const String& other) noexcept :
-//    m_length{ 0 },
-//    m_buffer{ nullptr }
-//  { 
-//    allocate(other.value());
-//  }
-//
-//  inline String(String&& other) noexcept :
-//    m_length { other.m_length },
-//    m_buffer { other.m_buffer }
-//  {
-//    other.m_buffer = nullptr;
-//    other.m_length = 0;
-//  }
-//
-//  inline String(int value) : 
-//    m_length{0}, 
-//    m_buffer{nullptr}
-//  {
-//    wchar temp[32];
-//    _itow_s(value, temp, 10);
-//    allocate(temp);
-//  }
-//
-//  inline String(double value) :
-//    m_length{ 0 }, m_buffer{ nullptr }
-//  {
-//    wchar temp[64];
-//    swprintf_s(temp, L"%f", value);
-//    allocate(temp);
-//  }
-//
-//
-//  inline ~String()
-//  { 
-//    freeBuffer();
-//  }
-//
-//  //;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; MEMBER FUNCTIONS
-//
-//  inline int32 length() const 
-//  { 
-//    return m_length; 
-//  }
-//
-//  inline const wchar* value() const 
-//  {
-//    return m_buffer;
-//  }
-//
-//  inline bool isAllocated() const
-//  {
-//    return m_buffer != nullptr;
-//  }
-//  
-//  // ;;;;;;;;;;;;;;;;;;;;;;;;;;;;; OPERATOR OVERLOADS
-//
-//  inline void operator=(const wchar* str) noexcept
-//  {
-//    freeBuffer();
-//    allocate(str);
-//  }
-//
-//  inline String& operator=(const String& other)
-//  {
-//    if (this != &other)
-//    {
-//      freeBuffer();
-//      allocate(other.m_buffer);
-//    }
-//    return *this;
-//  }
-//
-//  inline String& operator=(String&& other) noexcept
-//  {
-//    if (this != &other)
-//    {
-//      freeBuffer();
-//      m_buffer = other.m_buffer;
-//      m_length = other.m_length;
-//      other.m_buffer = nullptr;
-//      other.m_length = 0;
-//    }
-//    return *this;
-//  }
-//
-//  inline String& operator+=(const wchar* str)
-//  {
-//    int32 strSize{ String::getLiteralSize(str) };
-//
-//    if (strSize > 0 && str != nullptr)
-//    {
-//      int32 _bufferStrLength{ m_length + strSize };
-//
-//      // Alloc new buffer memeory
-//      wchar* newbuffer = new wchar[_bufferStrLength + 1];
-//
-//      copyToBuffer(0, newbuffer, m_buffer);
-//      copyToBuffer(m_length, newbuffer, str);
-//
-//      newbuffer[_bufferStrLength] = '\0';
-//
-//      // Free old buffer
-//      freeBuffer();
-//
-//      m_buffer    = newbuffer;
-//      m_length    = _bufferStrLength;
-//      newbuffer   = nullptr;
-//    }
-//    return *this;
-//  }
-//
-//  inline String& operator+=(const String& other)
-//  {
-//    int32 otherSize{ other.length() };
-//    if (otherSize > 0 && other.m_buffer != nullptr)
-//    {
-//      *this += other.m_buffer;
-//    }
-//    return *this;
-//  }
-//
-//  inline String operator+(String& other)
-//  {
-//    String _newStr = String(this->value());
-//    _newStr += other;
-//    return _newStr;
-//  }
-//
-//  inline String operator+(const wchar* str)
-//  {
-//    String _newStr = String(this->value());
-//    _newStr += str;
-//    return _newStr;
-//  }
-//
-//private:
-//  wchar* m_buffer;
-//  int32 m_length;
-//
-//  inline void allocate(const wchar* str)
-//  {
-//    m_length = String::getLiteralSize(str);
-//    m_buffer = new wchar[m_length + 1];
-//
-//    if (m_length > 0)
-//    {
-//      for (int i = 0; i < m_length; i++) m_buffer[i] = str[i];
-//    }
-//
-//    m_buffer[m_length] = L'\0';
-//  }
-//
-//  inline void freeBuffer()
-//  {
-//    delete[] m_buffer;
-//    m_buffer = nullptr;
-//    m_length = 0;
-//  }
-//
-//  inline void copyToBuffer(int writeBufferStartIndex, wchar* writeBuffer, const wchar* readBuffer)
-//  {
-//    int32 writeIndex          = writeBufferStartIndex;
-//    //int32 readBufferLength    = String::getLiteralSize(readBuffer);
-//    //int32 writeBufferLength   = String::getLiteralSize(writeBuffer);
-//
-//    int32 readIndex{ 0 };
-//
-//    while (readBuffer[readIndex] != L'\0')
-//    {
-//      writeBuffer[writeIndex] = readBuffer[readIndex];
-//      writeIndex++;
-//      readIndex++;
-//    }
-//  }
-//};
+#define STRINGIFY(x) STRINGIFY2(x)
+
+#define CAST(_TYPE_, _VAL_)   static_cast<_TYPE>(_VAL_)
+#define RCAST(_TYPE_, _VAL_)  reinterpret_cast<_TYPE_>(_VAL_)
+
+#define THROW_EXCEPTION(_MSG_) throw op::Exception(__LINE__, __FILEW__, _MSG_)

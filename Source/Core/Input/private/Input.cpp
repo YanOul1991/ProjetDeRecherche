@@ -8,8 +8,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
-#include "Core/Input/Input.h"
 #include "Core/OptimEngineGlobal.h"
+#include "Core/Input/Input.h"
+
 #include <Windows.h>
 
 bool op::SInput::initialize(void* _pApplication, void* p_WindowHandle)

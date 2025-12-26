@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Color\Color.h" />
+    <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h" />
     <ClInclude Include="..\Source\Core\Exception\exception.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
     <ClInclude Include="..\Source\Core\OptimEngineGlobal.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="..\Source\Core\Types\string.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
     <ClCompile Include="..\Source\Core\System\private\IWindow.cpp" />
@@ -89,7 +91,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)Builds\</OutDir>
+    <OutDir>$(SolutionDir)Builds</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -122,7 +124,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);DLL_LIB</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);CORE_EXPORT;DLL_LIB</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>

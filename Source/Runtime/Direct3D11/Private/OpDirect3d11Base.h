@@ -1,17 +1,9 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      ~~~~~~~~~~ MAY BE REMOVED/REFORMATTED ~~~~~~~~~~
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
-      + OpDirect3d11.h:
-          Abstracting class for OpDirect3D11Module.
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
-
+/* ======================================================================================
+ *  OpDirect3d11Base.h:
+ *
+ *  By:
+ *    Yanis Oulmane
+====================================================================================== */
 
 #pragma once
 
@@ -35,15 +27,15 @@ public:
   DXGI_SWAP_CHAIN_DESC m_swapChainDesc;
 
   bool Initialize(HWND _outputWindow);    // Initialize Direct3d11.
-  void EndFrame();
-  void clearBuffer(float red, float green, float blue) noexcept;
-  void clearBuffer(const op::color::ColorHex fillColor) noexcept;
-  void clearBuffer(const op::color::ColorRgb fillColor) noexcept;
+  void presentBuffer();
+  void clearBuffer(float red, float green, float blue);
+  void clearBuffer(const op::color::ColorRgb fillColor);
+  //void clearBuffer(const op::color::ColorHex fillColor);
 
 private:
-  ID3D11Device* m_pDevice;
-  IDXGISwapChain* m_pSwapChain;
-  ID3D11DeviceContext* m_pDeviceContext;
+  ID3D11Device*           m_pDevice;
+  IDXGISwapChain*         m_pSwapChain;
+  ID3D11DeviceContext*    m_pDeviceContext;
   ID3D11RenderTargetView* m_pRenderTargetView; 
 
   /*

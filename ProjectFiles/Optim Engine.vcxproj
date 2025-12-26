@@ -79,7 +79,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)Builds\</OutDir>
+    <OutDir>$(SolutionDir)Builds</OutDir>
     <IntDir>$(SolutionDir)Intermediate\$(ProjectName)\</IntDir>
     <TargetName>optimengine</TargetName>
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>

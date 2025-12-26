@@ -26,6 +26,9 @@
     <ClInclude Include="..\Source\Core\Types\string.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h">
+      <Filter>Defines\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -61,6 +64,15 @@
     <Filter Include="Types\private">
       <UniqueIdentifier>{d1f1af6b-370b-402a-8c81-136540fa8c30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Exception\private">
+      <UniqueIdentifier>{20f0e9a5-93f1-452d-b3a1-ae80b61a249a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Defines">
+      <UniqueIdentifier>{167ff6c2-5679-452c-b74c-a56e4ad44ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Defines\Windows">
+      <UniqueIdentifier>{c2df1b5f-c9a8-40b3-a1b0-b34957c4ab83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -77,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Types\Private\string.cpp">
       <Filter>Types\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Exception\private\exception.cpp">
+      <Filter>Exception\private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

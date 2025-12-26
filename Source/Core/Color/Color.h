@@ -43,15 +43,6 @@ namespace op::color
 
   inline ColorRgb convertColorHexToRgba(const ColorHex& _color8bit)
   {
-    /*
-    return {
-      (float)(((_color8bit.value & 0xFF000000u) >> 24) / 255.0f) / 1.0f,
-      (float)(((_color8bit.value & 0x00FF0000u) >> 16) / 255.0f) / 1.0f,
-      (float)(((_color8bit.value & 0x0000FF00u) >> 8)  / 255.0f) / 1.0f,
-      (float)(((_color8bit.value & 0x000000FFu) >> 0)  / 255.0f) / 1.0f
-    };
-    */
-
     return{
       (((float)((_color8bit.value >> 24)  & 0xFFu)) / 255.0f) / 1.0f,
       (((float)((_color8bit.value >> 16)  & 0xFFu)) / 255.0f) / 1.0f,
@@ -62,13 +53,6 @@ namespace op::color
 
   inline void setHexArray(float* _arr, const ColorHex& _color8bit)
   {
-    /*
-    _arr[0] = (float)(((_color8bit.value & 0xFF000000u) >> 24) / 255.0f) / 1.0f;
-    _arr[1] = (float)(((_color8bit.value & 0x00FF0000u) >> 16) / 255.0f) / 1.0f;
-    _arr[2] = (float)(((_color8bit.value & 0x0000FF00u) >> 8)  / 255.0f) / 1.0f;
-    _arr[3] = (float)(((_color8bit.value & 0x000000FFu) >> 0)  / 255.0f) / 1.0f;
-    */
-
     for (int i = 0; i < 4; i++)
       _arr[i] = (float)((_color8bit.value >> (24 - (8 * i))) & 0xFFu) / 255.0f / 1.0f;
   }

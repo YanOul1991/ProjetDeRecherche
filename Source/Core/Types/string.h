@@ -10,15 +10,9 @@
 
 #pragma once
 
-#ifdef DLL_LIB
-#define OPTIMAPI __declspec(dllexport)
-#else
-#define OPTIMAPI __declspec(dllimport)
-#endif
-
 #include <Core/OptimEngineGlobal.h>
 
-class OPTIMAPI String final
+class CORE_API String final
 {
 public:
   static int32 getLiteralSize(const wchar* str);

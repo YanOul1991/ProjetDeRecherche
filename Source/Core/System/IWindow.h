@@ -1,18 +1,17 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
       + application.h :
-          Base Class Interface for system managed 
-          windows. This class defines global system 
-          window functionalities.
+          Base Class Interface for system managed windows. This class defines global
+          system window functionalities.
 
       + By:
           Yanis Oulmane
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
 #pragma once
 
+#include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/OptimEngineGlobal.h"
+
 #include <string>
 
 class Application;
@@ -43,12 +42,12 @@ public:
   void display() const;
   void windowLoop();
   MSG m_msg;
+
 protected:
   Application* m_pApplication;
 
 private:
 #if defined(OS_WINDOWS)
-  //On Windows OS defined a Window procedure
   static LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
 };

@@ -11,10 +11,15 @@
 #pragma once
 
 // Optim Engine
-#include <Core/OptimEngineGlobal.h>
+#include "Core/Defines/Windows/windowsAPI.h"
+
+#include "Core/OptimEngineGlobal.h"
+
+#include "Core/Time/Time.h"
+#include "Core/Exception/exception.h"
+#include "Core/System/Application.h"
+
 #include "Core/System/IWindow.h"
-#include <Core/Time/Time.h>
-#include <Core/System/Application.h>
 
 // Standard Library
 #include <iostream>
@@ -40,17 +45,19 @@ bool IWindow::create(Application* _pApplication_, const std::wstring& _title, in
 
   // WINDOWS OS IMPLEMENTATION
 #if defined(OS_WINDOWS)
-  /*
-    - Register Window cLass
-  */
+  // Register Window cLass
 
-  _width = GetSystemMetrics(SM_CXSCREEN);
+  _width  = GetSystemMetrics(SM_CXSCREEN);
   _height = GetSystemMetrics(SM_CYSCREEN);
 
   WNDCLASS wc{ 0 };
-  wc.lpfnWndProc = WindowProcedure;
-  wc.hInstance = GetModuleHandleA(0);
-  wc.lpszClassName = _title.c_str();
+
+  wc.lpfnWndProc    = WindowProcedure;
+  wc.hInstance      = GetModuleHandleA(0);
+  wc.lpszClassName  = _title.c_str();
+  wc.hIcon          = nullptr,
+  wc.hCursor        = nullptr,
+
   RegisterClassW(&wc);
 
   pSystemWindow = CreateWindowExW(
@@ -59,7 +66,7 @@ bool IWindow::create(Application* _pApplication_, const std::wstring& _title, in
     _title.c_str(),
     WS_OVERLAPPEDWINDOW,
     0, 0, _width, _height,
-    _parentWindow ? reinterpret_cast<HWND>(_parentWindow->getHandle()) : nullptr,
+    _parentWindow ? RCAST(HWND, _parentWindow->getHandle()) : nullptr,
     0,
     GetModuleHandleW(0),
     this);
@@ -76,23 +83,19 @@ void IWindow::display() const
 
 void IWindow::windowLoop()
 {
-  /*
-    * Windows Loop
-    *   - Windos OS: Listen and translate messages
-  */
 #if defined(OS_WINDOWS)
-  while (PeekMessageW(&m_msg, 0, 0, 0, PM_REMOVE) > 0)
-  {
-    if (m_msg.message == WM_QUIT)
-    {
-      m_pApplication->Quit();
-    }
-    else
-    {
-      TranslateMessage(&m_msg);
-      DispatchMessageW(&m_msg);
-    }
-  }
+		while (PeekMessageW(&m_msg, 0, 0, 0, PM_REMOVE) > 0)
+		{
+			if (m_msg.message == WM_QUIT)
+			{
+				m_pApplication->Quit();
+			}
+			else
+			{
+				TranslateMessage(&m_msg);
+				DispatchMessageW(&m_msg);
+			}
+		}
 #endif
 }
 
@@ -177,8 +180,6 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
         {
           int dx = mouse.lLastX;
           int dy = mouse.lLastY;
-          //std::stringstream ss;
-          //ss << "Mouse dx: " << dx << " | dy: " << dy;
           //SetWindowTextA(hwnd, ss.str().c_str());
         }
 
@@ -209,21 +210,21 @@ LRESULT CALLBACK IWindow::WindowProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, L
       {
         RAWHID& controller = raw->data.hid;
 
-        char dualShockTriangle = 0b1000;
-        char dualShockCircle = 0b0100;
-        char dualShockCross = 0b0010;
-        char dualShockBox = 0b0001;
+        char dualShockTriangle  = 0b1000;
+        char dualShockCircle    = 0b0100;
+        char dualShockCross     = 0b0010;
+        char dualShockBox       = 0b0001;
 
         char iconsInput = (controller.bRawData[8] & 0xF0) >> 4;
 
-        if (iconsInput & dualShockTriangle)
-          std::cout << "Dualshock Triangle Press!\n";
-        if (iconsInput & dualShockCircle)
-          std::cout << "Dualshock Circle Press!\n";
-        if (iconsInput & dualShockCross)
-          std::cout << "Dualshock Cross Press!\n";
-        if (iconsInput & dualShockBox)
-          std::cout << "Dualshock Box Press!\n";
+        //if (iconsInput & dualShockTriangle)
+        //  std::cout << "Dualshock Triangle Press!\n";
+        //if (iconsInput & dualShockCircle)
+        //  std::cout << "Dualshock Circle Press!\n";
+        //if (iconsInput & dualShockCross)
+        //  std::cout << "Dualshock Cross Press!\n";
+        //if (iconsInput & dualShockBox)
+        //  std::cout << "Dualshock Box Press!\n";
       }
     }
     delete[] buffer;

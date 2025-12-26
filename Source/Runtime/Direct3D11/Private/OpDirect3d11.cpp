@@ -9,17 +9,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
 
+#include "Core/Time/Time.h"
+#include "Core/Types/string.h"
+#include "Core/Exception/exception.h"
+
 #include "Runtime/Direct3D11/OpDirect3d11.h"
 #include "OpDirect3d11Base.h"
-#include "Core/Time/Time.h"
-#include <cmath>
-#include <string>
-#include <sstream>
 
-#include <iostream>
+#include <cmath>
 
 extern "C" {
-  EXPORT OpDirect3D11Module* CreateDirect3D11Module() 
+  DIRECTX11_API OpDirect3D11Module* CreateDirect3D11Module()
   {
     return new OpDirect3D11Module;
   }
@@ -36,7 +36,8 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
 
   m_pBase = new OpDirect3d11Base{};
 
-  if (m_pBase) m_pBase->Initialize(reinterpret_cast<HWND>(m_hTargetWindow));
+  if (m_pBase) 
+    m_pBase->Initialize(reinterpret_cast<HWND>(m_hTargetWindow));
 }
 
 /*
@@ -44,16 +45,8 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
 */
 void OpDirect3D11Module::draw()
 {
-  // Clear buffer and render target with color
   m_pBase->clearBuffer({ (34.0f / 255.0f), (38.0f / 255.0f), (92.0f / 255.0f) , 1.0f });
-  
-  /* 
-    +++++++++++++++++++++++++++++++++++++++++++++++++ 
-    ++++++++++++++++ RENDERING LOGIC ++++++++++++++++ 
-    +++++++++++++++++++++++++++++++++++++++++++++++++ 
-  */
-
-  m_pBase->EndFrame();
+  m_pBase->presentBuffer();
 }
 
 void OpDirect3D11Module::Clean() { }

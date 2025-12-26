@@ -9,8 +9,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
-#include "Core/Types/string.h"
 #include <cwchar>
+#include "Core/Types/string.h"
 
 int32 String::getLiteralSize(const wchar* str)
 {
