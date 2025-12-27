@@ -9,8 +9,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
-#include <cwchar>
+#include "Core/OptimEngineGlobal.h"
+#include "Core/Defines/Windows/windowsAPI.h"
+
 #include "Core/Types/string.h"
+#include <sstream>
+#include <cwchar>
 
 int32 String::getLiteralSize(const wchar* str)
 {
@@ -18,6 +22,58 @@ int32 String::getLiteralSize(const wchar* str)
   int32 i{ 0 };
   while (str[i] != TEXT('\0')) i++;
   return i;
+}
+
+String String::SFprint(const wchar* string, ...)
+{
+  String str = String(TEXT("X: {uint32}, Y{uint32}"));
+  return nullptr;
+}
+
+bool String::isEmpty(const String& other)
+{
+  return other.length() == 0 || other.m_buffer[0] == '\0' || other.m_buffer == nullptr;
+}
+
+String String::find(const String& string, const wchar* expression)
+{
+  int32 _expLength = getLiteralSize(expression);
+  int32 _matchIndex{ 0 };
+  int32 _searchIndex{ 0 };
+
+  return String();
+}
+
+
+bool String::compare(const String& string1, const String& string2)
+{
+  if (string1.length() != string2.length()) return false;
+
+  uint64* _str1_sub_buffer = reinterpret_cast<uint64*>(string1.m_buffer);
+  uint64* _str2_sub_buffer = reinterpret_cast<uint64*>(string2.m_buffer);
+
+
+  int iterations = static_cast<int>(string1.length() / 4);
+  int remainder   = string1.length() % 4;
+
+  for (int i = 0; i < iterations; i++)
+  {
+    if (*_str1_sub_buffer != *_str2_sub_buffer) return false;
+    _str1_sub_buffer++;
+    _str2_sub_buffer++;
+  }
+
+  wchar* _str1_remainder = reinterpret_cast<wchar*>(_str1_sub_buffer);
+  wchar* _str2_remainder = reinterpret_cast<wchar*>(_str2_sub_buffer);
+
+  while (*_str1_remainder != '\0' && *_str2_remainder != '\0')
+  {
+    if (*_str1_remainder != *_str2_remainder) return false;
+    _str1_remainder++;
+    _str2_remainder++;
+  }
+
+  return true;
 }
 
 String::String() noexcept :
@@ -56,7 +112,7 @@ String::String(String&& other) noexcept :
 
 int32 String::length()        const { return m_length; }
 const wchar* String::value()  const { return m_buffer; }
-bool String::isAllocated()    const { return m_buffer != nullptr; }
+//bool String::isAllocated()    const { return m_buffer != nullptr; }
 
 /* #######################################
     Operator Overloads

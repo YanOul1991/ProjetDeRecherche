@@ -18,7 +18,7 @@
       <Filter>Time</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Color\Color.h">
-      <Filter>Color</Filter>
+      <Filter>Defines\Color</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Exception\exception.h">
       <Filter>Exception</Filter>
@@ -52,9 +52,6 @@
     <Filter Include="Time\private">
       <UniqueIdentifier>{05b9865d-7015-410a-bed0-3c90180a1e8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Color">
-      <UniqueIdentifier>{5c58de70-61d3-40a3-9ca3-fc5977722f8e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Exception">
       <UniqueIdentifier>{9f83be35-06fb-40f5-82fc-bc85568bd095}</UniqueIdentifier>
     </Filter>
@@ -72,6 +69,9 @@
     </Filter>
     <Filter Include="Defines\Windows">
       <UniqueIdentifier>{c2df1b5f-c9a8-40b3-a1b0-b34957c4ab83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Defines\Color">
+      <UniqueIdentifier>{5c58de70-61d3-40a3-9ca3-fc5977722f8e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
