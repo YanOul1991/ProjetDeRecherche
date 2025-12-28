@@ -36,6 +36,8 @@ extern "C" {
   }
 }
 
+float Application::m_runtime{ 0.0f };
+
 Application::Application() :
   m_shouldRun{ false },
   m_pDirect2dModule{ nullptr },
@@ -47,6 +49,12 @@ Application::Application() :
 Application::~Application() {}
 
 bool Application::ShouldRun() const { return m_shouldRun; }
+
+float Application::getRuntime()
+{
+  return m_runtime;
+}
+
 
 void Application::Quit() 
 { 
@@ -119,7 +127,8 @@ void Application::ApplicationLoop()
     m_pWindow->windowLoop();
     m_pGraphicsRenderingModule->draw();
 
-    String winText = TEXT("Optim Engine - DirectX11");
+    String winText = TEXT("Optim Engine - DirectX11 --- ");
+    //winText += m_runtime;
 
     SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
 

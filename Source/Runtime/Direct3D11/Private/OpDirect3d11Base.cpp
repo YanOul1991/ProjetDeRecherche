@@ -17,6 +17,8 @@
 #include "OpDirect3d11Base.h"
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
+#include "Core/System/Application.h"
+
 #include <iostream>
 
 #define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw op::Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
@@ -185,6 +187,43 @@ void OpDirect3d11Base::__testDrawTriangle()
 
   m_pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
+  /// ////////////////////// CREATE CONSTANT BUFFER
+
+  struct ConstantBuffer
+  {
+    struct
+    {
+      float element[4][4];
+    } transformation;
+  };
+
+  float angle = Application::getRuntime();
+
+  ConstantBuffer cb =
+  {
+    {
+      (9.0f / 16.0f) * cos(angle), sin(angle), 0.0f, 0.0f,
+      (9.0f / 16.0f) * -sin(angle), cos(angle), 0.0f, 0.0f,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f,
+    }
+  };
+
+  ComPtr<ID3D11Buffer>    pConstBuffer;
+  D3D11_BUFFER_DESC       constBufferDesc{};
+  D3D11_SUBRESOURCE_DATA  constBufferSubResData{};
+
+  constBufferDesc.ByteWidth = sizeof(cb);
+  constBufferDesc.StructureByteStride = 0;
+  constBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+  constBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+  constBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+  constBufferDesc.MiscFlags = 0u;
+  
+  constBufferSubResData.pSysMem = &cb;
+  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&constBufferDesc, &constBufferSubResData, &pConstBuffer));
+
+  m_pDeviceContext->VSSetConstantBuffers(0, 1, pConstBuffer.GetAddressOf());
 
   /* ===================================
       SHADERS LOADING

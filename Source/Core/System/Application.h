@@ -36,6 +36,7 @@ public:
 
   // Should the application continue running and looping.
   bool ShouldRun() const;
+  static float getRuntime();
 
 private:
   bool m_shouldRun; // Should the application continue running/looping.
@@ -47,7 +48,7 @@ private:
   op::SInput* m_pInput;
   //MSG m_msg;
 
-  float m_runtime{ 0 };
+  static float m_runtime;
 };
 
 extern "C" {
