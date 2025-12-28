@@ -107,6 +107,7 @@ void OpDirect3d11Base::clearBuffer(const op::color::ColorRgb fillColor)
 
 void OpDirect3d11Base::__testDrawTriangle()
 {
+  HRESULT hr = S_OK;
   struct Vertex
   {
     struct
@@ -126,10 +127,15 @@ void OpDirect3d11Base::__testDrawTriangle()
 
   Vertex vertices[] =
   {
-    { 0.0f  , 1.0f  , 255, 0, 0, 0  },
-    { 1.0f  , -1.0f , 0, 255, 0, 0  },
-    { -1.0f , -1.0f , 0, 0.0f, 255, 0  }
+    { 0.0f , 0.0f ,  255, 255, 255, 0    },
+    { 0.0f , 0.5f ,  255, 255, 255, 0 },
+    { 0.5f , 0.0f ,  0, 0, 0, 0  },
+    { 0.5f , 0.5f ,  0, 0, 0, 0  },
+    { 0.25f , 1.0f ,  0, 0, 0, 0  },
+    { 0.25f , -0.5f ,  0, 0, 0, 0  },
   };
+
+  /// ///////////////////// CREATE VERTEX BUFFER
 
   ComPtr<ID3D11Buffer>      _pVertexBuffer;
   D3D11_BUFFER_DESC         _bufferDesc{};
@@ -144,13 +150,41 @@ void OpDirect3d11Base::__testDrawTriangle()
 
   _subResData.pSysMem = vertices;
 
-  HRESULT hr = S_OK;
-
   hr = m_pDevice->CreateBuffer(&_bufferDesc, &_subResData, &_pVertexBuffer);
   if (FAILED(hr)) THROW_EXCEPTION(op::sys::windows::translateError(hr));
+
   UINT _stride = sizeof(Vertex);
   UINT _offset = 0u;
+
   m_pDeviceContext->IASetVertexBuffers(0u, 1u, _pVertexBuffer.GetAddressOf(), &_stride, &_offset);
+
+  /// ////////////////////// CREATE INDEX BUFFER
+
+  uint16 indices[] =
+  {
+    0, 1, 2,
+    2, 1, 3,
+    1, 4, 3,
+    5, 0, 2
+  };
+
+  ComPtr<ID3D11Buffer>      pIndexBuffer;
+  D3D11_BUFFER_DESC         indexBufferDesc{};
+  D3D11_SUBRESOURCE_DATA    indexSubResData{};
+
+  indexBufferDesc.ByteWidth = sizeof(indices);
+  indexBufferDesc.StructureByteStride = sizeof(uint16);
+  indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+  indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+  indexBufferDesc.CPUAccessFlags = 0u;
+  indexBufferDesc.MiscFlags = 0u;
+  
+  indexSubResData.pSysMem = indices;
+
+  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&indexBufferDesc, &indexSubResData, &pIndexBuffer));
+
+  m_pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+
 
   /* ===================================
       SHADERS LOADING
@@ -222,7 +256,8 @@ void OpDirect3d11Base::__testDrawTriangle()
 
   m_pDeviceContext->RSSetViewports(1u, &vp);
 
-  m_pDeviceContext->Draw(std::size(vertices), 0u);
+  //m_pDeviceContext->Draw(std::size(vertices), 0u);
+  m_pDeviceContext->DrawIndexed(std::size(indices), 0u, 0u);
 }
 
 void OpDirect3d11Base::presentBuffer()
