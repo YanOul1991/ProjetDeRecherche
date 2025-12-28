@@ -16,13 +16,9 @@ class CORE_API String final
 {
 public:
   static String SFprint(const wchar* string, ...);
-
   static String find(const String& string, const wchar* expression);
-
   static bool compare(const String& string1, const String& string2);
-
   static bool isEmpty(const String& other);
-
   static int32 getLiteralSize(const wchar* str);
 
   String  () noexcept;
@@ -30,9 +26,13 @@ public:
 
   // Copy and move
 
-  String  (const wchar* str)    noexcept;
-  String  (const String& other) noexcept;
-  String  (String&& other)      noexcept;
+  String(const wchar* str)    noexcept;
+  String(const String& other) noexcept;
+  String(String&& other)      noexcept;
+
+  String(int value);
+  String(double value);
+  String(float value);
 
   // Member functions
 

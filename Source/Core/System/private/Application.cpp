@@ -21,6 +21,8 @@
 
 #include "Core/System/Application.h"
 
+#include <format>
+
 // Standard libraries
 #include <iostream>
 #include <memory>
@@ -117,7 +119,7 @@ void Application::ApplicationLoop()
     m_pWindow->windowLoop();
     m_pGraphicsRenderingModule->draw();
 
-    String winText = String(TEXT("Optim Engine - DirectX11"));
+    String winText = TEXT("Optim Engine - DirectX11");
 
     SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
 

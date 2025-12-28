@@ -13,6 +13,10 @@
 #include "Core/Defines/Windows/windowsAPI.h"
 
 #include "Core/Types/string.h"
+
+#include <vector>
+#include <format>
+#include <string>
 #include <sstream>
 #include <cwchar>
 
@@ -24,10 +28,25 @@ int32 String::getLiteralSize(const wchar* str)
   return i;
 }
 
-String String::SFprint(const wchar* string, ...)
+String String::SFprint(const wchar* string,...)
 {
-  String str = String(TEXT("X: {uint32}, Y{uint32}"));
-  return nullptr;
+  //va_list args;
+  //va_start(args, string);
+
+  //int size = _vcwprintf(string, args);
+  //va_end(args);
+
+  //String _str;
+  //wchar buffer[size + 1];
+
+  //va_start(args, string);
+  //vswprintf(buffer.data(), buffer.size(), string, args);
+  //va_end(args);
+
+  //MessageBox(0, buffer.data(), TEXT("DEBUG"), MB_OK);
+
+  //return String(buffer.data());
+  return String(TEXT("String::SFprint function not functional yet!!!"));
 }
 
 bool String::isEmpty(const String& other)
@@ -108,6 +127,33 @@ String::String(String&& other) noexcept :
 {
   other.m_buffer = nullptr;
   other.m_length = 0;
+}
+
+String::String(int value) :
+  m_length{ 0 },
+  m_buffer{ }
+{
+  wchar temp[32];
+  swprintf(temp, 32, TEXT("%d"), value);
+  allocate(temp);
+}
+
+String::String(double value) :
+  m_length{ 0 },
+  m_buffer{ }
+{
+  wchar temp[32];
+  swprintf(temp, 32, TEXT("%lf"), value);
+  allocate(temp);
+}
+
+String::String(float value) : 
+  m_length{ 0 },
+  m_buffer{ }
+{
+  wchar temp[32];
+  swprintf(temp, 32, TEXT("%f"), value);
+  allocate(temp);
 }
 
 int32 String::length()        const { return m_length; }

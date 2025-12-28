@@ -10,6 +10,11 @@
 #include "OpDirect3d11Global.h"
 #include "Core/Color/Color.h"
 
+#include <d3dcompiler.h>
+
+#pragma comment(lib, "D3DCompiler.lib")
+
+
 //namespace op::
 
 class OpDirect3d11Base final
@@ -30,6 +35,7 @@ public:
   void presentBuffer();
   void clearBuffer(float red, float green, float blue);
   void clearBuffer(const op::color::ColorRgb fillColor);
+  void __testDrawTriangle();
 
 private:
   ComPtr<ID3D11Device>            m_pDevice;

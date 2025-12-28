@@ -4,6 +4,9 @@
     <Filter Include="Private">
       <UniqueIdentifier>{3f73ef02-913d-44ec-8d2b-758e33c192f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b3abbfd4-6deb-4711-8426-7cf381e10bb5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\OpDirect3d11.h" />
@@ -21,5 +24,13 @@
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\OpDirect3d11Base.cpp">
       <Filter>Private</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Source\Shader\VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shader\PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -15,7 +15,6 @@
 
 #include "Runtime/Direct3D11/OpDirect3d11.h"
 #include "OpDirect3d11Base.h"
-
 #include <cmath>
 
 extern "C" {
@@ -46,6 +45,7 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
 void OpDirect3D11Module::draw()
 {
   m_pBase->clearBuffer({ (34.0f / 255.0f), (38.0f / 255.0f), (92.0f / 255.0f) , 1.0f });
+  m_pBase->__testDrawTriangle();
   m_pBase->presentBuffer();
 }
 
