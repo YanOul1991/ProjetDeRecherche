@@ -49,7 +49,7 @@ bool OpDirect3d11Base::Initialize(HWND _outputWindow)
   m_swapChainDesc.BufferDesc.Width              = 0;
   m_swapChainDesc.BufferDesc.Height             = 0;
   m_swapChainDesc.BufferDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
-  m_swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING_UNSPECIFIED;
+  m_swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING_CENTERED;
   m_swapChainDesc.BufferDesc.ScanlineOrdering   = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 
   m_swapChainDesc.BufferDesc.RefreshRate.Numerator    = 0;
@@ -107,7 +107,7 @@ void OpDirect3d11Base::clearBuffer(const op::color::ColorRgb fillColor)
   m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
 }
 
-void OpDirect3d11Base::__testDrawTriangle()
+void OpDirect3d11Base::drawTriangle()
 {
   HRESULT hr = S_OK;
   struct Vertex
@@ -129,12 +129,15 @@ void OpDirect3d11Base::__testDrawTriangle()
 
   Vertex vertices[] =
   {
-    { 0.0f , 0.0f ,  255, 255, 255, 0    },
-    { 0.0f , 0.5f ,  255, 255, 255, 0 },
-    { 0.5f , 0.0f ,  0, 0, 0, 0  },
-    { 0.5f , 0.5f ,  0, 0, 0, 0  },
-    { 0.25f , 1.0f ,  0, 0, 0, 0  },
-    { 0.25f , -0.5f ,  0, 0, 0, 0  },
+    { -1.0f , -1.0f ,  255, 255, 255, 0 },
+    { -1.0f , 1.0f ,  255, 255, 255, 0 },
+    { -0.7f , -1.0f ,  255, 255, 255, 0 },
+    { -0.7f , 1.0f ,  255, 255, 255, 0 },
+
+    { -0.25f, -0.25f, 128, 128, 000, 000 },
+    { -0.25f, 0.25f, 128, 128, 000, 000 },
+    { 0.25f, -0.25f, 128, 128, 000, 000 },
+    { 0.25f, 0.25f, 128, 128, 000, 000 },
   };
 
   /// ///////////////////// CREATE VERTEX BUFFER
@@ -166,20 +169,20 @@ void OpDirect3d11Base::__testDrawTriangle()
   {
     0, 1, 2,
     2, 1, 3,
-    1, 4, 3,
-    5, 0, 2
+    4, 5, 6,
+    6, 5, 7
   };
 
   ComPtr<ID3D11Buffer>      pIndexBuffer;
   D3D11_BUFFER_DESC         indexBufferDesc{};
   D3D11_SUBRESOURCE_DATA    indexSubResData{};
 
-  indexBufferDesc.ByteWidth = sizeof(indices);
+  indexBufferDesc.ByteWidth           = sizeof(indices);
   indexBufferDesc.StructureByteStride = sizeof(uint16);
-  indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-  indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-  indexBufferDesc.CPUAccessFlags = 0u;
-  indexBufferDesc.MiscFlags = 0u;
+  indexBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
+  indexBufferDesc.BindFlags           = D3D11_BIND_INDEX_BUFFER;
+  indexBufferDesc.CPUAccessFlags      = 0u;
+  indexBufferDesc.MiscFlags           = 0u;
   
   indexSubResData.pSysMem = indices;
 
@@ -271,6 +274,8 @@ void OpDirect3d11Base::__testDrawTriangle()
   /* ===================================
       INPUT BINDING
   =================================== */
+  // Set Primitive topology to triangle list;
+  m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   // Bind Input Layout
   m_pDeviceContext->IASetInputLayout(pInputLayout.Get());
@@ -281,8 +286,6 @@ void OpDirect3d11Base::__testDrawTriangle()
   // Bind Render Target
   m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
 
-  // Set Primitive topology to triangle list;
-  m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
   
   // Configure Viewport
   D3D11_VIEWPORT vp{};
@@ -290,6 +293,8 @@ void OpDirect3d11Base::__testDrawTriangle()
   vp.Height   = 450;
   vp.MinDepth = 0;
   vp.MaxDepth = 1;
+  //vp.TopLeftX = 0;
+  //vp.TopLeftY = 0;
   vp.TopLeftX = (1920 / 2) - 400;
   vp.TopLeftY = (1080 / 2) - 275;
 

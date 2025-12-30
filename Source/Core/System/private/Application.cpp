@@ -29,7 +29,7 @@
 #include <sstream>
 
 extern "C" {
-  EXPORT Application* CreateApplicationProc()
+  CORE_API Application* CreateApplicationProc()
   {
     //std::unique_ptr<Application> application = std::make_unique<Application>();
     return new Application;
@@ -39,11 +39,10 @@ extern "C" {
 float Application::m_runtime{ 0.0f };
 
 Application::Application() :
-  m_shouldRun{ false },
-  m_pDirect2dModule{ nullptr },
-  m_pGraphicsRenderingModule{ nullptr },
-  m_pInput{ nullptr },
-  m_pWindow{ nullptr }
+  m_shouldRun     { false },
+  m_pRenderModule { nullptr },
+  m_pInput        { nullptr },
+  m_pWindow       { nullptr }
 { }
 
 Application::~Application() {}
@@ -54,7 +53,6 @@ float Application::getRuntime()
 {
   return m_runtime;
 }
-
 
 void Application::Quit() 
 { 
@@ -85,15 +83,9 @@ void Application::ApplicationStart()
 
     if (pProc)
     {
-      m_pGraphicsRenderingModule = pProc();
-      m_pGraphicsRenderingModule->Initialize(m_pWindow->getHandle());
+      m_pRenderModule = pProc();
+      m_pRenderModule->Initialize(m_pWindow->getHandle());
     }
-
-    // Regitser Inputs
-    m_pInput = new op::SInput;
-
-    if (!m_pInput->initialize(reinterpret_cast<void*>(this), m_pWindow->getHandle())) return;
-
     m_shouldRun = true;
   }
   catch (const op::Exception& e)
@@ -125,9 +117,9 @@ void Application::ApplicationLoop()
     if (!m_shouldRun) return;
 
     m_pWindow->windowLoop();
-    m_pGraphicsRenderingModule->draw();
+    m_pRenderModule->draw();
 
-    String winText = TEXT("Optim Engine - DirectX11 --- ");
+    String winText = TEXT("Optim Engine - DirectX11");
     //winText += m_runtime;
 
     SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
@@ -162,8 +154,7 @@ void Application::ApplicationLoop()
 void Application::ApplicationQuit()
 { 
   // Free resources
-  delete(m_pDirect2dModule);
-  delete(m_pGraphicsRenderingModule);
+  delete(m_pRenderModule);
   delete(m_pWindow);
   delete(m_pInput);
 }

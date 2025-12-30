@@ -43,8 +43,7 @@ private:
   //SystemWindow* m_pEditorOsWindow; //Pointer to the editor OS managed main window.
 
   IWindow* m_pWindow;     // Pointer to os managed windows
-  IRenderingModule* m_pDirect2dModule;  // Pointer to the direct 2D module
-  IRenderingModule* m_pGraphicsRenderingModule;
+  IRenderingModule* m_pRenderModule;
   op::SInput* m_pInput;
   //MSG m_msg;
 

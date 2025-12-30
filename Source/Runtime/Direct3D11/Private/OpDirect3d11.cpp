@@ -45,7 +45,7 @@ void OpDirect3D11Module::Initialize(void* _WindowHandle)
 void OpDirect3D11Module::draw()
 {
   m_pBase->clearBuffer({ (34.0f / 255.0f), (38.0f / 255.0f), (92.0f / 255.0f) , 1.0f });
-  m_pBase->__testDrawTriangle();
+  m_pBase->drawTriangle();
   m_pBase->presentBuffer();
 }
 
