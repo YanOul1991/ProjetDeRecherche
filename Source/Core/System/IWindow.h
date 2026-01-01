@@ -1,16 +1,16 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      + application.h :
-          Base Class Interface for system managed windows. This class defines global
-          system window functionalities.
-
-      + By:
-          Yanis Oulmane
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+/* ======================================================================================
+ *  IWindow.h:
+ *      Base Class Interface for system managed windows. This class defines global 
+ *      system window functionalities.
+ *
+ *  By:
+ *    Yanis Oulmane
+====================================================================================== */
 
 #pragma once
 
 #include "Core/Defines/Windows/windowsAPI.h"
-#include "Core/OptimEngineGlobal.h"
+#include "Core/OptimEngine.h"
 
 #include <string>
 
@@ -41,7 +41,6 @@ public:
 
   void display() const;
   void windowLoop();
-  MSG m_msg;
 
 protected:
   Application* m_pApplication;

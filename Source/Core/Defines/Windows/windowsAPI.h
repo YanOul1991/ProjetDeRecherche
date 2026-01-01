@@ -9,11 +9,8 @@
  *
  *  By:
  *    Yanis Oulmane
- *
- * --------------------------------------------------------------------------------------
- *  TODO
- *
 ====================================================================================== */
+
 #pragma once
 
 #include "Core/Types/string.h"
@@ -37,6 +34,7 @@
   #pragma comment(lib, "user32")
   #pragma comment(lib, "gdi32")
 
+// Shortcut for ComPtr
 
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -69,5 +67,4 @@ namespace op::sys::windows
     return errMsg;
   }
 }
-
 #endif

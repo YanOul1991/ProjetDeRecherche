@@ -6,33 +6,30 @@
 
 #pragma once
 
-#include <Core/OptimEngineGlobal.h>
+#include "Core/OptimEngine.h"
 
 class String;
 
-namespace op
+class CORE_API Exception
 {
-  class CORE_API Exception
-  {
-  public:
-    Exception(int line, const wchar* file, const wchar* message) noexcept;
-    Exception(int line, const wchar* file, String&& message);
-    ~Exception() noexcept;
+public:
+  Exception(int line, const wchar* file, const wchar* message) noexcept;
+  Exception(int line, const wchar* file, String&& message);
+  ~Exception() noexcept;
 
-    Exception(int line, const wchar* file, int errorCode, const wchar* errorString, String&& message);
+  Exception(int line, const wchar* file, int errorCode, const wchar* errorString, String&& message);
 
-    const wchar*  what()      const noexcept;
-    const String  whatDescriptive()      const noexcept;
-    const wchar*  type()      const noexcept;
-    const wchar*  getFile()   const noexcept;
-    int           getLine()   const noexcept;
-    int           getErrorCode() const;
+  const wchar*  what()              const noexcept;
+  const String  whatDescriptive()   const noexcept;
+  const wchar*  type()              const noexcept;
+  const wchar*  getFile()           const noexcept;
+  int           getLine()           const noexcept;
+  int           getErrorCode()      const;
 
-  private:
-    const int m_line;
-    const int m_errorCode;
-    const wchar* m_file;
-    const wchar* m_errorString;
-    String m_message;
-  };
-}
+private:
+  const int m_line;
+  const int m_errorCode;
+  const wchar* m_file;
+  const wchar* m_errorString;
+  String m_message;
+};

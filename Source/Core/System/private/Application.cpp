@@ -11,7 +11,7 @@
 #pragma once
 
 // Optim Engine libraries
-#include "Core/Rendering/IRenderingModule.h"
+#include "Core/Graphics/IGraphicsModule.h"
 #include "Core/System/IWindow.h"
 #include "Core/Input/Input.h"
 #include "Core/Time/Time.h"
@@ -79,7 +79,7 @@ void Application::ApplicationStart()
 
     if (hmod == nullptr) THROW_EXCEPTION(TEXT("Could not load the module at \"bin/directx11_ri.dll\""));
 
-    IRenderingModule* (*pProc)() = (IRenderingModule* (*)())GetProcAddress(hmod, "CreateDirect3D11Module");
+    IGraphicsModule* (*pProc)() = (IGraphicsModule* (*)())GetProcAddress(hmod, "CreateDirect3D11Module");
 
     if (pProc)
     {
@@ -88,7 +88,7 @@ void Application::ApplicationStart()
     }
     m_shouldRun = true;
   }
-  catch (const op::Exception& e)
+  catch (const Exception& e)
   {
     String fullMessage = String(e.whatDescriptive());
     MessageBoxW(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
@@ -129,7 +129,7 @@ void Application::ApplicationLoop()
     __last        = __now;
     m_runtime     += __deltaTime;
   }
-  catch (const op::Exception& e)
+  catch (const Exception& e)
   {
     String fullMessage = String(e.type());
     fullMessage 

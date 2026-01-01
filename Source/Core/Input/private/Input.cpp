@@ -8,7 +8,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
-#include "Core/OptimEngineGlobal.h"
+#include "Core/OptimEngine.h"
 #include "Core/Input/Input.h"
 
 #include <Windows.h>

@@ -1,16 +1,14 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      + string.h :
-          Declarations of Optim Engine String class.
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+/* ======================================================================================
+ *  string.h:
+ *
+ *  By:
+ *    Yanis Oulmane
+ *
+====================================================================================== */
 
 #pragma once
 
-#include <Core/OptimEngineGlobal.h>
+#include "Core/OptimEngine.h"
 
 class CORE_API String final
 {

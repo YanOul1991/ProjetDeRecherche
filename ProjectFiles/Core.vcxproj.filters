@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="..\Source\Core\OptimEngineGlobal.h" />
+    <ClInclude Include="..\Source\Core\OptimEngine.h" />
     <ClInclude Include="..\Source\Core\System\Application.h">
       <Filter>System</Filter>
     </ClInclude>
@@ -11,14 +11,8 @@
     <ClInclude Include="..\Source\Core\Input\Input.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Rendering\IRenderingModule.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Time\Time.h">
       <Filter>Time</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Color\Color.h">
-      <Filter>Defines\Color</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Exception\exception.h">
       <Filter>Exception</Filter>
@@ -28,6 +22,18 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h">
       <Filter>Defines\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Color\Color.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Defines\DirectX\msDx11.h">
+      <Filter>Defines\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\SVertex.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -42,9 +48,6 @@
     </Filter>
     <Filter Include="Input\private">
       <UniqueIdentifier>{49c719f4-1922-4239-920d-6a8356d84c8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Rendering">
-      <UniqueIdentifier>{e5fc91cc-ec0b-4f00-be8d-d8b5f5e3a04b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Time">
       <UniqueIdentifier>{dc7f4020-7457-4671-82ab-65bcf3eafb46}</UniqueIdentifier>
@@ -70,8 +73,11 @@
     <Filter Include="Defines\Windows">
       <UniqueIdentifier>{c2df1b5f-c9a8-40b3-a1b0-b34957c4ab83}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Defines\Color">
-      <UniqueIdentifier>{5c58de70-61d3-40a3-9ca3-fc5977722f8e}</UniqueIdentifier>
+    <Filter Include="Defines\DirectX">
+      <UniqueIdentifier>{d06328ea-fc60-45fb-bc5b-fda443820b49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{e5fc91cc-ec0b-4f00-be8d-d8b5f5e3a04b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\Color\Color.h" />
+    <ClInclude Include="..\Source\Core\Defines\DirectX\msDx11.h" />
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h" />
     <ClInclude Include="..\Source\Core\Exception\exception.h" />
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h" />
+    <ClInclude Include="..\Source\Core\Graphics\SVertex.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
-    <ClInclude Include="..\Source\Core\OptimEngineGlobal.h" />
-    <ClInclude Include="..\Source\Core\Rendering\IRenderingModule.h" />
+    <ClInclude Include="..\Source\Core\OptimEngine.h" />
     <ClInclude Include="..\Source\Core\System\Application.h" />
     <ClInclude Include="..\Source\Core\System\IWindow.h" />
     <ClInclude Include="..\Source\Core\Time\Time.h" />

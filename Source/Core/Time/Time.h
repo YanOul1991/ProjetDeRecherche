@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Core/OptimEngineGlobal.h"
+#include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 
 #include <chrono>

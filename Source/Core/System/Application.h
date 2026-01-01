@@ -1,22 +1,18 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      + Application.h :
-          This class serves as a central module that 
-          managed lifetimes of other Engine implemented 
-          modules, and manages the life time of the 
-          application.
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+/* ======================================================================================
+ *  Application.h:
+ *      This class serves as a central module that managed lifetimes of other Engine 
+ *      implemented modules, and manages the life time of the application.
+ * 
+ *  By:
+ *    Yanis Oulmane
+====================================================================================== */
 
 #pragma once
 
-#include "Core/OptimEngineGlobal.h"
+#include "Core/OptimEngine.h"
 
 class SystemWindow;
-class IRenderingModule;
+class IGraphicsModule;
 class IWindow;
 
 namespace op 
@@ -43,7 +39,7 @@ private:
   //SystemWindow* m_pEditorOsWindow; //Pointer to the editor OS managed main window.
 
   IWindow* m_pWindow;     // Pointer to os managed windows
-  IRenderingModule* m_pRenderModule;
+  IGraphicsModule* m_pRenderModule;
   op::SInput* m_pInput;
   //MSG m_msg;
 

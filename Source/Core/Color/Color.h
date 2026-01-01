@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Core/OptimEngineGlobal.h>
+#include "Core/OptimEngine.h"
 
 namespace op::color
 { 

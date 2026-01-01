@@ -9,9 +9,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
-#include "Core/OptimEngineGlobal.h"
-#include "Core/Defines/Windows/windowsAPI.h"
-
+#include "Core/OptimEngine.h"
 #include "Core/Types/string.h"
 
 #include <vector>

@@ -6,30 +6,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
 #include "Core/Types/string.h"
-
 #include "Core/Exception/exception.h"
 #include <string>
 #include <sstream>
 #include <iomanip>
 
-op::Exception::Exception(int line, const wchar* file, const wchar* message) noexcept :
+Exception::Exception(int line, const wchar* file, const wchar* message) noexcept :
   m_line{ line },
   m_file{ file },
   m_message{ String(message) },
   m_errorCode { 0 }
 { }
 
-op::Exception::Exception(int line, const wchar* file, String&& message) :
+Exception::Exception(int line, const wchar* file, String&& message) :
   m_line{ line }, 
   m_file{ file }, 
   m_message{ message }, 
   m_errorCode{ 0 }
 { }
 
-op::Exception::~Exception() noexcept
+Exception::~Exception() noexcept
 { }
 
-op::Exception::Exception(int line, const wchar * file, int errorCode, const wchar* errorString, String&& message) :
+Exception::Exception(int line, const wchar * file, int errorCode, const wchar* errorString, String&& message) :
   m_line { line },
   m_file { file },
   m_errorCode { errorCode },
@@ -38,12 +37,12 @@ op::Exception::Exception(int line, const wchar * file, int errorCode, const wcha
 {
 }
 
-const wchar* op::Exception::what() const noexcept
+const wchar* Exception::what() const noexcept
 {
   return m_message.value();
 }
 
-const String op::Exception::whatDescriptive() const noexcept
+const String Exception::whatDescriptive() const noexcept
 {
   std::wstringstream wss;
   wss
@@ -57,22 +56,22 @@ const String op::Exception::whatDescriptive() const noexcept
   return String(wss.str().c_str());
 }
 
-const wchar* op::Exception::type() const noexcept
+const wchar* Exception::type() const noexcept
 {
   return TEXT("Optim Engine Exception");
 }
 
-const wchar* op::Exception::getFile() const noexcept
+const wchar* Exception::getFile() const noexcept
 {
   return m_file;
 }
 
-int op::Exception::getLine() const noexcept
+int Exception::getLine() const noexcept
 {
   return m_line;
 }
 
-int op::Exception::getErrorCode() const
+int Exception::getErrorCode() const
 {
     return m_errorCode;
 }

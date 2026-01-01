@@ -10,20 +10,15 @@
 
 #pragma once
 
-// Optim Engine
+#include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
-
-#include "Core/OptimEngineGlobal.h"
-
 #include "Core/Time/Time.h"
 #include "Core/Exception/exception.h"
 #include "Core/System/Application.h"
-
 #include "Core/System/IWindow.h"
 
 // Standard Library
 #include <iostream>
-
 // System Specifics
 #if defined(OS_WINDOWS)
   #include <dwmapi.h>
@@ -84,18 +79,20 @@ void IWindow::display() const
 void IWindow::windowLoop()
 {
 #if defined(OS_WINDOWS)
-		while (PeekMessageW(&m_msg, 0, 0, 0, PM_REMOVE) > 0)
+	static MSG m_msg;
+
+	while (PeekMessageW(&m_msg, 0, 0, 0, PM_REMOVE) > 0)
+	{
+		if (m_msg.message == WM_QUIT)
 		{
-			if (m_msg.message == WM_QUIT)
-			{
-				m_pApplication->Quit();
-			}
-			else
-			{
-				TranslateMessage(&m_msg);
-				DispatchMessageW(&m_msg);
-			}
+			m_pApplication->Quit();
 		}
+		else
+		{
+			TranslateMessage(&m_msg);
+			DispatchMessageW(&m_msg);
+		}
+	}
 #endif
 }
 
