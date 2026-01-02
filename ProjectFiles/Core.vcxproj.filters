@@ -35,6 +35,9 @@
     <ClInclude Include="..\Source\Core\Graphics\SVertex.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Defines\Windows\WindowsProcs.h">
+      <Filter>Defines\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -79,6 +82,9 @@
     <Filter Include="Graphics">
       <UniqueIdentifier>{e5fc91cc-ec0b-4f00-be8d-d8b5f5e3a04b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Defines\Windows\Private">
+      <UniqueIdentifier>{6c3ddf29-d4be-440b-82a2-37295e351ce7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -98,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp">
       <Filter>Exception\private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Defines\Windows\Private\WindowsProcs.cpp">
+      <Filter>Defines\Windows\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

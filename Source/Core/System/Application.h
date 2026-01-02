@@ -35,14 +35,13 @@ public:
   static float getRuntime();
 
 private:
-  bool m_shouldRun; // Should the application continue running/looping.
-  //SystemWindow* m_pEditorOsWindow; //Pointer to the editor OS managed main window.
+  bool m_shouldRun; 
 
   IWindow* m_pWindow;     // Pointer to os managed windows
-  IGraphicsModule* m_pRenderModule;
-  op::SInput* m_pInput;
-  //MSG m_msg;
 
+  IGraphicsModule* m_pRenderModule;
+
+  op::SInput* m_pInput;
   static float m_runtime;
 };
 

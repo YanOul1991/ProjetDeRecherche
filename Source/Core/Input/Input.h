@@ -10,12 +10,9 @@
 
 #pragma once
 
-class Application;
-
-namespace op
+class CORE_API Mouse
 {
-  struct SInput
-  {
-    bool (initialize)(void* _pApplication_, void* _pWindowHandle_);
-  };
-}
+public:
+  static int posX;
+  static int posY;
+};

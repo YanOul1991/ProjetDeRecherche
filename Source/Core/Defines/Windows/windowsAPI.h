@@ -43,7 +43,6 @@ namespace op::sys::windows
 {
   // Help function to translate HRESULT codes into
   // descriptive text.
-
   inline String translateError(HRESULT hr)
   {
     wchar* msgBuffer = nullptr;

@@ -14,10 +14,13 @@
  * 
 ====================================================================================== */
 
+#include "Core/System/Application.h"
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
-#include "Core/System/Application.h"
+#include "Core/Input/Input.h"
+
 #include "DirectX11Graphics.h"
+
 #include <iostream>
 
 #define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
@@ -43,7 +46,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   m_swapChainDesc.BufferDesc.Width              = 0;
   m_swapChainDesc.BufferDesc.Height             = 0;
   m_swapChainDesc.BufferDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
-  m_swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING_CENTERED;
+  m_swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING_UNSPECIFIED;
   m_swapChainDesc.BufferDesc.ScanlineOrdering   = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 
   m_swapChainDesc.BufferDesc.RefreshRate.Numerator    = 0;
@@ -121,19 +124,52 @@ void DirectX11Graphics::drawTriangle()
     } Color;
   };
 
+  float ndcX = ((float)Mouse::posX / 1920) * 2 - 1.0f;
+  float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
+
+  Vertex  bottomLeft   {};
+  Vertex  topLeft      {};
+  Vertex  bottomRight  {};
+  Vertex  topRight     {};
+
+  bottomLeft  .Position = { ((1920.0 / 2 - 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 + 100.0f) / 1080)  * 2 + 1.0f};
+  topLeft     .Position = { ((1920.0 / 2 - 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 - 100.0f) / 1080)  * 2 + 1.0f};
+  bottomRight .Position = { ((1920.0 / 2 + 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 + 100.0f) / 1080)  * 2 + 1.0f};
+  topRight    .Position = { ((1920.0 / 2 + 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 - 100.0f) / 1080)  * 2 + 1.0f};
+
+  //bottomLeft  .Position = { -0.10f, -0.10f };
+  //topLeft     .Position = { -0.10f,  0.10f };
+  //bottomRight .Position = {  0.10f, -0.10f };
+  //topRight    .Position = {  0.10f,  0.10f };
+
+  //bottomLeft.Color = { 255, 255, 255, 0 };
+
   Vertex vertices[] =
   {
+    //bottomLeft,
+    //topLeft,
+    //bottomRight,
+    //topRight
     //{ -1.0f , -1.0f ,  255, 255, 255, 0 },
     //{ -1.0f , 1.0f ,  255, 255, 255, 0 },
     //{ -0.7f , -1.0f ,  255, 255, 255, 0 },
     //{ -0.7f , 1.0f ,  255, 255, 255, 0 },
 
-    { -0.25f, -0.25f, 128, 128, 000, 000 },
-    { -0.25f, 0.25f, 128, 128, 000, 000 },
-    { 0.25f, -0.25f, 128, 128, 000, 000 },
-    { 0.25f, 0.25f, 128, 128, 000, 000 },
+    { -0.10f, -0.10f, 128, 128, 000, 000 },
+    { -0.10f,  0.10f, 128, 128, 000, 000 },
+    {  0.10f, -0.10f, 128, 128, 000, 000 },
+    {  0.10f,  0.10f, 128, 128, 000, 000 },
   };
 
+  //vertices[0].Color = { 255, 255, 255, 0 };
+  //vertices[1].Color = { 255, 255, 255, 0 };
+  //vertices[2].Color = { 255, 255, 255, 0 };
+  //vertices[3].Color = { 255, 255, 255, 0 };
+
+  for (size_t i = 0; i < std::size(vertices); i++)
+  {
+    vertices[i].Color = { 255, 255, 255, 0 };
+  }
   /// ///////////////////// CREATE VERTEX BUFFER
 
   ComPtr<ID3D11Buffer>      _pVertexBuffer;
@@ -201,7 +237,7 @@ void DirectX11Graphics::drawTriangle()
     //  0.0f, 0.0f, 0.0f, 1.0f,
     //}
     {
-      DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixScaling(3.0f / 4.0f, 1.0f, 1.0f))
+      DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixScaling(1080.0f / 1920.0f, 1.0f, 1.0f) * DirectX::XMMatrixTranslation(ndcX, ndcY, 0.0f))
     }
   };
 
@@ -273,12 +309,12 @@ void DirectX11Graphics::drawTriangle()
   
   // Configure Viewport
   D3D11_VIEWPORT vp{};
-  vp.Width    = 800;
-  vp.Height   = 450;
+  vp.Width    = 1920;
+  vp.Height   = 1080;
   vp.MinDepth = 0;
   vp.MaxDepth = 1;
-  vp.TopLeftX = (1920 / 2) - 400;
-  vp.TopLeftY = (1080 / 2) - 275;
+  vp.TopLeftX = 0;
+  vp.TopLeftY = 0;
 
   m_pDeviceContext->RSSetViewports(1u, &vp);
 

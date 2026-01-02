@@ -56,6 +56,7 @@ float Application::getRuntime()
 
 void Application::Quit() 
 { 
+  MessageBox(0, TEXT("Quit function called"), TEXT("Debug"), MB_OK);
   m_shouldRun = false;
 }
 
@@ -70,11 +71,9 @@ void Application::ApplicationStart()
     // Allocate resources to create a new system managed Window
     m_pWindow = new IWindow;
     if (!m_pWindow) return;
-    if (!m_pWindow->create(this, TEXT("Optim Engine"), 0, 0, 500, 500, nullptr)) return;
-    m_pWindow->display();
+    if (!m_pWindow->create(this, TEXT("Optim Engine | <DirectX11>"), 0, 0, 500, 500, nullptr)) return;
 
     // Load Direct3d11 runtime module
-
     HMODULE hmod = LoadLibraryW(TEXT("bin/directx11_ri.dll"));
 
     if (hmod == nullptr) THROW_EXCEPTION(TEXT("Could not load the module at \"bin/directx11_ri.dll\""));
@@ -116,13 +115,25 @@ void Application::ApplicationLoop()
 
     if (!m_shouldRun) return;
 
-    m_pWindow->windowLoop();
+    if (m_pWindow->windowLoop())
+    {
+      MessageBox(0, TEXT("Quit message for windows recieved"), TEXT("Debug"), MB_OK);
+      Quit();
+      return;
+    }
+
     m_pRenderModule->draw();
 
-    String winText = TEXT("Optim Engine - DirectX11");
-    //winText += m_runtime;
+    //String winText = TEXT("Optim Engine <DirectX11>");
 
-    SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
+    //float ndcX = ((float)Mouse::posX / 1920) * 2 - 1.0f;
+    //float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
+
+    //float testX = ((1920.0 / 2 - 100.0f) / 1920) * 2 - 1.0f;
+
+    //winText += String(TEXT(" | ")) + String(testX) + String(TEXT(", ")) + String(Mouse::posY);
+
+    //SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
 
     __now         = op::time::nowHighFreq();
     __deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
@@ -153,6 +164,7 @@ void Application::ApplicationLoop()
 
 void Application::ApplicationQuit()
 { 
+  MessageBox(0, TEXT("ApplicationQuit Function called"), TEXT("Debug"), MB_OK);
   // Free resources
   delete(m_pRenderModule);
   delete(m_pWindow);

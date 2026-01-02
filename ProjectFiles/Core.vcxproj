@@ -22,6 +22,7 @@
     <ClInclude Include="..\Source\Core\Color\Color.h" />
     <ClInclude Include="..\Source\Core\Defines\DirectX\msDx11.h" />
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h" />
+    <ClInclude Include="..\Source\Core\Defines\Windows\WindowsProcs.h" />
     <ClInclude Include="..\Source\Core\Exception\exception.h" />
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h" />
     <ClInclude Include="..\Source\Core\Graphics\SVertex.h" />
@@ -33,6 +34,7 @@
     <ClInclude Include="..\Source\Core\Types\string.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Core\Defines\Windows\Private\WindowsProcs.cpp" />
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
