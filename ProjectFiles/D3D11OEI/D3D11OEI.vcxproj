@@ -26,16 +26,6 @@
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\IDirect3D11.cpp" />
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Source\Shader\PixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Builds\bin\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="..\..\Source\Shader\VertexShader.hlsl">
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Builds\bin\%(Filename).cso</ObjectFileOutput>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-    </FxCompile>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

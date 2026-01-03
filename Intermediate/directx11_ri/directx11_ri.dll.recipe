@@ -5,14 +5,7 @@
       <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\directx11_ri.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
-  <ContentFiles>
-    <ContentFile>
-      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\PixelShader.cso</FullPath>
-    </ContentFile>
-    <ContentFile>
-      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\VertexShader.cso</FullPath>
-    </ContentFile>
-  </ContentFiles>
+  <ContentFiles />
   <SatelliteDlls />
   <NonRecipeFileRefs />
 </Project>

@@ -124,7 +124,7 @@ void Application::ApplicationLoop()
 
     m_pRenderModule->draw();
 
-    //String winText = TEXT("Optim Engine <DirectX11>");
+    String winText = TEXT("Optim Engine <DirectX11>");
 
     //float ndcX = ((float)Mouse::posX / 1920) * 2 - 1.0f;
     //float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
@@ -133,7 +133,9 @@ void Application::ApplicationLoop()
 
     //winText += String(TEXT(" | ")) + String(testX) + String(TEXT(", ")) + String(Mouse::posY);
 
-    //SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
+    winText += String(TEXT(" ")) + String(static_cast<int>(1.0f / __deltaTime)) + TEXT("fps");
+
+    SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
 
     __now         = op::time::nowHighFreq();
     __deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
