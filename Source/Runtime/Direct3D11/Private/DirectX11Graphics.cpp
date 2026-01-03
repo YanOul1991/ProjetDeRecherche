@@ -104,7 +104,7 @@ void DirectX11Graphics::clearBuffer(const op::color::ColorRgb fillColor)
   m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
 }
 
-void DirectX11Graphics::drawTriangle()
+void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX, float __posY)
 {
   HRESULT hr = S_OK;
   struct Vertex
@@ -115,55 +115,21 @@ void DirectX11Graphics::drawTriangle()
       float y;
       float z;
     } Position;
-
-    struct
-    {
-      uint8 r;
-      uint8 g;
-      uint8 b;
-      uint8 a;
-    } Color;
   };
 
   float ndcX = ((float)Mouse::posX / 1920) * 2 - 1.0f;
   float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
 
-  Vertex  bottomLeft   {};
-  Vertex  topLeft      {};
-  Vertex  bottomRight  {};
-  Vertex  topRight     {};
-
-  //bottomLeft  .Position = { ((1920.0 / 2 - 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 + 100.0f) / 1080)  * 2 + 1.0f};
-  //topLeft     .Position = { ((1920.0 / 2 - 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 - 100.0f) / 1080)  * 2 + 1.0f};
-  //bottomRight .Position = { ((1920.0 / 2 + 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 + 100.0f) / 1080)  * 2 + 1.0f};
-  //topRight    .Position = { ((1920.0 / 2 + 100.0f) / 1920) * 2 - 1.0f,   -((1080 / 2 - 100.0f) / 1080)  * 2 + 1.0f};
-
-  //bottomLeft  .Position = { -0.10f, -0.10f };
-  //topLeft     .Position = { -0.10f,  0.10f };
-  //bottomRight .Position = {  0.10f, -0.10f };
-  //topRight    .Position = {  0.10f,  0.10f };
-
-  //bottomLeft.Color = { 255, 255, 255, 0 };
-
   Vertex vertices[] =
   {
-    { -0.5f, -0.5f, -0.5f, 255, 000, 000, 0 }, // 0  
-    {  0.5f, -0.5f, -0.5f, 000, 255, 000, 0 }, // 1  
-    { -0.5f,  0.5f, -0.5f, 000, 000, 255, 0 }, // 2  
-    {  0.5f,  0.5f, -0.5f, 255, 255, 000, 0 }, // 3  
-    { -0.5f, -0.5f,  0.5f, 255, 000, 255, 0 }, // 4  
-    {  0.5f, -0.5f,  0.5f, 000, 255, 255, 0 }, // 5  
-    { -0.5f,  0.5f,  0.5f, 000, 000, 000, 0 }, // 6  
-    {  0.5f,  0.5f,  0.5f, 255, 255, 255, 0 }  // 7
-
-    //{ -0.2f, -0.2f, -0.2f, 255, 000, 000, 0 }, // 0  
-    //{  0.2f, -0.2f, -0.2f, 000, 255, 000, 0 }, // 1  
-    //{ -0.2f,  0.2f, -0.2f, 000, 000, 255, 0 }, // 2  
-    //{  0.2f,  0.2f, -0.2f, 255, 255, 000, 0 }, // 3  
-    //{ -0.2f, -0.2f,  0.2f, 255, 000, 255, 0 }, // 4  
-    //{  0.2f, -0.2f,  0.2f, 000, 255, 255, 0 }, // 5  
-    //{ -0.2f,  0.2f,  0.2f, 000, 000, 000, 0 }, // 6  
-    //{  0.2f,  0.2f,  0.2f, 255, 255, 255, 0 }  // 7
+    { -0.5f, -0.5f, -0.5f }, // 0  
+    {  0.5f, -0.5f, -0.5f }, // 1  
+    { -0.5f,  0.5f, -0.5f }, // 2  
+    {  0.5f,  0.5f, -0.5f }, // 3  
+    { -0.5f, -0.5f,  0.5f }, // 4  
+    {  0.5f, -0.5f,  0.5f }, // 5  
+    { -0.5f,  0.5f,  0.5f }, // 6  
+    {  0.5f,  0.5f,  0.5f }  // 7
   };
 
   /// ///////////////////// CREATE VERTEX BUFFER
@@ -236,9 +202,9 @@ void DirectX11Graphics::drawTriangle()
     //}
     {
       DirectX::XMMatrixTranspose(
-        DirectX::XMMatrixRotationY(-ndcX) * 
-        DirectX::XMMatrixRotationX(ndcY) * 
-        DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f) *
+        DirectX::XMMatrixRotationY(__angle) * 
+        DirectX::XMMatrixRotationX(__angle) * 
+        DirectX::XMMatrixTranslation(__offset + __posX * 2, 0.0f, 5.0f + __posY * 2) *
         DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
       )
     }
@@ -250,10 +216,10 @@ void DirectX11Graphics::drawTriangle()
 
   constBufferDesc.ByteWidth           = sizeof(cb);
   constBufferDesc.StructureByteStride = 0;
-  constBufferDesc.Usage               = D3D11_USAGE_DYNAMIC;
+  constBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
   constBufferDesc.BindFlags           = D3D11_BIND_CONSTANT_BUFFER;
-  constBufferDesc.CPUAccessFlags      = D3D11_CPU_ACCESS_WRITE;
-  constBufferDesc.MiscFlags           = 0u;
+  constBufferDesc.CPUAccessFlags      = 0;
+  constBufferDesc.MiscFlags           = 0;
   
   constBufferSubResData.pSysMem = &cb;
   OPTIM_TRY_DX(m_pDevice->CreateBuffer(&constBufferDesc, &constBufferSubResData, &pConstBuffer));
@@ -275,12 +241,12 @@ void DirectX11Graphics::drawTriangle()
 	const ConstantBufferColor colorBuffer =
 	{
 		{
-		  { 1.0f, 0.0f, 1.0f, 0.0f }, // face 1
-		  { 1.0f, 0.0f, 0.0f, 0.0f }, // face 2
-		  { 0.0f, 1.0f, 0.0f, 0.0f }, // face 3
-		  { 0.0f, 0.0f, 1.0f, 0.0f }, // face 4
-		  { 1.0f, 1.0f, 0.0f, 0.0f }, // face 5
-		  { 0.0f, 1.0f, 1.0f, 0.0f }  // face 6
+		  { 1.0f, 0.0f, 1.0f }, // face 1
+		  { 1.0f, 0.0f, 0.0f }, // face 2
+		  { 0.0f, 1.0f, 0.0f }, // face 3
+		  { 0.0f, 0.0f, 1.0f }, // face 4
+		  { 1.0f, 1.0f, 0.0f }, // face 5
+		  { 0.0f, 1.0f, 1.0f }  // face 6
     }
 	};
 
@@ -299,9 +265,9 @@ void DirectX11Graphics::drawTriangle()
 
   colorBufferSubresData.pSysMem = &colorBuffer;
 
-  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&colorBufferDesc, &colorBufferSubresData, &pConstBuffer));
+  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&colorBufferDesc, &colorBufferSubresData, &pConstBufferColor));
 
-  m_pDeviceContext->VSSetConstantBuffers(0, 1, pConstBufferColor.GetAddressOf()); // Bind
+  m_pDeviceContext->PSSetConstantBuffers(0, 1, pConstBufferColor.GetAddressOf());
 
   /* ===================================
       SHADERS LOADING
@@ -331,8 +297,7 @@ void DirectX11Graphics::drawTriangle()
   ComPtr<ID3D11InputLayout> pInputLayout;
   const D3D11_INPUT_ELEMENT_DESC ied[] =
   {
-    {"Position" , 0,  DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,   D3D11_INPUT_PER_VERTEX_DATA,  0 },
-    {"Color"    , 0,  DXGI_FORMAT_R8G8B8A8_UNORM,   0, 12u,  D3D11_INPUT_PER_VERTEX_DATA,  0 }
+    {"Position" , 0,  DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,   D3D11_INPUT_PER_VERTEX_DATA,  0 }
   };
 
   OPTIM_TRY_DX(m_pDevice->CreateInputLayout(ied, std::size(ied), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout));

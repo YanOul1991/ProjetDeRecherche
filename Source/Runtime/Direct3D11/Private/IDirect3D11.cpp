@@ -13,6 +13,8 @@
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
 #include "DirectX11Graphics.h"
+#include "Core/System/Application.h"
+#include "Core/Input/Input.h"
 
 #include "Runtime/Direct3D11/IDirect3D11.h"
 
@@ -46,7 +48,13 @@ void IDirect3D11::Initialize(void* _WindowHandle)
 void IDirect3D11::draw()
 {
   m_pBase->clearBuffer({ (34.0f / 255.0f), (38.0f / 255.0f), (92.0f / 255.0f) , 1.0f });
-  m_pBase->drawTriangle();
+
+  float angle = Application::getRuntime();
+  float ndcX =  ((float)Mouse::posX / 1920) * 2 - 1.0f;
+  float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
+
+  m_pBase->drawTriangle(-0.25f,  angle, ndcX, ndcY);
+  m_pBase->drawTriangle( 0.25f, -angle, 0, 0);
   m_pBase->presentBuffer();
 }
 

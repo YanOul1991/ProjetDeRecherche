@@ -35,7 +35,7 @@ public:
   void presentBuffer();
   void clearBuffer(float red, float green, float blue);
   void clearBuffer(const op::color::ColorRgb fillColor);
-  void drawTriangle();
+  void drawTriangle(float __offset, float __angle, float __posX, float __posY);
 
 private:
   ComPtr<ID3D11Device>            m_pDevice;
