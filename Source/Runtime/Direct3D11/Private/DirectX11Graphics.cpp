@@ -43,8 +43,8 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   // Set Swap chain description -> DXGI_MODE_DESC
 
-  m_swapChainDesc.BufferDesc.Width              = 0;
-  m_swapChainDesc.BufferDesc.Height             = 0;
+  m_swapChainDesc.BufferDesc.Width              = 1920;
+  m_swapChainDesc.BufferDesc.Height             = 1080;
   m_swapChainDesc.BufferDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
   m_swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING_UNSPECIFIED;
   m_swapChainDesc.BufferDesc.ScanlineOrdering   = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
@@ -89,19 +89,63 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   OPTIM_TRY_DX(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &_pBackbuffer));
   OPTIM_TRY_DX(m_pDevice->CreateRenderTargetView(_pBackbuffer.Get(), nullptr, &m_pRenderTargetView));
 
-  return SUCCEEDED(hr) == TRUE;
+  /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      DEPTH BUFFER SETTING
+  +++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
+  // Create Depth stencil state
+  D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+  dsDesc.DepthEnable    = TRUE;
+  dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+  dsDesc.DepthFunc      = D3D11_COMPARISON_LESS;
+  ComPtr<ID3D11DepthStencilState> pDepthStencilState;
+  OPTIM_TRY_DX(m_pDevice->CreateDepthStencilState(&dsDesc, &pDepthStencilState));
+
+  // Bind depth state | OM -> Output Merger 
+  m_pDeviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), 1);
+
+  // Create depth stencil texture
+  ComPtr<ID3D11Texture2D> pDepthStencil;
+  D3D11_TEXTURE2D_DESC depthDesc = {};
+  depthDesc.Width       = 1920;
+  depthDesc.Height      = 1080;
+  depthDesc.MipLevels   = 1u;
+  depthDesc.ArraySize   = 1u;
+  depthDesc.Format      = DXGI_FORMAT_D32_FLOAT; // D32_FLOAT -> Depth 32bit floating point value
+  depthDesc.Usage       = D3D11_USAGE_DEFAULT;
+  depthDesc.BindFlags   = D3D11_BIND_DEPTH_STENCIL;
+
+  depthDesc.SampleDesc.Count    = 1;
+  depthDesc.SampleDesc.Quality  = 0;
+
+  OPTIM_TRY_DX(m_pDevice->CreateTexture2D(&depthDesc, nullptr, &pDepthStencil));
+
+  // Create view of depth stencil texture
+  D3D11_DEPTH_STENCIL_VIEW_DESC descDSV{};
+
+  descDSV.Format              = DXGI_FORMAT_D32_FLOAT;
+  descDSV.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D;
+  descDSV.Texture2D.MipSlice  = 0u;
+
+  OPTIM_TRY_DX(m_pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &m_pDepthStencilView));
+
+  // Bind depth stencil view
+  m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
+  return true;
 }
 
 void DirectX11Graphics::clearBuffer(float red, float green, float blue)
 {
   const float color[] = { red, green, blue, 1.0f };
   m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
+  m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void DirectX11Graphics::clearBuffer(const op::color::ColorRgb fillColor)
 {
   float color[4]{fillColor.r, fillColor.g, fillColor.b, fillColor.a};
   m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
+  m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX, float __posY)
@@ -314,10 +358,6 @@ void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX
   // Bind Vertex shader
   m_pDeviceContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
 
-  // Bind Render Target
-  m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
-
-  
   // Configure Viewport
   D3D11_VIEWPORT vp{};
   vp.Width    = 1920;
