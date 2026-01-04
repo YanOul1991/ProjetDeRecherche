@@ -135,7 +135,9 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   // Bind depth stencil view
   m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 
+  /// ///////////////////////////////////////////////////
   /// ////////////////////// TESTING
+  /// ///////////////////////////////////////////////////
 
   // Initializtion of vertex and index buffer testing values.
   __t_vertexData = new SGFXVertex[8] 
@@ -188,6 +190,43 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   createBuffer(__t_constBufferColor);
 
+  // Shader Initialization
+
+  __t_material.setPath(TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
+
+  ComPtr<ID3DBlob> pBlob;
+
+  OPTIM_TRY_DX(D3DReadFileToBlob(__t_material.pixelShader.path, &pBlob));
+
+  OPTIM_TRY_DX(m_pDevice->CreatePixelShader(
+    pBlob->GetBufferPointer(), 
+    pBlob->GetBufferSize(), 
+    nullptr, 
+    &__t_material.pixelShader.pShader
+  ));
+
+  OPTIM_TRY_DX(D3DReadFileToBlob(__t_material.vertexShader.path, &pBlob));
+  OPTIM_TRY_DX(m_pDevice->CreateVertexShader(
+    pBlob->GetBufferPointer(), 
+    pBlob->GetBufferSize(), 
+    nullptr, 
+    &__t_material.vertexShader.pShader
+  ));
+
+  const D3D11_INPUT_ELEMENT_DESC ied[] =
+  {
+    {"Position" , 0,  DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,   D3D11_INPUT_PER_VERTEX_DATA,  0 }
+  };
+
+  OPTIM_TRY_DX(m_pDevice->CreateInputLayout(
+    ied, 
+    std::size(ied), 
+    pBlob->GetBufferPointer(), 
+    pBlob->GetBufferSize(), 
+    &__t_material.vertexShader.pInputLayout
+  ));
+
+
   return true;
 }
 
@@ -198,106 +237,21 @@ void DirectX11Graphics::clearBuffer(float red, float green, float blue, float al
   m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-/**************************
-***************************
-**************************/
-
-void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX, float __posY)
-{
-  HRESULT hr = S_OK;
-
-  m_pDeviceContext->IASetVertexBuffers(0u, 1u, __t_VertexBuffer.m_comptr.GetAddressOf(), &__t_VertexBuffer.m_stride, &__t_VertexBuffer.m_offset);
-
-  m_pDeviceContext->IASetIndexBuffer(__t_IndexBuffer.m_comptr.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-  float runtime = Application::getRuntime();
-
-  __t_constBuffer.data =
-  {
-    DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixRotationY(runtime) *
-      DirectX::XMMatrixRotationX(-runtime) *
-      DirectX::XMMatrixTranslation(0, -sin(runtime * 2), 3.0f + sin(runtime * 2))*
-      DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
-    )
-  };
-
-  m_pDeviceContext->UpdateSubresource(__t_constBuffer.m_comptr.Get(), 0, nullptr, &__t_constBuffer.data, 0, 0);
-  m_pDeviceContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
-
-  m_pDeviceContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
-
-  /* ===================================
-      SHADERS LOADING
-  =================================== */
-  ComPtr<ID3DBlob> pBlob;
-
-  //////////////////// PIXEL SHADER START
-  ComPtr<ID3D11PixelShader> pPixelShader;
-
-  OPTIM_TRY_DX(D3DReadFileToBlob(TEXT("bin/PixelShader.cso"), &pBlob));
-
-  OPTIM_TRY_DX(m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
-
-  m_pDeviceContext->PSSetShader(pPixelShader.Get(), nullptr, 0);
-  //////////////////// PIXEL SHADER END
-
-
-  //////////////////// VERTEX SHADER START
-  ComPtr<ID3D11VertexShader> pVertexShader;
-
-  OPTIM_TRY_DX(D3DReadFileToBlob(TEXT("bin/VertexShader.cso"), &pBlob));
-
-  OPTIM_TRY_DX(m_pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
-  //////////////////// VERTEX SHADER END
-
-  // Input (vertx) layout
-  ComPtr<ID3D11InputLayout> pInputLayout;
-  const D3D11_INPUT_ELEMENT_DESC ied[] =
-  {
-    {"Position" , 0,  DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,   D3D11_INPUT_PER_VERTEX_DATA,  0 }
-  };
-
-  OPTIM_TRY_DX(m_pDevice->CreateInputLayout(ied, std::size(ied), pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout));
-
-  /* ===================================
-      INPUT BINDING
-  =================================== */
-  // Set Primitive topology to triangle list;
-  m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-  // Bind Input Layout
-  m_pDeviceContext->IASetInputLayout(pInputLayout.Get());
-
-  // Bind Vertex shader
-  m_pDeviceContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
-
-  // Configure Viewport
-  D3D11_VIEWPORT vp{};
-  vp.Width      = 1920;
-  vp.Height     = 1080;
-  vp.MinDepth   = 0;
-
-  vp.MaxDepth   = 1;
-  vp.TopLeftX   = 0;
-  vp.TopLeftY   = 0;
-
-  m_pDeviceContext->RSSetViewports(1u, &vp);
-
-  //m_pDeviceContext->Draw(std::size(vertices), 0u);
-  m_pDeviceContext->DrawIndexed(__t_IndexBuffer.m_elementCount, 0u, 0u);
-}
-
 void DirectX11Graphics::renderUpdate()
 {
-  m_pDeviceContext->IASetVertexBuffers(0u, 1u, __t_VertexBuffer.m_comptr.GetAddressOf(), &__t_VertexBuffer.m_stride, &__t_VertexBuffer.m_offset);
+  // *** MAY BE CHANGED ***
+  // Assume all topology for all is triangle list
+  m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+   // Bind vertex and index buffers
+  m_pDeviceContext->IASetVertexBuffers(0u, 1u, __t_VertexBuffer.m_comptr.GetAddressOf(), &__t_VertexBuffer.m_stride, &__t_VertexBuffer.m_offset);
   m_pDeviceContext->IASetIndexBuffer(__t_IndexBuffer.m_comptr.Get(), DXGI_FORMAT_R16_UINT, 0);
 
   float runtime = Application::getRuntime();
 
-  __t_constBuffer.data =
-  {
+  // Update subresource for Pixel shader to make cube move 
+  // and rotate in 3D space based on current runtime
+  __t_constBuffer.data = {
     DirectX::XMMatrixTranspose(
       DirectX::XMMatrixRotationY(runtime) *
       DirectX::XMMatrixRotationX(-runtime) *
@@ -305,12 +259,31 @@ void DirectX11Graphics::renderUpdate()
       DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
     )
   };
-
   m_pDeviceContext->UpdateSubresource(__t_constBuffer.m_comptr.Get(), 0, nullptr, &__t_constBuffer.data, 0, 0);
 
+  // Set constant buffer for vertex shader and pixel shader
   m_pDeviceContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
-
   m_pDeviceContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
+
+  // Bind Input Layout
+  m_pDeviceContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
+
+  // Bind Shaders
+  m_pDeviceContext->VSSetShader(__t_material.vertexShader.pShader.Get(), nullptr, 0);
+  m_pDeviceContext->PSSetShader(__t_material.pixelShader.pShader.Get(), nullptr, 0);
+
+  // Configure Viewport
+  D3D11_VIEWPORT vp{};
+  vp.Width = 1920;
+  vp.Height = 1080;
+  vp.MinDepth = 0;
+
+  vp.MaxDepth = 1;
+  vp.TopLeftX = 0;
+  vp.TopLeftY = 0;
+
+  m_pDeviceContext->RSSetViewports(1u, &vp);
+  m_pDeviceContext->DrawIndexed(__t_IndexBuffer.m_elementCount, 0u, 0u);
 }
 
 void DirectX11Graphics::createBuffer(DirectX11Buffer& buffer)

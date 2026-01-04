@@ -1,12 +1,9 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      + IDirect3D11.cpp
-          Definitions for IDirect3D11.h file.
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+/* ======================================================================================
+ *  IDirect3D11.h:
+ *
+ *  By:
+ *    Yanis Oulmane
+====================================================================================== */
 
 
 #include "Core/Time/Time.h"
@@ -49,12 +46,11 @@ void IDirect3D11::draw()
 {
   m_pBase->clearBuffer((34.0f / 255.0f), (38.0f / 255.0f), (92.0f / 255.0f), 1.0f);
 
-  float angle = Application::getRuntime();
-  float ndcX =  ((float)Mouse::posX / 1920) * 2 - 1.0f;
-  float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
+  //float angle = Application::getRuntime();
+  //float ndcX =  ((float)Mouse::posX / 1920) * 2 - 1.0f;
+  //float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
 
   m_pBase->renderUpdate();
-  m_pBase->drawTriangle(0, angle, 0, 0);
   m_pBase->presentBuffer();
 }
 
