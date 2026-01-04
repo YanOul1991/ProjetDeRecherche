@@ -38,6 +38,12 @@
     <ClInclude Include="..\Source\Core\Defines\Windows\WindowsProcs.h">
       <Filter>Defines\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicResource.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Mesh.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">

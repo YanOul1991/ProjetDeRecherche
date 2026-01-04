@@ -34,7 +34,10 @@ DirectX11Graphics::DirectX11Graphics() :
 { }
 
 DirectX11Graphics::~DirectX11Graphics() 
-{ }
+{ 
+  delete[] __t_vertexData;
+  delete[] __t_indexData;
+}
 
 bool DirectX11Graphics::initialize(HWND _outputWindow)
 {
@@ -131,40 +134,11 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   // Bind depth stencil view
   m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-  return true;
-}
 
-void DirectX11Graphics::clearBuffer(float red, float green, float blue)
-{
-  const float color[] = { red, green, blue, 1.0f };
-  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
-  m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-}
+  /// ////////////////////// TESTING
 
-void DirectX11Graphics::clearBuffer(const op::color::ColorRgb fillColor)
-{
-  float color[4]{fillColor.r, fillColor.g, fillColor.b, fillColor.a};
-  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
-  m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-}
-
-void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX, float __posY)
-{
-  HRESULT hr = S_OK;
-  struct Vertex
-  {
-    struct
-    {
-      float x;
-      float y;
-      float z;
-    } Position;
-  };
-
-  float ndcX = ((float)Mouse::posX / 1920) * 2 - 1.0f;
-  float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
-
-  Vertex vertices[] =
+  // Initializtion of vertex and index buffer testing values.
+  __t_vertexData = new SGFXVertex[8] 
   {
     { -0.5f, -0.5f, -0.5f }, // 0  
     {  0.5f, -0.5f, -0.5f }, // 1  
@@ -176,31 +150,12 @@ void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX
     {  0.5f,  0.5f,  0.5f }  // 7
   };
 
-  /// ///////////////////// CREATE VERTEX BUFFER
+  __t_VertexBuffer = VertexBuffer(__t_vertexData, sizeof(SGFXVertex) * 8);
+  createBuffer(__t_VertexBuffer);
 
-  ComPtr<ID3D11Buffer>      _pVertexBuffer;
-  D3D11_BUFFER_DESC         _bufferDesc{};
-  D3D11_SUBRESOURCE_DATA    _subResData{};
+  // Index buffer initialization
 
-  _bufferDesc.ByteWidth           = sizeof(vertices);
-  _bufferDesc.StructureByteStride = sizeof(Vertex);
-  _bufferDesc.Usage               = D3D11_USAGE_DEFAULT;
-  _bufferDesc.BindFlags           = D3D11_BIND_VERTEX_BUFFER;
-  _bufferDesc.CPUAccessFlags      = 0u;
-  _bufferDesc.MiscFlags           = 0u;
-
-  _subResData.pSysMem = vertices;
-
-  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&_bufferDesc, &_subResData, &_pVertexBuffer));
-
-  UINT _stride = sizeof(Vertex);
-  UINT _offset = 0u;
-
-  m_pDeviceContext->IASetVertexBuffers(0u, 1u, _pVertexBuffer.GetAddressOf(), &_stride, &_offset);
-
-  /// ////////////////////// CREATE INDEX BUFFER
-
-  uint16 indices[] =
+  __t_indexData = new uint16[]
   {
     0, 2, 1,  2, 3, 1,
     1, 3, 5,  3, 7, 5,
@@ -210,108 +165,67 @@ void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX
     0, 1, 4,  1, 5, 4
   };
 
-  ComPtr<ID3D11Buffer>      pIndexBuffer;
-  D3D11_BUFFER_DESC         indexBufferDesc{};
-  D3D11_SUBRESOURCE_DATA    indexSubResData{};
+  __t_IndexBuffer = IndexBuffer(__t_indexData, sizeof(uint16) * 36);
+  createBuffer(__t_IndexBuffer);
 
-  indexBufferDesc.ByteWidth           = sizeof(indices);
-  indexBufferDesc.StructureByteStride = sizeof(uint16);
-  indexBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
-  indexBufferDesc.BindFlags           = D3D11_BIND_INDEX_BUFFER;
-  indexBufferDesc.CPUAccessFlags      = 0u;
-  indexBufferDesc.MiscFlags           = 0u;
-  
-  indexSubResData.pSysMem = indices;
 
-  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&indexBufferDesc, &indexSubResData, &pIndexBuffer));
+  // Initialize constant Buffers
+  __t_constBuffer = ConstantBuffer<DirectX::XMMATRIX>(DirectX::XMMatrixIdentity());
+  createBuffer(__t_constBuffer);
 
-  m_pDeviceContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-  /// ////////////////////// CREATE CONSTANT BUFFER
-
-  struct ConstantBuffer
+  __t_constBufferColor = ConstantBuffer<ConstColors>();
+  __t_constBufferColor = ConstColors
   {
-    DirectX::XMMATRIX transform;
-  };
-
-  float angle = Application::getRuntime();
-
-  ConstantBuffer cb =
-  {
-    //{
-    //  (9.0f / 16.0f) * cos(angle), sin(angle), 0.0f, 0.0f,
-    //  (9.0f / 16.0f) * -sin(angle), cos(angle), 0.0f, 0.0f,
-    //  0.0f, 0.0f, 1.0f, 0.0f,
-    //  0.0f, 0.0f, 0.0f, 1.0f,
-    //}
     {
-      DirectX::XMMatrixTranspose(
-        DirectX::XMMatrixRotationY(__angle) * 
-        DirectX::XMMatrixRotationX(__angle) * 
-        DirectX::XMMatrixTranslation(__offset + __posX * 2, 0.0f, 5.0f + __posY * 2) *
-        DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
-      )
+      { 1.0f, 0.0f, 1.0f }, // face 1
+      { 1.0f, 0.0f, 0.0f }, // face 2
+      { 0.0f, 1.0f, 0.0f }, // face 3
+      { 0.0f, 0.0f, 1.0f }, // face 4
+      { 1.0f, 1.0f, 0.0f }, // face 5
+      { 0.0f, 1.0f, 1.0f }  // face 6
     }
   };
 
-  ComPtr<ID3D11Buffer>    pConstBuffer;
-  D3D11_BUFFER_DESC       constBufferDesc{};
-  D3D11_SUBRESOURCE_DATA  constBufferSubResData{};
+  createBuffer(__t_constBufferColor);
 
-  constBufferDesc.ByteWidth           = sizeof(cb);
-  constBufferDesc.StructureByteStride = 0;
-  constBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
-  constBufferDesc.BindFlags           = D3D11_BIND_CONSTANT_BUFFER;
-  constBufferDesc.CPUAccessFlags      = 0;
-  constBufferDesc.MiscFlags           = 0;
-  
-  constBufferSubResData.pSysMem = &cb;
-  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&constBufferDesc, &constBufferSubResData, &pConstBuffer));
+  return true;
+}
 
-  m_pDeviceContext->VSSetConstantBuffers(0, 1, pConstBuffer.GetAddressOf());
+void DirectX11Graphics::clearBuffer(float red, float green, float blue, float alpha)
+{
+  const float color[] = { red, green, blue, alpha };
+  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
+  m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
 
-  ////////////////////////////////////// 
-  struct ConstantBufferColor
+/**************************
+***************************
+**************************/
+
+void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX, float __posY)
+{
+  HRESULT hr = S_OK;
+
+  m_pDeviceContext->IASetVertexBuffers(0u, 1u, __t_VertexBuffer.m_comptr.GetAddressOf(), &__t_VertexBuffer.m_stride, &__t_VertexBuffer.m_offset);
+
+  m_pDeviceContext->IASetIndexBuffer(__t_IndexBuffer.m_comptr.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+  float runtime = Application::getRuntime();
+
+  __t_constBuffer.data =
   {
-    struct
-    {
-      float r;
-      float g;
-      float b;
-      float a;
-    } face_colors[6];
+    DirectX::XMMatrixTranspose(
+      DirectX::XMMatrixRotationY(runtime) *
+      DirectX::XMMatrixRotationX(-runtime) *
+      DirectX::XMMatrixTranslation(0, -sin(runtime * 2), 3.0f + sin(runtime * 2))*
+      DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
+    )
   };
 
-	const ConstantBufferColor colorBuffer =
-	{
-		{
-		  { 1.0f, 0.0f, 1.0f }, // face 1
-		  { 1.0f, 0.0f, 0.0f }, // face 2
-		  { 0.0f, 1.0f, 0.0f }, // face 3
-		  { 0.0f, 0.0f, 1.0f }, // face 4
-		  { 1.0f, 1.0f, 0.0f }, // face 5
-		  { 0.0f, 1.0f, 1.0f }  // face 6
-    }
-	};
+  m_pDeviceContext->UpdateSubresource(__t_constBuffer.m_comptr.Get(), 0, nullptr, &__t_constBuffer.data, 0, 0);
+  m_pDeviceContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
 
-  //  Create and bind const buffer for color
-
-  ComPtr<ID3D11Buffer>    pConstBufferColor;
-  D3D11_BUFFER_DESC       colorBufferDesc{};
-  D3D11_SUBRESOURCE_DATA  colorBufferSubresData{};
-
-  colorBufferDesc.ByteWidth             = sizeof(colorBuffer);
-  colorBufferDesc.StructureByteStride   = 0;
-  colorBufferDesc.Usage                 = D3D11_USAGE_DYNAMIC;
-  colorBufferDesc.BindFlags             = D3D11_BIND_CONSTANT_BUFFER;
-  colorBufferDesc.CPUAccessFlags        = D3D11_CPU_ACCESS_WRITE;
-  colorBufferDesc.MiscFlags             = 0u;
-
-  colorBufferSubresData.pSysMem = &colorBuffer;
-
-  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&colorBufferDesc, &colorBufferSubresData, &pConstBufferColor));
-
-  m_pDeviceContext->PSSetConstantBuffers(0, 1, pConstBufferColor.GetAddressOf());
+  m_pDeviceContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
 
   /* ===================================
       SHADERS LOADING
@@ -360,17 +274,49 @@ void DirectX11Graphics::drawTriangle(float __offset, float __angle, float __posX
 
   // Configure Viewport
   D3D11_VIEWPORT vp{};
-  vp.Width    = 1920;
-  vp.Height   = 1080;
-  vp.MinDepth = 0;
-  vp.MaxDepth = 1;
-  vp.TopLeftX = 0;
-  vp.TopLeftY = 0;
+  vp.Width      = 1920;
+  vp.Height     = 1080;
+  vp.MinDepth   = 0;
+
+  vp.MaxDepth   = 1;
+  vp.TopLeftX   = 0;
+  vp.TopLeftY   = 0;
 
   m_pDeviceContext->RSSetViewports(1u, &vp);
 
   //m_pDeviceContext->Draw(std::size(vertices), 0u);
-  m_pDeviceContext->DrawIndexed(std::size(indices), 0u, 0u);
+  m_pDeviceContext->DrawIndexed(__t_IndexBuffer.m_elementCount, 0u, 0u);
+}
+
+void DirectX11Graphics::renderUpdate()
+{
+  m_pDeviceContext->IASetVertexBuffers(0u, 1u, __t_VertexBuffer.m_comptr.GetAddressOf(), &__t_VertexBuffer.m_stride, &__t_VertexBuffer.m_offset);
+
+  m_pDeviceContext->IASetIndexBuffer(__t_IndexBuffer.m_comptr.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+  float runtime = Application::getRuntime();
+
+  __t_constBuffer.data =
+  {
+    DirectX::XMMatrixTranspose(
+      DirectX::XMMatrixRotationY(runtime) *
+      DirectX::XMMatrixRotationX(-runtime) *
+      DirectX::XMMatrixTranslation(0, -sin(runtime * 2), 3.0f + sin(runtime * 2)) *
+      DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
+    )
+  };
+
+  m_pDeviceContext->UpdateSubresource(__t_constBuffer.m_comptr.Get(), 0, nullptr, &__t_constBuffer.data, 0, 0);
+
+  m_pDeviceContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
+
+  m_pDeviceContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
+}
+
+void DirectX11Graphics::createBuffer(DirectX11Buffer& buffer)
+{
+  HRESULT hr{ S_OK };
+  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&buffer.m_bufferDesc, &buffer.m_bufferSubres, &buffer.m_comptr));
 }
 
 void DirectX11Graphics::presentBuffer()

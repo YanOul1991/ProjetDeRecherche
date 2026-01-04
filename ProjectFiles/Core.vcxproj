@@ -24,7 +24,9 @@
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h" />
     <ClInclude Include="..\Source\Core\Defines\Windows\WindowsProcs.h" />
     <ClInclude Include="..\Source\Core\Exception\exception.h" />
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicResource.h" />
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h" />
+    <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
     <ClInclude Include="..\Source\Core\Graphics\SVertex.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
