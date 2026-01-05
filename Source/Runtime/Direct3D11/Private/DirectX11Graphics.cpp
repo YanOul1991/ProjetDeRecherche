@@ -20,7 +20,6 @@
 #include "Core/Input/Input.h"
 
 #include "DirectX11Graphics.h"
-
 #include <iostream>
 
 #define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
@@ -28,9 +27,8 @@
 DirectX11Graphics::DirectX11Graphics() :
   m_pSwapChain        { nullptr },
   m_pDevice           { nullptr },
-  m_pDeviceContext    { nullptr },
-  m_pRenderTargetView { nullptr },
-  m_swapChainDesc     { 0 }
+  m_pContext          { nullptr },
+  m_pRenderTargetView { nullptr }
 { }
 
 DirectX11Graphics::~DirectX11Graphics() 
@@ -41,33 +39,34 @@ DirectX11Graphics::~DirectX11Graphics()
 
 bool DirectX11Graphics::initialize(HWND _outputWindow)
 {
+  DXGI_SWAP_CHAIN_DESC swapChainDesc{};
   // Empty Memory
-  ZeroMemory(&m_swapChainDesc, sizeof(m_swapChainDesc));
+  ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
   // Set Swap chain description -> DXGI_MODE_DESC
 
-  m_swapChainDesc.BufferDesc.Width              = 1920;
-  m_swapChainDesc.BufferDesc.Height             = 1080;
-  m_swapChainDesc.BufferDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
-  m_swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING_UNSPECIFIED;
-  m_swapChainDesc.BufferDesc.ScanlineOrdering   = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+  swapChainDesc.BufferDesc.Width              = 1920;
+  swapChainDesc.BufferDesc.Height             = 1080;
+  swapChainDesc.BufferDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
+  swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING_UNSPECIFIED;
+  swapChainDesc.BufferDesc.ScanlineOrdering   = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 
-  m_swapChainDesc.BufferDesc.RefreshRate.Numerator    = 0;
-  m_swapChainDesc.BufferDesc.RefreshRate.Denominator  = 0;
+  swapChainDesc.BufferDesc.RefreshRate.Numerator    = 0;
+  swapChainDesc.BufferDesc.RefreshRate.Denominator  = 0;
 
-  m_swapChainDesc.SampleDesc.Count = 1;
-  m_swapChainDesc.SampleDesc.Quality = 0;
+  swapChainDesc.SampleDesc.Count = 1;
+  swapChainDesc.SampleDesc.Quality = 0;
 
-  m_swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-  m_swapChainDesc.BufferCount = 1;
+  swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+  swapChainDesc.BufferCount = 1;
 
-  m_swapChainDesc.OutputWindow = _outputWindow;
+  swapChainDesc.OutputWindow = _outputWindow;
 
-  m_swapChainDesc.Windowed = TRUE;
+  swapChainDesc.Windowed = TRUE;
 
-  m_swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+  swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-  m_swapChainDesc.Flags = 0;
+  swapChainDesc.Flags = 0;
 
   HRESULT hr{ S_OK };
 
@@ -80,11 +79,11 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     nullptr,
     0,
     D3D11_SDK_VERSION,
-    &m_swapChainDesc,
+    &swapChainDesc,
     &m_pSwapChain,
     &m_pDevice,
     nullptr,
-    &m_pDeviceContext
+    &m_pContext
   ));
 
   // Get pointer to backbuffer
@@ -105,7 +104,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   OPTIM_TRY_DX(m_pDevice->CreateDepthStencilState(&dsDesc, &pDepthStencilState));
 
   // Bind depth state | OM -> Output Merger 
-  m_pDeviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), 1);
+  m_pContext->OMSetDepthStencilState(pDepthStencilState.Get(), 1);
 
   // Create depth stencil texture
   ComPtr<ID3D11Texture2D> pDepthStencil;
@@ -133,14 +132,20 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   OPTIM_TRY_DX(m_pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &m_pDepthStencilView));
 
   // Bind depth stencil view
-  m_pDeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
+  m_pContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 
   /// ///////////////////////////////////////////////////
   /// ////////////////////// TESTING
   /// ///////////////////////////////////////////////////
+  /// 
+  /// 
 
-  // Initializtion of vertex and index buffer testing values.
-  __t_vertexData = new SGFXVertex[8] 
+  /// ---------------------------------
+  /// VERTEX BUFFER INITIALIZATION
+  /// ---------------------------------
+  __t_VertexBuffer = VertexBuffer(__t_vertexData, sizeof(SGFXVertex) * 8);
+
+  __t_VertexBuffer.data = new SGFXVertex[8]
   {
     { -0.5f, -0.5f, -0.5f }, // 0  
     {  0.5f, -0.5f, -0.5f }, // 1  
@@ -152,12 +157,14 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     {  0.5f,  0.5f,  0.5f }  // 7
   };
 
-  __t_VertexBuffer = VertexBuffer(__t_vertexData, sizeof(SGFXVertex) * 8);
-  createBuffer(__t_VertexBuffer);
+  __t_VertexBuffer.create(m_pDevice.Get());
 
-  // Index buffer initialization
 
-  __t_indexData = new uint16[]
+
+  /// ---------------------------------
+  /// INDEX BUFFER INITIALIZATION
+  /// ---------------------------------
+  uint16* indexData = new uint16[]
   {
     0, 2, 1,  2, 3, 1,
     1, 3, 5,  3, 7, 5,
@@ -166,21 +173,24 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     0, 4, 2,  2, 4, 6,
     0, 1, 4,  1, 5, 4
   };
+  __t_IndexBuffer = IndexBuffer(indexData, sizeof(indexData) * 36);
+  __t_IndexBuffer.create(m_pDevice.Get());
+  
 
-  __t_IndexBuffer = IndexBuffer(__t_indexData, sizeof(uint16) * 36);
-  createBuffer(__t_IndexBuffer);
 
+  /// ---------------------------------
+  /// CONSTANT BUFFER INITIALIZATION
+  /// ---------------------------------
 
-  // Initialize constant Buffers
   __t_constBuffer = ConstantBuffer<DirectX::XMMATRIX>(DirectX::XMMatrixIdentity());
-  createBuffer(__t_constBuffer);
+  __t_constBuffer.create(m_pDevice.Get());
 
   __t_constBufferColor = ConstantBuffer<ConstColors>();
-  __t_constBufferColor = ConstColors
+  __t_constBufferColor.data = 
   {
     {
       { 1.0f, 0.0f, 1.0f }, // face 1
-      { 1.0f, 0.0f, 0.0f }, // face 2
+      { 1.0f, 1.0f, 1.0f }, // face 2
       { 0.0f, 1.0f, 0.0f }, // face 3
       { 0.0f, 0.0f, 1.0f }, // face 4
       { 1.0f, 1.0f, 0.0f }, // face 5
@@ -188,44 +198,13 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     }
   };
 
-  createBuffer(__t_constBufferColor);
+  __t_constBufferColor.create(m_pDevice.Get());
 
-  // Shader Initialization
-
+  /// ---------------------------------
+  /// SHADERS INITIALIZATION
+  /// ---------------------------------
   __t_material.setPath(TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
-
-  ComPtr<ID3DBlob> pBlob;
-
-  OPTIM_TRY_DX(D3DReadFileToBlob(__t_material.pixelShader.path, &pBlob));
-
-  OPTIM_TRY_DX(m_pDevice->CreatePixelShader(
-    pBlob->GetBufferPointer(), 
-    pBlob->GetBufferSize(), 
-    nullptr, 
-    &__t_material.pixelShader.pShader
-  ));
-
-  OPTIM_TRY_DX(D3DReadFileToBlob(__t_material.vertexShader.path, &pBlob));
-  OPTIM_TRY_DX(m_pDevice->CreateVertexShader(
-    pBlob->GetBufferPointer(), 
-    pBlob->GetBufferSize(), 
-    nullptr, 
-    &__t_material.vertexShader.pShader
-  ));
-
-  const D3D11_INPUT_ELEMENT_DESC ied[] =
-  {
-    {"Position" , 0,  DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,   D3D11_INPUT_PER_VERTEX_DATA,  0 }
-  };
-
-  OPTIM_TRY_DX(m_pDevice->CreateInputLayout(
-    ied, 
-    std::size(ied), 
-    pBlob->GetBufferPointer(), 
-    pBlob->GetBufferSize(), 
-    &__t_material.vertexShader.pInputLayout
-  ));
-
+  __t_material.loadShaders(m_pDevice.Get());
 
   return true;
 }
@@ -233,21 +212,21 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 void DirectX11Graphics::clearBuffer(float red, float green, float blue, float alpha)
 {
   const float color[] = { red, green, blue, alpha };
-  m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
-  m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+  m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
+  m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void DirectX11Graphics::renderUpdate()
 {
+  float runtime = Application::getRuntime();
+
   // *** MAY BE CHANGED ***
   // Assume all topology for all is triangle list
-  m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
    // Bind vertex and index buffers
-  m_pDeviceContext->IASetVertexBuffers(0u, 1u, __t_VertexBuffer.m_comptr.GetAddressOf(), &__t_VertexBuffer.m_stride, &__t_VertexBuffer.m_offset);
-  m_pDeviceContext->IASetIndexBuffer(__t_IndexBuffer.m_comptr.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-  float runtime = Application::getRuntime();
+  __t_VertexBuffer.bind(m_pContext.Get());
+  __t_IndexBuffer.bind(m_pContext.Get());
 
   // Update subresource for Pixel shader to make cube move 
   // and rotate in 3D space based on current runtime
@@ -259,37 +238,32 @@ void DirectX11Graphics::renderUpdate()
       DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
     )
   };
-  m_pDeviceContext->UpdateSubresource(__t_constBuffer.m_comptr.Get(), 0, nullptr, &__t_constBuffer.data, 0, 0);
+
+  __t_constBuffer.update(m_pContext.Get());
 
   // Set constant buffer for vertex shader and pixel shader
-  m_pDeviceContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
-  m_pDeviceContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
+  m_pContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
+  m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
 
   // Bind Input Layout
-  m_pDeviceContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
+  m_pContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
 
   // Bind Shaders
-  m_pDeviceContext->VSSetShader(__t_material.vertexShader.pShader.Get(), nullptr, 0);
-  m_pDeviceContext->PSSetShader(__t_material.pixelShader.pShader.Get(), nullptr, 0);
+  m_pContext->VSSetShader(__t_material.vertexShader.pShader.Get(), nullptr, 0);
+  m_pContext->PSSetShader(__t_material.pixelShader.pShader.Get(), nullptr, 0);
 
   // Configure Viewport
   D3D11_VIEWPORT vp{};
-  vp.Width = 1920;
-  vp.Height = 1080;
+  vp.Width    = 1920;
+  vp.Height   = 1080;
   vp.MinDepth = 0;
 
   vp.MaxDepth = 1;
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;
 
-  m_pDeviceContext->RSSetViewports(1u, &vp);
-  m_pDeviceContext->DrawIndexed(__t_IndexBuffer.m_elementCount, 0u, 0u);
-}
-
-void DirectX11Graphics::createBuffer(DirectX11Buffer& buffer)
-{
-  HRESULT hr{ S_OK };
-  OPTIM_TRY_DX(m_pDevice->CreateBuffer(&buffer.m_bufferDesc, &buffer.m_bufferSubres, &buffer.m_comptr));
+  m_pContext->RSSetViewports(1u, &vp);
+  m_pContext->DrawIndexed(__t_IndexBuffer.m_elementCount, 0u, 0u);
 }
 
 void DirectX11Graphics::presentBuffer()

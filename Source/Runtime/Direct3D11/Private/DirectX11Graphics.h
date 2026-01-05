@@ -44,31 +44,27 @@ public:
   DirectX11Graphics& operator=(const DirectX11Graphics&)  = delete;
   DirectX11Graphics& operator=(const DirectX11Graphics&&) = delete;
 
-  DXGI_SWAP_CHAIN_DESC m_swapChainDesc;
-
   bool initialize(HWND _outputWindow);
   void presentBuffer();
   void clearBuffer(float red, float green, float blue, float alpha);
-
   void renderUpdate();
-  void createBuffer(DirectX11Buffer& buffer);
 
 private:
   ComPtr<ID3D11Device>            m_pDevice;
   ComPtr<IDXGISwapChain>          m_pSwapChain;
-  ComPtr<ID3D11DeviceContext>     m_pDeviceContext;
+  ComPtr<ID3D11DeviceContext>     m_pContext;
   ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
   ComPtr<ID3D11DepthStencilView>  m_pDepthStencilView;
 
   /// TEST FIELDS
-  VertexBuffer<SGFXVertex>  __t_VertexBuffer;
-  IndexBuffer               __t_IndexBuffer;
+  VertexBuffer<SGFXVertex>  __t_VertexBuffer{};
+  IndexBuffer               __t_IndexBuffer{};
 
   ConstantBuffer<DirectX::XMMATRIX>   __t_constBuffer{};
   ConstantBuffer<ConstColors>         __t_constBufferColor{};
 
-  GFXMaterial __t_material;
+  GFXMaterial __t_material{};
 
-  SGFXVertex* __t_vertexData;
-  uint16*     __t_indexData;
+  SGFXVertex*   __t_vertexData  { nullptr };
+  uint16*      __t_indexData    { nullptr };
 };
