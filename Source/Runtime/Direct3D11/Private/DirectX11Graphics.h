@@ -12,15 +12,15 @@
 
 #include "Resources/DirectX11Resources.h"
 
-struct SGFXVertex
-{
-  struct
-  {
-    float x;
-    float y;
-    float z;
-  } position;
-};
+//struct SGFXVertex
+//{
+//  struct
+//  {
+//    float x;
+//    float y;
+//    float z;
+//  } position;
+//};
 
 struct ConstColors
 {
@@ -63,17 +63,11 @@ private:
   ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
   ComPtr<ID3D11DepthStencilView>  m_pDepthStencilView;
 
-  Transform* transforms;
-
   /// TEST FIELDS
-  VertexBuffer<SGFXVertex>  __t_VertexBuffer{};
-  IndexBuffer               __t_IndexBuffer{};
+  Mesh _cubeMesh;
 
   ConstantBuffer<DirectX::XMMATRIX>   __t_constBuffer{};
   ConstantBuffer<ConstColors>         __t_constBufferColor{};
 
   GFXMaterial __t_material{};
-
-  SGFXVertex*   __t_vertexData  { nullptr };
-  uint16*      __t_indexData    { nullptr };
 };

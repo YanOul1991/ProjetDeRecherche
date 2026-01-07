@@ -9,6 +9,8 @@
 
 #include "DirectX11Shader.h"
 #include "DirectX11Buffer.h"
+#include "Primitives.h"
+
 
 /*
 #include <iostream>

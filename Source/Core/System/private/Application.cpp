@@ -170,5 +170,5 @@ void Application::ApplicationQuit()
   // Free resources
   delete(m_pRenderModule);
   delete(m_pWindow);
-  delete(m_pInput);
+  //delete(m_pInput);
 }

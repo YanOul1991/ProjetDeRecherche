@@ -61,7 +61,8 @@ public:
     desc.MiscFlags            = 0;
     subres.pSysMem            = data;
 
-    device->CreateBuffer(&desc, &subres, &m_comptr);
+    HRESULT hr{S_OK};
+    OPTIM_TRY_DX(device->CreateBuffer(&desc, &subres, &m_comptr));
   }
 
   inline void bind(ID3D11DeviceContext* context) override 
@@ -103,7 +104,8 @@ public:
     desc.MiscFlags            = 0;
     subres.pSysMem            = data;
 
-    device->CreateBuffer(&desc, &subres, &m_comptr);
+    HRESULT hr{ S_OK };
+    OPTIM_TRY_DX(device->CreateBuffer(&desc, &subres, &m_comptr));
   }
 
   inline void bind(ID3D11DeviceContext* context) override 

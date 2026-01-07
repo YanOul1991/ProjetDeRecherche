@@ -22,6 +22,9 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Shader.h">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Primitives.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\IDirect3D11.cpp">
