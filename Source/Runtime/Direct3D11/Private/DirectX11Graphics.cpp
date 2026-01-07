@@ -19,8 +19,11 @@
 #include "Core/Exception/exception.h"
 #include "Core/Input/Input.h"
 
+#include "Core/System/FileStream.h"
+
 #include "DirectX11Graphics.h"
 #include <iostream>
+#include <sstream>
 
 #define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
 
@@ -39,6 +42,8 @@ DirectX11Graphics::~DirectX11Graphics()
 
 bool DirectX11Graphics::initialize(HWND _outputWindow)
 {
+
+
   DXGI_SWAP_CHAIN_DESC swapChainDesc{};
   // Empty Memory
   ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -137,14 +142,12 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   /// ///////////////////////////////////////////////////
   /// ////////////////////// TESTING
   /// ///////////////////////////////////////////////////
-  /// 
-  /// 
 
+  
   /// ---------------------------------
   /// VERTEX BUFFER INITIALIZATION
   /// ---------------------------------
-  __t_VertexBuffer = VertexBuffer(__t_vertexData, sizeof(SGFXVertex) * 8);
-
+  __t_VertexBuffer = VertexBuffer(__t_vertexData, sizeof(SGFXVertex[8]));
   __t_VertexBuffer.data = new SGFXVertex[8]
   {
     { -0.5f, -0.5f, -0.5f }, // 0  
@@ -159,12 +162,11 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   __t_VertexBuffer.create(m_pDevice.Get());
 
-
-
   /// ---------------------------------
   /// INDEX BUFFER INITIALIZATION
   /// ---------------------------------
-  uint16* indexData = new uint16[]
+  /// 
+  uint16* indexData = new uint16[36]
   {
     0, 2, 1,  2, 3, 1,
     1, 3, 5,  3, 7, 5,
@@ -173,10 +175,9 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     0, 4, 2,  2, 4, 6,
     0, 1, 4,  1, 5, 4
   };
-  __t_IndexBuffer = IndexBuffer(indexData, sizeof(indexData) * 36);
-  __t_IndexBuffer.create(m_pDevice.Get());
-  
 
+  __t_IndexBuffer = IndexBuffer(indexData, sizeof(uint16[36]));
+  __t_IndexBuffer.create(m_pDevice.Get());
 
   /// ---------------------------------
   /// CONSTANT BUFFER INITIALIZATION
@@ -206,6 +207,17 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   __t_material.setPath(TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
   __t_material.loadShaders(m_pDevice.Get());
 
+
+  /// ------------------------------- TRANSFORMS
+  transforms = new Transform[5]
+  {
+    {  02.00f ,  1.0f,   10.0f },
+    {  01.23f ,  0.5f,   03.0f },
+    {  -2.00f ,  0.2f,   20.0f },
+    {  0.23f  ,  -0.8f,  12.0f },
+    {  -10.89f,  0.1f,   45.0f },
+  };
+
   return true;
 }
 
@@ -220,11 +232,9 @@ void DirectX11Graphics::renderUpdate()
 {
   float runtime = Application::getRuntime();
 
-  // *** MAY BE CHANGED ***
-  // Assume all topology for all is triangle list
   m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-   // Bind vertex and index buffers
+    // Bind vertex and index buffers
   __t_VertexBuffer.bind(m_pContext.Get());
   __t_IndexBuffer.bind(m_pContext.Get());
 
@@ -234,8 +244,8 @@ void DirectX11Graphics::renderUpdate()
     DirectX::XMMatrixTranspose(
       DirectX::XMMatrixRotationY(runtime) *
       DirectX::XMMatrixRotationX(-runtime) *
-      DirectX::XMMatrixTranslation(0, -sin(runtime * 2), 3.0f + sin(runtime * 2)) *
-      DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 10.0f)
+      DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f) *
+      DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 100.0f)
     )
   };
 

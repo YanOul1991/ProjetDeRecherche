@@ -44,6 +44,9 @@
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\System\FileStream.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -113,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Defines\Windows\Private\WindowsProcs.cpp">
       <Filter>Defines\Windows\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\System\private\FileStream.cpp">
+      <Filter>System\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

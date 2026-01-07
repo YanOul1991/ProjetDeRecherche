@@ -32,6 +32,13 @@ struct ConstColors
   } face_colors[6];
 };
 
+struct Transform
+{
+  float x;
+  float y;
+  float z;
+};
+
 class DirectX11Graphics final
 {
 public:
@@ -55,6 +62,8 @@ private:
   ComPtr<ID3D11DeviceContext>     m_pContext;
   ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
   ComPtr<ID3D11DepthStencilView>  m_pDepthStencilView;
+
+  Transform* transforms;
 
   /// TEST FIELDS
   VertexBuffer<SGFXVertex>  __t_VertexBuffer{};

@@ -31,6 +31,7 @@
     <ClInclude Include="..\Source\Core\Input\Input.h" />
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
     <ClInclude Include="..\Source\Core\System\Application.h" />
+    <ClInclude Include="..\Source\Core\System\FileStream.h" />
     <ClInclude Include="..\Source\Core\System\IWindow.h" />
     <ClInclude Include="..\Source\Core\Time\Time.h" />
     <ClInclude Include="..\Source\Core\Types\string.h" />
@@ -40,6 +41,7 @@
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
+    <ClCompile Include="..\Source\Core\System\private\FileStream.cpp" />
     <ClCompile Include="..\Source\Core\System\private\IWindow.cpp" />
     <ClCompile Include="..\Source\Core\Time\Time.cpp" />
     <ClCompile Include="..\Source\Core\Types\Private\string.cpp" />
