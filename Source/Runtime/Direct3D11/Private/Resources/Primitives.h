@@ -10,8 +10,14 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "DirectX11Buffer.h"
-#include "DirectX11Shader.h"
+
+#include "DirectX11Resources.h"
+
+#include <vector>
+#include <sstream>
+
+
+constexpr float pi = 3.141592f;
 
 struct SGFXVertex
 {
@@ -65,6 +71,51 @@ inline Mesh createCubeMesh()
 
   instance.vertexBuffer = VertexBuffer(pData, sizeof(SGFXVertex[8]));
   instance.indexBuffer = IndexBuffer(indexData, sizeof(uint16[36]));
+
+  return instance;
+}
+
+inline Mesh createFlatCircle(int precision = 0)
+{
+  //std::stringstream ss;
+  Mesh instance = Mesh();
+
+  int steps = 3 + precision;
+  float radVar = (2 * pi) / steps;
+
+  std::vector<SGFXVertex> verts;
+
+  for (int i = 0; i < steps; i++)
+  {
+    SGFXVertex v{};
+    float rad = (pi / 2) + ((2.0f * pi / steps) * i);
+
+    v.position.x = cos(rad);
+    v.position.y = sin(rad);
+    v.position.z = 0;
+
+    verts.push_back(v);
+  }
+
+  SGFXVertex* pVerts = new SGFXVertex[verts.size()];
+  memcpy(pVerts, verts.data(), sizeof(SGFXVertex) * verts.size());
+
+  std::vector<float2> points2d(verts.size());
+
+
+  for (int i = 0; i < verts.size(); i++)
+  {
+    points2d[i].x = verts[i].position.x;
+    points2d[i].y = verts[i].position.y;
+  }
+
+  std::vector<uint16> indices = triangulateEarClip(points2d);
+
+  uint16* pIndexData = new uint16[indices.size()];
+  memcpy(pIndexData, indices.data(), sizeof(uint16) * indices.size());
+
+  instance.vertexBuffer = VertexBuffer(pVerts, sizeof(SGFXVertex) * (int)verts.size());
+  instance.indexBuffer = IndexBuffer(pIndexData,  sizeof(uint16) * indices.size());
 
   return instance;
 }

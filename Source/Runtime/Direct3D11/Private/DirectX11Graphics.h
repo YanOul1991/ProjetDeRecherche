@@ -11,16 +11,8 @@
 #include "Core/Color/Color.h"
 
 #include "Resources/DirectX11Resources.h"
-
-//struct SGFXVertex
-//{
-//  struct
-//  {
-//    float x;
-//    float y;
-//    float z;
-//  } position;
-//};
+#include "Resources/Primitives.h"
+#include <vector>
 
 struct ConstColors
 {
@@ -37,6 +29,15 @@ struct Transform
   float x;
   float y;
   float z;
+};
+
+class MeshRenderer
+{
+public:
+  MeshRenderer() = default;
+
+  Transform position;
+  Mesh* meshData;
 };
 
 class DirectX11Graphics final
@@ -65,6 +66,8 @@ private:
 
   /// TEST FIELDS
   Mesh _cubeMesh;
+
+  std::vector<MeshRenderer> objects;
 
   ConstantBuffer<DirectX::XMMATRIX>   __t_constBuffer{};
   ConstantBuffer<ConstColors>         __t_constBufferColor{};

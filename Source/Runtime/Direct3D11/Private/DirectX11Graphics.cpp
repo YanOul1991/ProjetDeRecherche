@@ -20,10 +20,12 @@
 #include "Core/Input/Input.h"
 
 #include "Core/System/FileStream.h"
-
 #include "DirectX11Graphics.h"
+
 #include <iostream>
 #include <sstream>
+#include <random>
+#include <iomanip>
 
 //#define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
 
@@ -136,56 +138,36 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   // Bind depth stencil view
   m_pContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 
-  /// ///////////////////////////////////////////////////
   /// ////////////////////// TESTING
-  /// ///////////////////////////////////////////////////
+
+  objects = std::vector<MeshRenderer>(1);
+  //String strSize = String((int)objects.size());
+  //MessageBox(0, strSize.value(), TEXT("DEBUG"), MB_OK);
 
   _cubeMesh = createCubeMesh();
+  //_cubeMesh = createFlatCircle(30);
 
   _cubeMesh.vertexBuffer.create(m_pDevice.Get());
   _cubeMesh.indexBuffer.create(m_pDevice.Get());
 
-  _cubeMesh.posX = 0.0f;
-  _cubeMesh.posY = 0.0f;
-  _cubeMesh.posZ = 5.0f;
 
-  /// ---------------------------------
-  /// VERTEX BUFFER INITIALIZATION
-  /// ---------------------------------
-  
-  /*
-  SGFXVertex* pData = new SGFXVertex[8]
-  {
-    { -0.5f, -0.5f, -0.5f }, // 0  
-    {  0.5f, -0.5f, -0.5f }, // 1  
-    { -0.5f,  0.5f, -0.5f }, // 2  
-    {  0.5f,  0.5f, -0.5f }, // 3  
-    { -0.5f, -0.5f,  0.5f }, // 4  
-    {  0.5f, -0.5f,  0.5f }, // 5  
-    { -0.5f,  0.5f,  0.5f }, // 6  
-    {  0.5f,  0.5f,  0.5f }  // 7
-  };
-  
-  __t_VertexBuffer = VertexBuffer(pData, sizeof(SGFXVertex[8]));
-  __t_VertexBuffer.data = pData;
-  __t_VertexBuffer.create(m_pDevice.Get());
+  std::random_device rd;
+  std::mt19937 engine(rd());
 
-  /// ---------------------------------
-  /// INDEX BUFFER INITIALIZATION
-  /// ---------------------------------
-  /// 
-  uint16* indexData = new uint16[36]
+  std::uniform_real_distribution<float> dist(-5.0f, 5.0f);
+  std::uniform_real_distribution<float> distZ(5.0f, 15.0f);
+
+  for (int i = 0; i < objects.size(); i++)
   {
-    0, 2, 1,  2, 3, 1,
-    1, 3, 5,  3, 7, 5,
-    2, 6, 3,  3, 6, 7,
-    4, 5, 7,  4, 7, 6,
-    0, 4, 2,  2, 4, 6,
-    0, 1, 4,  1, 5, 4
-  };
-  __t_IndexBuffer = IndexBuffer(indexData, sizeof(uint16[36]));
-  __t_IndexBuffer.create(m_pDevice.Get());
-  */
+    objects[i].meshData = &_cubeMesh;
+    objects[i].position.x = 0;
+    objects[i].position.y = 0;
+    objects[i].position.z = 5;
+  }
+
+  //_cubeMesh.posX = 0.0f;
+  //_cubeMesh.posY = 0.0f;
+  //_cubeMesh.posZ = 5.0f;
 
   /// ---------------------------------
   /// CONSTANT BUFFER INITIALIZATION
@@ -229,51 +211,51 @@ void DirectX11Graphics::renderUpdate()
 {
   float runtime = Application::getRuntime();
 
-  m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  for (int i = 0; i < objects.size(); i++)
+  {
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-  // Bind vertex and index buffers
-  //__t_VertexBuffer.bind(m_pContext.Get());
-  //__t_IndexBuffer.bind(m_pContext.Get());
+    objects[i].meshData->vertexBuffer.bind(m_pContext.Get());
+    objects[i].meshData->indexBuffer.bind(m_pContext.Get());
 
-  _cubeMesh.vertexBuffer.bind(m_pContext.Get());
-  _cubeMesh.indexBuffer.bind(m_pContext.Get());
+    // Update subresource for Pixel shader to make cube move 
+    // and rotate in 3D space based on current runtime
+    __t_constBuffer.data = {
+      DirectX::XMMatrixTranspose(
+        DirectX::XMMatrixRotationY(runtime *0.5f) *
+        DirectX::XMMatrixRotationX(-runtime * 0.5f) *
+        DirectX::XMMatrixRotationZ(0) * 
+        DirectX::XMMatrixTranslation(objects[i].position.x, objects[i].position.y, objects[i].position.z) *
+        DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 100.0f)
+      )
+    };
 
-  // Update subresource for Pixel shader to make cube move 
-  // and rotate in 3D space based on current runtime
-  __t_constBuffer.data = {
-    DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixRotationY(runtime) *
-      DirectX::XMMatrixRotationX(-runtime) *
-      DirectX::XMMatrixTranslation(_cubeMesh.posX, _cubeMesh.posY, _cubeMesh.posZ) *
-      DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 100.0f)
-    )
-  };
+    __t_constBuffer.update(m_pContext.Get());
 
-  __t_constBuffer.update(m_pContext.Get());
+    // Set constant buffer for vertex shader and pixel shader
+    m_pContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
+    m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
 
-  // Set constant buffer for vertex shader and pixel shader
-  m_pContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
-  m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
+    // Bind Input Layout
+    m_pContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
 
-  // Bind Input Layout
-  m_pContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
+    // Bind Shaders
+    m_pContext->VSSetShader(__t_material.vertexShader.pShader.Get(), nullptr, 0);
+    m_pContext->PSSetShader(__t_material.pixelShader.pShader.Get(), nullptr, 0);
 
-  // Bind Shaders
-  m_pContext->VSSetShader(__t_material.vertexShader.pShader.Get(), nullptr, 0);
-  m_pContext->PSSetShader(__t_material.pixelShader.pShader.Get(), nullptr, 0);
+    // Configure Viewport
+    D3D11_VIEWPORT vp{};
+    vp.Width    = 1920;
+    vp.Height   = 1080;
+    vp.MinDepth = 0;
 
-  // Configure Viewport
-  D3D11_VIEWPORT vp{};
-  vp.Width    = 1920;
-  vp.Height   = 1080;
-  vp.MinDepth = 0;
+    vp.MaxDepth = 1;
+    vp.TopLeftX = 0;
+    vp.TopLeftY = 0;
 
-  vp.MaxDepth = 1;
-  vp.TopLeftX = 0;
-  vp.TopLeftY = 0;
-
-  m_pContext->RSSetViewports(1u, &vp);
-  m_pContext->DrawIndexed(_cubeMesh.indexBuffer.m_elementCount, 0u, 0u);
+    m_pContext->RSSetViewports(1u, &vp);
+    m_pContext->DrawIndexed(objects[i].meshData->indexBuffer.m_elementCount, 0u, 0u);
+  }
 }
 
 void DirectX11Graphics::presentBuffer()

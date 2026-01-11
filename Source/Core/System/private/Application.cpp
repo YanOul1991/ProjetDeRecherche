@@ -56,7 +56,7 @@ float Application::getRuntime()
 
 void Application::Quit() 
 { 
-  MessageBox(0, TEXT("Quit function called"), TEXT("Debug"), MB_OK);
+  //MessageBox(0, TEXT("Quit function called"), TEXT("Debug"), MB_OK);
   m_shouldRun = false;
 }
 
@@ -117,7 +117,7 @@ void Application::ApplicationLoop()
 
     if (m_pWindow->windowLoop())
     {
-      MessageBox(0, TEXT("Quit message for windows recieved"), TEXT("Debug"), MB_OK);
+      //MessageBox(0, TEXT("Quit message for windows recieved"), TEXT("Debug"), MB_OK);
       Quit();
       return;
     }
@@ -166,7 +166,7 @@ void Application::ApplicationLoop()
 
 void Application::ApplicationQuit()
 { 
-  MessageBox(0, TEXT("ApplicationQuit Function called"), TEXT("Debug"), MB_OK);
+  //MessageBox(0, TEXT("ApplicationQuit Function called"), TEXT("Debug"), MB_OK);
   // Free resources
   delete(m_pRenderModule);
   delete(m_pWindow);
