@@ -40,6 +40,24 @@ public:
   Mesh* meshData;
 };
 
+class Texture
+{
+public:
+  inline Texture()
+  {
+    D3D11_TEXTURE2D_DESC    textureDesc{};
+    D3D11_SUBRESOURCE_DATA  subRes{};
+  }
+};
+
+struct DxColor 
+{
+  uint8 r;
+  uint8 g;
+  uint8 b;
+  uint8 a;
+};
+
 class DirectX11Graphics final
 {
 public:

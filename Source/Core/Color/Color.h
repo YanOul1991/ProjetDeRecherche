@@ -22,6 +22,14 @@ namespace op::color
     blue  = 0x0000FFFFu
   };
 
+  struct SColor
+  {
+    uint8 r;
+    uint8 g;
+    uint8 b;
+    uint8 a;
+  };
+
   struct ColorRgb
   {
     float r;

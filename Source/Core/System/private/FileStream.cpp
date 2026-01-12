@@ -5,6 +5,7 @@
  *    Yanis Oulmane
 ====================================================================================== */
 
+#include "Core/Object/Image.h"
 #include "Core/Color/Color.h"
 #include "ThirdParty/libjpeg/turbojpeg.h"
 #include "ThirdParty/libpng/libpng18/png.h"
@@ -222,25 +223,25 @@ bool FileStream::IsOutputStreamTextOpen()
   return s_outFileText.is_open();
 }
 
-void FileStream::readJpegImage(const char* filename)
+void FileStream::readJpegImage(const char* filename, Image* img)
 {
-  FILE* image{};
-  fopen_s(&image, filename, "rb");
+  FILE* file{};
+  fopen_s(&file, filename, "rb");
 
-  if (!image) {
-    //printf("Failed to load image %s", filename);
+  if (!file) {
+    printf("Failed to load image %s", filename);
     return;
   }
 
   // Get the size of the binary file
-  fseek(image, 0, SEEK_END);
-  int imageSize = ftell(image);
-  fseek(image, 0, SEEK_SET);
+  fseek(file, 0, SEEK_END);
+  int imageSize = ftell(file);
+  fseek(file, 0, SEEK_SET);
 
   // Load raw data to std::vector then close file stream
   std::vector<unsigned char> jpegData(imageSize);
-  fread(jpegData.data(), 1, imageSize, image);
-  fclose(image);
+  fread(jpegData.data(), 1, imageSize, file);
+  fclose(file);
 
   tjhandle handle = tjInitDecompress();
 
@@ -252,19 +253,19 @@ void FileStream::readJpegImage(const char* filename)
   // Get jpeg header data
   tjDecompressHeader3(handle, jpegData.data(), imageSize, &imgWidth, &imgHeight, &imgSubSample, &imgColorSpace);
 
-  std::vector<unsigned char> pixelData(imgWidth * imgHeight * 3);
-  tjDecompress2(handle, jpegData.data(), imageSize, pixelData.data(), imgWidth, 0, imgHeight, TJPF_RGB, 0);
+  //std::vector<unsigned char> pixelData(imgWidth * imgHeight * 3);
+
+  printf("Image Resolution from reader: %dx%d\n", imgWidth, imgHeight);
+
+  img->width = imgWidth;
+  img->height = imgHeight;
+  img->pixels = new op::color::SColor[imgWidth * imgHeight];
+
+  tjDecompress2(handle, jpegData.data(), imageSize, reinterpret_cast<uint8*>(img->pixels), imgWidth, 0, imgHeight, TJPF_RGBA, 0);
 
   tjDestroy(handle);
 
-  // Destroy handle
-  //printf("Loaded image: %s\n", filename);
-  //printf("--- Image dimensions  : %dx%d\n", imgWidth, imgHeight);
-  //printf("--- Image subsampling : %d\n", imgSubSample);
-  //printf("--- Image color space : %d\n", imgColorSpace);
-
-  //printf("First 10 piexls data: \n");
-
+  /*
   std::vector<op::color::ColorRgb>colors(10);
 
   for (int i = 0; i < colors.size(); i++)
@@ -276,20 +277,15 @@ void FileStream::readJpegImage(const char* filename)
     colors[i].b = (float)((int)cursor[2]);
     colors[i].a = 0;
   }
-
-  //for (int i = 0; i < colors.size(); i++)
-  //{
-  //  printf("--- [%3d] 0x%X%X%X\n", (i + 1), (int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
-  //}
+  */
 }
 
-void FileStream::readPngImage(const char* path)
+void FileStream::readPngImage(const char* path, Image& img)
 {
   FILE* file{};
   fopen_s(&file, path, "rb");
 
-  if (!file)
-  {
+  if (!file) {
     printf("Could not read the follwing file: %s", path);
     return;
   }
@@ -310,16 +306,14 @@ void FileStream::readPngImage(const char* path)
 
 
   png_struct* pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-  if (!pPng)
-  {
+  if (!pPng) {
     printf("[Error] An error occured while reading PNG file:(\n");;
     fclose(file);
     return;
   }
 
   png_info* pInfo = png_create_info_struct(pPng);
-  if (!pInfo)
-  {
+  if (!pInfo) {
     printf("[Error] An error occured while reading PNG file:(\n");;
     fclose(file);
     return;
@@ -341,66 +335,184 @@ void FileStream::readPngImage(const char* path)
   unsigned char imgColorType  = png_get_color_type(pPng, pInfo);
   unsigned char imgBitDepth   = png_get_bit_depth(pPng, pInfo);
 
+  printf("Bit depth of image %s : %d\n", path, imgBitDepth);
+
   /**
    * To simplyfy implementation with other modules, all PNG images will
    * be converted to 8-bit RGBA.
   */
 
-  if (imgBitDepth == 16) 
+  if (imgBitDepth == 16) {
     png_set_strip_16(pPng);
+  }
 
-  if (imgColorType == PNG_COLOR_TYPE_PALETTE)
+  if (imgColorType == PNG_COLOR_TYPE_PALETTE) {
     png_set_palette_to_rgb(pPng);
+  }
 
-  if (imgColorType == PNG_COLOR_TYPE_GRAY && imgBitDepth < 8)
+  if (imgColorType == PNG_COLOR_TYPE_GRAY && imgBitDepth < 8) {
     png_set_expand_gray_1_2_4_to_8(pPng);
+  }
 
-  if (png_get_valid(pPng, pInfo, PNG_INFO_tRNS))
+  if (png_get_valid(pPng, pInfo, PNG_INFO_tRNS)) {
     png_set_tRNS_to_alpha(pPng);
+  }
 
-  if (imgColorType == PNG_COLOR_TYPE_RGB || imgColorType == PNG_COLOR_TYPE_GRAY || imgColorType == PNG_COLOR_TYPE_PALETTE)
+  if (  imgColorType == PNG_COLOR_TYPE_RGB ||
+        imgColorType == PNG_COLOR_TYPE_GRAY ||
+        imgColorType == PNG_COLOR_TYPE_PALETTE) {
     png_set_filler(pPng, 0xFF, PNG_FILLER_AFTER);
+  }
 
-  if (imgColorType == PNG_COLOR_TYPE_GRAY || imgColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+  if (imgColorType == PNG_COLOR_TYPE_GRAY || imgColorType == PNG_COLOR_TYPE_GRAY_ALPHA) {
     png_set_gray_to_rgb(pPng);
+  }
 
   png_read_update_info(pPng, pInfo);
 
-  std::vector<unsigned char> pixels(imgWidth * imgHeight * 4);
+  img.width   = imgWidth;
+  img.height  = imgHeight;
+  img.pixels  = new op::color::SColor[imgWidth * imgHeight * 4];
+
   std::vector<png_bytep> rowPtr(imgHeight);
 
   for (int i = 0; i < imgHeight; i++) {
-    rowPtr[i] = pixels.data() + (i * imgWidth * 4);
+    rowPtr[i] = reinterpret_cast<uint8*>(img.pixels) + (i * imgWidth * 4);
   }
+
   png_read_image(pPng, rowPtr.data());
   png_destroy_read_struct(&pPng, &pInfo, 0);
 
-  //printf("Sucessfully read the data of %s\n", path);
-  //printf("--- Image resolution  : %dx%d\n", imgWidth, imgHeight);
-  //printf("--- Image color type  : %d\n", imgColorType);
-  //printf("--- Image bit depth   : %d\n", imgBitDepth);
-
-  //printf("Pixels data:\n");
-
-  //std::vector<op::color::ColorRgb> colors(10);
-
-  //for (size_t i = 0; i < colors.size(); i++)
-  //{
-  //  unsigned char* cursor = &pixels[i * 4];
-
-  //  colors[i].r = (float)((int)cursor[0]);
-  //  colors[i].g = (float)((int)cursor[1]);
-  //  colors[i].b = (float)((int)cursor[2]);
-  //  colors[i].a = (float)((int)cursor[3]);
-  //}
-
-  //printf("Pixel Data:\n");
-
-  //for (int i = 0; i < colors.size(); i++)
-  //{
-  //  printf("--- Pixel at index %2d: 0x%X%X%X%X\n", i, (int)colors[i].r, (int)colors[i].g, (int)colors[i].b, (int)colors[i].a);
-  //}
-
   // Final fclose()
   fclose(file);
+}
+
+void FileStream::saveImage(const char* filename, Image* imageData)
+{
+  tjhandle handle = tjInitCompress();
+
+  if (!handle) {
+    printf("There was an error while trying to save image.\n"); 
+    return;
+  }
+
+  uint8*  jpegBuffer{};
+  unsigned long  jpegSize{};
+
+  int pitch = imageData->width * sizeof(op::color::SColor);
+
+  int result = tjCompress2(
+    handle,
+    reinterpret_cast<const unsigned char*>(imageData->pixels),
+    imageData->width,
+    pitch,
+    imageData->height,
+    TJPF_RGBA,
+    &jpegBuffer,
+    &jpegSize,
+    TJSAMP_444,
+    80,
+    TJFLAG_FASTDCT
+  );
+
+  if (result != 0) {
+    printf("There was an error while trying to save image.\n");
+    tjDestroy(handle);
+    return;
+  }
+
+  FILE* fp{};
+
+  fopen_s(&fp, filename, "wb");
+
+  if (!fp) {
+    printf("There was an error while trying to save image.\n");
+    tjFree(jpegBuffer);
+    tjDestroy(handle);
+    return;
+  }
+
+  fwrite(jpegBuffer, jpegSize, 1, fp);
+  fclose(fp);
+
+  tjFree(jpegBuffer);
+  tjDestroy(handle);
+}
+
+
+void FileStream::saveImageAsPng(const char* filename, Image* imageData) 
+{
+  FILE*         pFile{};
+  png_struct*   pPng{};
+  png_info*     pInfo{};
+  uint8**       pRow{};
+
+  // Open file in binary write mode
+  fopen_s(&pFile, filename, "wb");
+
+  if (pFile == nullptr) {
+    printf("Could open a file at %s", filename);
+    return;
+  }
+
+  // Initialize png structures
+
+  pPng = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+
+  if (pPng == nullptr) {
+    printf("Could not create a read struct for png.\n");
+    png_destroy_write_struct(&pPng, nullptr);
+    fclose(pFile);
+    return;
+  }
+
+  pInfo = png_create_info_struct(pPng);
+
+  if (pInfo == nullptr) {
+    printf("Error could not create pnf info struct.\n");
+    png_destroy_write_struct(&pPng, nullptr);
+    fclose(pFile);
+    return;
+  }
+
+  // Error handling
+
+  if (setjmp(png_jmpbuf(pPng))) {
+    printf("Error with PNG creation.\n");
+    png_destroy_write_struct(&pPng, &pInfo);
+    fclose(pFile);
+    return;
+  }
+
+  // IO initialization
+  png_init_io(pPng, pFile);
+
+  // Set image header info
+
+  png_set_IHDR(
+    pPng,
+    pInfo,
+    imageData->width,
+    imageData->height,
+    8,
+    PNG_COLOR_TYPE_RGBA,
+    PNG_INTERLACE_NONE,
+    PNG_COMPRESSION_TYPE_DEFAULT,
+    PNG_FILTER_TYPE_DEFAULT
+  );
+
+  png_write_info(pPng, pInfo);
+
+  std::vector<png_bytep> rows(imageData->height);
+  for (int i = 0; i < imageData->height; i++) {
+    rows[i] = reinterpret_cast<uint8*>(imageData->pixels) + (i * imageData->width * 4);
+  }
+
+  png_set_strip_16(pPng);
+
+  png_write_image(pPng, rows.data());
+  png_write_end(pPng, nullptr);
+
+  png_destroy_write_struct(&pPng, &pInfo);
+  fclose(pFile);
 }

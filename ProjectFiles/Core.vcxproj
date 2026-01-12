@@ -28,6 +28,7 @@
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
     <ClInclude Include="..\Source\Core\Graphics\SVertex.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
+    <ClInclude Include="..\Source\Core\Object\Image.h" />
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
     <ClInclude Include="..\Source\Core\System\Application.h" />
     <ClInclude Include="..\Source\Core\System\FileStream.h" />
@@ -38,6 +39,7 @@
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
+    <ClCompile Include="..\Source\Core\Object\Image.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
     <ClCompile Include="..\Source\Core\System\private\FileStream.cpp" />
     <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp" />

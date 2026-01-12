@@ -44,6 +44,9 @@
     <ClInclude Include="..\Source\Core\System\SystemWindow.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Object\Image.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -91,6 +94,9 @@
     <Filter Include="Defines\Windows\Private">
       <UniqueIdentifier>{6c3ddf29-d4be-440b-82a2-37295e351ce7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{8271e369-3cb4-405e-a8fd-61cf015898d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -113,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp">
       <Filter>System\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Object\Image.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

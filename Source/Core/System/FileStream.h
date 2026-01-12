@@ -14,6 +14,8 @@
 
 #pragma warning(disable: 4251)
 
+class Image;
+
 struct FileMetaHeader
 {
 	char signature[4];
@@ -93,7 +95,7 @@ public:
 	 * @param filename
 	 * Relative path to the image.
 	*/
-	static void readJpegImage(const char* filename);
+	static void readJpegImage(const char* filename, Image* img);
 
 	/*
 	 * @brief
@@ -102,5 +104,30 @@ public:
 	 * @param filename
 	 * Relative path to the image.
 	*/
-	static void readPngImage(const char* path);
+	static void readPngImage(const char* path, Image& img);
+
+	/*
+	 * @brief
+	 * Saves an image as a JPEG.
+	 * 
+	 * @param filename
+	 * The name of the image file to save. Must end with file type.
+	 * 
+	 * @param imageData
+	 * Pointer to an Image class conataining the data to save.
+	*/
+	static void saveImage(const char* filename, Image* imageData);
+
+	/*
+	 * @brief 
+	 * Saves an image as an 8-bit RGBA PNG file.
+	 * 
+	 * @param filename
+	 * The name of the image file to save. Must end with file extension.
+	 * 
+	 * @param imageData
+	 * A pointer to an Image class object containing the data 
+	 * of the image to save.
+	*/
+	static void saveImageAsPng(const char* filename, Image* imageData);
 };
