@@ -115,7 +115,7 @@ inline Mesh createFlatCircle(int precision = 0)
   memcpy(pIndexData, indices.data(), sizeof(uint16) * indices.size());
 
   instance.vertexBuffer = VertexBuffer(pVerts, sizeof(SGFXVertex) * (int)verts.size());
-  instance.indexBuffer = IndexBuffer(pIndexData,  sizeof(uint16) * indices.size());
+  instance.indexBuffer = IndexBuffer(pIndexData,  sizeof(uint16) * static_cast<int>(indices.size()));
 
   return instance;
 }

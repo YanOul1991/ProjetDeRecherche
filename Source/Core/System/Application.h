@@ -36,13 +36,10 @@ public:
 
 private:
   bool m_shouldRun; 
-
-  IWindow* m_pWindow;     // Pointer to os managed windows
-
   IGraphicsModule* m_pRenderModule;
-
   op::SInput* m_pInput;
   static float m_runtime;
+  SystemWindow* m_pSysWindow;
 };
 
 extern "C" {

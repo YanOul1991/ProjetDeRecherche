@@ -5,9 +5,6 @@
     <ClInclude Include="..\Source\Core\System\Application.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\System\IWindow.h">
-      <Filter>System</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Input\Input.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -35,9 +32,6 @@
     <ClInclude Include="..\Source\Core\Graphics\SVertex.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Defines\Windows\WindowsProcs.h">
-      <Filter>Defines\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\IGraphicResource.h">
       <Filter>Graphics</Filter>
     </ClInclude>
@@ -45,6 +39,9 @@
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\System\FileStream.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\System\SystemWindow.h">
       <Filter>System</Filter>
     </ClInclude>
   </ItemGroup>
@@ -99,9 +96,6 @@
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
       <Filter>System\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Core\System\private\IWindow.cpp">
-      <Filter>System\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp">
       <Filter>Input\private</Filter>
     </ClCompile>
@@ -114,10 +108,10 @@
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp">
       <Filter>Exception\private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Core\Defines\Windows\Private\WindowsProcs.cpp">
-      <Filter>Defines\Windows\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Core\System\private\FileStream.cpp">
+      <Filter>System\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp">
       <Filter>System\Private</Filter>
     </ClCompile>
   </ItemGroup>

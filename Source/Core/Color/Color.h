@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
+#include <cmath>
 
 namespace op::color
 { 

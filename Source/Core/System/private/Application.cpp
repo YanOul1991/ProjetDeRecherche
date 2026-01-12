@@ -1,29 +1,25 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      + Application.cpp :
-          Definitions for Application.h
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+/* ======================================================================================
+ *  Application.cpp:
+ *
+ *  By:
+ *    Yanis Oulmane
+====================================================================================== */
 
 #pragma once
 
 // Optim Engine libraries
 #include "Core/Graphics/IGraphicsModule.h"
-#include "Core/System/IWindow.h"
 #include "Core/Input/Input.h"
 #include "Core/Time/Time.h"
 #include "Core/Color/Color.h"
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
-
+#include "Core/System/FileStream.h"
+#include "Core/System/SystemWindow.h"
 #include "Core/System/Application.h"
 
-#include <format>
-
 // Standard libraries
+#include <format>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -42,7 +38,7 @@ Application::Application() :
   m_shouldRun     { false },
   m_pRenderModule { nullptr },
   m_pInput        { nullptr },
-  m_pWindow       { nullptr }
+  m_pSysWindow    { nullptr }
 { }
 
 Application::~Application() {}
@@ -54,11 +50,7 @@ float Application::getRuntime()
   return m_runtime;
 }
 
-void Application::Quit() 
-{ 
-  //MessageBox(0, TEXT("Quit function called"), TEXT("Debug"), MB_OK);
-  m_shouldRun = false;
-}
+void Application::Quit() { m_shouldRun = false; }
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart()
@@ -68,23 +60,25 @@ void Application::ApplicationStart()
     // Start by assuming failure
     m_shouldRun = false;
 
-    // Allocate resources to create a new system managed Window
-    m_pWindow = new IWindow;
-    if (!m_pWindow) return;
-    if (!m_pWindow->create(this, TEXT("Optim Engine | <DirectX11>"), 0, 0, 500, 500, nullptr)) return;
+    m_pSysWindow->initialize(TEXT("dvwjdvwjvdhj"));
 
     // Load Direct3d11 runtime module
     HMODULE hmod = LoadLibraryW(TEXT("bin/directx11_ri.dll"));
 
-    if (hmod == nullptr) THROW_EXCEPTION(TEXT("Could not load the module at \"bin/directx11_ri.dll\""));
+    if (hmod == nullptr) 
+      THROW_EXCEPTION(TEXT("Could not load the module at \"bin/directx11_ri.dll\""));
 
     IGraphicsModule* (*pProc)() = (IGraphicsModule* (*)())GetProcAddress(hmod, "CreateDirect3D11Module");
 
     if (pProc)
     {
       m_pRenderModule = pProc();
-      m_pRenderModule->Initialize(m_pWindow->getHandle());
+      m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
+
+    FileStream::readJpegImage("test.jpg");
+    FileStream::readPngImage("heihachi.png");
+
     m_shouldRun = true;
   }
   catch (const Exception& e)
@@ -113,29 +107,22 @@ void Application::ApplicationLoop()
     static uint64 __last = op::time::nowHighFreq();
     static float __deltaTime{ 1.0f };
 
-    if (!m_shouldRun) return;
-
-    if (m_pWindow->windowLoop())
+    if (!m_pSysWindow->loop())
     {
-      //MessageBox(0, TEXT("Quit message for windows recieved"), TEXT("Debug"), MB_OK);
       Quit();
       return;
     }
 
-    m_pRenderModule->draw();
+    if (m_pRenderModule) 
+      m_pRenderModule->draw();
 
-    String winText = TEXT("Optim Engine <DirectX11>");
+    /*
+    int fps = static_cast<int>(1.0f / __deltaTime);
+    char buffer[64]{};
 
-    //float ndcX = ((float)Mouse::posX / 1920) * 2 - 1.0f;
-    //float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
-
-    //float testX = ((1920.0 / 2 - 100.0f) / 1920) * 2 - 1.0f;
-
-    //winText += String(TEXT(" | ")) + String(testX) + String(TEXT(", ")) + String(Mouse::posY);
-
-    winText += String(TEXT(" ")) + String(static_cast<int>(1.0f / __deltaTime)) + TEXT("fps");
-
-    SetWindowTextW(reinterpret_cast<HWND>(m_pWindow->getHandle()), winText.value());
+    sprintf_s(buffer, sizeof(buffer), "Optim Engine <DirectX11> | FPS: %d", fps);
+    m_pSysWindow->setWindowTitle(buffer);
+    */
 
     __now         = op::time::nowHighFreq();
     __deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
@@ -166,9 +153,6 @@ void Application::ApplicationLoop()
 
 void Application::ApplicationQuit()
 { 
-  //MessageBox(0, TEXT("ApplicationQuit Function called"), TEXT("Debug"), MB_OK);
-  // Free resources
   delete(m_pRenderModule);
-  delete(m_pWindow);
-  //delete(m_pInput);
+  delete(m_pSysWindow);
 }

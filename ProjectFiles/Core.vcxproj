@@ -22,7 +22,6 @@
     <ClInclude Include="..\Source\Core\Color\Color.h" />
     <ClInclude Include="..\Source\Core\Defines\DirectX\msDx11.h" />
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h" />
-    <ClInclude Include="..\Source\Core\Defines\Windows\WindowsProcs.h" />
     <ClInclude Include="..\Source\Core\Exception\exception.h" />
     <ClInclude Include="..\Source\Core\Graphics\IGraphicResource.h" />
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h" />
@@ -32,17 +31,16 @@
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
     <ClInclude Include="..\Source\Core\System\Application.h" />
     <ClInclude Include="..\Source\Core\System\FileStream.h" />
-    <ClInclude Include="..\Source\Core\System\IWindow.h" />
+    <ClInclude Include="..\Source\Core\System\SystemWindow.h" />
     <ClInclude Include="..\Source\Core\Time\Time.h" />
     <ClInclude Include="..\Source\Core\Types\string.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\Core\Defines\Windows\Private\WindowsProcs.cpp" />
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
     <ClCompile Include="..\Source\Core\System\private\FileStream.cpp" />
-    <ClCompile Include="..\Source\Core\System\private\IWindow.cpp" />
+    <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp" />
     <ClCompile Include="..\Source\Core\Time\Time.cpp" />
     <ClCompile Include="..\Source\Core\Types\Private\string.cpp" />
   </ItemGroup>
@@ -137,14 +135,16 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source;$(SolutionDir)Source\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL3-static.lib;turbojpeg-static.lib;jpeg-static.lib;libpng18_static.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\;$(SolutionDir)Source\ThirdParty\libjpeg\lib\;$(SolutionDir)Source\ThirdParty\libpng\lib\;$(SolutionDir)Source\ThirdParty\zlib\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AddModuleNamesToAssembly>
+      </AddModuleNamesToAssembly>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

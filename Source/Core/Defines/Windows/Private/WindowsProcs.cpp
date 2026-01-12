@@ -5,8 +5,9 @@
  *    Yanis Oulmane
 ====================================================================================== */
 
+//#include "Core/System/IWindow.h"
+
 #include "Core/Defines/Windows/WindowsProcs.h"
-#include "Core/System/IWindow.h"
 #include "Core/Exception/exception.h"
 #include "Core/Input/Input.h"
 
