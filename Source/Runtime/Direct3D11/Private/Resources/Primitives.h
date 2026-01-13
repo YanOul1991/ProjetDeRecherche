@@ -27,6 +27,12 @@ struct SGFXVertex
     float y;
     float z;
   } position;
+
+  struct
+  {
+    float u;
+    float v;
+  } UVCoord;
 };
 
 class Mesh
@@ -48,14 +54,14 @@ inline Mesh createCubeMesh()
 
   SGFXVertex* pData = new SGFXVertex[8]
   {
-    { -0.5f, -0.5f, -0.5f }, // 0  
-    {  0.5f, -0.5f, -0.5f }, // 1  
-    { -0.5f,  0.5f, -0.5f }, // 2  
-    {  0.5f,  0.5f, -0.5f }, // 3  
-    { -0.5f, -0.5f,  0.5f }, // 4  
-    {  0.5f, -0.5f,  0.5f }, // 5  
-    { -0.5f,  0.5f,  0.5f }, // 6  
-    {  0.5f,  0.5f,  0.5f }  // 7
+    { -0.5f, -0.5f, -0.5f , 0.0f, 1.0f }, // 0  
+    {  0.5f, -0.5f, -0.5f , 1.0f, 1.0f }, // 1  
+    { -0.5f,  0.5f, -0.5f , 0.0f, 0.0f }, // 2  
+    {  0.5f,  0.5f, -0.5f , 1.0f, 0.0f }, // 3  
+    { -0.5f, -0.5f,  0.5f , 1.0f, 1.0f }, // 4  
+    {  0.5f, -0.5f,  0.5f , 0.0f, 1.0f }, // 5  
+    { -0.5f,  0.5f,  0.5f , 1.0f, 0.0f }, // 6  
+    {  0.5f,  0.5f,  0.5f , 0.0f, 0.0f }  // 7
   };
   instance.vertexBuffer.data = pData;
 
@@ -75,7 +81,7 @@ inline Mesh createCubeMesh()
   return instance;
 }
 
-inline Mesh createFlatCircle(int precision = 0)
+inline Mesh createFlatCircle(int precision = 0) 
 {
   //std::stringstream ss;
   Mesh instance = Mesh();

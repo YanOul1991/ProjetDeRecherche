@@ -14,12 +14,13 @@
  * 
 ====================================================================================== */
 
+#include "Core/Object/Image.h"
+#include "Core/System/FileStream.h"
 #include "Core/System/Application.h"
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
 #include "Core/Input/Input.h"
 
-#include "Core/System/FileStream.h"
 #include "DirectX11Graphics.h"
 
 #include <iostream>
@@ -140,7 +141,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   /// ////////////////////// TESTING
 
-  objects = std::vector<MeshRenderer>(1);
+  objects = std::vector<MeshRenderer>(20);
   //String strSize = String((int)objects.size());
   //MessageBox(0, strSize.value(), TEXT("DEBUG"), MB_OK);
 
@@ -149,7 +150,6 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   _cubeMesh.vertexBuffer.create(m_pDevice.Get());
   _cubeMesh.indexBuffer.create(m_pDevice.Get());
-
 
   std::random_device rd;
   std::mt19937 engine(rd());
@@ -160,9 +160,9 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   for (int i = 0; i < objects.size(); i++)
   {
     objects[i].meshData = &_cubeMesh;
-    objects[i].position.x = 0;
-    objects[i].position.y = 0;
-    objects[i].position.z = 5;
+    objects[i].position.x = dist(rd);
+    objects[i].position.y = dist(rd);
+    objects[i].position.z = distZ(rd);
   }
 
   //_cubeMesh.posX = 0.0f;
@@ -197,6 +197,13 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   __t_material.setPath(TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
   __t_material.loadShaders(m_pDevice.Get());
 
+  Image img = Image();
+  FileStream::readPngImage("images/jeffTexture.png", img);
+  printf("Image resolution is %dx%d\n", img.width, img.height);
+
+  _test_texture.allocResource(m_pDevice.Get(), &img);
+  _test_sampler.init(m_pDevice.Get());
+
   return true;
 }
 
@@ -210,6 +217,9 @@ void DirectX11Graphics::clearBuffer(float red, float green, float blue, float al
 void DirectX11Graphics::renderUpdate()
 {
   float runtime = Application::getRuntime();
+
+  _test_texture.bind(m_pContext.Get());
+  _test_sampler.bind(m_pContext.Get());
 
   for (int i = 0; i < objects.size(); i++)
   {

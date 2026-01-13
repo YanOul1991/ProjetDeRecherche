@@ -1,10 +1,13 @@
-cbuffer CBuf
+struct VSOut
 {
-  float4 face_colors[6];
+  float2 tex : TEXCOORD;
+  float4 pos : SV_POSITION;
 };
 
-float4 main(uint tid : SV_PrimitiveID) : SV_Target
+Texture2D tex : register(t0);
+SamplerState smplr : register(s0);
+
+float4 main(VSOut input) : SV_Target
 {
-  return face_colors[tid % 6];
-  //return float4(1.0f, 1.0f, 1.0f, 1.0f);
+  return tex.Sample(smplr, input.tex);
 }

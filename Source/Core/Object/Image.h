@@ -10,11 +10,11 @@
 #include "Core/OptimEngine.h"
 #include "Core/Color/Color.h"
 
-class CORE_API Image
+class Image
 {
 public:
-	Image();
-	~Image();
+	CORE_API Image();
+	CORE_API ~Image();
 
 	int width;
 	int height;

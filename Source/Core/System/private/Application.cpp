@@ -78,39 +78,6 @@ void Application::ApplicationStart()
       m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
 
-    /*
-      TEST IMAGE START
-    */
-    Image imgTest = Image();
-    Image img2 = Image();
-
-    //FileStream::readJpegImage("heihachi.jpg", &imgTest);
-    FileStream::readPngImage("jeff2.png", imgTest);
-
-    printf("Image Resolution: %dx%d\n", imgTest.width, imgTest.height);
-
-    for (int i = 0; i < 10; i++)
-    {
-      printf("--- 0x%X%X%X\n", imgTest.pixels[i].r, imgTest.pixels[i].g, imgTest.pixels[i].b);
-    }
-
-    //int pixelCount = imgTest.width * imgTest.height;
-    //int halfImage =  (int)((imgTest.width * imgTest.height) / 2);
-
-    //for (int i = 0; i < pixelCount; i++) {
-    //  if (i > halfImage) {
-    //    imgTest.pixels[i].a = 0;
-    //  }
-    //}
-
-    //FileStream::saveImage("saveFromOptimeEngine.jpg", &imgTest);
-    FileStream::saveImageAsPng("jeff_newImage.png", &imgTest);
-    FileStream::readPngImage("jeff_newImage.png", img2);
-
-    /*
-      TEST IMAGE END
-    */
-
     m_shouldRun = true;
   }
   catch (const Exception& e)

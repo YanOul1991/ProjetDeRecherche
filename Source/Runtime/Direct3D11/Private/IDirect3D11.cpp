@@ -35,8 +35,9 @@ void IDirect3D11::Initialize(void* _WindowHandle)
 
   m_pBase = new DirectX11Graphics{};
 
-  if (m_pBase) 
+  if (m_pBase) {
     m_pBase->initialize(reinterpret_cast<HWND>(m_hTargetWindow));
+  }
 }
 
 /*
@@ -45,11 +46,6 @@ void IDirect3D11::Initialize(void* _WindowHandle)
 void IDirect3D11::draw()
 {
   m_pBase->clearBuffer((34.0f / 255.0f), (38.0f / 255.0f), (92.0f / 255.0f), 1.0f);
-
-  //float angle = Application::getRuntime();
-  //float ndcX =  ((float)Mouse::posX / 1920) * 2 - 1.0f;
-  //float ndcY = -((float)Mouse::posY / 1080) * 2 + 1.0f;
-
   m_pBase->renderUpdate();
   m_pBase->presentBuffer();
 }

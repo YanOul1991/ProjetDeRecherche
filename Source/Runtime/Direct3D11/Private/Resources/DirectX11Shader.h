@@ -41,6 +41,8 @@ public:
 	{
 		ComPtr<ID3DBlob> pBlob;
 
+		// Serring pixel shader
+
 		D3DReadFileToBlob(pixelShader.path, &pBlob);
 
 		device->CreatePixelShader(
@@ -49,6 +51,8 @@ public:
 			nullptr,
 			&pixelShader.pShader
 		);
+
+		// Setting vertex shader
 
 		D3DReadFileToBlob(vertexShader.path, &pBlob);
 
@@ -59,9 +63,11 @@ public:
 			&vertexShader.pShader
 		);
 
+		// Input
 		const D3D11_INPUT_ELEMENT_DESC ied[] =
 		{
-			{"Position" , 0,  DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,   D3D11_INPUT_PER_VERTEX_DATA,  0 }
+			{"POSITION" , 0,  DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,   D3D11_INPUT_PER_VERTEX_DATA,  0 },
+			{"TEXCOORD" , 0,  DXGI_FORMAT_R32G32_FLOAT,     0, 12,  D3D11_INPUT_PER_VERTEX_DATA,  0 }
 		};
 
 		device->CreateInputLayout(
