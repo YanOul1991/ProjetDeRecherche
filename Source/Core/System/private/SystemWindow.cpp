@@ -15,6 +15,7 @@
 
 //#include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Object/Camera/Camera.h"
+#include "Core/Math/OptimMathematics.h"
 
 #include "ThirdParty/SDL3/SDL.h"
 #include "ThirdParty/SDL3/SDL_system.h"
@@ -75,15 +76,60 @@ bool SystemWindow::loop()
 
 		if (evt.type == SDL_EVENT_MOUSE_WHEEL) {
 
-			Camera::posX += Camera::Forward.x * evt.wheel.y * 0.5f;
-			Camera::posY += Camera::Forward.y * evt.wheel.y * 0.5f;
-			Camera::posZ += Camera::Forward.z * evt.wheel.y * 0.5f;
+			float3 movement = evt.wheel.y * 0.5f * Camera::Forward;
+			Camera::posX += movement.x;
+			Camera::posY += movement.y;
+			Camera::posZ += movement.z;
+			
+			/*
+			//Camera::posX += Camera::Forward.x * evt.wheel.y * 0.5f;
+			//Camera::posY += Camera::Forward.y * evt.wheel.y * 0.5f;
+			//Camera::posZ += Camera::Forward.z * evt.wheel.y * 0.5f;
+			*/
+
 			break;
 		}
 		//if (evt.type == SDL_EVENT_MOUSE_MOTION) {
 		//	mouseDxevt.motion.xrel
 		//}
 	}// While end - Event poll loop
+
+	float3 forward{};
+	float3 right{};
+	float3 up{};
+	float3 wordlUp{0.0f, 1.0f, 0.0f};
+
+	forward.x = sinf(Camera::yaw) * cosf(Camera::pitch);
+	forward.y = -sinf(Camera::pitch);
+	forward.z = cosf(Camera::yaw) * cosf(Camera::pitch);
+
+	Camera::Forward = forward;
+
+	right.x = cosf(Camera::yaw);
+	right.z = -sinf(Camera::yaw);
+
+	//right = normalize(cross(wordlUp, forward));
+	up		= normalize(cross(forward, right));
+
+	Camera::right = right;
+	Camera::up		= up;
+
+	/*
+	float3 a = Camera::Forward;
+	float3 b = { 0, 1, 0 };
+	float3 c{};
+
+	c.x = (a.z * b.y) - (a.y * b.z);
+	c.y = (a.z * b.x) - (a.x * b.z);
+	c.z = (a.x * b.y) - (a.y * b.x);
+	Camera::right = c;
+
+	a = Camera::Forward;
+	b = Camera::right;
+	c.x = (a.z * b.y) - (a.y * b.z);
+	c.y = (a.z * b.x) - (a.x * b.z);
+	c.z = (a.x * b.y) - (a.y * b.x);
+	*/
 
 	/*
 	 * Viewport camera management.
@@ -92,50 +138,18 @@ bool SystemWindow::loop()
 	 * axis and X axis
 	*/
 	if (wheelHold) {
-		Camera::Forward = {
-			cosf(Camera::rotX) * sinf(Camera::rotY), 
-			-sinf(Camera::rotX), 
-			cosf(Camera::rotX) * cosf(Camera::rotY), 
-		};
-
-		float3 a = Camera::Forward;
-		float3 b = { 0, 1, 0 };
-		float3 c{};
-
-		c.x = (a.z * b.y) - (a.y * b.z);
-		c.y = (a.z * b.x) - (a.x * b.z);
-		c.z = (a.x * b.y) - (a.y * b.x);
-		Camera::right = c;
-
-		a = Camera::Forward;
-		b = Camera::right;
-		c.x = (a.z * b.y) - (a.y * b.z);
-		c.y = (a.z * b.x) - (a.x * b.z);
-		c.z = (a.x * b.y) - (a.y * b.x);
-
-		Camera::up = c;
-
-		/*
-		Camera::right = {
-			cosf(Camera::rotY) * cosf(Camera::rotZ),
-			cosf(Camera::rotY) * sinf(Camera::rotZ),
-			sinf(Camera::rotY)
-		};
-		*/
-		
-
 		if (keyboardState[SDL_SCANCODE_LSHIFT]) {
-			Camera::rotY += mouseDx * 0.005f;
-			Camera::rotX += mouseDy * 0.005f;
-		}
-		else {
-			Camera::posX += (Camera::right.x * mouseDx * -0.01f);
-			Camera::posY += (Camera::right.y * mouseDx * 0.01f);
-			Camera::posZ += (Camera::right.z * mouseDx * 0.01f);
+			Camera::posX += (Camera::right.x * -mouseDx * 0.01f);
+			Camera::posY += (Camera::right.y * -mouseDx * 0.01f);
+			Camera::posZ += (Camera::right.z * -mouseDx * 0.01f);
 
 			Camera::posX += (Camera::up.x * mouseDy * 0.01f);
 			Camera::posY += (Camera::up.y * mouseDy * 0.01f);
 			Camera::posZ += (Camera::up.z * mouseDy * 0.01f);
+		}
+		else {
+			Camera::yaw		+= mouseDx * 0.005f;
+			Camera::pitch += mouseDy * 0.005f;
 		}
 	}
 	//SDL_Delay(1);

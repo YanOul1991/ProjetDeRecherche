@@ -90,9 +90,9 @@ void InterfaceImGui::update()
 		ImGui::SliderFloat("PositionY", &Camera::posY, -10.0f, 10.0f);
 		ImGui::SliderFloat("PositionZ", &Camera::posZ, -10.0f, 10.0f);
 		ImGui::Spacing();
-		ImGui::SliderFloat("RotationX", &Camera::rotX, -10.0f, 10.0f);
-		ImGui::SliderFloat("RotationY", &Camera::rotY, -10.0f, 10.0f);
-		ImGui::SliderFloat("RotationZ", &Camera::rotZ, -10.0f, 10.0f);
+		ImGui::SliderFloat("RotationX", &Camera::pitch, -10.0f, 10.0f);
+		ImGui::SliderFloat("RotationY", &Camera::yaw, -10.0f, 10.0f);
+		ImGui::SliderFloat("RotationZ", &Camera::roll, -10.0f, 10.0f);
 		ImGui::Spacing();
 		ImGui::Text("Camera Forward: %.7f, %7f, %7f", Camera::Forward.x, Camera::Forward.y, Camera::Forward.z);
 		ImGui::Spacing();

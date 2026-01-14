@@ -28,6 +28,7 @@
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
     <ClInclude Include="..\Source\Core\Graphics\SVertex.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
+    <ClInclude Include="..\Source\Core\Math\OptimMathematics.h" />
     <ClInclude Include="..\Source\Core\Object\Camera\Camera.h" />
     <ClInclude Include="..\Source\Core\Object\Image.h" />
     <ClInclude Include="..\Source\Core\OptimEngine.h" />

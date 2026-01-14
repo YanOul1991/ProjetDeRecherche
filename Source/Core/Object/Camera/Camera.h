@@ -1,13 +1,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-
-struct float3
-{
-	float x;
-	float y;
-	float z;
-};
+#include "Core/Math/OptimMathematics.h"
 
 class CORE_API Camera final
 {
@@ -16,9 +10,9 @@ public:
 	static float posY;
 	static float posZ;
 
-	static float rotX;
-	static float rotY;
-	static float rotZ;
+	static float pitch; // The X rotation of the camera.
+	static float yaw;		// The Y rotation of the camera.
+	static float roll;	// The Z rotation of the camera.
 
 	static float3 Forward;
 	static float3 right;

@@ -9,15 +9,11 @@
 
 #include "DirectX11Shader.h"
 #include "DirectX11Buffer.h"
+#include "Core/Math/OptimMathematics.h"
 
 #include <iostream>
 #include <vector>
 #include <sstream>
-
-struct float2 {
-	float x;
-	float y;
-};
 
 inline float2 getVector(float2& start, float2& end)
 {

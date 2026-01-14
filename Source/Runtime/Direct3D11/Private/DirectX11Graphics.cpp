@@ -240,7 +240,7 @@ void DirectX11Graphics::renderUpdate()
   matrix_camera = 
     DirectX::XMMatrixInverse(
       nullptr, 
-      DirectX::XMMatrixRotationRollPitchYaw(Camera::rotX, Camera::rotY, Camera::rotZ) * DirectX::XMMatrixTranslation(Camera::posX, Camera::posY, Camera::posZ)
+      DirectX::XMMatrixRotationRollPitchYaw(Camera::pitch, Camera::yaw, Camera::roll) * DirectX::XMMatrixTranslation(Camera::posX, Camera::posY, Camera::posZ)
     );
 
   float runtime = Application::getRuntime();
