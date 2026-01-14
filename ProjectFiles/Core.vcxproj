@@ -28,6 +28,7 @@
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
     <ClInclude Include="..\Source\Core\Graphics\SVertex.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
+    <ClInclude Include="..\Source\Core\Object\Camera\Camera.h" />
     <ClInclude Include="..\Source\Core\Object\Image.h" />
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
     <ClInclude Include="..\Source\Core\System\Application.h" />
@@ -35,16 +36,30 @@
     <ClInclude Include="..\Source\Core\System\SystemWindow.h" />
     <ClInclude Include="..\Source\Core\Time\Time.h" />
     <ClInclude Include="..\Source\Core\Types\string.h" />
+    <ClInclude Include="..\Source\Core\_Temporary\InterfaceImGui.h" />
+    <ClInclude Include="..\Source\ThirdParty\imgui\imconfig.h" />
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui.h" />
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui_impl_sdl3.h" />
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui_internal.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
+    <ClCompile Include="..\Source\Core\Object\Camera\Camera.cpp" />
     <ClCompile Include="..\Source\Core\Object\Image.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
     <ClCompile Include="..\Source\Core\System\private\FileStream.cpp" />
     <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp" />
     <ClCompile Include="..\Source\Core\Time\Time.cpp" />
     <ClCompile Include="..\Source\Core\Types\Private\string.cpp" />
+    <ClCompile Include="..\Source\Core\_Temporary\InterfaceImGui.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_impl_sdl3.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

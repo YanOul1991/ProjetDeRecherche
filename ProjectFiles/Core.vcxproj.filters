@@ -47,6 +47,27 @@
     <ClInclude Include="..\Source\Core\Object\Image.h">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\_Temporary\InterfaceImGui.h">
+      <Filter>_Temporary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\imgui\imconfig.h">
+      <Filter>_Temporary\ImGui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui.h">
+      <Filter>_Temporary\ImGui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui_impl_dx11.h">
+      <Filter>_Temporary\ImGui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui_impl_sdl3.h">
+      <Filter>_Temporary\ImGui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\imgui\imgui_internal.h">
+      <Filter>_Temporary\ImGui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Object\Camera\Camera.h">
+      <Filter>Object\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -97,6 +118,21 @@
     <Filter Include="Object">
       <UniqueIdentifier>{8271e369-3cb4-405e-a8fd-61cf015898d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="_Temporary">
+      <UniqueIdentifier>{0103263b-adc6-4219-81fc-747a0e4fd6b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Temporary\ImGui">
+      <UniqueIdentifier>{fee01e1a-1ecf-400c-a318-333355b09914}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Temporary\ImGui\Headers">
+      <UniqueIdentifier>{69c8d95a-920a-411a-9635-2468f81b7dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Temporary\ImGui\Source">
+      <UniqueIdentifier>{697f19f7-bf2a-4b19-a671-11811c668c41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Camera">
+      <UniqueIdentifier>{6f7948aa-29c7-40e5-afb3-8b5ef976a755}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -122,6 +158,30 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Object\Image.cpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\_Temporary\InterfaceImGui.cpp">
+      <Filter>_Temporary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui.cpp">
+      <Filter>_Temporary\ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_draw.cpp">
+      <Filter>_Temporary\ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_impl_dx11.cpp">
+      <Filter>_Temporary\ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_impl_sdl3.cpp">
+      <Filter>_Temporary\ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_tables.cpp">
+      <Filter>_Temporary\ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\imgui\imgui_widgets.cpp">
+      <Filter>_Temporary\ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Object\Camera\Camera.cpp">
+      <Filter>Object\Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

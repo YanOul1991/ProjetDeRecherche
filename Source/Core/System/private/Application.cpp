@@ -7,7 +7,6 @@
 
 #pragma once
 
-// Optim Engine libraries
 #include "Core/Graphics/IGraphicsModule.h"
 #include "Core/Input/Input.h"
 #include "Core/Time/Time.h"
@@ -17,14 +16,12 @@
 #include "Core/System/FileStream.h"
 #include "Core/System/SystemWindow.h"
 #include "Core/Object/Image.h"
-
 #include "Core/System/Application.h"
 
-// Standard libraries
-#include <format>
 #include <iostream>
-#include <memory>
 #include <sstream>
+#include <format>
+#include <memory>
 
 extern "C" {
   CORE_API Application* CreateApplicationProc()
@@ -35,6 +32,7 @@ extern "C" {
 }
 
 float Application::m_runtime{ 0.0f };
+float Application::m_deltaTime{ 1.0f };
 
 Application::Application() :
   m_shouldRun     { false },
@@ -45,54 +43,60 @@ Application::Application() :
 
 Application::~Application() {}
 
-bool Application::ShouldRun() const { return m_shouldRun; }
+bool Application::ShouldRun() const 
+{ 
+  return m_shouldRun; 
+}
 
 float Application::getRuntime()
 {
   return m_runtime;
 }
 
-void Application::Quit() { m_shouldRun = false; }
+float Application::getDeltaTime()
+{
+  return m_deltaTime;
+}
+
+void Application::Quit() 
+{ 
+  m_shouldRun = false; 
+}
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart()
 {
-  try
-  {
+  try {
     // Start by assuming failure
     m_shouldRun = false;
-
     m_pSysWindow->initialize(TEXT("dvwjdvwjvdhj"));
 
     // Load Direct3d11 runtime module
     HMODULE hmod = LoadLibraryW(TEXT("bin/directx11_ri.dll"));
 
-    if (hmod == nullptr) 
+    if (hmod == nullptr) {
       THROW_EXCEPTION(TEXT("Could not load the module at \"bin/directx11_ri.dll\""));
+    }
 
     IGraphicsModule* (*pProc)() = (IGraphicsModule* (*)())GetProcAddress(hmod, "CreateDirect3D11Module");
 
-    if (pProc)
-    {
+    if (pProc) {
       m_pRenderModule = pProc();
       m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
 
     m_shouldRun = true;
   }
-  catch (const Exception& e)
-  {
+  catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());
     MessageBoxW(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
-  catch (const std::exception& e)
-  {
+  catch (const std::exception& e) {
     MessageBoxA(0, e.what(), "Error", MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
-  catch (...)
-  {
+  catch (...) {
     MessageBoxW(0, TEXT("Unknown details, for exception thrown"), TEXT("Exception..."), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
@@ -100,36 +104,25 @@ void Application::ApplicationStart()
 
 void Application::ApplicationLoop()
 {
-  try
-  {
+  try {
     static uint64 __now;
     static uint64 __last = op::time::nowHighFreq();
-    static float __deltaTime{ 1.0f };
 
-    if (!m_pSysWindow->loop())
-    {
+    if (!m_pSysWindow->loop()) {
       Quit();
       return;
     }
 
-    if (m_pRenderModule) 
+    if (m_pRenderModule) {
       m_pRenderModule->draw();
-
-    /*
-    int fps = static_cast<int>(1.0f / __deltaTime);
-    char buffer[64]{};
-
-    sprintf_s(buffer, sizeof(buffer), "Optim Engine <DirectX11> | FPS: %d", fps);
-    m_pSysWindow->setWindowTitle(buffer);
-    */
+    }
 
     __now         = op::time::nowHighFreq();
-    __deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
+    m_deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
     __last        = __now;
-    m_runtime     += __deltaTime;
+    m_runtime     += m_deltaTime;
   }
-  catch (const Exception& e)
-  {
+  catch (const Exception& e) {
     String fullMessage = String(e.type());
     fullMessage 
       +=  String(TEXT("\n\n[Description]\n")) + String(e.what())
@@ -138,13 +131,11 @@ void Application::ApplicationLoop()
     MessageBoxW(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
-  catch (const std::exception& e)
-  {
+  catch (const std::exception& e) {
     MessageBoxA(0, e.what(), "Error", MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
-  catch (...)
-  {
+  catch (...) {
     MessageBoxW(0, TEXT("Unknown details, for exception thrown"), TEXT("Exception..."), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }

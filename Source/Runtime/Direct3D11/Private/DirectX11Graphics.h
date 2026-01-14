@@ -154,6 +154,9 @@ private:
   ComPtr<ID3D11DepthStencilView>  m_pDepthStencilView;
 
   /// TEST FIELDS
+  DirectX::XMMATRIX matrix_projection{};
+  DirectX::XMMATRIX matrix_camera{};
+
   Mesh _cubeMesh;
 
   std::vector<MeshRenderer> objects;

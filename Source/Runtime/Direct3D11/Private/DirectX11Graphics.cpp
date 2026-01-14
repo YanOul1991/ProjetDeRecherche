@@ -22,13 +22,14 @@
 #include "Core/Input/Input.h"
 
 #include "DirectX11Graphics.h"
+#include "Core/Object/Camera/Camera.h"
 
 #include <iostream>
 #include <sstream>
 #include <random>
 #include <iomanip>
 
-//#define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
+#include "Core/_Temporary/InterfaceImGui.h"
 
 DirectX11Graphics::DirectX11Graphics() :
   m_pSwapChain        { nullptr },
@@ -141,7 +142,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   /// ////////////////////// TESTING
 
-  objects = std::vector<MeshRenderer>(20);
+  objects = std::vector<MeshRenderer>(1);
   //String strSize = String((int)objects.size());
   //MessageBox(0, strSize.value(), TEXT("DEBUG"), MB_OK);
 
@@ -160,9 +161,13 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   for (int i = 0; i < objects.size(); i++)
   {
     objects[i].meshData = &_cubeMesh;
-    objects[i].position.x = dist(rd);
-    objects[i].position.y = dist(rd);
-    objects[i].position.z = distZ(rd);
+    objects[i].position.x = 0.0f;
+    objects[i].position.y = 0.0f;
+    objects[i].position.z = 5.0f;
+
+    //objects[i].position.x = dist(rd);
+    //objects[i].position.y = dist(rd);
+    //objects[i].position.z = distZ(rd);
   }
 
   //_cubeMesh.posX = 0.0f;
@@ -204,6 +209,11 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   _test_texture.allocResource(m_pDevice.Get(), &img);
   _test_sampler.init(m_pDevice.Get());
 
+  InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
+
+  matrix_projection =  DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 100.0f);
+  matrix_camera = DirectX::XMMatrixTranslation(Camera::posX, Camera::posY, Camera::posZ);
+
   return true;
 }
 
@@ -216,6 +226,23 @@ void DirectX11Graphics::clearBuffer(float red, float green, float blue, float al
 
 void DirectX11Graphics::renderUpdate()
 {
+  /*
+  D3D11_RASTERIZER_DESC rsDesc{};
+
+  rsDesc.FillMode = D3D11_FILL_SOLID;
+  rsDesc.CullMode = D3D11_CULL_NONE;
+
+  ComPtr<ID3D11RasterizerState> pRsState;
+  m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
+  m_pContext->RSSetState(pRsState.Get());
+  */
+
+  matrix_camera = 
+    DirectX::XMMatrixInverse(
+      nullptr, 
+      DirectX::XMMatrixRotationRollPitchYaw(Camera::rotX, Camera::rotY, Camera::rotZ) * DirectX::XMMatrixTranslation(Camera::posX, Camera::posY, Camera::posZ)
+    );
+
   float runtime = Application::getRuntime();
 
   _test_texture.bind(m_pContext.Get());
@@ -232,11 +259,9 @@ void DirectX11Graphics::renderUpdate()
     // and rotate in 3D space based on current runtime
     __t_constBuffer.data = {
       DirectX::XMMatrixTranspose(
-        DirectX::XMMatrixRotationY(runtime *0.5f) *
-        DirectX::XMMatrixRotationX(-runtime * 0.5f) *
-        DirectX::XMMatrixRotationZ(0) * 
         DirectX::XMMatrixTranslation(objects[i].position.x, objects[i].position.y, objects[i].position.z) *
-        DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 100.0f)
+        matrix_camera * 
+        matrix_projection
       )
     };
 
@@ -270,6 +295,8 @@ void DirectX11Graphics::renderUpdate()
 
 void DirectX11Graphics::presentBuffer()
 {
+  InterfaceImGui::update();
+
   HRESULT hr{ S_OK };
   hr = m_pSwapChain->Present(1u, 0u);
 
