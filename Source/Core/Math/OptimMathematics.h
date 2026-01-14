@@ -4,6 +4,12 @@
 #include "Core/OptimEngine.h"
 #include "math.h"
 
+namespace mathConst
+{
+constexpr float		PI				= 3.1415927f;
+constexpr double	PI_double	= 3.141592653589793;
+}
+
 struct float2
 {
 	float x;

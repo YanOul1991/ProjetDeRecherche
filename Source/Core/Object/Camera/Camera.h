@@ -2,19 +2,24 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Math/OptimMathematics.h"
+#include "Core/Math/OptimMathematics.h"
+#include "Core/Math/Quaternion.h"
 
-class CORE_API Camera final
+class Camera final
 {
 public:
-	static float posX;
-	static float posY;
-	static float posZ;
+	CORE_API static float posX;
+	CORE_API static float posY;
+	CORE_API static float posZ;
 
-	static float pitch; // The X rotation of the camera.
-	static float yaw;		// The Y rotation of the camera.
-	static float roll;	// The Z rotation of the camera.
+	CORE_API static float3 position;
+	CORE_API static Quaternion rotation;
 
-	static float3 Forward;
-	static float3 right;
-	static float3 up;
+	CORE_API static float pitch; // The X rotation of the camera.
+	CORE_API static float yaw;		// The Y rotation of the camera.
+	CORE_API static float roll;	// The Z rotation of the camera.
+
+	CORE_API static float3 Forward;
+	CORE_API static float3 right;
+	CORE_API static float3 up;
 };

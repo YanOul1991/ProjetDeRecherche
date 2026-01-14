@@ -115,10 +115,10 @@ inline Mesh createCubeMesh()
     {vertices[5].position, { 1.0f, 1.0f }}, // 19
 
     // Face 6
-    {vertices[4].position, { 0.0f, 0.0f }}, // 20
-    {vertices[5].position, { 1.0f, 0.0f }}, // 21
-    {vertices[6].position, { 0.0f, 1.0f }}, // 22
-    {vertices[7].position, { 1.0f, 1.0f }}, // 23
+    {vertices[4].position, { 0.0f, 1.0f }}, // 20
+    {vertices[5].position, { 1.0f, 1.0f }}, // 21
+    {vertices[6].position, { 0.0f, 0.0f }}, // 22
+    {vertices[7].position, { 1.0f, 0.0f }}, // 23
   };
 
   instance.vertexBuffer.data = pData;

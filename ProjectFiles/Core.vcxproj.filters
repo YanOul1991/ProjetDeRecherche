@@ -71,6 +71,9 @@
     <ClInclude Include="..\Source\Core\Math\OptimMathematics.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Math\Quaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">

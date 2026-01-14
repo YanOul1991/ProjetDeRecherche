@@ -161,8 +161,8 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   for (int i = 0; i < objects.size(); i++)
   {
     objects[i].meshData = &_cubeMesh;
-    objects[i].position.x = 0.0f;
-    objects[i].position.y = 0.0f;
+    objects[i].position.x = 0.0f + i;
+    objects[i].position.y = 0.0f; 
     objects[i].position.z = 5.0f;
 
     //objects[i].position.x = dist(rd);
@@ -212,7 +212,6 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
   matrix_projection =  DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 100.0f);
-  matrix_camera = DirectX::XMMatrixTranslation(Camera::posX, Camera::posY, Camera::posZ);
 
   return true;
 }
@@ -226,31 +225,46 @@ void DirectX11Graphics::clearBuffer(float red, float green, float blue, float al
 
 void DirectX11Graphics::renderUpdate()
 {
-  /*
+  /* RASTERIZER MINI CODE
   D3D11_RASTERIZER_DESC rsDesc{};
-
   rsDesc.FillMode = D3D11_FILL_SOLID;
   rsDesc.CullMode = D3D11_CULL_NONE;
-
   ComPtr<ID3D11RasterizerState> pRsState;
   m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
   m_pContext->RSSetState(pRsState.Get());
   */
 
-  matrix_camera = 
-    DirectX::XMMatrixInverse(
-      nullptr, 
-      DirectX::XMMatrixRotationRollPitchYaw(Camera::pitch, Camera::yaw, Camera::roll) * DirectX::XMMatrixTranslation(Camera::posX, Camera::posY, Camera::posZ)
-    );
-
   float runtime = Application::getRuntime();
+
+  DirectX::XMFLOAT3 position = {
+    Camera::posX,
+    Camera::posY,
+    Camera::posZ
+  };
+  DirectX::XMFLOAT3 forward = {
+    Camera::Forward.x,
+    Camera::Forward.y,
+    Camera::Forward.z
+  };
+  DirectX::XMFLOAT3 up = {
+    Camera::up.x,
+    Camera::up.y,
+    Camera::up.z
+  };
+
+  matrix_camera = DirectX::XMMatrixLookToLH(
+    DirectX::XMLoadFloat3(&position),
+    DirectX::XMLoadFloat3(&forward),
+    DirectX::XMLoadFloat3(&up)
+  );
+
 
   _test_texture.bind(m_pContext.Get());
   _test_sampler.bind(m_pContext.Get());
 
   for (int i = 0; i < objects.size(); i++)
   {
-    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
     objects[i].meshData->vertexBuffer.bind(m_pContext.Get());
     objects[i].meshData->indexBuffer.bind(m_pContext.Get());
