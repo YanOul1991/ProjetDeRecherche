@@ -1,4 +1,4 @@
-/* ======================================================================================
+﻿/* ======================================================================================
  *  Application.cpp:
  *
  *  By:
@@ -10,18 +10,26 @@
 #include "Core/Graphics/IGraphicsModule.h"
 #include "Core/Input/Input.h"
 #include "Core/Time/Time.h"
-#include "Core/Color/Color.h"
+#include "Core/Types/Color.h"
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
 #include "Core/System/FileStream.h"
 #include "Core/System/SystemWindow.h"
-#include "Core/Object/Image.h"
+#include "Core/Object/Image/Image.h"
 #include "Core/System/Application.h"
+
+#include "Core/Object/Object.h"
+#include "Core/Utilities/Random/Random.h"
 
 #include <iostream>
 #include <sstream>
 #include <format>
 #include <memory>
+#include <fstream>
+#include <string>
+
+#pragma warning(disable: 4477)
+#pragma warning(disable: 4313)
 
 extern "C" {
   CORE_API Application* CreateApplicationProc()
@@ -85,6 +93,85 @@ void Application::ApplicationStart()
       m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
 
+    /// OBJECT CLASS EXPERIMENTATION
+
+    //String str1 = String::SPrint(TEXT("This is the first part of the string:"));
+    //wprintf(TEXT("String Value: %s| String length %d"), str1.value(), str1.length());
+
+    //wprintf(L"%s | String length %d", str1.value(), str1.length());
+
+    //String* str = new String(TEXT("dwavdwdvu"));
+    //String* str = new String();
+
+    //printf("Created  pointer: 0x%02x\n", str);
+
+    //String* strAlloc = new String;
+    //UniquePtr<String>pStr0;
+    ////UniquePtr<String>pStr1(static_cast<UniquePtr<String>&&>(pStr0));
+    //UniquePtr<String>pStr1(nullptr);
+
+    //pStr1 = pStr0.move();
+
+    //printf("Ptr address 0 : 0x%02X\n", &(*pStr0));
+    //printf("Ptr address 1 : 0x%02X\n", &(*pStr1));
+    //printf("Alloc address : 0x%02X\n", strAlloc);
+
+    //String::printf("This is a printf test function %d", 373268);
+
+    //std::wcout << str1.value();
+    //std::wcout << TEXT("This is new data\n");
+    //std::cout << "ebhjfvbjhevfje";
+
+    //String str2 = TEXT("-Hello!");
+    //str1 += str2;
+    //std::cout << std::boolalpha << "Same string? " << String::compare(str1, str2);
+    //std::vector<Object*> objects;
+    //Object* obj1 = Type::getObject(GrandChildClass::typeInfo.name);
+    //Object* obj2 = Type::getObject(ChildClass::typeInfo.name);
+    //Object* obj3 = Type::getObject(GrandChildClass::typeInfo.name);
+
+    /*
+    std::fstream fileStream("data/test.txt", std::ios::in | std::ios::app);
+
+    if (!fileStream.is_open()) {
+      std::cerr << "Could not open file :(\n";
+    }
+    else {
+      std::cout << "File opened :D\n";
+    }
+
+    std::string line{};
+
+    while (std::getline(fileStream, line)) {
+      //std::cout << line.length() << '\n';
+      for (unsigned char c : line) {
+        std::cout << (int)c << " ";
+      }
+
+      std::cout << '\n';
+
+      objects.push_back(Type::getObject(line.c_str()));
+
+    }
+
+    fileStream.close();
+    */
+
+    /*
+    objects.push_back(Type::getObject(GrandChildClass::typeInfo.name));
+    objects.push_back(Type::getObject(Object::typeInfo.name));
+    objects.push_back(Type::getObject(ChildClass::typeInfo.name));
+
+    for (int i = 0; i < 3; i++) {
+      std::cout << "TypeInfo : " << objects[i]->getTypeInfo()->name << '\n';
+    }
+    */
+
+    // std::cout << "Address  : 0x" << std::hex << obj1 << std::dec << '\n';
+    // obj1->printHello();
+
+    /// OBJECT CLASS EXPERIMENTATION - END
+
     m_shouldRun = true;
   }
   catch (const Exception& e) {
@@ -124,9 +211,7 @@ void Application::ApplicationLoop()
   }
   catch (const Exception& e) {
     String fullMessage = String(e.type());
-    fullMessage 
-      +=  String(TEXT("\n\n[Description]\n")) + String(e.what())
-      +   String(TEXT("\n[File]\n")) + e.getFile();
+    fullMessage +=  String(TEXT("\n\n[Description]\n")) + String(e.what()) + String(TEXT("\n[File]\n")) + e.getFile();
 
     MessageBoxW(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();

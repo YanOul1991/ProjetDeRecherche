@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "Core/Color/Color.h"
-#include "Core/Object/Image.h"
+#include "Core/Types/Color.h"
+#include "Core/Object/Image/Image.h"
 
 #include "Runtime/Direct3D11/IDirect3D11.h"
 

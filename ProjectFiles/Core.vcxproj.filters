@@ -14,14 +14,11 @@
     <ClInclude Include="..\Source\Core\Exception\exception.h">
       <Filter>Exception</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Types\string.h">
+    <ClInclude Include="..\Source\Core\Types\String.h">
       <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h">
       <Filter>Defines\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Color\Color.h">
-      <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Defines\DirectX\msDx11.h">
       <Filter>Defines\DirectX</Filter>
@@ -43,9 +40,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\System\SystemWindow.h">
       <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Object\Image.h">
-      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\_Temporary\InterfaceImGui.h">
       <Filter>_Temporary</Filter>
@@ -73,6 +67,18 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\Math\Quaternion.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Types\Color.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Object\Image\Image.h">
+      <Filter>Object\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Object\Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Utilities\Random\Random.h">
+      <Filter>Utilities\Random</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +148,18 @@
     <Filter Include="Math">
       <UniqueIdentifier>{7c57a133-1c38-45d7-9be9-c9d251d805d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Image">
+      <UniqueIdentifier>{2917b471-63de-4dca-8b0d-8dcdc8df44be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{0ec94a93-dcbd-4a2a-be65-ded684262ab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Random">
+      <UniqueIdentifier>{c57afca1-d668-4ef6-8fe1-b3f3d1cd0f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Pointer">
+      <UniqueIdentifier>{45c6573d-53d5-40c0-b05d-de78d2fc2ce9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -153,7 +171,7 @@
     <ClCompile Include="..\Source\Core\Time\Time.cpp">
       <Filter>Time\private</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Core\Types\Private\string.cpp">
+    <ClCompile Include="..\Source\Core\Types\Private\String.cpp">
       <Filter>Types\private</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp">
@@ -164,9 +182,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp">
       <Filter>System\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Core\Object\Image.cpp">
-      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\_Temporary\InterfaceImGui.cpp">
       <Filter>_Temporary</Filter>
@@ -191,6 +206,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Object\Camera\Camera.cpp">
       <Filter>Object\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Object\Image\Image.cpp">
+      <Filter>Object\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Object\Object.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Utilities\Random\Random.cpp">
+      <Filter>Utilities\Random</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -47,35 +47,6 @@ void InterfaceImGui::update()
 	ImGui_ImplSDL3_NewFrame(); 
 	ImGui::NewFrame();
 
-	/*
-	// Docking space
-	ImGuiWindowFlags	windowFlags = ImGuiWindowFlags_NoDocking;
-	ImGuiViewport*		viewPort		= ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(viewPort->WorkPos);
-	ImGui::SetNextWindowSize(viewPort->WorkSize);
-	ImGui::SetNextWindowViewport(viewPort->ID);
-
-	windowFlags |=	ImGuiWindowFlags_NoTitleBar | 
-									ImGuiWindowFlags_NoCollapse | 
-									ImGuiWindowFlags_NoResize | 
-									ImGuiWindowFlags_NoMove | 
-									ImGuiWindowFlags_NoBringToFrontOnFocus | 
-									ImGuiWindowFlags_NoNavFocus |
-									ImGuiWindowFlags_NoBackground;
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f); 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-
-	ImGui::Begin("DockSpaceHost", nullptr, windowFlags); 
-	ImGui::PopStyleVar(2);
-
-	ImGuiID dockSpaceId = ImGui::GetID("MyDockSpace");
-	ImGui::DockSpace(dockSpaceId, ImVec2(0, 0), ImGuiDockNodeFlags_None);
-
-	ImGui::End();
-	
-	*/
-
 	ImGui::Begin("Debug"); 
 	ImGui::SetWindowFontScale(1.05f);
 
@@ -86,23 +57,22 @@ void InterfaceImGui::update()
 	}
 
 	if (ImGui::CollapsingHeader("Camera")) {
-		ImGui::SliderFloat("PositionX", &Camera::posX, -10.0f, 10.0f);
-		ImGui::SliderFloat("PositionY", &Camera::posY, -10.0f, 10.0f);
-		ImGui::SliderFloat("PositionZ", &Camera::posZ, -10.0f, 10.0f);
-		ImGui::Spacing();
-		ImGui::SliderFloat("RotationX", &Camera::pitch, -10.0f, 10.0f);
-		ImGui::SliderFloat("RotationY", &Camera::yaw, -10.0f, 10.0f);
-		ImGui::SliderFloat("RotationZ", &Camera::roll, -10.0f, 10.0f);
-		ImGui::Spacing();
-		ImGui::Text("Camera Forward: %.7f, %7f, %7f", Camera::Forward.x, Camera::Forward.y, Camera::Forward.z);
-		ImGui::Spacing();
-		ImGui::Text("Camera Right: %.7f, %7f, %7f", Camera::right.x, Camera::right.y, Camera::right.z);
-		ImGui::Spacing();
-		ImGui::Text("Camera Up: %.7f, %7f, %7f", Camera::up.x, Camera::up.y, Camera::up.z);
+		ImGui::Text("Position : %.7f, %7f, %7f", Camera::position.x, Camera::position.y, Camera::position.z);
+		ImGui::Text("Forward  : %.7f, %7f, %7f", Camera::forward.x, Camera::forward.y, Camera::forward.z);
+		ImGui::Text("Right    : %.7f, %7f, %7f", Camera::right.x, Camera::right.y, Camera::right.z);
+		ImGui::Text("Up       : %.7f, %7f, %7f", Camera::up.x, Camera::up.y, Camera::up.z);
 	}
 
-	ImGui::End();
+	float pitch;
+	float yaw;
+	float roll;
 
+	Camera::rotation.toEuler(pitch, yaw, roll);
+
+	ImGui::Text("Euler angle (%.7f, %.7f, %.7f)", pitch * 180/mathConst::PI, yaw * 180/mathConst::PI, roll * 180/mathConst::PI);
+
+	ImGui::End();
 	ImGui::Render(); 
+
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }

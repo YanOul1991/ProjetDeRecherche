@@ -1,3 +1,9 @@
+/* ======================================================================================
+ *  OptimMathematics.h:
+ *
+ *  By:
+ *    Yanis Oulmane
+====================================================================================== */
 
 #pragma once
 
@@ -6,8 +12,10 @@
 
 namespace mathConst
 {
-constexpr float		PI				= 3.1415927f;
-constexpr double	PI_double	= 3.141592653589793;
+
+constexpr float		PI = 3.1415927f;
+constexpr double	PI_double = 3.141592653589793;
+
 }
 
 struct float2
@@ -59,7 +67,7 @@ struct float4x4
 
 inline float3 operator+(float3 left, float3 right)
 {
-	return { 
+	return {
 		left.x + right.x,
 		left.y + right.y,
 		left.z + right.z
@@ -68,7 +76,7 @@ inline float3 operator+(float3 left, float3 right)
 
 inline float3 operator-(float3 left, float3 right)
 {
-	return { 
+	return {
 		left.x - right.x,
 		left.y - right.y,
 		left.z - right.z
@@ -115,7 +123,7 @@ inline float magnitude(const float3& v)
 
 inline float3 normalize(const float3& v)
 {
-	return {
+	return{
 		(1.0f / magnitude(v)) * v
 	};
 }

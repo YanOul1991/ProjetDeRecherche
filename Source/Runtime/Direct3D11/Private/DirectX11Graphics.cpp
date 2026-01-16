@@ -14,7 +14,7 @@
  * 
 ====================================================================================== */
 
-#include "Core/Object/Image.h"
+#include "Core/Object/Image/Image.h"
 #include "Core/System/FileStream.h"
 #include "Core/System/Application.h"
 #include "Core/Types/string.h"
@@ -163,16 +163,12 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     objects[i].meshData = &_cubeMesh;
     objects[i].position.x = 0.0f + i;
     objects[i].position.y = 0.0f; 
-    objects[i].position.z = 5.0f;
+    objects[i].position.z = 0.0f;
 
     //objects[i].position.x = dist(rd);
     //objects[i].position.y = dist(rd);
     //objects[i].position.z = distZ(rd);
   }
-
-  //_cubeMesh.posX = 0.0f;
-  //_cubeMesh.posY = 0.0f;
-  //_cubeMesh.posZ = 5.0f;
 
   /// ---------------------------------
   /// CONSTANT BUFFER INITIALIZATION
@@ -203,7 +199,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   __t_material.loadShaders(m_pDevice.Get());
 
   Image img = Image();
-  FileStream::readPngImage("images/jeffTexture.png", img);
+  FileStream::readPngImage("images/jeff.png", img);
   printf("Image resolution is %dx%d\n", img.width, img.height);
 
   _test_texture.allocResource(m_pDevice.Get(), &img);
@@ -211,7 +207,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
-  matrix_projection =  DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 100.0f);
+  matrix_projection =  DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 1000.0f);
 
   return true;
 }
@@ -237,14 +233,14 @@ void DirectX11Graphics::renderUpdate()
   float runtime = Application::getRuntime();
 
   DirectX::XMFLOAT3 position = {
-    Camera::posX,
-    Camera::posY,
-    Camera::posZ
+    Camera::position.x,
+    Camera::position.y,
+    Camera::position.z
   };
   DirectX::XMFLOAT3 forward = {
-    Camera::Forward.x,
-    Camera::Forward.y,
-    Camera::Forward.z
+    Camera::forward.x,
+    Camera::forward.y,
+    Camera::forward.z
   };
   DirectX::XMFLOAT3 up = {
     Camera::up.x,
@@ -258,13 +254,12 @@ void DirectX11Graphics::renderUpdate()
     DirectX::XMLoadFloat3(&up)
   );
 
-
   _test_texture.bind(m_pContext.Get());
   _test_sampler.bind(m_pContext.Get());
 
   for (int i = 0; i < objects.size(); i++)
   {
-    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     objects[i].meshData->vertexBuffer.bind(m_pContext.Get());
     objects[i].meshData->indexBuffer.bind(m_pContext.Get());

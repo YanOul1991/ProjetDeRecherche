@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
+#include "Core/Types/String.h"
 
 class SystemWindow;
 class IGraphicsModule;

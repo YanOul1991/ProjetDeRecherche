@@ -1,22 +1,21 @@
 /* ======================================================================================
- *  Image.h:
+ *  Image.cpp:
  *
  *  By:
  *    Yanis Oulmane
 ====================================================================================== */
 
-#pragma once
+#include "Core/Types/Color.h"
+#include "Core/Object/Image/Image.h"
 
-#include "Core/OptimEngine.h"
-#include "Core/Color/Color.h"
-
-class Image
+Image::Image() :
+	width{ 0 },
+	height{ 0 },
+	pixels{ nullptr }
 {
-public:
-	CORE_API Image();
-	CORE_API ~Image();
+}
 
-	int width;
-	int height;
-	op::color::SColor* pixels{};
-};
+Image::~Image()
+{
+	delete[] pixels;
+}

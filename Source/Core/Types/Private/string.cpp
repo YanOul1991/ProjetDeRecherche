@@ -1,50 +1,50 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      + string.cpp :
-          Definitions of Optim Engine String class
-          included in string.h 
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+/* ======================================================================================
+ *  String.cpp
+ *
+ *  By:
+ *    Yanis Oulmane
+ *
+====================================================================================== */
 
 #include "Core/OptimEngine.h"
-#include "Core/Types/string.h"
+#include "Core/Types/String.h"
 
-#include <vector>
-#include <format>
-#include <string>
-#include <sstream>
+#include <cstring>
+#include <cstdarg>
 #include <cwchar>
+#include <cstdlib>
+#include <locale.h>
 
 int32 String::getLiteralSize(const wchar* str)
 {
-  if (str == nullptr) return 0;
-  int32 i{ 0 };
-  while (str[i] != TEXT('\0')) i++;
-  return i;
+  setlocale(LC_ALL, "");
+  return (int32)wcsnlen(str, 256);
 }
 
-String String::SFprint(const wchar* string,...)
+String String::sprintf(const wchar* string,...)
 {
-  //va_list args;
-  //va_start(args, string);
+  wchar buffer[256];
+  va_list args;
 
-  //int size = _vcwprintf(string, args);
-  //va_end(args);
+  va_start(args, string);
 
-  //String _str;
-  //wchar buffer[size + 1];
+  vswprintf(buffer, 256, string, args);
 
-  //va_start(args, string);
-  //vswprintf(buffer.data(), buffer.size(), string, args);
-  //va_end(args);
+  va_end(args);
 
-  //MessageBox(0, buffer.data(), TEXT("DEBUG"), MB_OK);
+  return String(buffer);
+}
 
-  //return String(buffer.data());
-  return String(TEXT("String::SFprint function not functional yet!!!"));
+void String::printf(const char* format, ...)
+{
+  char buffer[256]{};
+  va_list args{};
+
+  va_start(args, format);
+
+  vprintf(format, args);
+
+  va_end(args);
 }
 
 bool String::isEmpty(const String& other)
@@ -52,56 +52,25 @@ bool String::isEmpty(const String& other)
   return other.length() == 0 || other.m_buffer[0] == '\0' || other.m_buffer == nullptr;
 }
 
-String String::find(const String& string, const wchar* expression)
-{
-  int32 _expLength = getLiteralSize(expression);
-  int32 _matchIndex{ 0 };
-  int32 _searchIndex{ 0 };
-
-  return String();
-}
-
-
 bool String::compare(const String& string1, const String& string2)
 {
-  if (string1.length() != string2.length()) return false;
-
-  uint64* _str1_sub_buffer = reinterpret_cast<uint64*>(string1.m_buffer);
-  uint64* _str2_sub_buffer = reinterpret_cast<uint64*>(string2.m_buffer);
-
-
-  int iterations = static_cast<int>(string1.length() / 4);
-  int remainder   = string1.length() % 4;
-
-  for (int i = 0; i < iterations; i++)
-  {
-    if (*_str1_sub_buffer != *_str2_sub_buffer) return false;
-    _str1_sub_buffer++;
-    _str2_sub_buffer++;
+  if (string1.length() != string2.length()) {
+    return false;
   }
-
-  wchar* _str1_remainder = reinterpret_cast<wchar*>(_str1_sub_buffer);
-  wchar* _str2_remainder = reinterpret_cast<wchar*>(_str2_sub_buffer);
-
-  while (*_str1_remainder != '\0' && *_str2_remainder != '\0')
-  {
-    if (*_str1_remainder != *_str2_remainder) return false;
-    _str1_remainder++;
-    _str2_remainder++;
-  }
-
-  return true;
+  return memcmp(string1.value(), string2.value(), sizeof(wchar) * string1.length()) == 0;
 }
 
 String::String() noexcept :
   m_length{ 0 },
   m_buffer{ nullptr } 
 {
-  allocate(TEXT(""));
+  m_buffer = new wchar[1];
+  m_buffer[0] = '\0';
 }
 
 String::~String() noexcept
 {
+  printf("String has been deleted :D At following address:\n0x%02x\n", this);
   freeBuffer();
 }
 
@@ -109,14 +78,17 @@ String::String(const wchar* str) noexcept :
   m_length{ String::getLiteralSize(str) },
   m_buffer{ nullptr }
 {
-  allocate(str);
+  m_buffer = new wchar[m_length + 1];
+  memcpy(m_buffer, str, sizeof(*str) * (m_length + 1));
 }
 
 String::String(const String& other) noexcept :
   m_length{ 0 },
   m_buffer{ nullptr }
 {
-  allocate(other.value());
+  m_length = other.length();
+  m_buffer = new wchar[m_length];
+  memcpy(m_buffer, other.value(), sizeof(wchar) * m_length);
 }
 
 String::String(String&& other) noexcept :
@@ -127,36 +99,8 @@ String::String(String&& other) noexcept :
   other.m_length = 0;
 }
 
-String::String(int value) :
-  m_length{ 0 },
-  m_buffer{ }
-{
-  wchar temp[32];
-  swprintf(temp, 32, TEXT("%d"), value);
-  allocate(temp);
-}
-
-String::String(double value) :
-  m_length{ 0 },
-  m_buffer{ }
-{
-  wchar temp[32];
-  swprintf(temp, 32, TEXT("%lf"), value);
-  allocate(temp);
-}
-
-String::String(float value) : 
-  m_length{ 0 },
-  m_buffer{ }
-{
-  wchar temp[32];
-  swprintf(temp, 32, TEXT("%f"), value);
-  allocate(temp);
-}
-
 int32 String::length()        const { return m_length; }
 const wchar* String::value()  const { return m_buffer; }
-//bool String::isAllocated()    const { return m_buffer != nullptr; }
 
 /* #######################################
     Operator Overloads
@@ -164,8 +108,12 @@ const wchar* String::value()  const { return m_buffer; }
 
 String& String::operator=(const wchar* str) noexcept
 {
+  printf("Using overload: operator=(const wchar* str)\n");
   freeBuffer();
-  allocate(str);
+  int size = getLiteralSize(str);
+  m_length = size;
+  m_buffer = new wchar[size + 1];
+  memcpy(m_buffer, str, sizeof(*m_buffer) * (size + 1));
   return *this;
 }
 
@@ -174,15 +122,16 @@ String& String::operator=(const String& other) noexcept
   if (this != &other)
   {
     freeBuffer();
-    allocate(other.m_buffer);
+    m_length = other.m_length;
+    m_buffer = new wchar[m_length + 1];
+    memcpy(m_buffer, other.m_buffer, sizeof(*m_buffer) * (m_length + 1));
   }
   return *this;
 }
 
 String& String::operator=(String&& other) noexcept
 {
-  if (&other != this)
-  {
+  if (&other != this) {
     freeBuffer();
     m_buffer = other.m_buffer;
     m_length = other.m_length;
@@ -196,15 +145,14 @@ String& String::operator+=(const wchar* str) noexcept
 {
   int32 strSize{ String::getLiteralSize(str) };
 
-  if (strSize > 0 && str != nullptr)
-  {
+  if (strSize > 0 && str != nullptr) {
     int32 _bufferStrLength{ m_length + strSize };
 
     // Alloc new buffer memeory
     wchar* newbuffer = new wchar[_bufferStrLength + 1];
 
-    copyToBuffer(0, newbuffer, m_buffer);
-    copyToBuffer(m_length, newbuffer, str);
+    memcpy(newbuffer, m_buffer, sizeof(*m_buffer) * m_length);
+    memcpy(newbuffer + m_length, str, sizeof(wchar) * strSize);
 
     newbuffer[_bufferStrLength] = '\0';
 
@@ -242,34 +190,9 @@ String String::operator+(const String& other) noexcept
   return _newStr;
 }
 
-void String::allocate(const wchar* str)
-{
-  m_length = String::getLiteralSize(str);
-  m_buffer = new wchar[m_length + 1];
-  if (m_length > 0)
-  {
-    for (int i = 0; i < m_length; i++) m_buffer[i] = str[i];
-  }
-  m_buffer[m_length] = L'\0';
-
-}
-
 void String::freeBuffer()
 {
   delete[] m_buffer;
   m_buffer = nullptr;
   m_length = 0;
-}
-
-void String::copyToBuffer(int32 outStart, wchar* outbuffer, const wchar* inBuffer)
-{
-  int32 writeIndex = outStart;
-  int32 readIndex = 0;
-
-  while (inBuffer[readIndex] != L'\0')
-  {
-    outbuffer[writeIndex] = inBuffer[readIndex]; 
-    writeIndex++;
-    readIndex++;
-  }
 }

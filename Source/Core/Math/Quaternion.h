@@ -1,3 +1,10 @@
+/* ======================================================================================
+ *  Quaternion.h:
+ *
+ *  By:
+ *    Yanis Oulmane
+====================================================================================== */
+
 #pragma once
 
 #include "Core/OptimEngine.h"
@@ -8,11 +15,15 @@
 #include <math.h>
 #include <algorithm>
 
+/*
+ * @brief 
+ * A representation of a rotation on an axis.
+*/
 struct Quaternion {
-	float w;
-	float x;
-	float y;
-	float z;
+	float w{1.0f};
+	float x{1.0f};
+	float y{1.0f};
+	float z{1.0f};
 
 	static Quaternion fromAxisAngle(const float3& axis, float rad) {
 		float half = 0.5f * rad;

@@ -5,8 +5,8 @@
  *    Yanis Oulmane
 ====================================================================================== */
 
-#include "Core/Object/Image.h"
-#include "Core/Color/Color.h"
+#include "Core/Object/Image/Image.h"
+#include "Core/Types/Color.h"
 #include "ThirdParty/libjpeg/turbojpeg.h"
 #include "ThirdParty/libpng/libpng18/png.h"
 #include "Core/System/FileStream.h"
