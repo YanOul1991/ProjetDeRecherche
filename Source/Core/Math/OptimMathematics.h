@@ -10,38 +10,38 @@
 #include "Core/OptimEngine.h"
 #include "math.h"
 
-namespace mathConst
-{
+namespace mathConst {
 
 constexpr float		PI = 3.1415927f;
 constexpr double	PI_double = 3.141592653589793;
 
 }
 
-struct float2
-{
+struct float2 {
 	float x;
 	float y;
 };
 
-struct float3
-{
+struct UVCoord {
+	float u;
+	float v;
+};
+
+struct float3 {
 	float x;
 	float y;
 	float z;
 };
 
 
-struct float4
-{
+struct float4 {
 	float x;
 	float y;
 	float z;
 	float w;
 };
 
-struct float3x3
-{
+struct float3x3 {
 	float m11; float m12; float m13;
 	float m21; float m22; float m23;
 	float m31; float m32; float m33;
@@ -50,8 +50,7 @@ struct float3x3
 /*
  *	A structure defining a 4x4 float matrix
 */
-struct float4x4
-{
+struct float4x4 {
 	float m11; float m12; float m13; float m14;
 	float m21; float m22; float m23; float m24;
 	float m31; float m32; float m33; float m34;
@@ -116,12 +115,12 @@ inline float3 cross(const float3& a, const float3& b)
 	};
 }
 
-inline float magnitude(const float3& v)
+inline float magnitude(const float3& v) 
 {
 	return sqrtf((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
 }
 
-inline float3 normalize(const float3& v)
+inline float3 normalize(const float3& v) 
 {
 	return{
 		(1.0f / magnitude(v)) * v

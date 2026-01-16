@@ -6,15 +6,6 @@
 ====================================================================================== */
 
 #pragma once
+
 #include "Core/OptimEngine.h"
-
-class IGraphicResource
-{
-public:
-	virtual void initalize() = 0;
-};
-
-class Buffer
-{
-
-};
+#include "Core/Object/Object.h"

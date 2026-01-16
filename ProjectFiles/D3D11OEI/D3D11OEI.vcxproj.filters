@@ -4,8 +4,11 @@
     <Filter Include="Private">
       <UniqueIdentifier>{3f73ef02-913d-44ec-8d2b-758e33c192f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources">
+    <Filter Include="Private\Resources">
       <UniqueIdentifier>{1ec423ef-f21d-4faa-a1a8-31328daf3be6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\Resources\Buffers">
+      <UniqueIdentifier>{380757de-66fe-42cc-9c13-8cdbc13fbebf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -14,16 +17,19 @@
       <Filter>Private</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Resources.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Buffer.h">
-      <Filter>Resources</Filter>
+      <Filter>Private\Resources</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Shader.h">
-      <Filter>Resources</Filter>
+      <Filter>Private\Resources</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Primitives.h">
-      <Filter>Resources</Filter>
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\IDirectX11Resource.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffers\DirectX11Buffer.h">
+      <Filter>Private\Resources\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

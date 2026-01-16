@@ -112,6 +112,7 @@ protected:
 	SGuid m_guid{};
 };
 
+/*
 class ChildClass : public Object
 {
 public:
@@ -148,3 +149,4 @@ public:
 		printf("Hello! I am a \"GrandChildClass\" class object\n"); 
 	}
 };
+*/

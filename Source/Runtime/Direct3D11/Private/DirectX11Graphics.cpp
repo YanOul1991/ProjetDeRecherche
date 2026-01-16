@@ -22,6 +22,9 @@
 #include "Core/Input/Input.h"
 
 #include "DirectX11Graphics.h"
+#include "Private/Resources/IDirectX11Resource.h"
+#include "Private/Resources/Buffer/DirectX11Buffer.h"
+
 #include "Core/Object/Camera/Camera.h"
 
 #include <iostream>
@@ -149,8 +152,8 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   _cubeMesh = createCubeMesh();
   //_cubeMesh = createFlatCircle(30);
 
-  _cubeMesh.vertexBuffer.create(m_pDevice.Get());
-  _cubeMesh.indexBuffer.create(m_pDevice.Get());
+  _cubeMesh.vertexBuffer.init(m_pDevice.Get());
+  _cubeMesh.indexBuffer.init(m_pDevice.Get());
 
   std::random_device rd;
   std::mt19937 engine(rd());
@@ -175,7 +178,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   /// ---------------------------------
 
   __t_constBuffer = ConstantBuffer<DirectX::XMMATRIX>(DirectX::XMMatrixIdentity());
-  __t_constBuffer.create(m_pDevice.Get());
+  __t_constBuffer.init(m_pDevice.Get());
 
   __t_constBufferColor = ConstantBuffer<ConstColors>();
   __t_constBufferColor.data = 
@@ -190,7 +193,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     }
   };
 
-  __t_constBufferColor.create(m_pDevice.Get());
+  __t_constBufferColor.init(m_pDevice.Get());
 
   /// ---------------------------------
   /// SHADERS INITIALIZATION
@@ -277,8 +280,8 @@ void DirectX11Graphics::renderUpdate()
     __t_constBuffer.update(m_pContext.Get());
 
     // Set constant buffer for vertex shader and pixel shader
-    m_pContext->VSSetConstantBuffers(0, 1, __t_constBuffer.m_comptr.GetAddressOf());
-    m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.m_comptr.GetAddressOf());
+    m_pContext->VSSetConstantBuffers(0, 1, __t_constBuffer.pBuffer.GetAddressOf());
+    m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.pBuffer.GetAddressOf());
 
     // Bind Input Layout
     m_pContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
@@ -298,7 +301,7 @@ void DirectX11Graphics::renderUpdate()
     vp.TopLeftY = 0;
 
     m_pContext->RSSetViewports(1u, &vp);
-    m_pContext->DrawIndexed(objects[i].meshData->indexBuffer.m_elementCount, 0u, 0u);
+    m_pContext->DrawIndexed(objects[i].meshData->indexBuffer.elementCount, 0u, 0u);
   }
 }
 

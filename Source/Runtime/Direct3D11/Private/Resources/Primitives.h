@@ -10,14 +10,14 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
-
+#include "Core/Math/OptimMathematics.h"
 #include "DirectX11Resources.h"
 
-#include <vector>
-#include <sstream>
-
-
-constexpr float pi = 3.141592f;
+struct Vertex
+{
+  float3 position;
+  UVCoord uvCoord;
+};
 
 struct SGFXVertex
 {
@@ -51,30 +51,6 @@ public:
 inline Mesh createCubeMesh()
 {
   Mesh instance = Mesh();
-
-  /*
-  SGFXVertex* pData = new SGFXVertex[8]
-  {
-    { -0.5f, -0.5f, -0.5f , 0.0f, 1.0f }, // 0  
-    {  0.5f, -0.5f, -0.5f , 1.0f, 1.0f }, // 1  
-    { -0.5f,  0.5f, -0.5f , 0.0f, 0.0f }, // 2  
-    {  0.5f,  0.5f, -0.5f , 1.0f, 0.0f }, // 3  
-    { -0.5f, -0.5f,  0.5f , 1.0f, 1.0f }, // 4  
-    {  0.5f, -0.5f,  0.5f , 0.0f, 1.0f }, // 5  
-    { -0.5f,  0.5f,  0.5f , 1.0f, 0.0f }, // 6  
-    {  0.5f,  0.5f,  0.5f , 0.0f, 0.0f }  // 7
-  };
-  instance.vertexBuffer.data = pData;
-  uint16* indexData = new uint16[36]
-  {
-    0, 2, 1,  2, 3, 1,
-    1, 3, 5,  3, 7, 5,
-    2, 6, 3,  3, 6, 7,
-    4, 5, 7,  4, 7, 6,
-    0, 4, 2,  2, 4, 6,
-    0, 1, 4,  1, 5, 4
-  };
-  */
 
   SGFXVertex vertices[8] {
     { -0.5f, -0.5f, -0.5f , 0.0f, 1.0f }, // 0  
@@ -139,10 +115,11 @@ inline Mesh createCubeMesh()
   return instance;
 }
 
+/*
 inline Mesh createFlatCircle(int precision = 0) 
 {
   //std::stringstream ss;
-  Mesh instance = Mesh();
+  Mesh instance;
 
   int steps = 3 + precision;
   float radVar = (2 * pi) / steps;
@@ -183,3 +160,4 @@ inline Mesh createFlatCircle(int precision = 0)
 
   return instance;
 }
+*/

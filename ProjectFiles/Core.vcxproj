@@ -39,6 +39,7 @@
     <ClInclude Include="..\Source\Core\Time\Time.h" />
     <ClInclude Include="..\Source\Core\Types\Color.h" />
     <ClInclude Include="..\Source\Core\Types\String.h" />
+    <ClInclude Include="..\Source\Core\Utilities\Pointer\UniquePtr.h" />
     <ClInclude Include="..\Source\Core\Utilities\Random\Random.h" />
     <ClInclude Include="..\Source\Core\_Temporary\InterfaceImGui.h" />
     <ClInclude Include="..\Source\ThirdParty\imgui\imconfig.h" />

@@ -21,9 +21,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\IDirect3D11.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.h" />
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Buffer.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffers\DirectX11Buffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Resources.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Shader.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\IDirectX11Resource.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Primitives.h" />
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +123,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source;$(SolutionDir)Source\Direct3D11\Private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source;$(SolutionDir)Source\Runtime\;$(SolutionDir)Source\Runtime\Direct3D11\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

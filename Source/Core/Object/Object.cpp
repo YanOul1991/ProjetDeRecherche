@@ -58,8 +58,10 @@ CORE_API Object* Object::getObject(const SGuid& guid)
 std::unordered_map<std::string, Object*(*)()> g_typesFactoryRegistery = 
 {
 	{"Object", []() -> Object* { return new Object; }},
+	/*
 	OPTIM_TYPEFACTORY(ChildClass),
 	OPTIM_TYPEFACTORY(GrandChildClass)
+	*/
 };
 
 Object* Type::getObject(const char* type)

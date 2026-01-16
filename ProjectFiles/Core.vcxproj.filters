@@ -80,6 +80,9 @@
     <ClInclude Include="..\Source\Core\Utilities\Random\Random.h">
       <Filter>Utilities\Random</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Utilities\Pointer\UniquePtr.h">
+      <Filter>Utilities\Pointer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
