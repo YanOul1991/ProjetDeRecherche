@@ -9,6 +9,7 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
+#include "Core/Utilities/Random/Random.h"
 
 /*
  * @brief
@@ -21,7 +22,13 @@
 class IDirectX11Resource
 {
 public:
-  inline IDirectX11Resource() = default;
+  inline IDirectX11Resource() {
+    guid = Optim::Random::getGetGuid();
+    printf("New DirectX11Resource created with GUID : ");
+    guid.sPrint();
+    printf("\n");
+  };
+
   virtual ~IDirectX11Resource(){}
 
   /*
@@ -42,4 +49,18 @@ public:
    * A pointer to an existing ID3D11DeviceContext.
   */
   virtual void bind(ID3D11DeviceContext* pContext) = 0;
+
+
+  /*
+   * @brief Get the guid of the IDirectX11Resource object;
+   * 
+   * @return 
+   * SGuid : the guid of the object
+  */
+  inline SGuid getId() const {
+    return guid;
+  }
+
+protected:
+  SGuid guid{};
 };

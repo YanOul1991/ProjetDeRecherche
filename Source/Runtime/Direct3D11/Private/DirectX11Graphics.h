@@ -15,6 +15,7 @@
 #include "Resources/Primitives.h"
 #include <vector>
 
+/*
 struct ConstColors
 {
   struct {
@@ -31,13 +32,13 @@ struct Transform
   float y;
   float z;
 };
+*/
 
 class MeshRenderer
 {
 public:
   MeshRenderer() = default;
-
-  Transform position;
+  float3 position;
   Mesh* meshData;
 };
 
@@ -61,7 +62,7 @@ public:
     OPTIM_TRY_DX(pDevice->CreateSamplerState(&samplerDesc, &pSampler));
   }
 
-  inline void bind(ID3D11DeviceContext* pContext)
+  inline void bind(ID3D11DeviceContext* pContext) 
   {
     pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
   }
@@ -120,6 +121,7 @@ public:
   ComPtr<ID3D11ShaderResourceView>  pResourceView { nullptr };
 };
 
+/*
 struct DxColor 
 {
   uint8 r;
@@ -127,6 +129,7 @@ struct DxColor
   uint8 b;
   uint8 a;
 };
+*/
 
 class DirectX11Graphics final
 {
@@ -160,10 +163,11 @@ private:
 
   std::vector<MeshRenderer> objects;
 
-  ConstantBuffer<DirectX::XMMATRIX>   __t_constBuffer{};
-  ConstantBuffer<ConstColors>         __t_constBufferColor{};
+  ConstantBuffer<DirectX::XMMATRIX>     __t_constBuffer{};
+  //ConstantBuffer<ConstColors>         __t_constBufferColor{};
 
-  GFXMaterial __t_material{};
+  //GFXMaterial __t_material{};
+  Optim::Test::Material _TEST_material;
 
   Texture _test_texture{};
   Sampler _test_sampler{};

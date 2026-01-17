@@ -180,6 +180,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   __t_constBuffer = ConstantBuffer<DirectX::XMMATRIX>(DirectX::XMMatrixIdentity());
   __t_constBuffer.init(m_pDevice.Get());
 
+  /*
   __t_constBufferColor = ConstantBuffer<ConstColors>();
   __t_constBufferColor.data = 
   {
@@ -192,14 +193,19 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
       { 0.0f, 1.0f, 1.0f }  // face 6
     }
   };
+  */
 
-  __t_constBufferColor.init(m_pDevice.Get());
+  //__t_constBufferColor.init(m_pDevice.Get());
 
   /// ---------------------------------
   /// SHADERS INITIALIZATION
   /// ---------------------------------
+  /*
   __t_material.setPath(TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
   __t_material.loadShaders(m_pDevice.Get());
+  */
+
+  _TEST_material.initializeMaterial(m_pDevice.Get(), TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
 
   Image img = Image();
   FileStream::readPngImage("images/jeff.png", img);
@@ -281,14 +287,18 @@ void DirectX11Graphics::renderUpdate()
 
     // Set constant buffer for vertex shader and pixel shader
     m_pContext->VSSetConstantBuffers(0, 1, __t_constBuffer.pBuffer.GetAddressOf());
-    m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.pBuffer.GetAddressOf());
+    //m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.pBuffer.GetAddressOf());
 
+    /*
     // Bind Input Layout
     m_pContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
 
     // Bind Shaders
     m_pContext->VSSetShader(__t_material.vertexShader.pShader.Get(), nullptr, 0);
     m_pContext->PSSetShader(__t_material.pixelShader.pShader.Get(), nullptr, 0);
+    */
+
+    _TEST_material.bindShaders(m_pContext.Get());
 
     // Configure Viewport
     D3D11_VIEWPORT vp{};

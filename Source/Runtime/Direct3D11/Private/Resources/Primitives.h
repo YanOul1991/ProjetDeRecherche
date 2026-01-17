@@ -10,9 +10,13 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
+
 #include "Core/Math/OptimMathematics.h"
+#include "Core/Graphics/Vertex.h"
+
 #include "DirectX11Resources.h"
 
+/*
 struct Vertex
 {
   float3 position;
@@ -34,6 +38,7 @@ struct SGFXVertex
     float v;
   } UVCoord;
 };
+*/
 
 class Mesh
 {
@@ -44,15 +49,15 @@ public:
 	float posY{0};
 	float posZ{0};
 
-  VertexBuffer<SGFXVertex>  vertexBuffer;
-  IndexBuffer               indexBuffer;
+  VertexBuffer<Vertex>  vertexBuffer;
+  IndexBuffer           indexBuffer;
 };
 
 inline Mesh createCubeMesh()
 {
   Mesh instance = Mesh();
 
-  SGFXVertex vertices[8] {
+  Vertex vertices[8] {
     { -0.5f, -0.5f, -0.5f , 0.0f, 1.0f }, // 0  
     {  0.5f, -0.5f, -0.5f , 1.0f, 1.0f }, // 1  
     { -0.5f,  0.5f, -0.5f , 0.0f, 0.0f }, // 2  
@@ -63,7 +68,7 @@ inline Mesh createCubeMesh()
     {  0.5f,  0.5f,  0.5f , 0.0f, 0.0f }  // 7
   };
 
-  SGFXVertex* pData = new SGFXVertex[24] {
+  Vertex* pData = new Vertex[24] {
     // Face 1
     {vertices[2].position, { 0.0f, 0.0f }}, // 0
     {vertices[3].position, { 1.0f, 0.0f }}, // 1
@@ -109,7 +114,7 @@ inline Mesh createCubeMesh()
     20, 21, 22,   23, 22, 21
   };
 
-  instance.vertexBuffer = VertexBuffer(pData, sizeof(SGFXVertex[24]));
+  instance.vertexBuffer = VertexBuffer(pData, sizeof(Vertex[24]));
   instance.indexBuffer = IndexBuffer(indexData, sizeof(uint16[36]));
 
   return instance;

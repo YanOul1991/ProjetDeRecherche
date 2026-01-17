@@ -26,7 +26,7 @@
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\SVertex.h">
+    <ClInclude Include="..\Source\Core\Graphics\Vertex.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\IGraphicResource.h">

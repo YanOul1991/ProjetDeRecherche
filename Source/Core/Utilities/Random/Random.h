@@ -6,6 +6,15 @@
 
 struct SGuid {
 	uint8 data[16];
+
+	inline void sPrint() const {
+		for (int i = 0; i < 16; i++) {
+			if (i == 4 || i == 6 || i == 8 || i == 10) {
+				printf("-");
+			}
+			printf("%02X", (int)data[i]);
+		}
+	}
 };
 
 inline bool operator==(const SGuid& left, const SGuid& right) {
