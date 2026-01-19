@@ -23,13 +23,7 @@
     <ClInclude Include="..\Source\Core\Defines\DirectX\msDx11.h">
       <Filter>Defines\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\Vertex.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\IGraphicResource.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h">
@@ -82,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\Utilities\Pointer\UniquePtr.h">
       <Filter>Utilities\Pointer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

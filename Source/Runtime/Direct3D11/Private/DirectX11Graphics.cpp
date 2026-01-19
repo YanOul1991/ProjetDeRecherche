@@ -283,20 +283,9 @@ void DirectX11Graphics::renderUpdate()
       )
     };
 
+    // Update constant buffer and bind
     __t_constBuffer.update(m_pContext.Get());
-
-    // Set constant buffer for vertex shader and pixel shader
-    m_pContext->VSSetConstantBuffers(0, 1, __t_constBuffer.pBuffer.GetAddressOf());
-    //m_pContext->PSSetConstantBuffers(0, 1, __t_constBufferColor.pBuffer.GetAddressOf());
-
-    /*
-    // Bind Input Layout
-    m_pContext->IASetInputLayout(__t_material.vertexShader.pInputLayout.Get());
-
-    // Bind Shaders
-    m_pContext->VSSetShader(__t_material.vertexShader.pShader.Get(), nullptr, 0);
-    m_pContext->PSSetShader(__t_material.pixelShader.pShader.Get(), nullptr, 0);
-    */
+    __t_constBuffer.bind(m_pContext.Get());
 
     _TEST_material.bindShaders(m_pContext.Get());
 

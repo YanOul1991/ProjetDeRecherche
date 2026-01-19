@@ -8,37 +8,11 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-#include "Core/Defines/Windows/windowsAPI.h"
-#include "Core/Defines/DirectX/msDx11.h"
-
 #include "Core/Math/OptimMathematics.h"
 #include "Core/Graphics/Vertex.h"
-
-#include "DirectX11Resources.h"
-
-/*
-struct Vertex
-{
-  float3 position;
-  UVCoord uvCoord;
-};
-
-struct SGFXVertex
-{
-  struct
-  {
-    float x;
-    float y;
-    float z;
-  } position;
-
-  struct
-  {
-    float u;
-    float v;
-  } UVCoord;
-};
-*/
+#include "Core/Defines/Windows/windowsAPI.h"
+#include "Core/Defines/DirectX/msDx11.h"
+#include "Private/Resources/Buffer/DirectX11Buffer.h"
 
 class Mesh
 {
@@ -53,8 +27,7 @@ public:
   IndexBuffer           indexBuffer;
 };
 
-inline Mesh createCubeMesh()
-{
+inline Mesh createCubeMesh() {
   Mesh instance = Mesh();
 
   Vertex vertices[8] {
@@ -119,50 +92,3 @@ inline Mesh createCubeMesh()
 
   return instance;
 }
-
-/*
-inline Mesh createFlatCircle(int precision = 0) 
-{
-  //std::stringstream ss;
-  Mesh instance;
-
-  int steps = 3 + precision;
-  float radVar = (2 * pi) / steps;
-
-  std::vector<SGFXVertex> verts;
-
-  for (int i = 0; i < steps; i++)
-  {
-    SGFXVertex v{};
-    float rad = (pi / 2) + ((2.0f * pi / steps) * i);
-
-    v.position.x = cos(rad);
-    v.position.y = sin(rad);
-    v.position.z = 0;
-
-    verts.push_back(v);
-  }
-
-  SGFXVertex* pVerts = new SGFXVertex[verts.size()];
-  memcpy(pVerts, verts.data(), sizeof(SGFXVertex) * verts.size());
-
-  std::vector<float2> points2d(verts.size());
-
-
-  for (int i = 0; i < verts.size(); i++)
-  {
-    points2d[i].x = verts[i].position.x;
-    points2d[i].y = verts[i].position.y;
-  }
-
-  std::vector<uint16> indices = triangulateEarClip(points2d);
-
-  uint16* pIndexData = new uint16[indices.size()];
-  memcpy(pIndexData, indices.data(), sizeof(uint16) * indices.size());
-
-  instance.vertexBuffer = VertexBuffer(pVerts, sizeof(SGFXVertex) * (int)verts.size());
-  instance.indexBuffer = IndexBuffer(pIndexData,  sizeof(uint16) * static_cast<int>(indices.size()));
-
-  return instance;
-}
-*/

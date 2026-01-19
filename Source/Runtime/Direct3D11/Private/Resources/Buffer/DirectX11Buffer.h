@@ -24,7 +24,7 @@ class IDirectX11Buffer : IDirectX11Resource
 public:
   ~IDirectX11Buffer() override {}
 
-  virtual void init(ID3D11Device* pDevice)        = 0;
+  virtual void init(ID3D11Device* pDevice)         = 0;
   virtual void bind(ID3D11DeviceContext* pContext) = 0;
 
   ComPtr<ID3D11Buffer> pBuffer;
@@ -55,8 +55,7 @@ public:
     data            = vertices;
   }
 
-  inline virtual void init(ID3D11Device* pDevice) override
-  { 
+  inline virtual void init(ID3D11Device* pDevice) override { 
     D3D11_BUFFER_DESC       desc{};
     D3D11_SUBRESOURCE_DATA  subres{};
 
@@ -72,7 +71,7 @@ public:
     OPTIM_TRY_DX(pDevice->CreateBuffer(&desc, &subres, &pBuffer));
   }
 
-  inline virtual void bind(ID3D11DeviceContext* pContext) override  { 
+  inline virtual void bind(ID3D11DeviceContext* pContext) override { 
     pContext->IASetVertexBuffers(0, 1, pBuffer.GetAddressOf(), &stride, &offset);
   }
 
@@ -98,8 +97,7 @@ public:
     data            = indices;
   }
 
-  inline virtual void init(ID3D11Device* device) override 
-  {
+  inline virtual void init(ID3D11Device* device) override {
     D3D11_BUFFER_DESC       desc{};
     D3D11_SUBRESOURCE_DATA  subres{};
 
@@ -115,7 +113,7 @@ public:
     OPTIM_TRY_DX(device->CreateBuffer(&desc, &subres, &pBuffer));
   }
 
-  inline void bind(ID3D11DeviceContext* pContext) override  { 
+  inline void bind(ID3D11DeviceContext* pContext) override { 
     pContext->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
   }
 
@@ -161,10 +159,11 @@ public:
     pDevice->CreateBuffer(&desc, &subres, &pBuffer);
   }
 
-  inline void bind(ID3D11DeviceContext* pContext) override { }
+  inline void bind(ID3D11DeviceContext* pContext) override { 
+    pContext->VSSetConstantBuffers(0, 1, pBuffer.GetAddressOf());
+  }
 
-  inline void update(ID3D11DeviceContext* pContext) 
-  {
+  inline void update(ID3D11DeviceContext* pContext) {
     D3D11_MAPPED_SUBRESOURCE mapped;
     pContext->Map(pBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
     memcpy(mapped.pData, &data, sizeof(T));

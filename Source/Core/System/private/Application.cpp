@@ -171,7 +171,6 @@ void Application::ApplicationStart()
     // obj1->printHello();
 
     /// OBJECT CLASS EXPERIMENTATION - END
-
     m_shouldRun = true;
   }
   catch (const Exception& e) {

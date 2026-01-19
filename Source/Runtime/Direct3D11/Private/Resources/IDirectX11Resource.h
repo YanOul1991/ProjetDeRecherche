@@ -10,6 +10,14 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Utilities/Random/Random.h"
+#include "Core/Graphics/IGraphicsModule.h"
+
+#include <unordered_map>
+
+struct GfxType 
+{
+  const char* name;
+};
 
 /*
  * @brief
@@ -22,12 +30,7 @@
 class IDirectX11Resource
 {
 public:
-  inline IDirectX11Resource() {
-    guid = Optim::Random::getGetGuid();
-    printf("New DirectX11Resource created with GUID : ");
-    guid.sPrint();
-    printf("\n");
-  };
+  inline IDirectX11Resource() {};
 
   virtual ~IDirectX11Resource(){}
 
@@ -50,17 +53,13 @@ public:
   */
   virtual void bind(ID3D11DeviceContext* pContext) = 0;
 
-
   /*
    * @brief Get the guid of the IDirectX11Resource object;
    * 
    * @return 
    * SGuid : the guid of the object
-  */
   inline SGuid getId() const {
     return guid;
   }
-
-protected:
-  SGuid guid{};
+  */
 };

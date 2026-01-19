@@ -9,10 +9,13 @@
 
 #include "Core/Types/Color.h"
 #include "Core/Object/Image/Image.h"
-#include "Runtime/Direct3D11/IDirect3D11.h"
+#include "Direct3D11/IDirect3D11.h"
+
+#include "Private/Resources/Primitives.h"
 #include "Private/Resources/IDirectX11Resource.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
-#include "Resources/Primitives.h"
+#include "Private/Resources/DirectX11Shader.h"
+
 #include <vector>
 
 /*

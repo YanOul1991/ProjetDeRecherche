@@ -7,7 +7,7 @@
 struct SGuid {
 	uint8 data[16];
 
-	inline void sPrint() const {
+	inline void print() const {
 		for (int i = 0; i < 16; i++) {
 			if (i == 4 || i == 6 || i == 8 || i == 10) {
 				printf("-");

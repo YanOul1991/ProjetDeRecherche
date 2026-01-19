@@ -31,6 +31,7 @@ public:
   DIRECTX11_API void draw() override;
   DIRECTX11_API void Clean() override;
 
+
 private:
   void* m_hTargetWindow;      // Target Window.
   DirectX11Graphics* m_pBase;  

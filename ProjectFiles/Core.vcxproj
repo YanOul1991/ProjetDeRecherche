@@ -22,7 +22,6 @@
     <ClInclude Include="..\Source\Core\Defines\DirectX\msDx11.h" />
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h" />
     <ClInclude Include="..\Source\Core\Exception\exception.h" />
-    <ClInclude Include="..\Source\Core\Graphics\IGraphicResource.h" />
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h" />
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
     <ClInclude Include="..\Source\Core\Graphics\Vertex.h" />
@@ -155,7 +154,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);CORE_EXPORT;DLL_LIB</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);CORE_EXPORT</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>

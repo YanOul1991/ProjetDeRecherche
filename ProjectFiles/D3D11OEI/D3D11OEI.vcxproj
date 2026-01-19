@@ -22,7 +22,6 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\IDirect3D11.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h" />
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Resources.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Shader.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\IDirectX11Resource.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Primitives.h" />

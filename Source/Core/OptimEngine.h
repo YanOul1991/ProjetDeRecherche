@@ -48,10 +48,6 @@ using wchar       = wchar_t;
 #if defined(OS_WINDOWS) && defined(COMPILER_MSVC)
     #define EXPORT __declspec(dllexport)
     #define IMPORT __declspec(dllimport)
-    #define FORCE_INLINE __forceinline
-    #define WINDOW_PROC
-#elif defined(COMPILER_GNU)     
-    #define FORCE_INLINE inline __attribute__((always_inline))
 #endif
 
 #pragma warning(disable : 4005)
