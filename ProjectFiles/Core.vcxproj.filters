@@ -80,6 +80,24 @@
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexBuffer.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\IIndexBuffer.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\IConstantBuffer.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexShader.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\IPixelShader.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -159,6 +177,9 @@
     </Filter>
     <Filter Include="Utilities\Pointer">
       <UniqueIdentifier>{45c6573d-53d5-40c0-b05d-de78d2fc2ce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Resource">
+      <UniqueIdentifier>{9a5e5c76-61ca-47e2-b796-60ee35846566}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

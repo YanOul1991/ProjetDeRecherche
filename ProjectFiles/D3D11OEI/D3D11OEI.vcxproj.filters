@@ -10,32 +10,26 @@
     <Filter Include="Private\Resources\Buffers">
       <UniqueIdentifier>{380757de-66fe-42cc-9c13-8cdbc13fbebf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Resources\Shaders">
-      <UniqueIdentifier>{abe88c53-20f1-45b3-aea9-da1e5d028b10}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\IDirect3D11.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.h">
       <Filter>Private</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Shader.h">
-      <Filter>Private\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Primitives.h">
-      <Filter>Private\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\IDirectX11Resource.h">
-      <Filter>Private\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h">
       <Filter>Private\Resources\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Shader\DirectX11PixelShader.h">
-      <Filter>Private\Resources\Shaders</Filter>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexShader.h">
+      <Filter>Private\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Shader\DirectX11VertexShader.h">
-      <Filter>Private\Resources\Shaders</Filter>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11PixelShader.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11IndexBuffer.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexBuffer.h">
+      <Filter>Private\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

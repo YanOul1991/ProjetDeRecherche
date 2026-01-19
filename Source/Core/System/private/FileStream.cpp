@@ -291,7 +291,7 @@ void FileStream::readPngImage(const char* path, Image& img)
   }
 
   /**
-   * Read the signature at the given path paramter.
+   * Read the signature at the given path parameter.
    * If the signature does not correspond the the PNG file
    * signature then the file is not a valid PNG format file.
   */
@@ -335,7 +335,7 @@ void FileStream::readPngImage(const char* path, Image& img)
   unsigned char imgColorType  = png_get_color_type(pPng, pInfo);
   unsigned char imgBitDepth   = png_get_bit_depth(pPng, pInfo);
 
-  printf("Bit depth of image %s : %d\n", path, imgBitDepth);
+  //printf("Bit depth of image %s : %d\n", path, imgBitDepth);
 
   /**
    * To simplyfy implementation with other modules, all PNG images will

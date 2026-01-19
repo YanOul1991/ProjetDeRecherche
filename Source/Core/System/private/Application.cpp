@@ -17,9 +17,9 @@
 #include "Core/System/SystemWindow.h"
 #include "Core/Object/Image/Image.h"
 #include "Core/System/Application.h"
-
 #include "Core/Object/Object.h"
 #include "Core/Utilities/Random/Random.h"
+#include "ThirdParty/SDL3/SDL.h"
 
 #include <iostream>
 #include <sstream>
@@ -28,15 +28,27 @@
 #include <fstream>
 #include <string>
 
+#include "Core/Graphics/Mesh.h"
+#include "Core/Graphics/Resource/IVertexShader.h"
+#include "Core/Graphics/Resource/IPixelShader.h"
+
+/* #########################
+    LOCAL TESTING FIELDS
+######################### */
+
+static TestMeshClass _TEST_mesh{};
+static IVertexShader* _TEST_pVertexShader{};
+static IPixelShader* _TEST_pPixelShader{};
+
+/* #########################
+    LOCAL TESTING FIELDS
+######################### */
+
 #pragma warning(disable: 4477)
 #pragma warning(disable: 4313)
 
-extern "C" {
-  CORE_API Application* CreateApplicationProc()
-  {
-    //std::unique_ptr<Application> application = std::make_unique<Application>();
-    return new Application;
-  }
+extern "C" CORE_API Application* CreateApplicationProc() {
+  return new Application;
 }
 
 float Application::m_runtime{ 0.0f };
@@ -79,6 +91,7 @@ void Application::ApplicationStart()
     m_shouldRun = false;
     m_pSysWindow->initialize(TEXT("dvwjdvwjvdhj"));
 
+    /*
     // Load Direct3d11 runtime module
     HMODULE hmod = LoadLibraryW(TEXT("bin/directx11_ri.dll"));
 
@@ -92,86 +105,56 @@ void Application::ApplicationStart()
       m_pRenderModule = pProc();
       m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
+    */
 
-    /// OBJECT CLASS EXPERIMENTATION
+    // LOADING DLL WITH SDL
+    SDL_SharedObject* handle = SDL_LoadObject("bin/directx11_ri.dll");
 
-    //String str1 = String::SPrint(TEXT("This is the first part of the string:"));
-    //wprintf(TEXT("String Value: %s| String length %d"), str1.value(), str1.length());
+    if (handle == nullptr) {
+      printf("Could not load library: %s\n",SDL_GetError());
+      Quit();
+      return;
+    }
 
-    //wprintf(L"%s | String length %d", str1.value(), str1.length());
+    IGraphicsModule* (*pFactoryGraphicsModule)() = (IGraphicsModule* (*)())SDL_LoadFunction(handle, "CreateDirect3D11Module");
 
-    //String* str = new String(TEXT("dwavdwdvu"));
-    //String* str = new String();
+    void (*p_testFunction)() = (void (*)())SDL_LoadFunction(handle, "testFunction");
 
-    //printf("Created  pointer: 0x%02x\n", str);
+    if (p_testFunction) {
+      p_testFunction();
+    }
 
-    //String* strAlloc = new String;
-    //UniquePtr<String>pStr0;
-    ////UniquePtr<String>pStr1(static_cast<UniquePtr<String>&&>(pStr0));
-    //UniquePtr<String>pStr1(nullptr);
-
-    //pStr1 = pStr0.move();
-
-    //printf("Ptr address 0 : 0x%02X\n", &(*pStr0));
-    //printf("Ptr address 1 : 0x%02X\n", &(*pStr1));
-    //printf("Alloc address : 0x%02X\n", strAlloc);
-
-    //String::printf("This is a printf test function %d", 373268);
-
-    //std::wcout << str1.value();
-    //std::wcout << TEXT("This is new data\n");
-    //std::cout << "ebhjfvbjhevfje";
-
-    //String str2 = TEXT("-Hello!");
-    //str1 += str2;
-    //std::cout << std::boolalpha << "Same string? " << String::compare(str1, str2);
-    //std::vector<Object*> objects;
-    //Object* obj1 = Type::getObject(GrandChildClass::typeInfo.name);
-    //Object* obj2 = Type::getObject(ChildClass::typeInfo.name);
-    //Object* obj3 = Type::getObject(GrandChildClass::typeInfo.name);
-
-    /*
-    std::fstream fileStream("data/test.txt", std::ios::in | std::ios::app);
-
-    if (!fileStream.is_open()) {
-      std::cerr << "Could not open file :(\n";
+    if (pFactoryGraphicsModule == nullptr) {
+      printf("Could not initalize factory function for DirectX11 module.");
+      SDL_UnloadObject(handle);
+      Quit();
+      return;
     }
     else {
-      std::cout << "File opened :D\n";
+      m_pRenderModule = pFactoryGraphicsModule();
+      m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
 
-    std::string line{};
+    /////////////////////////////////
 
-    while (std::getline(fileStream, line)) {
-      //std::cout << line.length() << '\n';
-      for (unsigned char c : line) {
-        std::cout << (int)c << " ";
-      }
+    _TEST_mesh = TestMeshClass::createSkinnedCubeTestMeshClass();
 
-      std::cout << '\n';
+    _TEST_mesh.pVertexBuffer = m_pRenderModule->createVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
+    _TEST_mesh.pIndexBuffer  = m_pRenderModule->createIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);
 
-      objects.push_back(Type::getObject(line.c_str()));
-
-    }
-
-    fileStream.close();
-    */
+    _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/VertexShader.cso"));
+    _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PixelShader.cso"));
 
     /*
-    objects.push_back(Type::getObject(GrandChildClass::typeInfo.name));
-    objects.push_back(Type::getObject(Object::typeInfo.name));
-    objects.push_back(Type::getObject(ChildClass::typeInfo.name));
-
-    for (int i = 0; i < 3; i++) {
-      std::cout << "TypeInfo : " << objects[i]->getTypeInfo()->name << '\n';
+    printf("[Core Module] graphics resources count: %llu\n", g_graphicsResources.size());
+    for (IGraphicsResource*& p : g_graphicsResources) {
+      //printf("[Core Module] element: 0x%p\n", p);
+      p->printHello();
     }
     */
-
-    // std::cout << "Address  : 0x" << std::hex << obj1 << std::dec << '\n';
-    // obj1->printHello();
-
-    /// OBJECT CLASS EXPERIMENTATION - END
     m_shouldRun = true;
+
+    //IGraphicsResource::printTypes();
   }
   catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());
@@ -200,6 +183,10 @@ void Application::ApplicationLoop()
     }
 
     if (m_pRenderModule) {
+      m_pRenderModule->bindVertexBuffer(_TEST_mesh.pVertexBuffer);
+      m_pRenderModule->bindIndexBuffer(_TEST_mesh.pIndexBuffer);
+      m_pRenderModule->bindVertexShader(_TEST_pVertexShader);
+      m_pRenderModule->bindPixelShader(_TEST_pPixelShader);
       m_pRenderModule->draw();
     }
 
@@ -227,6 +214,7 @@ void Application::ApplicationLoop()
 
 void Application::ApplicationQuit()
 { 
+  printf("Application quitting...\n");
   delete(m_pRenderModule);
   delete(m_pSysWindow);
 }

@@ -29,8 +29,6 @@ void InterfaceImGui::initWindow(void* sdlWindow)
 	ImGui_ImplSDL3_InitForD3D(reinterpret_cast<SDL_Window*>(sdlWindow));
 
 	ImGuiIO& io = ImGui::GetIO();
-
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
 void InterfaceImGui::initDirectX(void* pDevice, void* pContext)

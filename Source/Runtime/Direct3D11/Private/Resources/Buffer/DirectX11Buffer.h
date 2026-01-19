@@ -10,19 +10,11 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Private/Resources/IDirectX11Resource.h"
 
-/**
- * @brief base class for DirectX11 buffer types.
- * 
- * @brief
- * >>>> This class should not be instanciated by itself.
- * Only derived classes should be instanciated <<<<
-*/
-class IDirectX11Buffer : IDirectX11Resource
+class IDirectX11Buffer
 {
 public:
-  ~IDirectX11Buffer() override {}
+  virtual ~IDirectX11Buffer() {}
 
   virtual void init(ID3D11Device* pDevice)         = 0;
   virtual void bind(ID3D11DeviceContext* pContext) = 0;
@@ -32,103 +24,15 @@ public:
   int32   elementCount    { 0 };
   uint32  stride          { 0 };
   uint32  offset          { 0 };
+
 };
 
-
-/**
- * @brief 
- * A DirectX11 vertex buffer type resource.
-*/
 template <typename T> 
-class VertexBuffer final : public IDirectX11Buffer
-{
-public:
-  inline VertexBuffer() = default;
-  inline ~VertexBuffer() override {}
-
-  inline VertexBuffer(T* vertices, int32 bufferSize)
-  {
-    bufferByteSize  = bufferSize;
-    elementCount    = bufferByteSize / sizeof(T);
-    stride          = sizeof(T);
-    offset          = 0;
-    data            = vertices;
-  }
-
-  inline virtual void init(ID3D11Device* pDevice) override { 
-    D3D11_BUFFER_DESC       desc{};
-    D3D11_SUBRESOURCE_DATA  subres{};
-
-    desc.ByteWidth            = bufferByteSize;
-    desc.StructureByteStride  = sizeof(T);
-    desc.Usage                = D3D11_USAGE_DEFAULT;
-    desc.BindFlags            = D3D11_BIND_VERTEX_BUFFER;
-    desc.CPUAccessFlags       = 0;
-    desc.MiscFlags            = 0;
-    subres.pSysMem            = data;
-
-    HRESULT hr{S_OK};
-    OPTIM_TRY_DX(pDevice->CreateBuffer(&desc, &subres, &pBuffer));
-  }
-
-  inline virtual void bind(ID3D11DeviceContext* pContext) override { 
-    pContext->IASetVertexBuffers(0, 1, pBuffer.GetAddressOf(), &stride, &offset);
-  }
-
-  T* data{ nullptr };
-};
-
-/**
- * @brief 
- * A DirectX11 index buffer type resource.
-*/
-class IndexBuffer final : public IDirectX11Buffer
-{
-public:
-  inline IndexBuffer() = default;
-  inline ~IndexBuffer() override{}
-
-  inline IndexBuffer(uint16* indices, int32 byteSize)
-  {
-    bufferByteSize  = byteSize;
-    elementCount    = byteSize / sizeof(uint16);
-    stride          = 0;
-    offset          = 0;
-    data            = indices;
-  }
-
-  inline virtual void init(ID3D11Device* device) override {
-    D3D11_BUFFER_DESC       desc{};
-    D3D11_SUBRESOURCE_DATA  subres{};
-
-    desc.ByteWidth            = bufferByteSize;
-    desc.StructureByteStride  = sizeof(uint16);
-    desc.Usage                = D3D11_USAGE_DEFAULT;
-    desc.BindFlags            = D3D11_BIND_INDEX_BUFFER;
-    desc.CPUAccessFlags       = 0;
-    desc.MiscFlags            = 0;
-    subres.pSysMem            = data;
-
-    HRESULT hr{ S_OK };
-    OPTIM_TRY_DX(device->CreateBuffer(&desc, &subres, &pBuffer));
-  }
-
-  inline void bind(ID3D11DeviceContext* pContext) override { 
-    pContext->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-  }
-
-  uint16* data{ nullptr };
-};
-
-/**
- * @brief 
- * A DirectX11 constant buffer type resource.
-*/
-template <typename T>
 class ConstantBuffer final : public IDirectX11Buffer
 {
 public:
-  inline ConstantBuffer() = default;
+  inline ConstantBuffer() {
+  }
   inline ~ConstantBuffer() override
   {}
 
@@ -157,6 +61,7 @@ public:
     subres.pSysMem            = &data;
 
     pDevice->CreateBuffer(&desc, &subres, &pBuffer);
+    //printf("Element at 0x%p is a Constant buffer resource\n", this);
   }
 
   inline void bind(ID3D11DeviceContext* pContext) override { 

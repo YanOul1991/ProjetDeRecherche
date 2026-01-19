@@ -22,21 +22,36 @@
 #include "Core/Graphics/IGraphicsModule.h"
 
 class DirectX11Graphics;
+//class IDirectX11Resource;
 
-class IDirect3D11 final : IGraphicsModule
+class IDirect3D11 final : public IGraphicsModule 
 {
 public:
-  DIRECTX11_API IDirect3D11();
-  DIRECTX11_API void Initialize(void* _WindowHandle) override;
-  DIRECTX11_API void draw() override;
-  DIRECTX11_API void Clean() override;
+  IDirect3D11();
+  ~IDirect3D11() override final;
+  void Initialize(void* _WindowHandle) override final;
+  void draw() override final;
+  void Clean() override final;
 
+  // NEW VIRTUAL FUNCTIONS TO TEST
+  void clearGraphicsResource(IGraphicsResource** ppResource) override final;
+
+  IVertexBuffer* createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) override final;
+  IIndexBuffer*  createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) override final;
+  IVertexShader* createVertexShader(const wchar* path) override final;
+  IPixelShader*  createPixelShader(const wchar* path) override final;
+
+  void bindVertexBuffer(IVertexBuffer* pVertexBuffer) override final;
+  void bindIndexBuffer(IIndexBuffer* pIndexBuffer) override final;
+  void bindVertexShader(IVertexShader* pVertexShader) override final;
+  void bindPixelShader(IPixelShader* pPixelShader) override final;
+
+  static ID3D11Device* getDevicePtr();
+  static ID3D11DeviceContext* getContextPtr();
 
 private:
   void* m_hTargetWindow;      // Target Window.
   DirectX11Graphics* m_pBase;  
 };
 
-extern "C" {
-  DIRECTX11_API IDirect3D11* CreateDirect3D11Module();
-}
+extern "C" DIRECTX11_API IDirect3D11* CreateDirect3D11Module();

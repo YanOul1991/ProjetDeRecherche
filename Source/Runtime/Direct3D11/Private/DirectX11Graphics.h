@@ -11,10 +11,8 @@
 #include "Core/Object/Image/Image.h"
 #include "Direct3D11/IDirect3D11.h"
 
-#include "Private/Resources/Primitives.h"
-#include "Private/Resources/IDirectX11Resource.h"
+#include "Core/Exception/exception.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
-#include "Private/Resources/DirectX11Shader.h"
 
 #include <vector>
 
@@ -35,17 +33,18 @@ struct Transform
   float y;
   float z;
 };
-*/
 
-class MeshRenderer
+class MeshRenderer final
 {
 public:
   MeshRenderer() = default;
   float3 position;
   Mesh* meshData;
 };
+*/
 
-class Sampler
+
+class Sampler final
 {
 public:
   inline Sampler() = default;
@@ -65,15 +64,14 @@ public:
     OPTIM_TRY_DX(pDevice->CreateSamplerState(&samplerDesc, &pSampler));
   }
 
-  inline void bind(ID3D11DeviceContext* pContext) 
-  {
+  inline void bind(ID3D11DeviceContext* pContext) {
     pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
   }
 
   ComPtr<ID3D11SamplerState> pSampler;
 };
 
-class Texture
+class Texture final
 {
 public:
   inline Texture() { }
@@ -111,12 +109,10 @@ public:
     srvDesc.Texture2D.MipLevels       = 1;
 
     OPTIM_TRY_DX(pDevice->CreateShaderResourceView(pResource.Get(), &srvDesc, &pResourceView));
-
-    printf("[DirectX11] texture resources allocated.\n");
+    //printf("[DirectX11] texture resources allocated.\n");
   }
 
-  inline void bind(ID3D11DeviceContext* pContext)
-  {
+  inline void bind(ID3D11DeviceContext* pContext) {
     pContext->PSSetShaderResources(0, 1, pResourceView.GetAddressOf());
   }
 
@@ -124,19 +120,14 @@ public:
   ComPtr<ID3D11ShaderResourceView>  pResourceView { nullptr };
 };
 
-/*
-struct DxColor 
-{
-  uint8 r;
-  uint8 g;
-  uint8 b;
-  uint8 a;
-};
-*/
-
 class DirectX11Graphics final
 {
 public:
+  friend class IDirect3D11;
+
+  static ID3D11Device* deviceRef;
+  static ID3D11DeviceContext* contextRef;
+
   DirectX11Graphics();
   ~DirectX11Graphics();
 
@@ -162,15 +153,11 @@ private:
   DirectX::XMMATRIX matrix_projection{};
   DirectX::XMMATRIX matrix_camera{};
 
-  Mesh _cubeMesh;
-
-  std::vector<MeshRenderer> objects;
-
   ConstantBuffer<DirectX::XMMATRIX>     __t_constBuffer{};
   //ConstantBuffer<ConstColors>         __t_constBufferColor{};
 
   //GFXMaterial __t_material{};
-  Optim::Test::Material _TEST_material;
+  //Optim::Test::Material _TEST_material;
 
   Texture _test_texture{};
   Sampler _test_sampler{};

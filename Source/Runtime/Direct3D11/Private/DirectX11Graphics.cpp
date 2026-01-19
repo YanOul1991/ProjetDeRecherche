@@ -22,7 +22,6 @@
 #include "Core/Input/Input.h"
 
 #include "DirectX11Graphics.h"
-#include "Private/Resources/IDirectX11Resource.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
 
 #include "Core/Object/Camera/Camera.h"
@@ -33,6 +32,9 @@
 #include <iomanip>
 
 #include "Core/_Temporary/InterfaceImGui.h"
+
+ID3D11Device*         DirectX11Graphics::deviceRef{nullptr};
+ID3D11DeviceContext*  DirectX11Graphics::contextRef{nullptr};
 
 DirectX11Graphics::DirectX11Graphics() :
   m_pSwapChain        { nullptr },
@@ -46,8 +48,6 @@ DirectX11Graphics::~DirectX11Graphics()
 
 bool DirectX11Graphics::initialize(HWND _outputWindow)
 {
-
-
   DXGI_SWAP_CHAIN_DESC swapChainDesc{};
   // Empty Memory
   ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -94,6 +94,11 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     nullptr,
     &m_pContext
   ));
+
+  // TEMPORARY - Set static fields for getting device and context
+  deviceRef = m_pDevice.Get();
+  contextRef = m_pContext.Get();
+  // 
 
   // Get pointer to backbuffer
   ComPtr<ID3D11Resource> _pBackbuffer;
@@ -145,73 +150,36 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   /// ////////////////////// TESTING
 
-  objects = std::vector<MeshRenderer>(1);
-  //String strSize = String((int)objects.size());
-  //MessageBox(0, strSize.value(), TEXT("DEBUG"), MB_OK);
 
+  //printf("Loading allocating vertex and pixel buffer resources...\n");
+  /*
   _cubeMesh = createCubeMesh();
-  //_cubeMesh = createFlatCircle(30);
-
   _cubeMesh.vertexBuffer.init(m_pDevice.Get());
   _cubeMesh.indexBuffer.init(m_pDevice.Get());
-
-  std::random_device rd;
-  std::mt19937 engine(rd());
-
-  std::uniform_real_distribution<float> dist(-5.0f, 5.0f);
-  std::uniform_real_distribution<float> distZ(5.0f, 15.0f);
-
-  for (int i = 0; i < objects.size(); i++)
-  {
-    objects[i].meshData = &_cubeMesh;
-    objects[i].position.x = 0.0f + i;
-    objects[i].position.y = 0.0f; 
-    objects[i].position.z = 0.0f;
-
-    //objects[i].position.x = dist(rd);
-    //objects[i].position.y = dist(rd);
-    //objects[i].position.z = distZ(rd);
-  }
+  */
 
   /// ---------------------------------
   /// CONSTANT BUFFER INITIALIZATION
   /// ---------------------------------
-
   __t_constBuffer = ConstantBuffer<DirectX::XMMATRIX>(DirectX::XMMatrixIdentity());
+  //printf("Loading allocating constant buffer resources...\n");
   __t_constBuffer.init(m_pDevice.Get());
-
-  /*
-  __t_constBufferColor = ConstantBuffer<ConstColors>();
-  __t_constBufferColor.data = 
-  {
-    {
-      { 1.0f, 0.0f, 1.0f }, // face 1
-      { 1.0f, 1.0f, 1.0f }, // face 2
-      { 0.0f, 1.0f, 0.0f }, // face 3
-      { 0.0f, 0.0f, 1.0f }, // face 4
-      { 1.0f, 1.0f, 0.0f }, // face 5
-      { 0.0f, 1.0f, 1.0f }  // face 6
-    }
-  };
-  */
-
-  //__t_constBufferColor.init(m_pDevice.Get());
 
   /// ---------------------------------
   /// SHADERS INITIALIZATION
   /// ---------------------------------
-  /*
-  __t_material.setPath(TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
-  __t_material.loadShaders(m_pDevice.Get());
-  */
 
-  _TEST_material.initializeMaterial(m_pDevice.Get(), TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
+  //printf("Loading allocating shader resources...\n");
+  //_TEST_material.initializeMaterial(m_pDevice.Get(), TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
 
   Image img = Image();
   FileStream::readPngImage("images/jeff.png", img);
-  printf("Image resolution is %dx%d\n", img.width, img.height);
 
+  //printf("Loading allocating image resources...\n");
   _test_texture.allocResource(m_pDevice.Get(), &img);
+  //_test_texture.allocResource(m_pDevice.Get(), &img);
+
+  //printf("Loading allocating sampler resources...\n");
   _test_sampler.init(m_pDevice.Get());
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
@@ -221,8 +189,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   return true;
 }
 
-void DirectX11Graphics::clearBuffer(float red, float green, float blue, float alpha)
-{
+void DirectX11Graphics::clearBuffer(float red, float green, float blue, float alpha) {
   const float color[] = { red, green, blue, alpha };
   m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
   m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -266,42 +233,38 @@ void DirectX11Graphics::renderUpdate()
   _test_texture.bind(m_pContext.Get());
   _test_sampler.bind(m_pContext.Get());
 
-  for (int i = 0; i < objects.size(); i++)
-  {
-    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    objects[i].meshData->vertexBuffer.bind(m_pContext.Get());
-    objects[i].meshData->indexBuffer.bind(m_pContext.Get());
+  // Update subresource for Pixel shader to make cube move 
+  // and rotate in 3D space based on current runtime
+  __t_constBuffer.data = {
+    DirectX::XMMatrixTranspose(
+      DirectX::XMMatrixTranslation(0, 0, 0) *
+      matrix_camera * 
+      matrix_projection
+    )
+  };
 
-    // Update subresource for Pixel shader to make cube move 
-    // and rotate in 3D space based on current runtime
-    __t_constBuffer.data = {
-      DirectX::XMMatrixTranspose(
-        DirectX::XMMatrixTranslation(objects[i].position.x, objects[i].position.y, objects[i].position.z) *
-        matrix_camera * 
-        matrix_projection
-      )
-    };
+  // Update constant buffer and bind
+  __t_constBuffer.update(m_pContext.Get());
+  __t_constBuffer.bind(m_pContext.Get());
 
-    // Update constant buffer and bind
-    __t_constBuffer.update(m_pContext.Get());
-    __t_constBuffer.bind(m_pContext.Get());
+  //_TEST_material.bindShaders(m_pContext.Get());
 
-    _TEST_material.bindShaders(m_pContext.Get());
+  // Configure Viewport
+  D3D11_VIEWPORT vp{};
+  vp.Width    = 1920;
+  vp.Height   = 1080;
+  vp.MinDepth = 0;
 
-    // Configure Viewport
-    D3D11_VIEWPORT vp{};
-    vp.Width    = 1920;
-    vp.Height   = 1080;
-    vp.MinDepth = 0;
+  vp.MaxDepth = 1;
+  vp.TopLeftX = 0;
+  vp.TopLeftY = 0;
 
-    vp.MaxDepth = 1;
-    vp.TopLeftX = 0;
-    vp.TopLeftY = 0;
+  m_pContext->RSSetViewports(1u, &vp);
 
-    m_pContext->RSSetViewports(1u, &vp);
-    m_pContext->DrawIndexed(objects[i].meshData->indexBuffer.elementCount, 0u, 0u);
-  }
+  // TEMP - hard code index count
+  m_pContext->DrawIndexed(36, 0u, 0u);
 }
 
 void DirectX11Graphics::presentBuffer()
