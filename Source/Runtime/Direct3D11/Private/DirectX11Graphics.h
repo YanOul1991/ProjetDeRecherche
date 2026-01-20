@@ -10,90 +10,10 @@
 #include "Core/Types/Color.h"
 #include "Core/Object/Image/Image.h"
 #include "Direct3D11/IDirect3D11.h"
-
-#include "Core/Exception/exception.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
 
 #include <vector>
 
-
-
-/*
-class Sampler final
-{
-public:
-  inline Sampler() = default;
-  inline ~Sampler()
-  {}
-
-  inline void init(ID3D11Device* pDevice)
-  {
-    D3D11_SAMPLER_DESC samplerDesc{};
-
-    samplerDesc.Filter    = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU  = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV  = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW  = D3D11_TEXTURE_ADDRESS_WRAP;
-
-    HRESULT hr{S_OK};
-    OPTIM_TRY_DX(pDevice->CreateSamplerState(&samplerDesc, &pSampler));
-  }
-
-  inline void bind(ID3D11DeviceContext* pContext) {
-    pContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
-  }
-
-  ComPtr<ID3D11SamplerState> pSampler;
-};
-class Texture final
-{
-public:
-  inline Texture() { }
-
-  inline void allocResource(ID3D11Device* pDevice, Image* image) 
-  {
-    HRESULT                         hr{ S_OK };
-    D3D11_TEXTURE2D_DESC            textDesc{};
-    D3D11_SUBRESOURCE_DATA          subRes{};
-
-    textDesc.Width              = image->width;
-    textDesc.Height             = image->height;
-    textDesc.MipLevels          = 1;
-    textDesc.ArraySize          = 1;
-    textDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
-    textDesc.SampleDesc.Count   = 1;
-    textDesc.SampleDesc.Quality = 0;
-    textDesc.Usage              = D3D11_USAGE_DEFAULT;
-    textDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
-    textDesc.CPUAccessFlags     = 0;
-    textDesc.MiscFlags          = 0;
-
-    subRes.pSysMem          = image->pixels;
-    subRes.SysMemPitch      = image->width * sizeof(op::color::SColor);
-    subRes.SysMemSlicePitch = 0;
-
-    OPTIM_TRY_DX(pDevice->CreateTexture2D(&textDesc, &subRes, &pResource));
-
-    // Shader Resource view
-    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-
-    srvDesc.Format                    = textDesc.Format;
-    srvDesc.ViewDimension             = D3D11_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MostDetailedMip = 0;
-    srvDesc.Texture2D.MipLevels       = 1;
-
-    OPTIM_TRY_DX(pDevice->CreateShaderResourceView(pResource.Get(), &srvDesc, &pResourceView));
-    //printf("[DirectX11] texture resources allocated.\n");
-  }
-
-  inline void bind(ID3D11DeviceContext* pContext) {
-    pContext->PSSetShaderResources(0, 1, pResourceView.GetAddressOf());
-  }
-
-  ComPtr<ID3D11Texture2D>           pResource     { nullptr };
-  ComPtr<ID3D11ShaderResourceView>  pResourceView { nullptr };
-};
-*/
 
 class DirectX11Graphics final
 {
@@ -129,7 +49,4 @@ private:
   DirectX::XMMATRIX matrix_camera{};
 
   ConstantBuffer<DirectX::XMMATRIX>     __t_constBuffer{};
-
-  //Texture _test_texture{};
-  //Sampler _test_sampler{};
 };

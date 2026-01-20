@@ -104,6 +104,9 @@
     <ClInclude Include="..\Source\Core\Graphics\Resource\ISampler.h">
       <Filter>Graphics\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Graphics.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">

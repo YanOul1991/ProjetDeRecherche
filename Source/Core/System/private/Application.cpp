@@ -19,6 +19,7 @@
 #include "Core/System/Application.h"
 #include "Core/Object/Object.h"
 #include "Core/Utilities/Random/Random.h"
+
 #include "ThirdParty/SDL3/SDL.h"
 
 #include <iostream>
@@ -43,6 +44,8 @@ static IVertexShader*     _TEST_pVertexShader{};
 static IPixelShader*      _TEST_pPixelShader{};
 static ITextureResource*  _TEST_pTextureResource{};
 static ISampler*          _TEST_pSampler{};
+
+static SGraphicResourceHandle    _hPixelShader;
 
 /* #########################
     LOCAL TESTING FIELDS
@@ -125,7 +128,7 @@ void Application::ApplicationStart()
       m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
 
-    /////////////////////////////////
+    /////////////////////////////////       TESTING FUNCTIONALITIES
 
     _TEST_mesh = TestMeshClass::createSkinnedCubeTestMeshClass();
 
@@ -142,6 +145,9 @@ void Application::ApplicationStart()
 
     // Create sampler resource
     _TEST_pSampler = m_pRenderModule->createSamplerResource();
+    _hPixelShader = m_pRenderModule->getPixelShader(TEXT("bin/PixelShader.cso"));
+
+    printf("Gen of generated pixel resource [%02d]\n", _hPixelShader.generation);
 
     m_shouldRun = true;
 
@@ -174,6 +180,12 @@ void Application::ApplicationLoop()
     }
 
     if (m_pRenderModule) {
+      /*
+      DrawCommand testCommand{};
+      testCommand.pixelShader = _hPixelShader;
+      m_pRenderModule->setDrawCommand(testCommand);
+      */
+
       m_pRenderModule->bindVertexBuffer(_TEST_mesh.pVertexBuffer);
       m_pRenderModule->bindIndexBuffer(_TEST_mesh.pIndexBuffer);
       m_pRenderModule->bindVertexShader(_TEST_pVertexShader);

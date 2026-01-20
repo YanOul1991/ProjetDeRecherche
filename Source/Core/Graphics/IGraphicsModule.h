@@ -21,6 +21,10 @@
 #include "Core/Graphics/Resource/ITextureResource.h"
 #include "Core/Graphics/Resource/ISampler.h"
 
+struct DrawCommand {
+  SGraphicResourceHandle pixelShader;
+};
+
 /*
  * @brief
  * Base class interface for graphics rendering modules
@@ -46,4 +50,10 @@ public:
   CORE_API virtual void bindPixelShader(IPixelShader* pPixelShader) = 0;
   CORE_API virtual void bindTexture(ITextureResource* pTexture) = 0;
   CORE_API virtual void bindSampler(ISampler* pSampler) = 0;
+
+
+  /* TESTING FUNCTIONS */
+  CORE_API virtual SGraphicResourceHandle getPixelShader(const wchar* path) = 0;
+
+  CORE_API virtual void setDrawCommand(DrawCommand& drawCommand) = 0;
 };

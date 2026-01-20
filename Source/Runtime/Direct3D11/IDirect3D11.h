@@ -22,11 +22,13 @@
 #include "Core/Graphics/IGraphicsModule.h"
 
 class DirectX11Graphics;
-//class IDirectX11Resource;
 
 class IDirect3D11 final : public IGraphicsModule 
 {
 public:
+  static ID3D11Device* getDevicePtr();
+  static ID3D11DeviceContext* getContextPtr();
+
   IDirect3D11();
   ~IDirect3D11() override final;
   void Initialize(void* _WindowHandle) override final;
@@ -49,8 +51,11 @@ public:
   void bindTexture(ITextureResource* pTexture) override final;
   void bindSampler(ISampler* pSampler) override final;
 
-  static ID3D11Device* getDevicePtr();
-  static ID3D11DeviceContext* getContextPtr();
+  /*----------------- TEST FIELD -----------------*/
+
+  SGraphicResourceHandle getPixelShader(const wchar* path) override final;
+
+  void setDrawCommand(DrawCommand& drawCommand) override final;
 
 private:
   void* m_hTargetWindow;      // Target Window.

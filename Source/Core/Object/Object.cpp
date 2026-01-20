@@ -20,6 +20,7 @@ static std::unordered_map<SGuid, Object*> objectRegistery{};
 
 Object::Object()
 {
+	/*
 	m_guid = Optim::Random::getGetGuid();
 	objectRegistery.emplace(m_guid, this);
 
@@ -28,10 +29,13 @@ Object::Object()
 		<< "----- Registery count : " << objectRegistery.size() << '\n'
 		//<< "----- Object type     : " << objectRegistery[m_guid]->getTypeInfo()->name << '\n'
 		<< "----- Object address  : " << std::hex << "0x" << this << '\n' << std::dec;
+	*/
 }
 
 CORE_API Object* Object::getObject(const SGuid& guid)
 {
+	return nullptr;
+	/*
 	Object* pObj = nullptr;
 
 	if (objectRegistery.contains(guid)) {
@@ -51,6 +55,7 @@ CORE_API Object* Object::getObject(const SGuid& guid)
 	printf("\n");
 
 	return pObj;
+	*/
 }
 
 #define OPTIM_TYPEFACTORY(CLASS_TYPE) {#CLASS_TYPE, []() -> Object* { return new CLASS_TYPE; }}

@@ -1,7 +1,11 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-#include "Core/Graphics/Vertex.h"
+
+typedef struct SGraphicResourceHandle {
+	uint32 data;
+	uint32 generation;
+} SGraphicResourceHandle;
 
 /*
  * @brief
