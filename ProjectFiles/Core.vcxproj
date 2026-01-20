@@ -28,6 +28,8 @@
     <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IIndexBuffer.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IPixelShader.h" />
+    <ClInclude Include="..\Source\Core\Graphics\Resource\ISampler.h" />
+    <ClInclude Include="..\Source\Core\Graphics\Resource\ITextureResource.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexBuffer.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexShader.h" />
     <ClInclude Include="..\Source\Core\Graphics\Vertex.h" />

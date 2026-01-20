@@ -24,6 +24,8 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11IndexBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11PixelShader.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Sampler.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Texture.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexShader.h" />
   </ItemGroup>

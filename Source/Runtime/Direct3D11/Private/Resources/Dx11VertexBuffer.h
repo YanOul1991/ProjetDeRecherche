@@ -7,7 +7,7 @@
 #include "Core/Graphics/Resource/IVertexBuffer.h"
 #include "Direct3D11/IDirect3D11.h"
 
-class Dx11VertexBuffer final : public IVertexBuffer
+class Dx11VertexBuffer final : public IVertexBuffer 
 {
 public:
   ~Dx11VertexBuffer() override {}

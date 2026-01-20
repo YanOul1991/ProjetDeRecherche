@@ -98,6 +98,12 @@
     <ClInclude Include="..\Source\Core\Graphics\Resource\IPixelShader.h">
       <Filter>Graphics\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\ITextureResource.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\ISampler.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">

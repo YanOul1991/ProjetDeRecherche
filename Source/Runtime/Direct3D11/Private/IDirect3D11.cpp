@@ -19,6 +19,8 @@
 #include "Private/Resources/Dx11IndexBuffer.h"
 #include "Private/Resources/Dx11VertexShader.h"
 #include "Private/Resources/Dx11PixelShader.h"
+#include "Private/Resources/Dx11Texture.h"
+#include "Private/Resources/Dx11Sampler.h"
 
 extern "C" DIRECTX11_API IDirect3D11* CreateDirect3D11Module() {
   return new IDirect3D11;
@@ -53,11 +55,6 @@ void IDirect3D11::draw() {
 
 void IDirect3D11::Clean() {}
 
-void IDirect3D11::clearGraphicsResource(IGraphicsResource** ppResource) {
-  delete *ppResource;
-  *ppResource = nullptr;
-}
-
 /*
  * CREATE FUNCTIONS
 */
@@ -86,6 +83,18 @@ IPixelShader* IDirect3D11::createPixelShader(const wchar* path) {
   return pResource;
 }
 
+ITextureResource* IDirect3D11::createTextureResource(const Image* pImage) {
+  Dx11TextureResource* pResource = new Dx11TextureResource;
+  pResource->createResource(pImage);
+  return pResource;
+}
+
+ISampler* IDirect3D11::createSamplerResource() {
+  Dx11Sampler* pResource = new Dx11Sampler;
+  pResource->createResource();
+  return pResource;
+}
+
 /*
  * BINDING FUNCTIONS
 */
@@ -104,6 +113,14 @@ void IDirect3D11::bindVertexShader(IVertexShader* pVertexShader) {
 
 void IDirect3D11::bindPixelShader(IPixelShader* pPixelShader) {
   pPixelShader->bindResource();
+}
+
+void IDirect3D11::bindTexture(ITextureResource* pTexture) {
+  pTexture->bindResource();
+}
+
+void IDirect3D11::bindSampler(ISampler* pSampler) {
+  pSampler->bindResource();
 }
 
 ID3D11Device* IDirect3D11::getDevicePtr() {

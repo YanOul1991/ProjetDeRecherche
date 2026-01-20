@@ -16,34 +16,9 @@
 
 #include <vector>
 
+
+
 /*
-struct ConstColors
-{
-  struct {
-    float r;
-    float g;
-    float b;
-    float a;
-  } face_colors[6];
-};
-
-struct Transform
-{
-  float x;
-  float y;
-  float z;
-};
-
-class MeshRenderer final
-{
-public:
-  MeshRenderer() = default;
-  float3 position;
-  Mesh* meshData;
-};
-*/
-
-
 class Sampler final
 {
 public:
@@ -70,7 +45,6 @@ public:
 
   ComPtr<ID3D11SamplerState> pSampler;
 };
-
 class Texture final
 {
 public:
@@ -119,6 +93,7 @@ public:
   ComPtr<ID3D11Texture2D>           pResource     { nullptr };
   ComPtr<ID3D11ShaderResourceView>  pResourceView { nullptr };
 };
+*/
 
 class DirectX11Graphics final
 {
@@ -154,11 +129,7 @@ private:
   DirectX::XMMATRIX matrix_camera{};
 
   ConstantBuffer<DirectX::XMMATRIX>     __t_constBuffer{};
-  //ConstantBuffer<ConstColors>         __t_constBufferColor{};
 
-  //GFXMaterial __t_material{};
-  //Optim::Test::Material _TEST_material;
-
-  Texture _test_texture{};
-  Sampler _test_sampler{};
+  //Texture _test_texture{};
+  //Sampler _test_sampler{};
 };

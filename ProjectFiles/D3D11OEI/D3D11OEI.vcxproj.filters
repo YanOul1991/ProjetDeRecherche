@@ -31,6 +31,12 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexBuffer.h">
       <Filter>Private\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Texture.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Sampler.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\IDirect3D11.cpp">

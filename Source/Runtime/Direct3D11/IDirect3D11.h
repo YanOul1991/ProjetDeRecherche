@@ -34,17 +34,20 @@ public:
   void Clean() override final;
 
   // NEW VIRTUAL FUNCTIONS TO TEST
-  void clearGraphicsResource(IGraphicsResource** ppResource) override final;
 
-  IVertexBuffer* createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) override final;
-  IIndexBuffer*  createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) override final;
-  IVertexShader* createVertexShader(const wchar* path) override final;
-  IPixelShader*  createPixelShader(const wchar* path) override final;
+  IVertexBuffer*    createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) override final;
+  IIndexBuffer*     createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) override final;
+  IVertexShader*    createVertexShader(const wchar* path) override final;
+  IPixelShader*     createPixelShader(const wchar* path) override final;
+  ITextureResource* createTextureResource(const Image* pImage) override final;
+  ISampler*         createSamplerResource() override final;
 
   void bindVertexBuffer(IVertexBuffer* pVertexBuffer) override final;
   void bindIndexBuffer(IIndexBuffer* pIndexBuffer) override final;
   void bindVertexShader(IVertexShader* pVertexShader) override final;
   void bindPixelShader(IPixelShader* pPixelShader) override final;
+  void bindTexture(ITextureResource* pTexture) override final;
+  void bindSampler(ISampler* pSampler) override final;
 
   static ID3D11Device* getDevicePtr();
   static ID3D11DeviceContext* getContextPtr();

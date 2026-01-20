@@ -172,15 +172,15 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   //printf("Loading allocating shader resources...\n");
   //_TEST_material.initializeMaterial(m_pDevice.Get(), TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
 
-  Image img = Image();
-  FileStream::readPngImage("images/jeff.png", img);
+  //Image img = Image();
+  //FileStream::readPngImage("images/jeff.png", img);
 
   //printf("Loading allocating image resources...\n");
-  _test_texture.allocResource(m_pDevice.Get(), &img);
+  //_test_texture.allocResource(m_pDevice.Get(), &img);
   //_test_texture.allocResource(m_pDevice.Get(), &img);
 
   //printf("Loading allocating sampler resources...\n");
-  _test_sampler.init(m_pDevice.Get());
+  //_test_sampler.init(m_pDevice.Get());
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
@@ -230,8 +230,8 @@ void DirectX11Graphics::renderUpdate()
     DirectX::XMLoadFloat3(&up)
   );
 
-  _test_texture.bind(m_pContext.Get());
-  _test_sampler.bind(m_pContext.Get());
+  //_test_texture.bind(m_pContext.Get());
+  //_test_sampler.bind(m_pContext.Get());
 
   m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

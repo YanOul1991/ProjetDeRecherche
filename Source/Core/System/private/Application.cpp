@@ -31,14 +31,18 @@
 #include "Core/Graphics/Mesh.h"
 #include "Core/Graphics/Resource/IVertexShader.h"
 #include "Core/Graphics/Resource/IPixelShader.h"
+#include "Core/Graphics/Resource/ITextureResource.h"
+#include "Core/Graphics/Resource/ISampler.h"
 
 /* #########################
     LOCAL TESTING FIELDS
 ######################### */
 
-static TestMeshClass _TEST_mesh{};
-static IVertexShader* _TEST_pVertexShader{};
-static IPixelShader* _TEST_pPixelShader{};
+static TestMeshClass      _TEST_mesh{};
+static IVertexShader*     _TEST_pVertexShader{};
+static IPixelShader*      _TEST_pPixelShader{};
+static ITextureResource*  _TEST_pTextureResource{};
+static ISampler*          _TEST_pSampler{};
 
 /* #########################
     LOCAL TESTING FIELDS
@@ -89,25 +93,8 @@ void Application::ApplicationStart()
   try {
     // Start by assuming failure
     m_shouldRun = false;
-    m_pSysWindow->initialize(TEXT("dvwjdvwjvdhj"));
+    m_pSysWindow->initialize(TEXT("OptimEngine"));
 
-    /*
-    // Load Direct3d11 runtime module
-    HMODULE hmod = LoadLibraryW(TEXT("bin/directx11_ri.dll"));
-
-    if (hmod == nullptr) {
-      THROW_EXCEPTION(TEXT("Could not load the module at \"bin/directx11_ri.dll\""));
-    }
-
-    IGraphicsModule* (*pProc)() = (IGraphicsModule* (*)())GetProcAddress(hmod, "CreateDirect3D11Module");
-
-    if (pProc) {
-      m_pRenderModule = pProc();
-      m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
-    }
-    */
-
-    // LOADING DLL WITH SDL
     SDL_SharedObject* handle = SDL_LoadObject("bin/directx11_ri.dll");
 
     if (handle == nullptr) {
@@ -118,10 +105,13 @@ void Application::ApplicationStart()
 
     IGraphicsModule* (*pFactoryGraphicsModule)() = (IGraphicsModule* (*)())SDL_LoadFunction(handle, "CreateDirect3D11Module");
 
+    /*
+    */
     void (*p_testFunction)() = (void (*)())SDL_LoadFunction(handle, "testFunction");
 
     if (p_testFunction) {
       p_testFunction();
+      printf("...TEST FUNCTION NOT FOUND...\n");
     }
 
     if (pFactoryGraphicsModule == nullptr) {
@@ -145,13 +135,14 @@ void Application::ApplicationStart()
     _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/VertexShader.cso"));
     _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PixelShader.cso"));
 
-    /*
-    printf("[Core Module] graphics resources count: %llu\n", g_graphicsResources.size());
-    for (IGraphicsResource*& p : g_graphicsResources) {
-      //printf("[Core Module] element: 0x%p\n", p);
-      p->printHello();
-    }
-    */
+    // Load image for texture
+    Image srcImage;
+    FileStream::readPngImage("images/jeff.png", srcImage);
+    _TEST_pTextureResource  = m_pRenderModule->createTextureResource(&srcImage);
+
+    // Create sampler resource
+    _TEST_pSampler = m_pRenderModule->createSamplerResource();
+
     m_shouldRun = true;
 
     //IGraphicsResource::printTypes();
@@ -187,6 +178,8 @@ void Application::ApplicationLoop()
       m_pRenderModule->bindIndexBuffer(_TEST_mesh.pIndexBuffer);
       m_pRenderModule->bindVertexShader(_TEST_pVertexShader);
       m_pRenderModule->bindPixelShader(_TEST_pPixelShader);
+      m_pRenderModule->bindTexture(_TEST_pTextureResource);
+      m_pRenderModule->bindSampler(_TEST_pSampler);
       m_pRenderModule->draw();
     }
 
