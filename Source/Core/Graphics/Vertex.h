@@ -14,4 +14,5 @@ struct Vertex
 {
   float3 position;
   UVCoord uvCoord;
+  float3 normal{0, 0, 0};
 };

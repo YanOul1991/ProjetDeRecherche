@@ -14,6 +14,19 @@
 
 #include <vector>
 
+struct VSInputConstantBuffer 
+{
+  DirectX::XMFLOAT4X4 transform;  
+  DirectX::XMFLOAT4X4 worldView;  
+};
+
+struct VSInputLightBuffer
+{
+  float3 lightPosition;
+  float pad1;
+  float3 lightColor;
+  float pad2;
+};
 
 class DirectX11Graphics final
 {
@@ -45,8 +58,8 @@ private:
   ComPtr<ID3D11DepthStencilView>  m_pDepthStencilView;
 
   /// TEST FIELDS
-  DirectX::XMMATRIX matrix_projection{};
+  DirectX::XMMATRIX matrix_perspective{};
   DirectX::XMMATRIX matrix_camera{};
 
-  ConstantBuffer<DirectX::XMMATRIX>     __t_constBuffer{};
+  ConstantBuffer<VSInputConstantBuffer> __t_constBuffer{};
 };

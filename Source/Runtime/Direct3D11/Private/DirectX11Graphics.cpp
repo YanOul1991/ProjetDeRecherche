@@ -161,7 +161,10 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   /// ---------------------------------
   /// CONSTANT BUFFER INITIALIZATION
   /// ---------------------------------
-  __t_constBuffer = ConstantBuffer<DirectX::XMMATRIX>(DirectX::XMMatrixIdentity());
+  //__t_constBuffer = ConstantBuffer<VSInputConstantBuffer>({
+  //  DirectX::XMMatrixIdentity(),
+  //  DirectX::XMMatrixIdentity(),
+  //});
   //printf("Loading allocating constant buffer resources...\n");
   __t_constBuffer.init(m_pDevice.Get());
 
@@ -184,7 +187,7 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
-  matrix_projection =  DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 1000.0f);
+  matrix_perspective =  DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 1000.0f);
 
   return true;
 }
@@ -237,13 +240,16 @@ void DirectX11Graphics::renderUpdate()
 
   // Update subresource for Pixel shader to make cube move 
   // and rotate in 3D space based on current runtime
-  __t_constBuffer.data = {
-    DirectX::XMMatrixTranspose(
-      DirectX::XMMatrixTranslation(0, 0, 0) *
-      matrix_camera * 
-      matrix_projection
-    )
-  };
+  //__t_constBuffer.data = {
+  //  DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)),
+  //  DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective)
+  //};
+
+  DirectX::XMStoreFloat4x4(&__t_constBuffer.data.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
+  DirectX::XMStoreFloat4x4(&__t_constBuffer.data.worldView, DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective));
+
+  //__t_constBuffer.data.transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0));
+  //__t_constBuffer.data.worldView = DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective);
 
   // Update constant buffer and bind
   __t_constBuffer.update(m_pContext.Get());
