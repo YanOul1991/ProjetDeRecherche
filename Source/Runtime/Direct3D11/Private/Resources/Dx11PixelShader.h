@@ -27,7 +27,7 @@ public:
 			&pShader
 		);
 
-		printf("Pixel Shader Resources initalized.\n");
+		//printf("Pixel Shader Resources initalized.\n");
 	}
 
 	void bindResource() override final {

@@ -35,7 +35,7 @@ public:
     subRes.SysMemSlicePitch = 0;
 
     OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateTexture2D(&textDesc, &subRes, &pTexture));
-    printf("Texture resource created.\n");
+    //printf("Texture resource created.\n");
 
     // ################# SHADER RESOURCE VIEW INITIALIZATION
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -46,7 +46,7 @@ public:
     srvDesc.Texture2D.MipLevels       = 1;
 
     OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pResourceView));
-    printf("Shader resource view created.\n");
+    //printf("Shader resource view created.\n");
 	}
 
 	void bindResource() override final {

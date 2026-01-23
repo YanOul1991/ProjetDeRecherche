@@ -30,7 +30,7 @@ public:
 
     HRESULT hr{ S_OK };
     OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
-    printf("Index Buffer was initalized!\n");
+    //printf("Index Buffer was initalized!\n");
   }
 
   void bindResource() override final {

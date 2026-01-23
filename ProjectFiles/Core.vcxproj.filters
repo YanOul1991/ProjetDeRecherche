@@ -107,6 +107,9 @@
     <ClInclude Include="..\Source\Core\Graphics\Graphics.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\System\ModelLoader.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -245,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Utilities\Random\Random.cpp">
       <Filter>Utilities\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\System\private\ModelLoader.cpp">
+      <Filter>System\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -32,7 +32,7 @@ public:
     HRESULT hr = S_OK;
     OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
 
-    printf("Vertex Buffer was initalized!\n");
+    //printf("Vertex Buffer was initalized!\n");
   }
 
   inline void bindResource() override final {

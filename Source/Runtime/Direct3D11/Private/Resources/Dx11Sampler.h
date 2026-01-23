@@ -21,7 +21,7 @@ public:
     HRESULT hr{S_OK};
     OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateSamplerState(&samplerDesc, &pSampler));
 
-		printf("[DIRECTX 11 - Dx11Sampler] Sampler Resource created.\n");
+		//printf("[DIRECTX 11 - Dx11Sampler] Sampler Resource created.\n");
 	}
 
 	void bindResource() override final {

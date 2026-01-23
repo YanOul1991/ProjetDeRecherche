@@ -201,13 +201,14 @@ void DirectX11Graphics::clearBuffer(float red, float green, float blue, float al
 void DirectX11Graphics::renderUpdate()
 {
   /* RASTERIZER MINI CODE
+  */
   D3D11_RASTERIZER_DESC rsDesc{};
   rsDesc.FillMode = D3D11_FILL_SOLID;
-  rsDesc.CullMode = D3D11_CULL_NONE;
+  rsDesc.CullMode = D3D11_CULL_BACK;
   ComPtr<ID3D11RasterizerState> pRsState;
   m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
   m_pContext->RSSetState(pRsState.Get());
-  */
+
 
   float runtime = Application::getRuntime();
 
@@ -270,7 +271,8 @@ void DirectX11Graphics::renderUpdate()
   m_pContext->RSSetViewports(1u, &vp);
 
   // TEMP - hard code index count
-  m_pContext->DrawIndexed(36, 0u, 0u);
+  m_pContext->DrawIndexed(2304, 0u, 0u);
+  //m_pContext->Draw(96, 0);
 }
 
 void DirectX11Graphics::presentBuffer()

@@ -43,6 +43,7 @@
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
     <ClInclude Include="..\Source\Core\System\Application.h" />
     <ClInclude Include="..\Source\Core\System\FileStream.h" />
+    <ClInclude Include="..\Source\Core\System\ModelLoader.h" />
     <ClInclude Include="..\Source\Core\System\SystemWindow.h" />
     <ClInclude Include="..\Source\Core\Time\Time.h" />
     <ClInclude Include="..\Source\Core\Types\Color.h" />
@@ -64,6 +65,7 @@
     <ClCompile Include="..\Source\Core\Object\Object.cpp" />
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
     <ClCompile Include="..\Source\Core\System\private\FileStream.cpp" />
+    <ClCompile Include="..\Source\Core\System\private\ModelLoader.cpp" />
     <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp" />
     <ClCompile Include="..\Source\Core\Time\Time.cpp" />
     <ClCompile Include="..\Source\Core\Types\Private\String.cpp" />
@@ -167,14 +169,14 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)Source;$(SolutionDir)Source\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source;$(SolutionDir)Source\ThirdParty;$(SolutionDir)Source\ThirdParty\fbx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL3-static.lib;turbojpeg-static.lib;jpeg-static.lib;libpng18_static.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\;$(SolutionDir)Source\ThirdParty\libjpeg\lib\;$(SolutionDir)Source\ThirdParty\libpng\lib\;$(SolutionDir)Source\ThirdParty\zlib\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL3-static.lib;turbojpeg-static.lib;jpeg-static.lib;libpng18_static.lib;zlib.lib;libfbxsdk-md.lib;libxml2-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\;$(SolutionDir)Source\ThirdParty\libjpeg\lib\;$(SolutionDir)Source\ThirdParty\libpng\lib\;$(SolutionDir)Source\ThirdParty\zlib\lib;$(SolutionDir)Source\ThirdParty\fbx\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
     </Link>

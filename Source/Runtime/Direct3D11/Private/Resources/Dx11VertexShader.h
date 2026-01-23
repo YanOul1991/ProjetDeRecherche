@@ -44,7 +44,7 @@ public:
 			&pInput
 		);
 
-		printf("Vertex Shader Resources initalized.\n");
+		//printf("Vertex Shader Resources initalized.\n");
 	}
 
 	void bindResource() override final {
