@@ -204,6 +204,7 @@ void DirectX11Graphics::renderUpdate()
   */
   D3D11_RASTERIZER_DESC rsDesc{};
   rsDesc.FillMode = D3D11_FILL_SOLID;
+  //rsDesc.FillMode = D3D11_FILL_WIREFRAME;
   rsDesc.CullMode = D3D11_CULL_BACK;
   ComPtr<ID3D11RasterizerState> pRsState;
   m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
@@ -228,7 +229,7 @@ void DirectX11Graphics::renderUpdate()
     Camera::up.z
   };
 
-  matrix_camera = DirectX::XMMatrixLookToLH(
+  matrix_camera = DirectX::XMMatrixLookToRH(
     DirectX::XMLoadFloat3(&position),
     DirectX::XMLoadFloat3(&forward),
     DirectX::XMLoadFloat3(&up)
@@ -271,7 +272,8 @@ void DirectX11Graphics::renderUpdate()
   m_pContext->RSSetViewports(1u, &vp);
 
   // TEMP - hard code index count
-  m_pContext->DrawIndexed(2304, 0u, 0u);
+  //m_pContext->DrawIndexed(2880, 0u, 0u);
+  m_pContext->DrawIndexed(12, 0u, 0u);
   //m_pContext->Draw(96, 0);
 }
 

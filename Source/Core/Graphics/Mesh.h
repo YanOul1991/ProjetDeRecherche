@@ -250,6 +250,62 @@ public:
 						}
 					}
 				}
+
+				/*
+				 * If the face is a triangle
+				*/
+				if (vector_pCstrVerts.size() == 3) {
+					//printf("The face is a triangle.\n");
+
+					/*
+					 * Add vertices and indices in the order 
+					 * at which they appear in the face description.
+					*/
+					for (int i = 0; i < 3; i++) {
+						auto search = _mapFaceTriplets.find(vector_pCstrVerts[i]);
+						if (search == _mapFaceTriplets.end()) {
+							_mapFaceTriplets.emplace(std::make_pair(vector_pCstrVerts[i], _indicesCount));
+							_indicesCount++;
+						}
+						_indices.push_back(_mapFaceTriplets[vector_pCstrVerts[i]]);
+					}
+
+					char* cstr_vposition;	// Vertex position value
+					char* cstr_normal;		// Vertex normal value
+					char* cstr_uvcoord;		// Vertex UV value
+
+					for (int i = 0; i < 3; i++) {
+						cstr_vposition = vector_pCstrVerts[i];
+
+						cstr_uvcoord = strchr(cstr_vposition, '/');
+						*cstr_uvcoord = '\0';
+						cstr_uvcoord++;
+
+						cstr_normal		= strchr(cstr_uvcoord, '/');
+						*cstr_normal = '\0';
+						cstr_normal++;
+
+						try {
+							int index_v		= std::stoi(cstr_vposition);
+							int index_vt	= std::stoi(cstr_uvcoord);
+							int index_vn	= std::stoi(cstr_normal);
+							//printf("v: %d | vt %d | vn %d\n", index_v, index_vt, index_vn);
+
+							//printf("vcount %llu | vt count %llu | vn count %llu", _vectorPositions.size(), _vectorUvCoord)
+
+							Vertex _newVert {
+								.position = _vectorPositions[index_v - 1],
+								.uvCoord	= _vectorUvCoord[index_vt - 1],
+								.normal		= _vectorNormals[index_vn - 1]
+							};
+
+							vertices.push_back(_newVert);
+						}
+						catch (const std::exception& e) {
+							std::cerr << "Error: could not convert to integer\n" << e.what() << '\n';
+						}
+					}
+				}
 				// Free resources
 				delete[] str_line;
 				/*
@@ -313,25 +369,20 @@ public:
 				}
 				delete[] str_face;
 				*/
+
 			} // END OF IF
+
 		} // while (std::getline(input, line)) - END
 
+		// >>>>>>>>> DATA EXTRACTED FROM OBJ FILE FROM THISE POINT
 
 		/*
-		printf("Element count %llu\n", _indices.size());
-		*/
-
-		//for (auto& pair : _mapFaceTriplets) {
-		//	printf("%s | %d\n", pair.first.c_str(), pair.second);
-		//}
-
-		/*
+		for (auto& pair : _mapFaceTriplets) {
+			printf("%s | %d\n", pair.first.c_str(), pair.second);
+		}
 		for (auto& i : _indices) {
 			printf("%d\n", i);
 		}
-		*/
-
-		/*
 		for (size_t i = 0; i < vertices.size(); i++) {
 			//printf("Vertex count: %llu\n", vertices.size());
 			std::cout 
@@ -366,6 +417,15 @@ public:
 			printf("---- (%f, %f)\n", _vectorUvCoord[i].u, _vectorUvCoord[i].v);
 		}
 		*/
+
+		// Chage V value of each vertex UV coordinates to match
+		// graphics API convention. 
+		for (size_t i = 0; i < vertices.size(); i++) {
+			//vertices[i].uvCoord.u = 1.0f - vertices[i].uvCoord.u;
+			//vertices[i].position.z *= -1;
+			//vertices[i].normal.z *= -1;
+			vertices[i].uvCoord.v = 1.0f - vertices[i].uvCoord.v;
+		}
 
 		meshObj.vertexCount = (uint32)vertices.size();
 		meshObj.indexCount  = (uint32)_indices.size();

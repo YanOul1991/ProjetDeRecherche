@@ -130,39 +130,14 @@ void Application::ApplicationStart()
 
     /////////////////////////////////       TESTING FUNCTIONALITIES
 
-    //printf("myCube Vertex count %d \n", myCube.vertexCount);
-    //printf("myCube Index count %d \n", myCube.indexCount);
-     
-    /*
-    //for (uint32 i = 0; i < myCube.vertexCount; i++) {
-    //  std::cout 
-				//<< "Vertex " << i << '\n'
-				//<< "---- Position: (" << myCube.vertices[i].position.x << ", "  << myCube.vertices[i].position.y   << ", " << myCube.vertices[i].position.z << ")\n"
-				//<< "---- UV      : (" << myCube.vertices[i].uvCoord.u << ", "   << myCube.vertices[i].uvCoord.v    << ")\n"
-				//<< "---- Normal  : (" << myCube.vertices[i].normal.x << ", "    << myCube.vertices[i].normal.y     << ", " << myCube.vertices[i].normal.z << ")\n";
-    //}
-    */
-
-    Mesh myCube;
-    //_TEST_mesh = Mesh::createSkinnedCubeTestMeshClass();
-
-    Mesh::setMeshFromOBJFile(_TEST_mesh, "Assets/sphere.obj");
+    Mesh::setMeshFromOBJFile(_TEST_mesh, "Assets/pyramid.obj");
 
     std::cout << "Vertex Count: " << _TEST_mesh.vertexCount << '\n';
     std::cout << "Index Count: " << _TEST_mesh.indexCount << '\n';
 
-    /*
-    int iter = 0;
-
-    for (int i = 0; i < _TEST_mesh.indexCount; i++) {
-      if (iter >= 3) {
-        iter = 0;
-        printf("\n");
-      }
-      printf("%d ", _TEST_mesh.indices[i]);
-      iter++;
+    for (size_t i = 0; i < _TEST_mesh.vertexCount; i++) {
+      printf("Vertex position: (%f, %f, %f)\n", _TEST_mesh.vertices[i].position.x, _TEST_mesh.vertices[i].position.y, _TEST_mesh.vertices[i].position.z);
     }
-    */
 
     _TEST_mesh.pVertexBuffer = m_pRenderModule->createVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
     _TEST_mesh.pIndexBuffer  = m_pRenderModule->createIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);

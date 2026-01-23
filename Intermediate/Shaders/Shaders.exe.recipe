@@ -2,10 +2,16 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\Shaders.exe</FullPath>
+      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\Shaders.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\PhongPixelShader.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\PhongVertexShader.cso</FullPath>
+    </ContentFile>
     <ContentFile>
       <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\PixelShader.cso</FullPath>
     </ContentFile>

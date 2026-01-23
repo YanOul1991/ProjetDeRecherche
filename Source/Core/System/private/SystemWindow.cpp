@@ -51,11 +51,11 @@ void SystemWindow::initialize(const wchar* windowTitle)
 
 	// Camera initial data.
 
-	Camera::forward = Camera::rotation.rotate({0.0f, 0.0f, -1.0f});
+	Camera::forward = Camera::rotation.rotate({0.0f, 0.0f, 1.0f});
 	Camera::right		= Camera::rotation.rotate({1.0f, 0.0f, 0.0f});
 	Camera::up			= Camera::rotation.rotate({0.0f, 1.0f, 0.0f});
 
-	Camera::position = {0.0f, 0.0f, 5.0f};
+	Camera::position = { 0.0f, 0.0f, -5.0f };
 }
 
 bool SystemWindow::loop() 
@@ -95,17 +95,17 @@ bool SystemWindow::loop()
 	if (wheelHold) {
 		if (keyboardState[SDL_SCANCODE_LSHIFT]) {
 			Camera::position = Camera::position + (mouseDx * 0.01f * Camera::right);
-			Camera::position = Camera::position + (mouseDy  * 0.01f * Camera::up);
+			Camera::position = Camera::position + (mouseDy * 0.01f * Camera::up);
 		}
 		else {
 			Quaternion qYaw = Quaternion::fromAxisAngle({0.0f, 1.0f, 0.0f}, mouseDx * 0.005f);
 			Camera::rotation = qYaw * Camera::rotation;
 
 			Camera::right = Camera::rotation.rotate({1.0f, 0.0f, 0.0f});
-			Quaternion qPitch = Quaternion::fromAxisAngle(Camera::right, -mouseDy * 0.005f);
+			Quaternion qPitch = Quaternion::fromAxisAngle(Camera::right, mouseDy * 0.005f);
 			Camera::rotation = qPitch * Camera::rotation;
 
-			Camera::forward = Camera::rotation.rotate({0.0f, 0.0f, -1.0f});
+			Camera::forward = Camera::rotation.rotate({0.0f, 0.0f, 1.0f});
 			Camera::right = Camera::rotation.rotate({1.0f, 0.0f, 0.0f});
 			Camera::up = Camera::rotation.rotate({0.0f, 1.0f, 0.0f});
 		}
