@@ -129,27 +129,28 @@ void Application::ApplicationStart()
       m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
 
-    Mesh l_fbxMesh;
-    OptimEditor::loadFbxModel(l_fbxMesh, "Assets/cube.fbx");
+    //Mesh l_fbxMesh;
+    //OptimEditor::loadFbxModel(l_fbxMesh, "Assets/cube.fbx");
+    OptimEditor::loadFbxModel(_TEST_mesh, "Assets/jeffSphere.fbx");
 
     printf("---------------------- APPLICATION.CPP ----------------------\n");
-    std::cout << "Vertex Count: " << l_fbxMesh.vertexCount << '\n';
-    //l_fbxMesh.vertices[0].position = {0, 0, 0};
-    //l_fbxMesh.vertices[0].uvCoord = {0, 0};
-    //l_fbxMesh.vertices[0].normal = {0, 0, 0};
+    std::cout << "Vertex Count: " << _TEST_mesh.vertexCount << '\n';
+    //for (int i = 0; i < _TEST_mesh.vertexCount; i++) {
+    //  printf("Vertex %003d\n", i);
+    //  _TEST_mesh.vertices[i].print();
+    //  printf("\n");
+    //}
 
-    for (int i = 0; i < l_fbxMesh.vertexCount; i++) {
-      printf("Vertex %003d\n", i);
-      l_fbxMesh.vertices[i].print();
-      printf("\n");
-    }
+    printf("Index Count: %d\n", _TEST_mesh.indexCount);
+    //for (size_t i = 0; i < _TEST_mesh.indexCount; i += 3) {
+    //  printf("%d, %d, %d\n", _TEST_mesh.indices[i], _TEST_mesh.indices[i + 1], _TEST_mesh.indices[i + 2]);
+    //}
     //l_fbxMesh.vertices[0].print();
     //std::cout << "Index Count: " << _TEST_mesh.indexCount << '\n';
 
     /////////////////////////////////       TESTING FUNCTIONALITIES
 
-    Mesh::setMeshFromOBJFile(_TEST_mesh, "Assets/jeffSphereSmooth.obj");
-
+    //Mesh::setMeshFromOBJFile(_TEST_mesh, "Assets/jeffSphereSmooth.obj");
 
     //for (size_t i = 0; i < _TEST_mesh.vertexCount; i += 3) {
     //  printf("Index: (%d, %d, %d)\n", _TEST_mesh.indices[i], _TEST_mesh.indices[i + 1], _TEST_mesh.indices[i + 2]);
@@ -166,7 +167,7 @@ void Application::ApplicationStart()
 
     // Load image for texture
     Image srcImage;
-    FileStream::readPngImage("images/jeff.png", srcImage);
+    FileStream::readPngImage("images/jeff2.png", srcImage);
     _TEST_pTextureResource  = m_pRenderModule->createTextureResource(&srcImage);
 
     // Create sampler resource

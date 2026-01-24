@@ -14,7 +14,7 @@ struct Vertex
 {
   float3 position;
   UVCoord uvCoord;
-  float3 normal{0, 0, 0};
+  float3 normal;
 
   void print() const {
     printf("---- Position: <%f, %f, %f>\n---- UV coord: <%f, %f>\n---- Normal  : <%f, %f, %f>\n", 
@@ -27,5 +27,9 @@ struct Vertex
            normal.y, 
            normal.z
     );
+  }
+
+  bool operator<(const Vertex& other) const {
+    return memcmp(this, &other, sizeof(Vertex)) < 0;
   }
 };

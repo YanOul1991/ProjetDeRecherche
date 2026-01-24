@@ -205,10 +205,14 @@ void DirectX11Graphics::renderUpdate()
   /* RASTERIZER MINI CODE
   */
   D3D11_RASTERIZER_DESC rsDesc{};
-  rsDesc.FillMode = D3D11_FILL_SOLID;
   //rsDesc.FillMode = D3D11_FILL_WIREFRAME;
+  rsDesc.FillMode = D3D11_FILL_SOLID;
+
   rsDesc.CullMode = D3D11_CULL_BACK;
   //rsDesc.CullMode = D3D11_CULL_NONE;
+
+  rsDesc.FrontCounterClockwise = TRUE;
+
   ComPtr<ID3D11RasterizerState> pRsState;
   m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
   m_pContext->RSSetState(pRsState.Get());
