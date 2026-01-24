@@ -20,6 +20,8 @@
 #include "Core/Object/Object.h"
 #include "Core/Utilities/Random/Random.h"
 
+#include "Core/System/ModelLoader.h"
+
 #include "ThirdParty/SDL3/SDL.h"
 
 #include <iostream>
@@ -107,7 +109,6 @@ void Application::ApplicationStart()
     }
 
     IGraphicsModule* (*pFactoryGraphicsModule)() = (IGraphicsModule* (*)())SDL_LoadFunction(handle, "CreateDirect3D11Module");
-
     /*
     */
     void (*p_testFunction)() = (void (*)())SDL_LoadFunction(handle, "testFunction");
@@ -128,22 +129,40 @@ void Application::ApplicationStart()
       m_pRenderModule->Initialize(m_pSysWindow->getSystemPointer());
     }
 
+    Mesh l_fbxMesh;
+    OptimEditor::loadFbxModel(l_fbxMesh, "Assets/cube.fbx");
+
+    printf("---------------------- APPLICATION.CPP ----------------------\n");
+    std::cout << "Vertex Count: " << l_fbxMesh.vertexCount << '\n';
+    //l_fbxMesh.vertices[0].position = {0, 0, 0};
+    //l_fbxMesh.vertices[0].uvCoord = {0, 0};
+    //l_fbxMesh.vertices[0].normal = {0, 0, 0};
+
+    for (int i = 0; i < l_fbxMesh.vertexCount; i++) {
+      printf("Vertex %003d\n", i);
+      l_fbxMesh.vertices[i].print();
+      printf("\n");
+    }
+    //l_fbxMesh.vertices[0].print();
+    //std::cout << "Index Count: " << _TEST_mesh.indexCount << '\n';
+
     /////////////////////////////////       TESTING FUNCTIONALITIES
 
-    Mesh::setMeshFromOBJFile(_TEST_mesh, "Assets/pyramid.obj");
+    Mesh::setMeshFromOBJFile(_TEST_mesh, "Assets/jeffSphereSmooth.obj");
 
-    std::cout << "Vertex Count: " << _TEST_mesh.vertexCount << '\n';
-    std::cout << "Index Count: " << _TEST_mesh.indexCount << '\n';
 
-    for (size_t i = 0; i < _TEST_mesh.vertexCount; i++) {
-      printf("Vertex position: (%f, %f, %f)\n", _TEST_mesh.vertices[i].position.x, _TEST_mesh.vertices[i].position.y, _TEST_mesh.vertices[i].position.z);
-    }
+    //for (size_t i = 0; i < _TEST_mesh.vertexCount; i += 3) {
+    //  printf("Index: (%d, %d, %d)\n", _TEST_mesh.indices[i], _TEST_mesh.indices[i + 1], _TEST_mesh.indices[i + 2]);
+    //}
+    //for (size_t i = 0; i < _TEST_mesh.vertexCount; i++) {
+    //  printf("Vertex position: (%f, %f, %f)\n", _TEST_mesh.vertices[i].position.x, _TEST_mesh.vertices[i].position.y, _TEST_mesh.vertices[i].position.z);
+    //}
 
     _TEST_mesh.pVertexBuffer = m_pRenderModule->createVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
     _TEST_mesh.pIndexBuffer  = m_pRenderModule->createIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);
 
-    _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/VertexShader.cso"));
-    _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PixelShader.cso"));
+    _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/PhongVertexShader.cso"));
+    _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PhongPixelShader.cso"));
 
     // Load image for texture
     Image srcImage;
@@ -154,7 +173,7 @@ void Application::ApplicationStart()
     _TEST_pSampler = m_pRenderModule->createSamplerResource();
     _hPixelShader = m_pRenderModule->getPixelShader(TEXT("bin/PixelShader.cso"));
 
-    printf("Gen of generated pixel resource [%02d]\n", _hPixelShader.generation);
+    //printf("Gen of generated pixel resource [%02d]\n", _hPixelShader.generation);
 
     m_shouldRun = true;
 

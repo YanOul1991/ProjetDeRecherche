@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cerrno>
 #include <unordered_map>
+#include <set>
 
 class Mesh final
 {
@@ -67,6 +68,7 @@ public:
 		std::vector<float3>   _vectorNormals{};
 		std::vector<uint32>		_indices{};
 		std::unordered_map<std::string, uint32> _mapFaceTriplets{};
+		std::set<std::string> _setInstanciatedTriplets{};
 
 		std::string line;
 
@@ -201,8 +203,12 @@ public:
 				*/
 				if (vector_pCstrVerts.size() == 4) {
 					int ind[6] = {
-						0, 1, 2,
-						0, 2, 3
+						0, 2, 1,
+						0, 3, 2
+					};
+
+					int winding[4] {
+						0, 2, 1, 3
 					};
 
 					for (int i = 0; i < 6; i++) {
@@ -218,8 +224,19 @@ public:
 					char* cstr_normal;		// Vertex normal value
 					char* cstr_uvcoord;		// Vertex UV value
 
-					for (int i = 0; i < 4; i++) {
-						cstr_vposition = vector_pCstrVerts[i];
+					for (int i = 0; i < vector_pCstrVerts.size(); i++) {
+						auto search = _setInstanciatedTriplets.find(vector_pCstrVerts[winding[i]]);
+
+						if (search != _setInstanciatedTriplets.end()) {
+							//printf("Triplet already existing: %s\n", vector_pCstrVerts[winding[i]]);
+							continue;
+						}
+						else {
+							//printf("creating new Triplet: %s\n", vector_pCstrVerts[winding[i]]);
+							_setInstanciatedTriplets.insert(vector_pCstrVerts[winding[i]]);
+						}
+
+						cstr_vposition = vector_pCstrVerts[winding[i]];
 
 						cstr_uvcoord = strchr(cstr_vposition, '/');
 						*cstr_uvcoord = '\0';
@@ -248,34 +265,47 @@ public:
 						catch (const std::exception& e) {
 							std::cerr << "Error: could not convert to integer\n" << e.what() << '\n';
 						}
-					}
-				}
+					} // vertex instanciate loop end
+				} // Enf of if for eching if face is a quad
 
-				/*
+				/* ----------------------------------------------------
 				 * If the face is a triangle
-				*/
+				---------------------------------------------------- */
 				if (vector_pCstrVerts.size() == 3) {
-					//printf("The face is a triangle.\n");
+					int winding[3]{
+						0, 2, 1
+					};
 
 					/*
 					 * Add vertices and indices in the order 
 					 * at which they appear in the face description.
 					*/
 					for (int i = 0; i < 3; i++) {
-						auto search = _mapFaceTriplets.find(vector_pCstrVerts[i]);
+						auto search = _mapFaceTriplets.find(vector_pCstrVerts[winding[i]]);
 						if (search == _mapFaceTriplets.end()) {
-							_mapFaceTriplets.emplace(std::make_pair(vector_pCstrVerts[i], _indicesCount));
+							_mapFaceTriplets.emplace(std::make_pair(vector_pCstrVerts[winding[i]], _indicesCount));
 							_indicesCount++;
 						}
-						_indices.push_back(_mapFaceTriplets[vector_pCstrVerts[i]]);
+						_indices.push_back(_mapFaceTriplets[vector_pCstrVerts[winding[i]]]);
 					}
 
 					char* cstr_vposition;	// Vertex position value
 					char* cstr_normal;		// Vertex normal value
 					char* cstr_uvcoord;		// Vertex UV value
 
-					for (int i = 0; i < 3; i++) {
-						cstr_vposition = vector_pCstrVerts[i];
+					for (int i = 0; i < vector_pCstrVerts.size(); i++) {
+						auto search = _setInstanciatedTriplets.find(vector_pCstrVerts[winding[i]]);
+
+						if (search != _setInstanciatedTriplets.end()) {
+							//printf("Triplet already existing: %s\n", vector_pCstrVerts[winding[i]]);
+							continue;
+						}
+						else {
+							//printf("creating new Triplet: %s\n", vector_pCstrVerts[winding[i]]);
+							_setInstanciatedTriplets.insert(vector_pCstrVerts[winding[i]]);
+						}
+
+						cstr_vposition = vector_pCstrVerts[winding[i]];
 
 						cstr_uvcoord = strchr(cstr_vposition, '/');
 						*cstr_uvcoord = '\0';

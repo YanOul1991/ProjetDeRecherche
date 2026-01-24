@@ -187,7 +187,9 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
-  matrix_perspective =  DirectX::XMMatrixPerspectiveLH(1.0f, 1080.0f / 1920.0f, 0.5f, 1000.0f);
+  //matrix_perspective =  DirectX::XMMatrixPerspectiveRH(16.0f / 9.0f, 1.0f, 0.5f, 1000.0f);
+  matrix_perspective =  DirectX::XMMatrixPerspectiveRH(1.0f, 1080.0f / 1920.0f, 0.5f, 1000.0f);
+  //matrix_perspective =  DirectX::XMMatrixPerspectiveFovRH(87.f, 16.0f / 9.0f, 0.5f, 1000.0f);
 
   return true;
 }
@@ -206,6 +208,7 @@ void DirectX11Graphics::renderUpdate()
   rsDesc.FillMode = D3D11_FILL_SOLID;
   //rsDesc.FillMode = D3D11_FILL_WIREFRAME;
   rsDesc.CullMode = D3D11_CULL_BACK;
+  //rsDesc.CullMode = D3D11_CULL_NONE;
   ComPtr<ID3D11RasterizerState> pRsState;
   m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
   m_pContext->RSSetState(pRsState.Get());
@@ -272,8 +275,10 @@ void DirectX11Graphics::renderUpdate()
   m_pContext->RSSetViewports(1u, &vp);
 
   // TEMP - hard code index count
-  //m_pContext->DrawIndexed(2880, 0u, 0u);
-  m_pContext->DrawIndexed(12, 0u, 0u);
+  //m_pContext->DrawIndexed(36, 0u, 0u); // Cube
+  m_pContext->DrawIndexed(2880, 0u, 0u); // Jeff sphere
+  //m_pContext->DrawIndexed(11808, 0u, 0u); // Jeff sphere
+  //m_pContext->DrawIndexed(12, 0u, 0u);
   //m_pContext->Draw(96, 0);
 }
 
