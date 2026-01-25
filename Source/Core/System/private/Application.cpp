@@ -140,8 +140,8 @@ void Application::ApplicationStart()
     _TEST_mesh.pVertexBuffer = m_pRenderModule->createVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
     _TEST_mesh.pIndexBuffer  = m_pRenderModule->createIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);
 
-    _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/VertexShader.cso"));
-    _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PixelShader.cso"));
+    _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/PhongVertexShader.cso"));
+    _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PhongPixelShader.cso"));
 
     // Load image for texture
     Image srcImage;
