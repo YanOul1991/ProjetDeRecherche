@@ -5,7 +5,7 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Graphics/Resource/IVertexBuffer.h"
-#include "Direct3D11/IDirect3D11.h"
+#include "Direct3D11/Dx11RHI.h"
 
 class Dx11VertexBuffer final : public IVertexBuffer 
 {
@@ -30,13 +30,13 @@ public:
     subres.pSysMem            = pVertexBuffer;
 
     HRESULT hr = S_OK;
-    OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
+    OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
 
     //printf("Vertex Buffer was initalized!\n");
   }
 
   inline void bindResource() override final {
-    IDirect3D11::getContextPtr()->IASetVertexBuffers(0, 1, pBuffer.GetAddressOf(), &stride, &offset);
+    Dx11RHI::getContextPtr()->IASetVertexBuffers(0, 1, pBuffer.GetAddressOf(), &stride, &offset);
   }
 
   ComPtr<ID3D11Buffer> pBuffer{};

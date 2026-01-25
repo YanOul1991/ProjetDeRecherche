@@ -38,7 +38,7 @@ public:
 	 * @param windowTitle 
 	 *		>>> DOES NOT APPLY FOR NOW <<< The title of the window
 	*/
-	void initialize(const wchar* windowTitle);
+	void initialize(const char* windowTitle);
 
 	/*
 	 * Runs the window loop.

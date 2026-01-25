@@ -17,10 +17,6 @@
 #include "Core/Graphics/Resource/IVertexBuffer.h"
 #include "Core/Graphics/Resource/IVertexShader.h"
 
-struct DrawCommand {
-
-};
-
 class Graphics
 {
 public:

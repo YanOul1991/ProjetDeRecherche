@@ -7,7 +7,7 @@
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Graphics/Resource/IVertexShader.h"
-#include "IDirect3D11.h"
+#include "Dx11RHI.h"
 
 class Dx11VertexShader final : public IVertexShader
 {
@@ -17,7 +17,7 @@ public:
 
 	void createResources(const wchar* path) override final {
 		ComPtr<ID3DBlob>	pBlob{};
-		ID3D11Device* pDevice	=	IDirect3D11::getDevicePtr();
+		ID3D11Device* pDevice	=	Dx11RHI::getDevicePtr();
 
 		D3DReadFileToBlob(path, &pBlob);
 
@@ -48,7 +48,7 @@ public:
 	}
 
 	void bindResource() override final {
-		ID3D11DeviceContext* pContext = IDirect3D11::getContextPtr();
+		ID3D11DeviceContext* pContext = Dx11RHI::getContextPtr();
 
 		pContext->IASetInputLayout(pInput.Get());
 		pContext->VSSetShader(pShader.Get(), nullptr, 0);

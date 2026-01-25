@@ -23,7 +23,7 @@
     <ClInclude Include="..\Source\Core\Defines\Windows\windowsAPI.h" />
     <ClInclude Include="..\Source\Core\Exception\exception.h" />
     <ClInclude Include="..\Source\Core\Graphics\Graphics.h" />
-    <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h" />
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsRHI.h" />
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IConstantBuffer.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h" />

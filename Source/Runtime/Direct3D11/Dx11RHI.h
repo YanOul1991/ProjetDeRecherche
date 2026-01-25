@@ -19,18 +19,43 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Core/Graphics/IGraphicsModule.h"
+#include "Core/Graphics/IGraphicsRHI.h"
 
 class DirectX11Graphics;
 
-class IDirect3D11 final : public IGraphicsModule 
+enum ECommandType {
+  bindPipeline,
+  bindVertexBuffer,
+  bindIndexBuffer,
+  bindTexture,
+  drawIndexed
+};
+
+struct SCommand {
+  ECommandType type;
+  uint32 dataOffset;
+};
+
+struct SCommandBuffer {
+  void push(ECommandType param_cmdType, uint8* param_pData, uint32 param_dataSize) {
+    SCommand cmd{};
+    cmd.type = param_cmdType;
+    cmd.dataOffset = data.size();
+    commands.push_back(cmd);
+    data.insert(data.end(), param_pData, param_pData + param_dataSize);
+  }
+  std::vector<SCommand> commands;
+  std::vector<uint8> data;
+};
+
+class Dx11RHI final : public IGraphicsRHI 
 {
 public:
   static ID3D11Device* getDevicePtr();
   static ID3D11DeviceContext* getContextPtr();
 
-  IDirect3D11();
-  ~IDirect3D11() override final;
+  Dx11RHI();
+  ~Dx11RHI() override final;
   void Initialize(void* _WindowHandle) override final;
   void draw() override final;
   void Clean() override final;
@@ -51,15 +76,23 @@ public:
   void bindTexture(ITextureResource* pTexture) override final;
   void bindSampler(ISampler* pSampler) override final;
 
+  inline void cmdDrawIndexed(uint32 indexCount) override final {
+    cmdBuffer.push(ECommandType::drawIndexed, (uint8*)(&indexCount), sizeof(uint32));
+  }
+
+  inline void excecuteCommands() override final;
+
   /*----------------- TEST FIELD -----------------*/
 
   SGraphicResourceHandle getPixelShader(const wchar* path) override final;
 
   void setDrawCommand(DrawCommand& drawCommand) override final;
+  void setCommandBuffer(DrawCommand* pDrawCommandBuffer, uint32 count) override final;
 
 private:
   void* m_hTargetWindow;      // Target Window.
   DirectX11Graphics* m_pBase;  
+  static SCommandBuffer cmdBuffer;
 };
 
-extern "C" DIRECTX11_API IDirect3D11* CreateDirect3D11Module();
+extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module();

@@ -77,7 +77,7 @@
     <ClInclude Include="..\Source\Core\Utilities\Pointer\UniquePtr.h">
       <Filter>Utilities\Pointer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h">
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsRHI.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h">

@@ -6,7 +6,7 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Graphics/Resource/IIndexBuffer.h"
-#include "Direct3D11/IDirect3D11.h"
+#include "Direct3D11/Dx11RHI.h"
 
 class Dx11IndexBuffer final : public IIndexBuffer
 {
@@ -29,12 +29,12 @@ public:
     subres.pSysMem            = pIndices;
 
     HRESULT hr{ S_OK };
-    OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
+    OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
     //printf("Index Buffer was initalized!\n");
   }
 
   void bindResource() override final {
-     IDirect3D11::getContextPtr()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+     Dx11RHI::getContextPtr()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
   }
 
   ComPtr<ID3D11Buffer> pBuffer{};

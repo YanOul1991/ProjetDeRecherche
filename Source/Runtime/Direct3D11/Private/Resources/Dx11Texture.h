@@ -4,7 +4,7 @@
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Graphics/Resource/ITextureResource.h"
-#include "IDirect3D11.h"
+#include "Dx11RHI.h"
 
 class Dx11TextureResource final : public ITextureResource 
 {
@@ -34,7 +34,7 @@ public:
     subRes.SysMemPitch      = pImage->width * sizeof(op::color::SColor);
     subRes.SysMemSlicePitch = 0;
 
-    OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateTexture2D(&textDesc, &subRes, &pTexture));
+    OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateTexture2D(&textDesc, &subRes, &pTexture));
     //printf("Texture resource created.\n");
 
     // ################# SHADER RESOURCE VIEW INITIALIZATION
@@ -45,12 +45,12 @@ public:
     srvDesc.Texture2D.MostDetailedMip = 0;
     srvDesc.Texture2D.MipLevels       = 1;
 
-    OPTIM_TRY_DX(IDirect3D11::getDevicePtr()->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pResourceView));
+    OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pResourceView));
     //printf("Shader resource view created.\n");
 	}
 
 	void bindResource() override final {
-    IDirect3D11::getContextPtr()->PSSetShaderResources(0, 1, pResourceView.GetAddressOf());
+    Dx11RHI::getContextPtr()->PSSetShaderResources(0, 1, pResourceView.GetAddressOf());
 	}
 
 	ComPtr<ID3D11Texture2D> pTexture{};

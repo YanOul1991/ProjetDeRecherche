@@ -9,7 +9,7 @@
 
 #include "Core/Types/Color.h"
 #include "Core/Object/Image/Image.h"
-#include "Direct3D11/IDirect3D11.h"
+#include "Direct3D11/Dx11RHI.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
 
 #include <vector>
@@ -31,7 +31,7 @@ struct VSInputLightBuffer
 class DirectX11Graphics final
 {
 public:
-  friend class IDirect3D11;
+  friend class Dx11RHI;
 
   static ID3D11Device* deviceRef;
   static ID3D11DeviceContext* contextRef;
@@ -62,4 +62,8 @@ private:
   DirectX::XMMATRIX matrix_camera{};
 
   ConstantBuffer<VSInputConstantBuffer> __t_constBuffer{};
+
+  uint32 drawCallIndexCount{0};
+
+  friend Dx11RHI;
 };

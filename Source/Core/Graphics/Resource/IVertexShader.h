@@ -10,3 +10,5 @@ public:
 	CORE_API virtual void createResources(const wchar* path) = 0;
 	CORE_API virtual void bindResource() = 0;
 };
+
+using IFragmentShader = IVertexShader; // Alias for pixel shader

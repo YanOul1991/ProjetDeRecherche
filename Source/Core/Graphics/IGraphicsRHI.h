@@ -23,19 +23,66 @@
 
 struct DrawCommand {
   SGraphicResourceHandle pixelShader;
+
+  IVertexBuffer* pVertexBuffer;
+  uint32 vertexCount;
+
+  IIndexBuffer* pIndexBuffer;
+  uint32 indexCount;
+
+  IVertexShader* pVertexShader;
+  IPixelShader* pPixelShader;
+
+  ITextureResource* pTexture;
+  ISampler* pSampler;
 };
 
+namespace Optim::Rendering 
+{
+
+enum EPipelinePrimitiveTopologyType : unsigned char {
+  eTrianglesList,
+  eLineList
+};
+enum EPipelineVertexLayout : unsigned char {
+  // ENUM_NOT_DEFINED_YET
+};
+
+enum EPipelineRasterizerDesc : unsigned char {
+  // ENUM_NOT_DEFINED_YET
+};
+
+enum EPipelineDepthDesc : unsigned char {
+  // ENUM_NOT_DEFINED_YET
+};
+
+enum EPipelineBlendDesc : unsigned char {
+  // ENUM_NOT_DEFINED_YET
+};
+
+enum EPipelineRenderTargetFormat : unsigned char {
+  // ENUM_NOT_DEFINED_YET
+};
+
+struct SPiplelineDesc {
+  IVertexShader* vertexShader;
+  IFragmentShader* pixelShader;
+};
+
+}
 /*
  * @brief
  * Base class interface for graphics rendering modules
 */
-class IGraphicsModule
+class IGraphicsRHI
 {
 public:
-  CORE_API virtual ~IGraphicsModule() {};
+  CORE_API virtual ~IGraphicsRHI() {};
   CORE_API virtual void Initialize(void* _WindowHandle) = 0;
   CORE_API virtual void draw() = 0;
   CORE_API virtual void Clean() = 0;
+
+  /* TESTING FUNCTIONS */
 
   CORE_API virtual IVertexBuffer*     createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) = 0;
   CORE_API virtual IIndexBuffer*      createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) = 0;
@@ -50,10 +97,12 @@ public:
   CORE_API virtual void bindPixelShader(IPixelShader* pPixelShader) = 0;
   CORE_API virtual void bindTexture(ITextureResource* pTexture) = 0;
   CORE_API virtual void bindSampler(ISampler* pSampler) = 0;
+  CORE_API virtual void cmdDrawIndexed(uint32 indexCount) = 0;
 
-
-  /* TESTING FUNCTIONS */
   CORE_API virtual SGraphicResourceHandle getPixelShader(const wchar* path) = 0;
-
   CORE_API virtual void setDrawCommand(DrawCommand& drawCommand) = 0;
+
+  CORE_API virtual void setCommandBuffer(DrawCommand* pDrawCommandBuffer, uint32 count) = 0;
+
+  CORE_API virtual void excecuteCommands() = 0;
 };

@@ -12,7 +12,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\IDirect3D11.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Dx11RHI.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.h">
       <Filter>Private</Filter>
     </ClInclude>

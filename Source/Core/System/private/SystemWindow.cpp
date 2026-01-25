@@ -14,6 +14,7 @@
 #pragma comment(lib, "version.lib")
 
 //#include "Core/Defines/Windows/windowsAPI.h"
+
 #include "Core/Object/Camera/Camera.h"
 #include "Core/Math/OptimMathematics.h"
 #include "Core/Math/Quaternion.h"
@@ -36,10 +37,13 @@ static bool shouldRun = true;
 SystemWindow::SystemWindow(){ }
 SystemWindow::~SystemWindow() { }
 
-void SystemWindow::initialize(const wchar* windowTitle)
+void SystemWindow::initialize(const char* windowTitle)
 {
-	SDL_Init(SDL_INIT_VIDEO);
-	window = SDL_CreateWindow("Optim Engine - SDL - DirectX 11", 1280, 720, SDL_WINDOW_RESIZABLE);
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
+		exit(-1);
+	}
+
+	window = SDL_CreateWindow(windowTitle, 1280, 720, SDL_WINDOW_RESIZABLE);
 
 	if (!SDL_MaximizeWindow(window)) {
 		printf("Failed to maximize window.");
@@ -83,6 +87,11 @@ bool SystemWindow::loop()
 		if (evt.type == SDL_EVENT_MOUSE_WHEEL) {
 			Camera::position = Camera::position + evt.wheel.y * 0.5f * Camera::forward;
 			break;
+		}
+
+		if (evt.type == SDL_EVENT_DROP_FILE) {
+			const char* path = evt.drop.data;
+			printf("File drop attempt! %s\n", path);
 		}
 	}// While end - Event poll loop
 

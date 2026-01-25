@@ -202,7 +202,8 @@ void DirectX11Graphics::clearBuffer(float red, float green, float blue, float al
 
 void DirectX11Graphics::renderUpdate()
 {
-  /* RASTERIZER MINI CODE
+  /* 
+    RASTERIZER MINI CODE
   */
   D3D11_RASTERIZER_DESC rsDesc{};
   //rsDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -215,10 +216,8 @@ void DirectX11Graphics::renderUpdate()
 
   ComPtr<ID3D11RasterizerState> pRsState;
   m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
+
   m_pContext->RSSetState(pRsState.Get());
-
-
-  float runtime = Application::getRuntime();
 
   DirectX::XMFLOAT3 position = {
     Camera::position.x,
@@ -242,29 +241,14 @@ void DirectX11Graphics::renderUpdate()
     DirectX::XMLoadFloat3(&up)
   );
 
-  //_test_texture.bind(m_pContext.Get());
-  //_test_sampler.bind(m_pContext.Get());
-
   m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-  // Update subresource for Pixel shader to make cube move 
-  // and rotate in 3D space based on current runtime
-  //__t_constBuffer.data = {
-  //  DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)),
-  //  DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective)
-  //};
 
   DirectX::XMStoreFloat4x4(&__t_constBuffer.data.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
   DirectX::XMStoreFloat4x4(&__t_constBuffer.data.worldView, DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective));
 
-  //__t_constBuffer.data.transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0));
-  //__t_constBuffer.data.worldView = DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective);
-
   // Update constant buffer and bind
   __t_constBuffer.update(m_pContext.Get());
   __t_constBuffer.bind(m_pContext.Get());
-
-  //_TEST_material.bindShaders(m_pContext.Get());
 
   // Configure Viewport
   D3D11_VIEWPORT vp{};
@@ -277,13 +261,7 @@ void DirectX11Graphics::renderUpdate()
   vp.TopLeftY = 0;
 
   m_pContext->RSSetViewports(1u, &vp);
-
-  // TEMP - hard code index count
-  //m_pContext->DrawIndexed(36, 0u, 0u); // Cube
-  m_pContext->DrawIndexed(2880, 0u, 0u); // Jeff sphere
-  //m_pContext->DrawIndexed(11808, 0u, 0u); // Jeff sphere
-  //m_pContext->DrawIndexed(12, 0u, 0u);
-  //m_pContext->Draw(96, 0);
+  //m_pContext->DrawIndexed(2880, 0, 0);
 }
 
 void DirectX11Graphics::presentBuffer()

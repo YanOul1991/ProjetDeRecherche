@@ -13,11 +13,10 @@
 #include "Core/Types/String.h"
 
 class SystemWindow;
-class IGraphicsModule;
+class IGraphicsRHI;
 class IWindow;
 
-namespace op 
-{
+namespace op {
   struct SInput;
 }
 
@@ -41,7 +40,7 @@ private:
   static float m_deltaTime;
 
   SystemWindow* m_pSysWindow;
-  IGraphicsModule* m_pRenderModule;
+  IGraphicsRHI* m_pRenderModule;
   op::SInput* m_pInput;
 
   bool m_shouldRun; 
@@ -50,3 +49,20 @@ private:
 extern "C" {
   CORE_API Application* CreateApplicationProc();
 }
+
+namespace OptimEditor {
+
+class Editor final
+{
+public:
+  CORE_API inline Editor(){}
+  CORE_API inline ~Editor(){}
+
+  // For now assume the file is an fbx always
+  CORE_API inline void processFile(const char* path) 
+  {
+
+  }
+};
+
+} // END - namespace OptimEditor

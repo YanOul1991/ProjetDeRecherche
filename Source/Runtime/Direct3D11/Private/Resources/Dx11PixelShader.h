@@ -7,7 +7,7 @@
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Graphics/Resource/IPixelShader.h"
-#include "IDirect3D11.h"
+#include "Dx11RHI.h"
 
 class Dx11PixelShader final : public IPixelShader
 {
@@ -20,7 +20,7 @@ public:
 
 		D3DReadFileToBlob(path, &pBlob);
 
-		IDirect3D11::getDevicePtr()->CreatePixelShader(
+		Dx11RHI::getDevicePtr()->CreatePixelShader(
 			pBlob->GetBufferPointer(),
 			pBlob->GetBufferSize(),
 			nullptr,
@@ -31,7 +31,7 @@ public:
 	}
 
 	void bindResource() override final {
-		IDirect3D11::getContextPtr()->PSSetShader(pShader.Get(), nullptr, 0);
+		Dx11RHI::getContextPtr()->PSSetShader(pShader.Get(), nullptr, 0);
 	}
 
 	ComPtr<ID3D11PixelShader> pShader;

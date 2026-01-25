@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "Core/Graphics/IGraphicsModule.h"
+#include "Core/Graphics/IGraphicsRHI.h"
 #include "Core/Input/Input.h"
 #include "Core/Time/Time.h"
 #include "Core/Types/Color.h"
@@ -98,7 +98,7 @@ void Application::ApplicationStart()
   try {
     // Start by assuming failure
     m_shouldRun = false;
-    m_pSysWindow->initialize(TEXT("OptimEngine"));
+    m_pSysWindow->initialize("Optim Engine - <DX11>");
 
     SDL_SharedObject* handle = SDL_LoadObject("bin/directx11_ri.dll");
 
@@ -108,7 +108,7 @@ void Application::ApplicationStart()
       return;
     }
 
-    IGraphicsModule* (*pFactoryGraphicsModule)() = (IGraphicsModule* (*)())SDL_LoadFunction(handle, "CreateDirect3D11Module");
+    IGraphicsRHI* (*pFactoryGraphicsModule)() = (IGraphicsRHI* (*)())SDL_LoadFunction(handle, "CreateDirect3D11Module");
     /*
     */
     void (*p_testFunction)() = (void (*)())SDL_LoadFunction(handle, "testFunction");
@@ -135,35 +135,13 @@ void Application::ApplicationStart()
 
     printf("---------------------- APPLICATION.CPP ----------------------\n");
     std::cout << "Vertex Count: " << _TEST_mesh.vertexCount << '\n';
-    //for (int i = 0; i < _TEST_mesh.vertexCount; i++) {
-    //  printf("Vertex %003d\n", i);
-    //  _TEST_mesh.vertices[i].print();
-    //  printf("\n");
-    //}
-
     printf("Index Count: %d\n", _TEST_mesh.indexCount);
-    //for (size_t i = 0; i < _TEST_mesh.indexCount; i += 3) {
-    //  printf("%d, %d, %d\n", _TEST_mesh.indices[i], _TEST_mesh.indices[i + 1], _TEST_mesh.indices[i + 2]);
-    //}
-    //l_fbxMesh.vertices[0].print();
-    //std::cout << "Index Count: " << _TEST_mesh.indexCount << '\n';
-
-    /////////////////////////////////       TESTING FUNCTIONALITIES
-
-    //Mesh::setMeshFromOBJFile(_TEST_mesh, "Assets/jeffSphereSmooth.obj");
-
-    //for (size_t i = 0; i < _TEST_mesh.vertexCount; i += 3) {
-    //  printf("Index: (%d, %d, %d)\n", _TEST_mesh.indices[i], _TEST_mesh.indices[i + 1], _TEST_mesh.indices[i + 2]);
-    //}
-    //for (size_t i = 0; i < _TEST_mesh.vertexCount; i++) {
-    //  printf("Vertex position: (%f, %f, %f)\n", _TEST_mesh.vertices[i].position.x, _TEST_mesh.vertices[i].position.y, _TEST_mesh.vertices[i].position.z);
-    //}
 
     _TEST_mesh.pVertexBuffer = m_pRenderModule->createVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
     _TEST_mesh.pIndexBuffer  = m_pRenderModule->createIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);
 
-    _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/PhongVertexShader.cso"));
-    _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PhongPixelShader.cso"));
+    _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/VertexShader.cso"));
+    _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PixelShader.cso"));
 
     // Load image for texture
     Image srcImage;
@@ -174,11 +152,11 @@ void Application::ApplicationStart()
     _TEST_pSampler = m_pRenderModule->createSamplerResource();
     _hPixelShader = m_pRenderModule->getPixelShader(TEXT("bin/PixelShader.cso"));
 
-    //printf("Gen of generated pixel resource [%02d]\n", _hPixelShader.generation);
-
     m_shouldRun = true;
 
-    //IGraphicsResource::printTypes();
+    m_pRenderModule->cmdDrawIndexed(_TEST_mesh.indexCount);
+    //m_pRenderModule->cmdDrawIndexed(223);
+    //m_pRenderModule->cmdDrawIndexed(8290);
   }
   catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());
@@ -208,9 +186,16 @@ void Application::ApplicationLoop()
 
     if (m_pRenderModule) {
       /*
-      DrawCommand testCommand{};
-      testCommand.pixelShader = _hPixelShader;
-      m_pRenderModule->setDrawCommand(testCommand);
+      DrawCommand commandBuffer[1];
+      commandBuffer[0].indexCount    = _TEST_mesh.indexCount;
+      commandBuffer[0].pVertexBuffer = _TEST_mesh.pVertexBuffer;
+      commandBuffer[0].pIndexBuffer  = _TEST_mesh.pIndexBuffer;
+      commandBuffer[0].pVertexShader = _TEST_pVertexShader;
+      commandBuffer[0].pPixelShader  = _TEST_pPixelShader;
+      commandBuffer[0].pTexture      = _TEST_pTextureResource;
+      commandBuffer[0].pSampler      = _TEST_pSampler;
+
+      m_pRenderModule->setCommandBuffer(commandBuffer, sizeof(commandBuffer) / sizeof(DrawCommand));
       */
 
       m_pRenderModule->bindVertexBuffer(_TEST_mesh.pVertexBuffer);
@@ -219,6 +204,8 @@ void Application::ApplicationLoop()
       m_pRenderModule->bindPixelShader(_TEST_pPixelShader);
       m_pRenderModule->bindTexture(_TEST_pTextureResource);
       m_pRenderModule->bindSampler(_TEST_pSampler);
+
+      m_pRenderModule->cmdDrawIndexed(_TEST_mesh.indexCount);
       m_pRenderModule->draw();
     }
 
