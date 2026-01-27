@@ -37,12 +37,18 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Sampler.h">
       <Filter>Private\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceManagement.h">
+      <Filter>Private</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\IDirect3D11.cpp">
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHI.cpp">
       <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceManagement.cpp">
       <Filter>Private</Filter>
     </ClCompile>
   </ItemGroup>

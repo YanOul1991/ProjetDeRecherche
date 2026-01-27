@@ -8,7 +8,6 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-#include "IGraphicsModule.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
 #include "Core/Graphics/Resource/IIndexBuffer.h"
 #include "Core/Graphics/Resource/IPixelShader.h"

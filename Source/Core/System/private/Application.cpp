@@ -47,7 +47,8 @@ static IPixelShader*      _TEST_pPixelShader{};
 static ITextureResource*  _TEST_pTextureResource{};
 static ISampler*          _TEST_pSampler{};
 
-static SGraphicResourceHandle    _hPixelShader;
+static ResourceHandle _resHandle_vertexBuffer{};
+static ResourceHandle _resHandle_indexBuffer{};
 
 /* #########################
     LOCAL TESTING FIELDS
@@ -131,11 +132,22 @@ void Application::ApplicationStart()
 
     //Mesh l_fbxMesh;
     //OptimEditor::loadFbxModel(l_fbxMesh, "Assets/cube.fbx");
-    OptimEditor::loadFbxModel(_TEST_mesh, "Assets/jeffSphere.fbx");
+    OptimEditor::loadFbxModel(_TEST_mesh, "Assets/monkey.fbx");
 
     printf("---------------------- APPLICATION.CPP ----------------------\n");
     std::cout << "Vertex Count: " << _TEST_mesh.vertexCount << '\n';
     printf("Index Count: %d\n", _TEST_mesh.indexCount);
+
+    _resHandle_vertexBuffer = m_pRenderModule->createResourceVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
+    //_resHandle_indexBuffer  = m_pRenderModule->createResourceIndexBuffer(_TEST_mesh.indices, _TEST_mesh.vertexCount);
+
+    m_pRenderModule->freeResource(_resHandle_vertexBuffer);
+
+    //m_pRenderModule->cmdBindVertexBuffer(&_resHandle_vertexBuffer);
+
+    /*
+     * OLD POINTER SYSTEM FOR RESOURCE CREATION
+    */
 
     _TEST_mesh.pVertexBuffer = m_pRenderModule->createVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
     _TEST_mesh.pIndexBuffer  = m_pRenderModule->createIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);
@@ -150,13 +162,11 @@ void Application::ApplicationStart()
 
     // Create sampler resource
     _TEST_pSampler = m_pRenderModule->createSamplerResource();
-    _hPixelShader = m_pRenderModule->getPixelShader(TEXT("bin/PixelShader.cso"));
+    //_hPixelShader = m_pRenderModule->getPixelShader(TEXT("bin/PixelShader.cso"));
 
     m_shouldRun = true;
 
     m_pRenderModule->cmdDrawIndexed(_TEST_mesh.indexCount);
-    //m_pRenderModule->cmdDrawIndexed(223);
-    //m_pRenderModule->cmdDrawIndexed(8290);
   }
   catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());
@@ -184,30 +194,16 @@ void Application::ApplicationLoop()
       return;
     }
 
-    if (m_pRenderModule) {
-      /*
-      DrawCommand commandBuffer[1];
-      commandBuffer[0].indexCount    = _TEST_mesh.indexCount;
-      commandBuffer[0].pVertexBuffer = _TEST_mesh.pVertexBuffer;
-      commandBuffer[0].pIndexBuffer  = _TEST_mesh.pIndexBuffer;
-      commandBuffer[0].pVertexShader = _TEST_pVertexShader;
-      commandBuffer[0].pPixelShader  = _TEST_pPixelShader;
-      commandBuffer[0].pTexture      = _TEST_pTextureResource;
-      commandBuffer[0].pSampler      = _TEST_pSampler;
+    m_pRenderModule->bindVertexBuffer(_TEST_mesh.pVertexBuffer);
+    m_pRenderModule->bindIndexBuffer(_TEST_mesh.pIndexBuffer);
+    m_pRenderModule->bindVertexShader(_TEST_pVertexShader);
+    m_pRenderModule->bindPixelShader(_TEST_pPixelShader);
+    m_pRenderModule->bindTexture(_TEST_pTextureResource);
+    m_pRenderModule->bindSampler(_TEST_pSampler);
 
-      m_pRenderModule->setCommandBuffer(commandBuffer, sizeof(commandBuffer) / sizeof(DrawCommand));
-      */
+    m_pRenderModule->cmdDrawIndexed(_TEST_mesh.indexCount);
 
-      m_pRenderModule->bindVertexBuffer(_TEST_mesh.pVertexBuffer);
-      m_pRenderModule->bindIndexBuffer(_TEST_mesh.pIndexBuffer);
-      m_pRenderModule->bindVertexShader(_TEST_pVertexShader);
-      m_pRenderModule->bindPixelShader(_TEST_pPixelShader);
-      m_pRenderModule->bindTexture(_TEST_pTextureResource);
-      m_pRenderModule->bindSampler(_TEST_pSampler);
-
-      m_pRenderModule->cmdDrawIndexed(_TEST_mesh.indexCount);
-      m_pRenderModule->draw();
-    }
+    m_pRenderModule->draw();
 
     __now         = op::time::nowHighFreq();
     m_deltaTime   = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;

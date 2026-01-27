@@ -23,7 +23,7 @@
 
 class DirectX11Graphics;
 
-enum ECommandType {
+enum class ECommandType {
   bindPipeline,
   bindVertexBuffer,
   bindIndexBuffer,
@@ -36,14 +36,33 @@ struct SCommand {
   uint32 dataOffset;
 };
 
-struct SCommandBuffer {
-  void push(ECommandType param_cmdType, uint8* param_pData, uint32 param_dataSize) {
+class CommandBuffer 
+{
+public:
+  /*
+   * @brief 
+   * Add a command to the command buffer.
+   * 
+   * @param param_cmd_Type
+   * The command type from the ECommandType class enum.
+   * 
+   * @param param_pData  
+   * A pointer to the required data to bind the resource.
+   * For a drawIndex command pass a pointer to an index count.
+   * For a pipeline pass a pointer to a pipeline object (to be created).
+   * For a resource binding a pointer to a ResourceHandle object.
+   * 
+   * @param the byte size if the data passed in the 
+   * 
+  */
+  void push(ECommandType param_cmdType, void* param_pData, uint32 param_dataSize) {
     SCommand cmd{};
     cmd.type = param_cmdType;
-    cmd.dataOffset = data.size();
+    cmd.dataOffset = (uint32)data.size();
     commands.push_back(cmd);
-    data.insert(data.end(), param_pData, param_pData + param_dataSize);
+    data.insert(data.end(), reinterpret_cast<uint8*>(param_pData), reinterpret_cast<uint8*>(param_pData) + param_dataSize);
   }
+
   std::vector<SCommand> commands;
   std::vector<uint8> data;
 };
@@ -76,23 +95,37 @@ public:
   void bindTexture(ITextureResource* pTexture) override final;
   void bindSampler(ISampler* pSampler) override final;
 
+  inline virtual void cmdBindVertexBuffer(ResourceHandle* handle) override final;
+
   inline void cmdDrawIndexed(uint32 indexCount) override final {
-    cmdBuffer.push(ECommandType::drawIndexed, (uint8*)(&indexCount), sizeof(uint32));
+    cmdBuffer.push(ECommandType::drawIndexed, &indexCount, sizeof(uint32));
   }
+
+  inline virtual ResourceHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
+  inline virtual ResourceHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+
+  virtual void freeResource(ResourceHandle handle) override final;
 
   inline void excecuteCommands() override final;
 
   /*----------------- TEST FIELD -----------------*/
 
-  SGraphicResourceHandle getPixelShader(const wchar* path) override final;
-
+  /*
+  SGraphicResourceHandle createResourceVertexShader(const wchar* path) override final;
+  SGraphicResourceHandle createResourceVertexBuffer(Vertex* pVertexBuffer, const uint32& bufferSize) override final;
+  inline SGraphicResourceHandle initResourcePixelShader(const wchar* path) override final {
+    SGraphicResourceHandle hResource;
+    hResource.data = 0;
+    return hResource;
+  }
   void setDrawCommand(DrawCommand& drawCommand) override final;
   void setCommandBuffer(DrawCommand* pDrawCommandBuffer, uint32 count) override final;
+  */
 
 private:
   void* m_hTargetWindow;      // Target Window.
   DirectX11Graphics* m_pBase;  
-  static SCommandBuffer cmdBuffer;
+  static CommandBuffer cmdBuffer;
 };
 
 extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module();

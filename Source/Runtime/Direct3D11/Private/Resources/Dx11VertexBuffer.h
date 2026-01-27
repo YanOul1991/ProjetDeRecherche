@@ -10,7 +10,9 @@
 class Dx11VertexBuffer final : public IVertexBuffer 
 {
 public:
-  ~Dx11VertexBuffer() override {}
+  ~Dx11VertexBuffer() override {
+    printf("DirectX11 Buffer is being deleted\n");
+  }
 
   inline void createResources(Vertex* pVertexBuffer, uint32 elementCount) override final {
     bufferElementCount = elementCount;

@@ -21,28 +21,12 @@
 #include "Core/Graphics/Resource/ITextureResource.h"
 #include "Core/Graphics/Resource/ISampler.h"
 
-struct DrawCommand {
-  SGraphicResourceHandle pixelShader;
-
-  IVertexBuffer* pVertexBuffer;
-  uint32 vertexCount;
-
-  IIndexBuffer* pIndexBuffer;
-  uint32 indexCount;
-
-  IVertexShader* pVertexShader;
-  IPixelShader* pPixelShader;
-
-  ITextureResource* pTexture;
-  ISampler* pSampler;
-};
-
 namespace Optim::Rendering 
 {
 
 enum EPipelinePrimitiveTopologyType : unsigned char {
-  eTrianglesList,
-  eLineList
+  TriangleList,
+  LineList
 };
 enum EPipelineVertexLayout : unsigned char {
   // ENUM_NOT_DEFINED_YET
@@ -72,7 +56,7 @@ struct SPiplelineDesc {
 }
 /*
  * @brief
- * Base class interface for graphics rendering modules
+ * Base class interface for graphics rendering modules.
 */
 class IGraphicsRHI
 {
@@ -97,12 +81,63 @@ public:
   CORE_API virtual void bindPixelShader(IPixelShader* pPixelShader) = 0;
   CORE_API virtual void bindTexture(ITextureResource* pTexture) = 0;
   CORE_API virtual void bindSampler(ISampler* pSampler) = 0;
+
+  /*
+   * @brief
+   * Creates and allocates a vertex buffer resources on the GPU.
+   * 
+   * @param pVertices
+   * Pointer to a vertex buffer.
+   * 
+   * @param elementCount
+   * Number of elements in the buffer.
+   * 
+   * @return
+   * A handle to the graphique resource.
+  */
+  CORE_API virtual ResourceHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
+
+  /*
+   * @brief
+   * Creates and allocates an index buffer resources on the GPU.
+   * 
+   * @param pIndices
+   * Pointer to an index buffer.
+   * 
+   * @param elementCount
+   * Number of elements in the buffer.
+   * 
+   * @return
+   * A handle to the graphique resource.
+  */
+  CORE_API virtual ResourceHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
+
+  /*
+   * @brief
+   * Frees the allocated resources by the RHI on the GPU. Once freed
+   * the handle becomes invalid.
+   * 
+   * @param handle
+   * A handle to the resource to free.
+  */
+  CORE_API virtual void freeResource(ResourceHandle handle) = 0;
+
+
+  CORE_API virtual void cmdBindVertexBuffer(ResourceHandle* handle) = 0;
+
+  /*
+   * @brief 
+   * Add a draw indexed command to the command buffer
+   * 
+   * @param indexCount
+   * The index count of the draw indexed command.
+  */
   CORE_API virtual void cmdDrawIndexed(uint32 indexCount) = 0;
 
-  CORE_API virtual SGraphicResourceHandle getPixelShader(const wchar* path) = 0;
-  CORE_API virtual void setDrawCommand(DrawCommand& drawCommand) = 0;
-
-  CORE_API virtual void setCommandBuffer(DrawCommand* pDrawCommandBuffer, uint32 count) = 0;
-
+  /*
+   * @brief
+   * Excecutes all the commands in the command buffer.
+   * The command buffer gets cleared once all its commands have be ran.
+  */
   CORE_API virtual void excecuteCommands() = 0;
 };

@@ -187,9 +187,8 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
-  //matrix_perspective =  DirectX::XMMatrixPerspectiveRH(16.0f / 9.0f, 1.0f, 0.5f, 1000.0f);
-  matrix_perspective =  DirectX::XMMatrixPerspectiveRH(1.0f, 1080.0f / 1920.0f, 0.5f, 1000.0f);
-  //matrix_perspective =  DirectX::XMMatrixPerspectiveFovRH(87.f, 16.0f / 9.0f, 0.5f, 1000.0f);
+  //matrix_perspective =  DirectX::XMMatrixPerspectiveRH(1.0f, 1080.0f / 1920.0f, 1.0f, 1000.0f);
+  matrix_perspective =  DirectX::XMMatrixPerspectiveFovRH(mathConst::PI / 3.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
 
   return true;
 }
@@ -269,7 +268,7 @@ void DirectX11Graphics::presentBuffer()
   InterfaceImGui::update();
 
   HRESULT hr{ S_OK };
-  hr = m_pSwapChain->Present(1u, 0u);
+  hr = m_pSwapChain->Present(0u, 0u);
 
   if (FAILED(hr)) {
     if (hr == DXGI_ERROR_DEVICE_REMOVED) {

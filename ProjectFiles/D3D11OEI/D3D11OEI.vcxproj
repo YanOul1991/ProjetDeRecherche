@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Dx11RHI.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceManagement.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11IndexBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11PixelShader.h" />
@@ -30,8 +31,9 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\IDirect3D11.cpp" />
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHI.cpp" />
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.cpp" />
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceManagement.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

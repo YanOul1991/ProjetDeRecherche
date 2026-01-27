@@ -2,10 +2,11 @@
 
 #include "Core/OptimEngine.h"
 
-typedef struct SGraphicResourceHandle {
-	uint32 data;
-	uint32 generation;
-} SGraphicResourceHandle;
+enum class EResourceTypes : uint8 
+{
+	vertexBuffer,
+	indexbuffer,
+};
 
 /*
  * @brief
@@ -15,4 +16,8 @@ class IGraphicResource
 {
 public:
 	CORE_API virtual ~IGraphicResource(){};
+};
+
+struct ResourceHandle {
+	uint64 data{};
 };

@@ -119,6 +119,8 @@ bool SystemWindow::loop()
 			Camera::up = Camera::rotation.rotate({0.0f, 1.0f, 0.0f});
 		}
 	}
+
+	SDL_Delay(16);
 	return shouldRun;
 }
 
