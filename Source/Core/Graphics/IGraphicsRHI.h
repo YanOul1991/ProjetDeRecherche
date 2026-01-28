@@ -8,47 +8,9 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-#include "Core/Utilities/Random/Random.h"
-#include "Core/Graphics/Vertex.h"
-#include "Core/Graphics/Graphics.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
-
-/*
-namespace Optim::Rendering 
-{
-
-enum EPipelinePrimitiveTopologyType : unsigned char {
-  TriangleList,
-  LineList
-};
-enum EPipelineVertexLayout : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-enum EPipelineRasterizerDesc : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-enum EPipelineDepthDesc : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-enum EPipelineBlendDesc : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-enum EPipelineRenderTargetFormat : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-struct SPiplelineDesc {
-  IVertexShader* vertexShader;
-  IFragmentShader* pixelShader;
-};
-
-}
-*/
+#include "Core/Graphics/Vertex.h"
 
 /*
  * @brief
@@ -92,6 +54,9 @@ public:
   */
   CORE_API virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
 
+
+  CORE_API virtual VertexShaderHandle createVertexShader(const char* path) = 0;
+
   /*
    * @brief
    * Frees the allocated resources by the RHI on the GPU. Once freed
@@ -111,6 +76,7 @@ public:
   */
   CORE_API virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) = 0;
 
+
   /*
    * @brief 
    * Bind an index buffer to the command buffer.
@@ -119,6 +85,8 @@ public:
    * A pointer to a IndexBufferHandle object.
   */
   CORE_API virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) = 0;
+
+  CORE_API virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) = 0;
 
   /*
    * @brief 
@@ -138,10 +106,11 @@ public:
 
   /*
    * OLD RESOURCE CREATION SYSTEM
-  */
+   * 
   CORE_API virtual IVertexBuffer*     createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) = 0;
   CORE_API virtual IIndexBuffer*      createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) = 0;
   CORE_API virtual IVertexShader*     createVertexShader(const wchar* path) = 0;
+  */
   CORE_API virtual IPixelShader*      createPixelShader(const wchar* path) = 0;
   CORE_API virtual ITextureResource*  createTextureResource(const Image* pImage) = 0;
   CORE_API virtual ISampler*          createSamplerResource() = 0;

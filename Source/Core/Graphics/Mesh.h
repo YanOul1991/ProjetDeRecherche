@@ -9,9 +9,10 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Math/OptimMathematics.h"
-#include "Core/Graphics/Graphics.h"
+//#include "Core/Graphics/Graphics.h"
 #include "Core/Graphics/Vertex.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
+#include "Core/Graphics/Resource/GraphicResourceHandle.h"
 #include "Core/System/FileStream.h"
 #include "Core/Object/Object.h"
 
@@ -39,8 +40,8 @@ public:
 	uint32	vertexCount	{};
 	uint32	indexCount	{};
 
-	//VertexBufferHandle vertexBufferHandle	{};
-	//IndexBufferHandle indexBufferHandle		{};
+	VertexBufferHandle vertexBufferHandle	{};
+	IndexBufferHandle indexBufferHandle		{};
 
 	/*
 	* @brief

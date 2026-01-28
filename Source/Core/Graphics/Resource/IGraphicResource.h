@@ -4,11 +4,13 @@
 #include "Core/Graphics/Vertex.h"
 #include "Core/Object/Image/Image.h"
 
+/*
 enum class EResourceTypes : uint8 
 {
 	vertexBuffer,
 	indexbuffer,
 };
+*/
 
 /*
  * @brief

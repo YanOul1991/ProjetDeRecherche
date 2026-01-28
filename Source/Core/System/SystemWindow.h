@@ -24,11 +24,27 @@
  * @brief 
  * This class represent an OS managed window.
 */
-class CORE_API SystemWindow final
+class SystemWindow final
 {
 public:
+	/*
+	 * @brief 
+	 * Get the window's pointer as managed by the OS.
+	 * 
+	 * @return
+	 * Pointer to window managed by the OS as a void*. Must be cast to appropriate
+	 * pointer type when used in context.
+	*/
+	static void* getSystemPointer();
+
 	SystemWindow();
 	~SystemWindow();
+
+	/*
+	 * @brief 
+	 * Displays the system window.
+	*/
+	void showWindow();
 
 	/*
 	 * @brief 
@@ -36,7 +52,7 @@ public:
 	 * For now the window does manage any message other than the QUIT message.
 	 * 
 	 * @param windowTitle 
-	 *		>>> DOES NOT APPLY FOR NOW <<< The title of the window
+	 * 
 	*/
 	void initialize(const char* windowTitle);
 
@@ -57,16 +73,6 @@ public:
 	 * The new title of the window.
 	*/
 	void setWindowTitle(const char* title);
-
-	/*
-	 * @brief 
-	 * Get the window's pointer as managed by the OS.
-	 * 
-	 * @return
-	 * Pointer to window managed by the OS as a void*. Must be cast to appropriate
-	 * pointer type when used in context.
-	*/
-	void* getSystemPointer();
 
 	/*
 	 * @brief

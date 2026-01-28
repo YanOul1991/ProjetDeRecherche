@@ -74,6 +74,7 @@ ID3D11DeviceContext* Dx11RHI::getContextPtr() {
 //    RESOURCE CREATION FUNCTIONS
 // ##################################
 
+/*
 IVertexBuffer* Dx11RHI::createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) {
   Dx11VertexBuffer* pResource = new Dx11VertexBuffer;
   pResource->createResources(pVertices, bufferElementCount);
@@ -85,12 +86,13 @@ IIndexBuffer* Dx11RHI::createIndexBuffer(uint32* pIndices, const uint32& bufferE
   pResource->createResources(pIndices, bufferElementCount);
   return pResource;
 }
-
 IVertexShader* Dx11RHI::createVertexShader(const wchar* path) {
   Dx11VertexShader* pResource = new Dx11VertexShader;
   pResource->createResources(path);
   return pResource;
 }
+*/
+
 
 IPixelShader* Dx11RHI::createPixelShader(const wchar* path) {
   Dx11PixelShader* pResource = new Dx11PixelShader;
@@ -163,6 +165,22 @@ IndexBufferHandle Dx11RHI::createResourceIndexBuffer(uint32* pIndices, const uin
   };
 }
 
+VertexShaderHandle Dx11RHI::createVertexShader(const char* path)
+{
+  Dx11VertexShader* l_pResource = new Dx11VertexShader;
+
+  uint64 size = MultiByteToWideChar(CP_UTF8, 0, path, -1, 0, 0);
+  wchar* l_wstr = new wchar[size];
+  MultiByteToWideChar(CP_UTF8, 0, path, -1, l_wstr, size);
+  
+  l_pResource->createResources(l_wstr);
+  delete[] l_wstr;
+
+  return VertexShaderHandle{
+    .data = g_registery.registerResource(EResourceTypes::VertexShader, l_pResource).data
+  };
+}
+
 void Dx11RHI::freeResource(ResourceHandle handle) {
   g_registery.freeResource(handle);
 }
@@ -199,6 +217,20 @@ void Dx11RHI::cmdBindIndexBuffer(IndexBufferHandle* pVertexBufferHandle)
   );
 }
 
+void Dx11RHI::cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle)
+{
+	if (!g_registery.validateHandle((ResourceHandle*)pVertexShaderHandle, EResourceTypes::VertexShader)) {
+		printf("The handle is not an index buffer resource handle or the resource as been destroyed.\n");
+		return;
+	}
+
+  cmdBuffer.push(
+    ECommandType::BindVertexShader,
+    &g_registery[(ResourceHandle*)pVertexShaderHandle]->pResource,
+    sizeof(void*)
+  );
+}
+
 void Dx11RHI::cmdDrawIndexed(uint32 param_indexCount) {
   cmdBuffer.push(ECommandType::drawIndexed, &param_indexCount, sizeof(uint32));
 }
@@ -220,6 +252,10 @@ void Dx11RHI::excecuteCommands()
       }
       case ECommandType::bindIndexBuffer: {
         (*(reinterpret_cast<Dx11IndexBuffer**>(l_pData)))->bindResource();
+        break;
+      }
+      case ECommandType::BindVertexShader: {
+        (*(reinterpret_cast<Dx11VertexShader**>(l_pData)))->bindResource();
         break;
       }
       default: {

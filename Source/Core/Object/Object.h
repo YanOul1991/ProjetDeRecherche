@@ -33,6 +33,9 @@ virtual const Type* getTypeInfo() const override { return &typeInfo; } \
 class Object 
 {
 public:
+	CORE_API Object();
+	CORE_API virtual ~Object();
+
 	// CLASS TYPE INFO
 	static constexpr Type typeInfo = { "Object", nullptr };
 	virtual const Type* getTypeInfo() const { return &typeInfo; }
@@ -59,8 +62,6 @@ public:
 	}
 
 	CORE_API static Object* getObject(const SGuid& guid);
-	CORE_API Object();
-	CORE_API virtual ~Object();
 
 protected:
 	SGuid m_guid{};

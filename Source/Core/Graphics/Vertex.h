@@ -9,6 +9,9 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Math/OptimMathematics.h"
+#include <cstdio>
+#include <cstdlib>
+#include <memory>
 
 struct Vertex
 {

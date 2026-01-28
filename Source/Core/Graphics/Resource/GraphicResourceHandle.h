@@ -2,8 +2,17 @@
 
 #include "Core/Graphics/Resource/IGraphicResource.h"
 
-template <typename T>
-struct GraphicResourceHandle {
+enum class EResourceTypes : uint8 
+{
+	vertexBuffer,
+	indexbuffer,
+	VertexShader,
+	FragmentShader,
+};
+
+template <typename T> 
+struct GraphicResourceHandle 
+{
 	uint64 data;
 };
 

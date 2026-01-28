@@ -10,15 +10,6 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-#include "Core/Types/String.h"
-
-class SystemWindow;
-class IGraphicsRHI;
-class IWindow;
-
-namespace op {
-  struct SInput;
-}
 
 class CORE_API Application final
 {
@@ -39,11 +30,7 @@ private:
   static float m_runtime;
   static float m_deltaTime;
 
-  SystemWindow* m_pSysWindow;
-  IGraphicsRHI* m_pRenderModule;
-  op::SInput* m_pInput;
-
-  bool m_shouldRun; 
+  bool m_shouldRun{false};
 };
 
 extern "C" {

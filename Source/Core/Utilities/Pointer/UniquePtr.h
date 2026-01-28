@@ -12,6 +12,13 @@ public:
     //String::printf("UniquePtr created with no ptr 0x%02x\n", ptr);
   }
 
+  explicit UniquePtr(T* p)
+  {
+    if (p) {
+      ptr = p;
+    }
+  }
+
   explicit UniquePtr(T** pp) {
     if (pp) {
       ptr = *pp;
@@ -53,6 +60,13 @@ public:
     return static_cast<UniquePtr<T>&&>(*this);
   }
 
+  /*
+   * @brief
+   * 
+   * Create a new instance of the underlying type.
+   * If the UniquePtr already holds an instance, 
+   * its gets deleted and a new one is created.
+  */
   void init() {
     //String::printf("UniquePtr initalizing new value\n");
     if (ptr != nullptr) {

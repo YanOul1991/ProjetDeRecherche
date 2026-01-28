@@ -35,8 +35,21 @@
 static SDL_Window* window;
 static bool shouldRun = true;
 
+void* SystemWindow::getSystemPointer()
+{
+	SDL_PropertiesID props = SDL_GetWindowProperties(window);
+	return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, 0);
+}
+
 SystemWindow::SystemWindow(){ }
 SystemWindow::~SystemWindow() { }
+
+void SystemWindow::showWindow() 
+{
+	SDL_MaximizeWindow(window);
+	//SDL_ShowWindow(window);
+	//SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "MessageBox", "Hello!", window);
+}
 
 void SystemWindow::initialize(const char* windowTitle)
 {
@@ -44,18 +57,18 @@ void SystemWindow::initialize(const char* windowTitle)
 		exit(-1);
 	}
 
-	window = SDL_CreateWindow(windowTitle, 1280, 720, SDL_WINDOW_RESIZABLE);
-
-	if (!SDL_MaximizeWindow(window)) {
-		printf("Failed to maximize window.");
-	}
-
-	//SDL_SetWindowRelativeMouseMode(window, false);
+	window = SDL_CreateWindow(windowTitle, 
+														1280, 
+														720, 
+														SDL_WINDOW_RESIZABLE | 
+														SDL_WINDOW_HIGH_PIXEL_DENSITY | 
+														SDL_WINDOW_MINIMIZED
+														//SDL_WINDOW_HIDDEN
+	);
 
 	InterfaceImGui::initWindow(window);
 
 	// Camera initial data.
-
 	Camera::forward = Camera::rotation.rotate({0.0f, 0.0f, -1.0f});
 	Camera::right		= Camera::rotation.rotate({1.0f, 0.0f, 0.0f});
 	Camera::up			= Camera::rotation.rotate({0.0f, 1.0f, 0.0f});
@@ -92,7 +105,7 @@ bool SystemWindow::loop()
 
 		if (evt.type == SDL_EVENT_DROP_FILE) {
 			const char* path = evt.drop.data;
-			printf("File drop attempt! %s\n", path);
+			//printf("File drop attempt! %s\n", path);
 			OptimEditor::processFile(path);
 		}
 	}// While end - Event poll loop
@@ -131,11 +144,6 @@ void SystemWindow::setWindowTitle(const char* title)
 	SDL_SetWindowTitle(window, title);
 }
 
-void* SystemWindow::getSystemPointer()
-{
-	SDL_PropertiesID props = SDL_GetWindowProperties(window);
-	return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, 0);
-}
 
 void SystemWindow::quit()
 {

@@ -92,6 +92,9 @@
     <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h">
       <Filter>Graphics\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicPipeline.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -175,6 +178,9 @@
     <Filter Include="Graphics\Resource">
       <UniqueIdentifier>{9a5e5c76-61ca-47e2-b796-60ee35846566}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\Private">
+      <UniqueIdentifier>{f632ff4c-20e2-4862-a964-d1845248f7f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -233,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\System\private\ModelLoader.cpp">
       <Filter>System\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Graphics\Private\Graphics.cpp">
+      <Filter>Graphics\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

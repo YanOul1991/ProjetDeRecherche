@@ -113,7 +113,8 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   D3D11_DEPTH_STENCIL_DESC dsDesc = {};
   dsDesc.DepthEnable    = TRUE;
   dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-  dsDesc.DepthFunc      = D3D11_COMPARISON_LESS;
+  dsDesc.DepthFunc      = D3D11_COMPARISON_LESS_EQUAL;
+
   ComPtr<ID3D11DepthStencilState> pDepthStencilState;
   OPTIM_TRY_DX(m_pDevice->CreateDepthStencilState(&dsDesc, &pDepthStencilState));
 

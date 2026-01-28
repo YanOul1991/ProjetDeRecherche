@@ -31,7 +31,9 @@ enum class ECommandType {
   bindVertexBuffer,
   bindIndexBuffer,
   bindTexture,
-  drawIndexed
+  drawIndexed,
+
+  BindVertexShader
 };
 
 struct SCommand {
@@ -82,11 +84,13 @@ public:
   void draw() override final;
   void Clean() override final;
 
-  // NEW VIRTUAL FUNCTIONS TO TEST
-
+  /*
+  * OLD RESOURC CREATION SYSTEM
   IVertexBuffer*    createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) override final;
   IIndexBuffer*     createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) override final;
   IVertexShader*    createVertexShader(const wchar* path) override final;
+  */
+
   IPixelShader*     createPixelShader(const wchar* path) override final;
   ITextureResource* createTextureResource(const Image* pImage) override final;
   ISampler*         createSamplerResource() override final;
@@ -98,11 +102,16 @@ public:
   virtual void bindTexture(ITextureResource* pTexture) override final;
   virtual void bindSampler(ISampler* pSampler) override final;
 
+  // NEW VIRTUAL FUNCTIONS TO TEST
+
   virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
   virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+  virtual VertexShaderHandle createVertexShader(const char* path) override final;
 
   virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) override final;
   virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) override final;
+  virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) override final;
+
   virtual void cmdDrawIndexed(uint32 indexCount) override final;
   virtual void excecuteCommands() override final;
 

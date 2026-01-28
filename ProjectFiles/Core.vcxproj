@@ -25,6 +25,7 @@
     <ClInclude Include="..\Source\Core\Graphics\Graphics.h" />
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsRHI.h" />
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
+    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicPipeline.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h" />
     <ClInclude Include="..\Source\Core\Graphics\Vertex.h" />
@@ -53,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
+    <ClCompile Include="..\Source\Core\Graphics\Private\Graphics.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
     <ClCompile Include="..\Source\Core\Object\Camera\Camera.cpp" />
     <ClCompile Include="..\Source\Core\Object\Image\Image.cpp" />
@@ -168,7 +170,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>SDL3-static.lib;turbojpeg-static.lib;jpeg-static.lib;libpng18_static.lib;zlib.lib;libfbxsdk-md.lib;libxml2-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Source\ThirdParty\SDL3\lib\;$(SolutionDir)Source\ThirdParty\libjpeg\lib\;$(SolutionDir)Source\ThirdParty\libpng\lib\;$(SolutionDir)Source\ThirdParty\zlib\lib;$(SolutionDir)Source\ThirdParty\fbx\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AddModuleNamesToAssembly>

@@ -25,11 +25,11 @@ Object::Object()
 	m_guid = Optim::Random::getGetGuid();
 	objectRegistery.emplace(m_guid, this);
 	
-	std::cout << std::dec
-		<< "[Object] A new Object was initialized:\n"
-		<< "----- Registery count : " << objectRegistery.size() << '\n'
-		<< "----- Object type     : " << objectRegistery[m_guid]->getTypeInfo()->name << '\n'
-		<< "----- Object address  : " << std::hex << "0x" << this << '\n' << std::dec;
+	//std::cout << std::dec
+	//	<< "[Object] A new Object was initialized:\n"
+	//	<< "----- Registery count : " << objectRegistery.size() << '\n'
+	//	<< "----- Object type     : " << objectRegistery[m_guid]->getTypeInfo()->name << '\n'
+	//	<< "----- Object address  : " << std::hex << "0x" << this << '\n' << std::dec;
 	
 }
 
