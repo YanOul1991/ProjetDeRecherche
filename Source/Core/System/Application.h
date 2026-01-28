@@ -52,17 +52,6 @@ extern "C" {
 
 namespace OptimEditor {
 
-class Editor final
-{
-public:
-  CORE_API inline Editor(){}
-  CORE_API inline ~Editor(){}
-
-  // For now assume the file is an fbx always
-  CORE_API inline void processFile(const char* path) 
-  {
-
-  }
-};
+  CORE_API void processFile(const char* cstrFilePath);
 
 } // END - namespace OptimEditor

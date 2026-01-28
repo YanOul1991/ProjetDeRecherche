@@ -16,9 +16,10 @@
 #include "Core/System/FileStream.h"
 #include "Core/System/SystemWindow.h"
 #include "Core/Object/Image/Image.h"
-#include "Core/System/Application.h"
 #include "Core/Object/Object.h"
+
 #include "Core/Utilities/Random/Random.h"
+#include "Core/Utilities/Pointer/UniquePtr.h"
 
 #include "Core/System/ModelLoader.h"
 
@@ -32,10 +33,13 @@
 #include <string>
 
 #include "Core/Graphics/Mesh.h"
-#include "Core/Graphics/Resource/IVertexShader.h"
-#include "Core/Graphics/Resource/IPixelShader.h"
-#include "Core/Graphics/Resource/ITextureResource.h"
-#include "Core/Graphics/Resource/ISampler.h"
+//#include "Core/Graphics/Graphics.h"
+//#include "Core/Graphics/Resource/IVertexShader.h"
+//#include "Core/Graphics/Resource/IPixelShader.h"
+//#include "Core/Graphics/Resource/ITextureResource.h"
+//#include "Core/Graphics/Resource/ISampler.h"
+
+#include "Core/System/Application.h"
 
 /* #########################
     LOCAL TESTING FIELDS
@@ -47,8 +51,10 @@ static IPixelShader*      _TEST_pPixelShader{};
 static ITextureResource*  _TEST_pTextureResource{};
 static ISampler*          _TEST_pSampler{};
 
-static ResourceHandle _resHandle_vertexBuffer{};
-static ResourceHandle _resHandle_indexBuffer{};
+static VertexBufferHandle   _vertexBufferHandle{};
+static IndexBufferHandle    _indexBufferHandle{};
+
+static std::vector<UniquePtr<Mesh>> _list_meshes{};
 
 /* #########################
     LOCAL TESTING FIELDS
@@ -138,19 +144,12 @@ void Application::ApplicationStart()
     std::cout << "Vertex Count: " << _TEST_mesh.vertexCount << '\n';
     printf("Index Count: %d\n", _TEST_mesh.indexCount);
 
-    _resHandle_vertexBuffer = m_pRenderModule->createResourceVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
-    //_resHandle_indexBuffer  = m_pRenderModule->createResourceIndexBuffer(_TEST_mesh.indices, _TEST_mesh.vertexCount);
-
-    m_pRenderModule->freeResource(_resHandle_vertexBuffer);
-
-    //m_pRenderModule->cmdBindVertexBuffer(&_resHandle_vertexBuffer);
+    _vertexBufferHandle = m_pRenderModule->createResourceVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
+    _indexBufferHandle = m_pRenderModule->createResourceIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);
 
     /*
      * OLD POINTER SYSTEM FOR RESOURCE CREATION
     */
-
-    _TEST_mesh.pVertexBuffer = m_pRenderModule->createVertexBuffer(_TEST_mesh.vertices, _TEST_mesh.vertexCount);
-    _TEST_mesh.pIndexBuffer  = m_pRenderModule->createIndexBuffer(_TEST_mesh.indices, _TEST_mesh.indexCount);
 
     _TEST_pVertexShader = m_pRenderModule->createVertexShader(TEXT("bin/PhongVertexShader.cso"));
     _TEST_pPixelShader  = m_pRenderModule->createPixelShader(TEXT("bin/PhongPixelShader.cso"));
@@ -194,15 +193,20 @@ void Application::ApplicationLoop()
       return;
     }
 
-    m_pRenderModule->bindVertexBuffer(_TEST_mesh.pVertexBuffer);
-    m_pRenderModule->bindIndexBuffer(_TEST_mesh.pIndexBuffer);
+    //m_pRenderModule->bindVertexBuffer(_TEST_mesh.pVertexBuffer);
+    //m_pRenderModule->bindIndexBuffer(_TEST_mesh.pIndexBuffer);
     m_pRenderModule->bindVertexShader(_TEST_pVertexShader);
     m_pRenderModule->bindPixelShader(_TEST_pPixelShader);
     m_pRenderModule->bindTexture(_TEST_pTextureResource);
     m_pRenderModule->bindSampler(_TEST_pSampler);
 
-    m_pRenderModule->cmdDrawIndexed(_TEST_mesh.indexCount);
+    for (int i = 0; i < _list_meshes.size(); i++) {
 
+    }
+
+    m_pRenderModule->cmdBindVertexBuffer(&_vertexBufferHandle);
+    m_pRenderModule->cmdBindIndexBuffer(&_indexBufferHandle);
+    m_pRenderModule->cmdDrawIndexed(_TEST_mesh.indexCount);
     m_pRenderModule->draw();
 
     __now         = op::time::nowHighFreq();
@@ -232,4 +236,19 @@ void Application::ApplicationQuit()
   printf("Application quitting...\n");
   delete(m_pRenderModule);
   delete(m_pSysWindow);
+}
+
+CORE_API void OptimEditor::processFile(const char* param_cstrFilePath) 
+{
+  printf("Application will process droped file from: %s\n", param_cstrFilePath);
+
+  Mesh* l_meshInstance = new Mesh;
+  UniquePtr<Mesh> l_uptrMesh(&l_meshInstance);
+
+  OptimEditor::loadFbxModel(*l_uptrMesh, param_cstrFilePath);
+
+  printf("Loaded mesh model vertex count: %d\n", (*l_uptrMesh).vertexCount);
+  printf("Loaded mesh model index count: %d\n", (*l_uptrMesh).indexCount);
+
+  _list_meshes.push_back(l_uptrMesh.move());
 }

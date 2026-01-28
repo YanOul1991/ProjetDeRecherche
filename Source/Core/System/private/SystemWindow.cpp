@@ -15,6 +15,7 @@
 
 //#include "Core/Defines/Windows/windowsAPI.h"
 
+#include "Core/System/Application.h"
 #include "Core/Object/Camera/Camera.h"
 #include "Core/Math/OptimMathematics.h"
 #include "Core/Math/Quaternion.h"
@@ -92,6 +93,7 @@ bool SystemWindow::loop()
 		if (evt.type == SDL_EVENT_DROP_FILE) {
 			const char* path = evt.drop.data;
 			printf("File drop attempt! %s\n", path);
+			OptimEditor::processFile(path);
 		}
 	}// While end - Event poll loop
 

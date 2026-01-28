@@ -20,6 +20,9 @@
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Graphics/IGraphicsRHI.h"
+#include "Core/Graphics/Resource/IGraphicResource.h"
+#include <iostream>
+#include <vector>
 
 class DirectX11Graphics;
 
@@ -88,39 +91,22 @@ public:
   ITextureResource* createTextureResource(const Image* pImage) override final;
   ISampler*         createSamplerResource() override final;
 
-  void bindVertexBuffer(IVertexBuffer* pVertexBuffer) override final;
-  void bindIndexBuffer(IIndexBuffer* pIndexBuffer) override final;
-  void bindVertexShader(IVertexShader* pVertexShader) override final;
-  void bindPixelShader(IPixelShader* pPixelShader) override final;
-  void bindTexture(ITextureResource* pTexture) override final;
-  void bindSampler(ISampler* pSampler) override final;
+  virtual void bindVertexBuffer(IVertexBuffer* pVertexBuffer) override final;
+  virtual void bindIndexBuffer(IIndexBuffer* pIndexBuffer) override final;
+  virtual void bindVertexShader(IVertexShader* pVertexShader) override final;
+  virtual void bindPixelShader(IPixelShader* pPixelShader) override final;
+  virtual void bindTexture(ITextureResource* pTexture) override final;
+  virtual void bindSampler(ISampler* pSampler) override final;
 
-  inline virtual void cmdBindVertexBuffer(ResourceHandle* handle) override final;
+  virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
+  virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
 
-  inline void cmdDrawIndexed(uint32 indexCount) override final {
-    cmdBuffer.push(ECommandType::drawIndexed, &indexCount, sizeof(uint32));
-  }
-
-  inline virtual ResourceHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
-  inline virtual ResourceHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+  virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) override final;
+  virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) override final;
+  virtual void cmdDrawIndexed(uint32 indexCount) override final;
+  virtual void excecuteCommands() override final;
 
   virtual void freeResource(ResourceHandle handle) override final;
-
-  inline void excecuteCommands() override final;
-
-  /*----------------- TEST FIELD -----------------*/
-
-  /*
-  SGraphicResourceHandle createResourceVertexShader(const wchar* path) override final;
-  SGraphicResourceHandle createResourceVertexBuffer(Vertex* pVertexBuffer, const uint32& bufferSize) override final;
-  inline SGraphicResourceHandle initResourcePixelShader(const wchar* path) override final {
-    SGraphicResourceHandle hResource;
-    hResource.data = 0;
-    return hResource;
-  }
-  void setDrawCommand(DrawCommand& drawCommand) override final;
-  void setCommandBuffer(DrawCommand* pDrawCommandBuffer, uint32 count) override final;
-  */
 
 private:
   void* m_hTargetWindow;      // Target Window.

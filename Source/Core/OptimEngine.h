@@ -65,7 +65,7 @@ using wchar       = wchar_t;
   #define DIRECTX11_API IMPORT
 #endif
 
-#define PROC_PTR(T) T*(*)()
+#define PROC_PTR(T) T(*)()
 #define PROC_PTR_PARAMS(T)
 
 #if defined(UNICODE)

@@ -9,18 +9,12 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Utilities/Random/Random.h"
-
 #include "Core/Graphics/Vertex.h"
-#include "Core/Graphics/Mesh.h"
-
+#include "Core/Graphics/Graphics.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
-#include "Core/Graphics/Resource/IVertexBuffer.h"
-#include "Core/Graphics/Resource/IIndexBuffer.h"
-#include "Core/Graphics/Resource/IVertexShader.h"
-#include "Core/Graphics/Resource/IPixelShader.h"
-#include "Core/Graphics/Resource/ITextureResource.h"
-#include "Core/Graphics/Resource/ISampler.h"
+#include "Core/Graphics/Resource/GraphicResourceHandle.h"
 
+/*
 namespace Optim::Rendering 
 {
 
@@ -54,6 +48,8 @@ struct SPiplelineDesc {
 };
 
 }
+*/
+
 /*
  * @brief
  * Base class interface for graphics rendering modules.
@@ -65,22 +61,6 @@ public:
   CORE_API virtual void Initialize(void* _WindowHandle) = 0;
   CORE_API virtual void draw() = 0;
   CORE_API virtual void Clean() = 0;
-
-  /* TESTING FUNCTIONS */
-
-  CORE_API virtual IVertexBuffer*     createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) = 0;
-  CORE_API virtual IIndexBuffer*      createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) = 0;
-  CORE_API virtual IVertexShader*     createVertexShader(const wchar* path) = 0;
-  CORE_API virtual IPixelShader*      createPixelShader(const wchar* path) = 0;
-  CORE_API virtual ITextureResource*  createTextureResource(const Image* pImage) = 0;
-  CORE_API virtual ISampler*          createSamplerResource() = 0;
-
-  CORE_API virtual void bindVertexBuffer(IVertexBuffer* pVertexBuffer) = 0;
-  CORE_API virtual void bindIndexBuffer(IIndexBuffer* pIndexBuffer) = 0;
-  CORE_API virtual void bindVertexShader(IVertexShader* pVertexShader) = 0;
-  CORE_API virtual void bindPixelShader(IPixelShader* pPixelShader) = 0;
-  CORE_API virtual void bindTexture(ITextureResource* pTexture) = 0;
-  CORE_API virtual void bindSampler(ISampler* pSampler) = 0;
 
   /*
    * @brief
@@ -95,7 +75,7 @@ public:
    * @return
    * A handle to the graphique resource.
   */
-  CORE_API virtual ResourceHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
+  CORE_API virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
 
   /*
    * @brief
@@ -110,7 +90,7 @@ public:
    * @return
    * A handle to the graphique resource.
   */
-  CORE_API virtual ResourceHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
+  CORE_API virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
 
   /*
    * @brief
@@ -122,8 +102,23 @@ public:
   */
   CORE_API virtual void freeResource(ResourceHandle handle) = 0;
 
+  /*
+   * @brief 
+   * Bind a vertex buffer to the command buffer.
+   * 
+   * @param pVertexBufferHandle
+   * A pointer to a VertexBufferHandle object.
+  */
+  CORE_API virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) = 0;
 
-  CORE_API virtual void cmdBindVertexBuffer(ResourceHandle* handle) = 0;
+  /*
+   * @brief 
+   * Bind an index buffer to the command buffer.
+   * 
+   * @param pIndexBufferHandle
+   * A pointer to a IndexBufferHandle object.
+  */
+  CORE_API virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) = 0;
 
   /*
    * @brief 
@@ -140,4 +135,24 @@ public:
    * The command buffer gets cleared once all its commands have be ran.
   */
   CORE_API virtual void excecuteCommands() = 0;
+
+  /*
+   * OLD RESOURCE CREATION SYSTEM
+  */
+  CORE_API virtual IVertexBuffer*     createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) = 0;
+  CORE_API virtual IIndexBuffer*      createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) = 0;
+  CORE_API virtual IVertexShader*     createVertexShader(const wchar* path) = 0;
+  CORE_API virtual IPixelShader*      createPixelShader(const wchar* path) = 0;
+  CORE_API virtual ITextureResource*  createTextureResource(const Image* pImage) = 0;
+  CORE_API virtual ISampler*          createSamplerResource() = 0;
+
+  /*
+   * OLD BINDING SYSTEM
+  */
+  CORE_API virtual void bindVertexBuffer(IVertexBuffer* pVertexBuffer) = 0;
+  CORE_API virtual void bindIndexBuffer(IIndexBuffer* pIndexBuffer) = 0;
+  CORE_API virtual void bindVertexShader(IVertexShader* pVertexShader) = 0;
+  CORE_API virtual void bindPixelShader(IPixelShader* pPixelShader) = 0;
+  CORE_API virtual void bindTexture(ITextureResource* pTexture) = 0;
+  CORE_API virtual void bindSampler(ISampler* pSampler) = 0;
 };

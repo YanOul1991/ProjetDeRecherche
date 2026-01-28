@@ -6,8 +6,10 @@
 ====================================================================================== */
 
 #include "Core/Defines/Windows/windowsAPI.h"
+
 #include "Core/OptimEngine.h"
 #include "Core/Object/Object.h"
+//#include "Core/Graphics/Mesh.h"
 
 #include <iostream>
 #include <random>
@@ -20,16 +22,23 @@ static std::unordered_map<SGuid, Object*> objectRegistery{};
 
 Object::Object()
 {
-	/*
 	m_guid = Optim::Random::getGetGuid();
 	objectRegistery.emplace(m_guid, this);
-
+	
 	std::cout << std::dec
 		<< "[Object] A new Object was initialized:\n"
 		<< "----- Registery count : " << objectRegistery.size() << '\n'
-		//<< "----- Object type     : " << objectRegistery[m_guid]->getTypeInfo()->name << '\n'
+		<< "----- Object type     : " << objectRegistery[m_guid]->getTypeInfo()->name << '\n'
 		<< "----- Object address  : " << std::hex << "0x" << this << '\n' << std::dec;
-	*/
+	
+}
+
+Object::~Object() {
+	auto target = objectRegistery.find(m_guid);
+
+	if (target != objectRegistery.end()) {
+		objectRegistery.erase(target);
+	}
 }
 
 CORE_API Object* Object::getObject(const SGuid& guid)
@@ -58,15 +67,13 @@ CORE_API Object* Object::getObject(const SGuid& guid)
 	*/
 }
 
-#define OPTIM_TYPEFACTORY(CLASS_TYPE) {#CLASS_TYPE, []() -> Object* { return new CLASS_TYPE; }}
+#define OE_TYPEFACTORY(CLASS_TYPE) {#CLASS_TYPE, []() -> Object* { return new CLASS_TYPE; }}
 
 std::unordered_map<std::string, Object*(*)()> g_typesFactoryRegistery = 
 {
-	{"Object", []() -> Object* { return new Object; }},
-	/*
-	OPTIM_TYPEFACTORY(ChildClass),
-	OPTIM_TYPEFACTORY(GrandChildClass)
-	*/
+	//{"Object", []() -> Object* { return new Object; }},
+	OE_TYPEFACTORY(Object),
+	//OE_TYPEFACTORY(Mesh),
 };
 
 Object* Type::getObject(const char* type)

@@ -6,7 +6,6 @@
 #include "Core/OptimEngine.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Core/Graphics/Resource/IVertexShader.h"
 #include "Dx11RHI.h"
 
 class Dx11VertexShader final : public IVertexShader

@@ -8,6 +8,7 @@
 
 #pragma warning(disable: 4244)
 #pragma warning(disable: 4267)
+#pragma warning(disable: 4099)
 
 // Aliases for frequently used types
 
@@ -125,17 +126,17 @@ void OptimEditor::loadFbxModel(Mesh& param_meshObject, const char* param_cstrFil
 			/*
 			*/
 			if (pNormalElement->GetMappingMode() == fbxsdk::FbxGeometryElement::eByPolygonVertex) {
-				printf("FbxGeometryElementNormal mapping mode eByPolygonVertex\n");
+				//printf("FbxGeometryElementNormal mapping mode eByPolygonVertex\n");
 			}
 			else if (pNormalElement->GetMappingMode() == fbxsdk::FbxGeometryElement::eByControlPoint) {
-				printf("FbxGeometryElementNormal mapping mode eByControlPoint\n");
+				//printf("FbxGeometryElementNormal mapping mode eByControlPoint\n");
 			}
 
 			fbxsdk::FbxGeometryElementUV* pUvElement = _pMesh->GetElementUV(0);
 
-			printf("UV count %d\n", pUvElement->GetDirectArray().GetCount());
+			//printf("UV count %d\n", pUvElement->GetDirectArray().GetCount());
 
-			printf("UV set name: %s\n", pUvElement->GetName());
+			//printf("UV set name: %s\n", pUvElement->GetName());
 
 			//if (pUvElement->GetMappingMode() == fbxsdk::FbxGeometryElement::eByPolygonVertex) {
 			//	printf("FbxGeometryElementUV mapping mode eByPolygonVertex\n");

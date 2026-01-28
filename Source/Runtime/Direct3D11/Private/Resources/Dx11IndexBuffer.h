@@ -5,7 +5,6 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Core/Graphics/Resource/IIndexBuffer.h"
 #include "Direct3D11/Dx11RHI.h"
 
 class Dx11IndexBuffer final : public IIndexBuffer

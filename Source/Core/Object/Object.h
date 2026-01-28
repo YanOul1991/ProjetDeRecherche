@@ -19,17 +19,26 @@
 
 class Object;
 
-typedef struct Type {
+struct Type {
 	const char*	name;
 	const Type* parent;
 	static Object* getObject(const char* type);
-} Type;
+};
+
+#define OE_OBJECT(OBJECT, PARENT_OBJECT) \
+static constexpr Type typeInfo = { #OBJECT, &PARENT_OBJECT::typeInfo }; \
+virtual const Type* getTypeInfo() const override { return &typeInfo; } \
+
 
 class Object 
 {
 public:
+	// CLASS TYPE INFO
+	static constexpr Type typeInfo = { "Object", nullptr };
+	virtual const Type* getTypeInfo() const { return &typeInfo; }
+
 	template<typename T>
-	static T* type_cast(Object* obj) {
+	static T* cast(Object* obj) {
 		if (obj == nullptr) {
 			return nullptr;
 		}
@@ -49,19 +58,18 @@ public:
 		return nullptr;
 	}
 
-	// CLASS TYPE INFO
-	static constexpr Type typeInfo = { "Object", nullptr };
-	virtual const Type* getTypeInfo() const { return &typeInfo; }
-
 	CORE_API static Object* getObject(const SGuid& guid);
-
 	CORE_API Object();
-	CORE_API virtual ~Object() {};
-
-	//virtual inline SGuid getGuid() const {
-	//	return m_guid;
-	//}
+	CORE_API virtual ~Object();
 
 protected:
-	//SGuid m_guid{};
+	SGuid m_guid{};
+
+	CORE_API virtual void onTick(){}
+
+private:
+	CORE_API inline Object(SGuid param_guid) noexcept 
+	{
+		m_guid = param_guid;
+	}
 };

@@ -2,7 +2,6 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Core/Graphics/Resource/ISampler.h"
 #include "Direct3D11/Dx11RHI.h"
 
 class Dx11Sampler final : public ISampler

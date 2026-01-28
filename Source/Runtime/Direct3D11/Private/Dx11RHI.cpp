@@ -138,53 +138,89 @@ void Dx11RHI::bindSampler(ISampler* pSampler) {
   pSampler->bindResource();
 }
 
-inline void Dx11RHI::cmdBindVertexBuffer(ResourceHandle* phandle) {
-  if (!g_registery.validate(phandle)) {
-    printf("The resource handle is invalid\n");
-    return;
-  }
-
-  if (g_registery.entries[g_registery.getHandleIndex(phandle)].resourceType != EResourceTypes::vertexBuffer) {
-    printf("The handle is not a vertex resource handle.\n");
-    return;
-  }
-
-  printf("binding Vertex buffer.\n");
-
-  cmdBuffer.push(ECommandType::bindVertexBuffer, phandle, sizeof(*phandle));
-}
-
 // ##################################
 //    RESOURCE CREATION FUNCTIONS
 // ##################################
 
-inline ResourceHandle Dx11RHI::createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount)
+VertexBufferHandle Dx11RHI::createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount)
 {
   Dx11VertexBuffer* l_pResource = new Dx11VertexBuffer;
+
   l_pResource->createResources(pVertices, elementCount);
-  return g_registery.registerResource(EResourceTypes::vertexBuffer, l_pResource);
+
+  return VertexBufferHandle{
+    .data = g_registery.registerResource(EResourceTypes::vertexBuffer, l_pResource).data
+  };
 }
 
-inline ResourceHandle Dx11RHI::createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) {
+IndexBufferHandle Dx11RHI::createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) {
   Dx11IndexBuffer* l_pResource = new Dx11IndexBuffer;
+
   l_pResource->createResources(pIndices, elementCount);
-  return g_registery.registerResource(EResourceTypes::indexbuffer, l_pResource);
+
+  return IndexBufferHandle {
+    .data = g_registery.registerResource(EResourceTypes::indexbuffer, l_pResource).data
+  };
 }
 
 void Dx11RHI::freeResource(ResourceHandle handle) {
   g_registery.freeResource(handle);
 }
 
-inline void Dx11RHI::excecuteCommands()
+// ##################################
+//    BINDING FUNCTIONS
+// ##################################
+
+void Dx11RHI::cmdBindVertexBuffer(VertexBufferHandle* param_pVertexBufferHandle)
+{
+  if (!g_registery.validateHandle((ResourceHandle*)param_pVertexBufferHandle, EResourceTypes::vertexBuffer)) {
+    printf("The handle is not a vertex buffer resource handle or the resource as been destroyed.\n");
+    return;
+  }
+
+  cmdBuffer.push(
+    ECommandType::bindVertexBuffer, 
+    &g_registery[(ResourceHandle*)param_pVertexBufferHandle]->pResource, 
+    sizeof(void*)
+  );
+}
+
+void Dx11RHI::cmdBindIndexBuffer(IndexBufferHandle* pVertexBufferHandle) 
+{
+  if (!g_registery.validateHandle((ResourceHandle*)pVertexBufferHandle, EResourceTypes::indexbuffer)) {
+    printf("The handle is not an index buffer resource handle or the resource as been destroyed.\n");
+    return;
+  }
+
+  cmdBuffer.push(
+    ECommandType::bindIndexBuffer, 
+    &g_registery[(ResourceHandle*)pVertexBufferHandle]->pResource, 
+    sizeof(void*)
+  );
+}
+
+void Dx11RHI::cmdDrawIndexed(uint32 param_indexCount) {
+  cmdBuffer.push(ECommandType::drawIndexed, &param_indexCount, sizeof(uint32));
+}
+
+void Dx11RHI::excecuteCommands()
 {
 	for (SCommand& cmd : cmdBuffer.commands) {
+    uint8* l_pData = cmdBuffer.data.data() + cmd.dataOffset;
+
 		switch (cmd.type) {
 			case ECommandType::drawIndexed: {
-        m_pBase->m_pContext->DrawIndexed(*(reinterpret_cast<uint32*>(cmdBuffer.data.data() + cmd.dataOffset)), 0, 0);
+        uint32 l_indexCount = *(reinterpret_cast<uint32*>(l_pData));
+        m_pBase->m_pContext->DrawIndexed(l_indexCount, 0, 0);
         break;
 			}
       case ECommandType::bindVertexBuffer: {
-        reinterpret_cast<ResourceHandle*>(cmdBuffer.data.data() + cmd.dataOffset);
+        (*(reinterpret_cast<Dx11VertexBuffer**>(l_pData)))->bindResource();
+        break;
+      }
+      case ECommandType::bindIndexBuffer: {
+        (*(reinterpret_cast<Dx11IndexBuffer**>(l_pData)))->bindResource();
+        break;
       }
       default: {
 				break;
@@ -196,31 +232,3 @@ inline void Dx11RHI::excecuteCommands()
   cmdBuffer.commands.clear();
   cmdBuffer.data.clear();
 }
-
-
-/*
-SGraphicResourceHandle Dx11RHI::createResourceVertexShader(const wchar* path) {
-  return SGraphicResourceHandle();
-}
-
-SGraphicResourceHandle Dx11RHI::createResourceVertexBuffer(Vertex* pVertexBuffer, const uint32& bufferSize) {
-  return SGraphicResourceHandle();
-}
-void Dx11RHI::setDrawCommand(DrawCommand& drawCommand) {
-  bindVertexBuffer(drawCommand.pVertexBuffer);
-  bindIndexBuffer(drawCommand.pIndexBuffer);
-  bindVertexShader(drawCommand.pVertexShader);
-  bindPixelShader(drawCommand.pPixelShader);
-  bindTexture(drawCommand.pTexture);
-  bindSampler(drawCommand.pSampler);
-  m_pBase->drawCallIndexCount = drawCommand.indexCount;
-}
-
-
-void Dx11RHI::setCommandBuffer(DrawCommand* pDrawCommandBuffer, uint32 count) {
-  for (size_t i = 0; i < count; i++) {
-    setDrawCommand(pDrawCommandBuffer[i]);
-    draw();
-  }
-}
-*/

@@ -25,14 +25,8 @@
     <ClInclude Include="..\Source\Core\Graphics\Graphics.h" />
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsRHI.h" />
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IConstantBuffer.h" />
+    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IIndexBuffer.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IPixelShader.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\ISampler.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\ITextureResource.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexBuffer.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexShader.h" />
     <ClInclude Include="..\Source\Core\Graphics\Vertex.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
     <ClInclude Include="..\Source\Core\Math\OptimMathematics.h" />

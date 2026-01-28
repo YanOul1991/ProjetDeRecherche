@@ -9,11 +9,12 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Math/OptimMathematics.h"
+#include "Core/Graphics/Graphics.h"
 #include "Core/Graphics/Vertex.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
-#include "Core/Graphics/Resource/IVertexBuffer.h"
-#include "Core/Graphics/Resource/IIndexBuffer.h"
 #include "Core/System/FileStream.h"
+#include "Core/Object/Object.h"
+
 
 #include <iostream>
 #include <fstream>
@@ -25,20 +26,21 @@
 #include <unordered_map>
 #include <set>
 
-class Mesh final
+class Mesh final : public Object
 {
 public:
+	OE_OBJECT(Mesh, Object)
+
 	inline Mesh() = default;
-	float3 position{};
+	inline virtual ~Mesh() noexcept override final{}
 
-	Vertex* vertices{};
-	uint32* indices{};
+	Vertex* vertices		{};
+	uint32* indices			{};
+	uint32	vertexCount	{};
+	uint32	indexCount	{};
 
-	uint32 vertexCount{};
-	uint32 indexCount{};
-
-	IVertexBuffer*	pVertexBuffer{};
-	IIndexBuffer*		pIndexBuffer{};
+	//VertexBufferHandle vertexBufferHandle	{};
+	//IndexBufferHandle indexBufferHandle		{};
 
 	/*
 	* @brief
@@ -338,122 +340,12 @@ public:
 				}
 				// Free resources
 				delete[] str_line;
-				/*
-				uint64 str_size = line.size() + 1;
-				char* str_face = new char[str_size - 2];
-
-				memcpy(str_face, line.c_str() + 2, str_size - 2);
-
-				char* str_verts[4];
-
-				str_verts[0] = str_face;
-
-				str_verts[1] = strchr(str_verts[0], ' ') + 1;
-				*(str_verts[1] - 1) = '\0';
-
-				str_verts[2] = strchr(str_verts[1], ' ') + 1;
-				*(str_verts[2] - 1) = '\0';
-
-				str_verts[3] = strchr(str_verts[2], ' ') + 1;
-				*(str_verts[3] - 1) = '\0';
-
-				for (int i = 0; i < 4; i++) {
-					char* str_v		{nullptr};
-					char* str_vt	{nullptr};
-					char* str_vn	{nullptr};
-
-					str_v = str_verts[i];
-
-					str_vt = strchr(str_verts[i], '/') + 1;
-					*(str_vt - 1) = '\0';
-
-					str_vn = strchr(str_vt, '/') + 1;
-					*(str_vn - 1) = '\0';
-
-					char* ptr_conversion_check;
-					int index_pos = 0;
-					int index_uv = 0;
-					int index_normal = 0;
-							
-					index_pos = strtol(str_v, &ptr_conversion_check, 10);
-					if (*ptr_conversion_check != '\0') {
-						printf("Failed to convert string to int :( %d\n", (int)(*ptr_conversion_check));
-					}
-
-					index_uv = strtol(str_vt, &ptr_conversion_check, 10);
-					if (*ptr_conversion_check != '\0') {
-						printf("Failed to convert string to int :( %d\n", (int)(*ptr_conversion_check));
-					}
-
-					index_normal = strtol(str_vn, &ptr_conversion_check, 10);
-					if (*ptr_conversion_check != '\0') {
-						printf("Failed to convert string to int :( %d\n", (int)(*ptr_conversion_check));
-					}
-
-					Vertex vertInstance{
-						.position = _vectorPositions[index_pos - 1],
-						.uvCoord	= _vectorUvCoord[index_uv - 1],
-						.normal		= _vectorNormals[index_normal - 1]
-					};
-					vertices.push_back(vertInstance);
-				}
-				delete[] str_face;
-				*/
-
 			} // END OF IF
 
 		} // while (std::getline(input, line)) - END
 
-		// >>>>>>>>> DATA EXTRACTED FROM OBJ FILE FROM THISE POINT
-
-		/*
-		for (auto& pair : _mapFaceTriplets) {
-			printf("%s | %d\n", pair.first.c_str(), pair.second);
-		}
-		for (auto& i : _indices) {
-			printf("%d\n", i);
-		}
+		// Chage V value of each vertex UV coordinates.
 		for (size_t i = 0; i < vertices.size(); i++) {
-			//printf("Vertex count: %llu\n", vertices.size());
-			std::cout 
-				<< "Vertex " << i << '\n'
-				<< "---- Position: (" << vertices[i].position.x << ", " << vertices[i].position.y  << ", " << vertices[i].position.z << ")\n"
-				<< "---- UV      : (" << vertices[i].uvCoord.u << ", " << vertices[i].uvCoord.v << ")\n"
-				<< "---- Normal  : (" << vertices[i].normal.x << ", " << vertices[i].normal.y << ", " << vertices[i].normal.z << ")\n";
-		}
-		std::vector<uint32> indices;
-		int iteration = 0;
-
-		for (int i = 0; i < vertices.size(); i++) {
-			if (iteration == 3) {
-				i--;
-				iteration = 0;
-				printf("\n");
-			}
-			indices.push_back(i);
-			printf("%02d ", i);
-			iteration ++;
-		}
-		for (size_t i = 0; i < _vectorPositions.size(); i++) {
-			printf("Position [%02llu]", i);
-			printf("---- (%f, %f, %f)\n", _vectorPositions[i].x, _vectorPositions[i].y, _vectorPositions[i].z);
-		}
-		for (size_t i = 0; i < _vectorNormals.size(); i++) {
-			printf("NORMAL [%02llu]", i);
-			printf("---- (%f, %f, %f)\n", _vectorNormals[i].x, _vectorNormals[i].y, _vectorNormals[i].z);
-		}
-		for (size_t i = 0; i < _vectorUvCoord.size(); i++) {
-			printf("UV DATA [%02llu]", i);
-			printf("---- (%f, %f)\n", _vectorUvCoord[i].u, _vectorUvCoord[i].v);
-		}
-		*/
-
-		// Chage V value of each vertex UV coordinates to match
-		// graphics API convention. 
-		for (size_t i = 0; i < vertices.size(); i++) {
-			//vertices[i].uvCoord.u = 1.0f - vertices[i].uvCoord.u;
-			//vertices[i].position.z *= -1;
-			//vertices[i].normal.z *= -1;
 			vertices[i].uvCoord.v = 1.0f - vertices[i].uvCoord.v;
 		}
 

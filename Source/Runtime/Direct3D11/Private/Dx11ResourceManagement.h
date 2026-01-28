@@ -38,7 +38,7 @@ public:
       l_resEntryData.resourceType = param_resourceType;
       l_resEntryData.valid = true;
 
-      ret_resourceHandle.data = (l_resEntryData.generation) | (entries.size() << 32);
+      ret_resourceHandle.data = entries.size() | ((uint64)l_resEntryData.generation<< 32);
       printf("Created a new entry at index: %llu \n", entries.size());
       entries.push_back(l_resEntryData);
     }
@@ -49,7 +49,7 @@ public:
       l_entryRealloc.resourceType = param_resourceType;
       l_entryRealloc.valid = true;
 
-      ret_resourceHandle.data = (l_entryRealloc.generation) | ((uint64)validIndices[0] << 32);
+      ret_resourceHandle.data = (uint64)validIndices[0] | ((uint64)l_entryRealloc.generation << 32);
       printf("Reallocared resource to available slot: %d\n", validIndices[0]);
       validIndices.erase(validIndices.begin());
     }
@@ -63,24 +63,24 @@ public:
   inline void freeResource(ResourceHandle resourceHandle) 
   {
     if (!validate(&resourceHandle)) {
-      printf("Cannot free the handle, the resource is invalid.\n");
+      //printf("Cannot free the handle, the resource is invalid.\n");
       return;
     }
 
-    uint32 l_generation = (uint32)(resourceHandle.data & 0x00000000FFFFFFFF);
-    uint32 l_index = (uint32)((resourceHandle.data & 0xFFFFFFFF00000000) >> 32);
+    uint32 l_generation = getHandleGen(&resourceHandle);
+    uint32 l_index = getHandleIndex(&resourceHandle);
     ResourceEntryData& l_targetEntry = entries[l_index];
 
-    printf("Trying to free resource at index %d\nGeneration type %d\n", l_index, l_generation);
+    //printf("Trying to free resource at index %d\nGeneration type %d\n", l_index, l_generation);
 
     switch (l_targetEntry.resourceType) {
       case EResourceTypes::vertexBuffer : {
-        printf("The resource is a vertex buffer.\n");
+        //printf("The resource is a vertex buffer.\n");
         delete reinterpret_cast<Dx11VertexBuffer*>(l_targetEntry.pResource);
         break;
       }
       case EResourceTypes::indexbuffer: {
-        printf("The resource is an indexbuffer.\n");
+        //printf("The resource is an indexbuffer.\n");
         delete reinterpret_cast<Dx11IndexBuffer*>(l_targetEntry.pResource);
         break;
       }
@@ -116,14 +116,41 @@ public:
     return entries[l_index].valid == true && l_generation == entries[l_index].generation;
   }
 
+  inline bool validateHandle(ResourceHandle* param_pHandle, EResourceTypes param_eResourceType)
+  {
+    uint32 l_generation = getHandleGen(param_pHandle);
+    uint32 l_index = getHandleIndex(param_pHandle);
+    const ResourceEntryData& l_targetResource = entries[l_index];
+
+    if (l_index >= entries.size() || entries.size() == 0) {
+      return false;
+    }
+
+    return 
+      l_targetResource.valid == true &&
+      l_targetResource.generation == l_generation &&
+      l_targetResource.pResource != nullptr &&
+      l_targetResource.resourceType == param_eResourceType;
+  }
+
   inline uint32 getHandleIndex(ResourceHandle* pHandle) const 
   {
-    return (uint32)((pHandle->data & 0xFFFFFFFF00000000) >> 32);
+    return (uint32)(pHandle->data & 0x00000000FFFFFFFF);
   }
 
   inline uint32 getHandleGen(ResourceHandle* pHandle) const 
   {
-    return (uint32)(pHandle->data & 0x00000000FFFFFFFF);
+    return (uint32)((pHandle->data & 0xFFFFFFFF00000000) >> 32);
+  }
+
+  ResourceEntryData* operator[](ResourceHandle& handle) 
+  {
+    return &entries[getHandleIndex(&handle)];
+  }
+
+  ResourceEntryData* operator[](ResourceHandle* param_pHandle)
+  {
+    return &entries[getHandleIndex(param_pHandle)];
   }
 
   std::vector<ResourceEntryData> entries{};

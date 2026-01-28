@@ -83,32 +83,14 @@
     <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h">
       <Filter>Graphics\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexBuffer.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IIndexBuffer.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IConstantBuffer.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IVertexShader.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IPixelShader.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\ITextureResource.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\ISampler.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\Graphics.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\System\ModelLoader.h">
       <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h">
+      <Filter>Graphics\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

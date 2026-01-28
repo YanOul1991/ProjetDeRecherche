@@ -4,7 +4,6 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Core/Graphics/Resource/IVertexBuffer.h"
 #include "Direct3D11/Dx11RHI.h"
 
 class Dx11VertexBuffer final : public IVertexBuffer 
@@ -39,6 +38,7 @@ public:
 
   inline void bindResource() override final {
     Dx11RHI::getContextPtr()->IASetVertexBuffers(0, 1, pBuffer.GetAddressOf(), &stride, &offset);
+    //printf("Binding DirectX11 Vertex buffer.\n");
   }
 
   ComPtr<ID3D11Buffer> pBuffer{};

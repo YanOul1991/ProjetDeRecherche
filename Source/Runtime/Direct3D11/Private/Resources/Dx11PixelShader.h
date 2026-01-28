@@ -4,9 +4,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-#include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Core/Graphics/Resource/IPixelShader.h"
 #include "Dx11RHI.h"
 
 class Dx11PixelShader final : public IPixelShader
