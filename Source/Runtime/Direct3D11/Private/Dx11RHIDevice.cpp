@@ -14,6 +14,7 @@
  * 
 ====================================================================================== */
 
+#include "Core/Object/Camera/Camera.h"
 #include "Core/Object/Image/Image.h"
 #include "Core/System/FileStream.h"
 #include "Core/System/Application.h"
@@ -21,10 +22,8 @@
 #include "Core/Exception/exception.h"
 #include "Core/Input/Input.h"
 
-#include "DirectX11Graphics.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
-
-#include "Core/Object/Camera/Camera.h"
+#include "Private/Dx11RHIDevice.h"
 
 #include <iostream>
 #include <sstream>
@@ -33,26 +32,24 @@
 
 #include "Core/_Temporary/InterfaceImGui.h"
 
-ID3D11Device*         DirectX11Graphics::deviceRef{nullptr};
-ID3D11DeviceContext*  DirectX11Graphics::contextRef{nullptr};
+ID3D11Device*           Dx11RHIDevice::deviceRef{nullptr};
+ID3D11DeviceContext*    Dx11RHIDevice::contextRef{nullptr};
+ID3D11RenderTargetView* Dx11RHIDevice::renderTargetView{nullptr};
 
-DirectX11Graphics::DirectX11Graphics() :
+Dx11RHIDevice::Dx11RHIDevice() :
   m_pSwapChain        { nullptr },
   m_pDevice           { nullptr },
   m_pContext          { nullptr },
   m_pRenderTargetView { nullptr }
 { }
 
-DirectX11Graphics::~DirectX11Graphics() 
+Dx11RHIDevice::~Dx11RHIDevice() 
 { }
 
-bool DirectX11Graphics::initialize(HWND _outputWindow)
+bool Dx11RHIDevice::initialize(HWND _outputWindow)
 {
   DXGI_SWAP_CHAIN_DESC swapChainDesc{};
-  // Empty Memory
   ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-
-  // Set Swap chain description -> DXGI_MODE_DESC
 
   swapChainDesc.BufferDesc.Width              = 1920;
   swapChainDesc.BufferDesc.Height             = 1080;
@@ -95,15 +92,15 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
     &m_pContext
   ));
 
-  // TEMPORARY - Set static fields for getting device and context
-  deviceRef = m_pDevice.Get();
-  contextRef = m_pContext.Get();
-  // 
-
   // Get pointer to backbuffer
   ComPtr<ID3D11Resource> _pBackbuffer;
   OPTIM_TRY_DX(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &_pBackbuffer));
   OPTIM_TRY_DX(m_pDevice->CreateRenderTargetView(_pBackbuffer.Get(), nullptr, &m_pRenderTargetView));
+
+  // TEMPORARY - Set static fields for getting device and context
+  deviceRef         = m_pDevice.Get();
+  contextRef        = m_pContext.Get();
+  renderTargetView  = m_pRenderTargetView.Get();
 
   /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++
       DEPTH BUFFER SETTING
@@ -145,18 +142,9 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   descDSV.Texture2D.MipSlice  = 0u;
 
   OPTIM_TRY_DX(m_pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &m_pDepthStencilView));
-
   // Bind depth stencil view
   m_pContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-
-  /// ////////////////////// TESTING
-
-
-  //printf("Loading allocating vertex and pixel buffer resources...\n");
   /*
-  _cubeMesh = createCubeMesh();
-  _cubeMesh.vertexBuffer.init(m_pDevice.Get());
-  _cubeMesh.indexBuffer.init(m_pDevice.Get());
   */
 
   /// ---------------------------------
@@ -169,23 +157,6 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   //printf("Loading allocating constant buffer resources...\n");
   __t_constBuffer.init(m_pDevice.Get());
 
-  /// ---------------------------------
-  /// SHADERS INITIALIZATION
-  /// ---------------------------------
-
-  //printf("Loading allocating shader resources...\n");
-  //_TEST_material.initializeMaterial(m_pDevice.Get(), TEXT("bin/VertexShader.cso"), TEXT("bin/PixelShader.cso"));
-
-  //Image img = Image();
-  //FileStream::readPngImage("images/jeff.png", img);
-
-  //printf("Loading allocating image resources...\n");
-  //_test_texture.allocResource(m_pDevice.Get(), &img);
-  //_test_texture.allocResource(m_pDevice.Get(), &img);
-
-  //printf("Loading allocating sampler resources...\n");
-  //_test_sampler.init(m_pDevice.Get());
-
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
   //matrix_perspective =  DirectX::XMMatrixPerspectiveRH(1.0f, 1080.0f / 1920.0f, 1.0f, 1000.0f);
@@ -194,29 +165,20 @@ bool DirectX11Graphics::initialize(HWND _outputWindow)
   return true;
 }
 
-void DirectX11Graphics::clearBuffer(float red, float green, float blue, float alpha) {
+void Dx11RHIDevice::clearBuffer(float red, float green, float blue, float alpha) {
   const float color[] = { red, green, blue, alpha };
   m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
   m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void DirectX11Graphics::renderUpdate()
+void Dx11RHIDevice::renderUpdate()
 {
-  /* 
-    RASTERIZER MINI CODE
-  */
   D3D11_RASTERIZER_DESC rsDesc{};
-  //rsDesc.FillMode = D3D11_FILL_WIREFRAME;
   rsDesc.FillMode = D3D11_FILL_SOLID;
-
   rsDesc.CullMode = D3D11_CULL_BACK;
-  //rsDesc.CullMode = D3D11_CULL_NONE;
-
   rsDesc.FrontCounterClockwise = TRUE;
-
   ComPtr<ID3D11RasterizerState> pRsState;
   m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
-
   m_pContext->RSSetState(pRsState.Get());
 
   DirectX::XMFLOAT3 position = {
@@ -261,10 +223,9 @@ void DirectX11Graphics::renderUpdate()
   vp.TopLeftY = 0;
 
   m_pContext->RSSetViewports(1u, &vp);
-  //m_pContext->DrawIndexed(2880, 0, 0);
 }
 
-void DirectX11Graphics::presentBuffer()
+void Dx11RHIDevice::presentBuffer()
 {
   InterfaceImGui::update();
 

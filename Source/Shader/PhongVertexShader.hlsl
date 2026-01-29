@@ -2,8 +2,8 @@
 
 cbuffer CBuf
 {
-  float4x4 transform;
-  float4x4 viewProj;
+  float4x4 transform; // The transform of the vertex
+  float4x4 viewProj;  // The viewprojection matrix
 };
 
 struct VSOut

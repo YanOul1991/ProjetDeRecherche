@@ -89,7 +89,8 @@ struct SDepthStencilDescription
     * PIPELINE DESCIRPTION
 ************************************** */
 
-struct SGraphicPipelineDesc {
+struct SPipelineDesc 
+{
   VertexShaderHandle        vertexShaderHandle;
   FragmentShaderHandle      fragmentShaderHandle;
   SRasterizerDescription    rasterizerDescription;

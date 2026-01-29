@@ -102,7 +102,9 @@ public:
   }
 
   /*
-   * Validates a handle.
+   * @brief
+   * DEPRECATED - Use validateHandle() instead.
+   * This function does not resource type
   */
   inline bool validate(ResourceHandle* pHandle) 
   {

@@ -4,13 +4,11 @@
 #include "Core/Graphics/Vertex.h"
 #include "Core/Object/Image/Image.h"
 
-/*
-enum class EResourceTypes : uint8 
+enum class EResourceCPUAccess
 {
-	vertexBuffer,
-	indexbuffer,
+	Read,
+	Write
 };
-*/
 
 /*
  * @brief
@@ -38,11 +36,17 @@ public:
 	CORE_API virtual void bindResource() = 0;
 };
 
+/*
+ * @brief
+ * CONSTANT DATA
+*/
 class IConstantBuffer : public IGraphicResource
 {
 public:
-	CORE_API ~IConstantBuffer() override
-	{}
+	CORE_API virtual ~IConstantBuffer() override{}
+	CORE_API virtual void createResource(EResourceCPUAccess cpuAccess, void* pInitalData, uint32 dataByteSize) = 0;
+	CORE_API virtual void update(void* data) = 0;
+	CORE_API virtual void bindResource() = 0;
 };
 
 class IVertexShader : public IGraphicResource 

@@ -28,42 +28,39 @@ struct VSInputLightBuffer
   float pad2;
 };
 
-class DirectX11Graphics final
+class Dx11RHIDevice final
 {
 public:
-  friend class Dx11RHI;
-
   static ID3D11Device* deviceRef;
   static ID3D11DeviceContext* contextRef;
+  static ID3D11RenderTargetView* renderTargetView;
 
-  DirectX11Graphics();
-  ~DirectX11Graphics();
+  Dx11RHIDevice();
+  ~Dx11RHIDevice();
 
   // No move or copy
-  DirectX11Graphics(const DirectX11Graphics&)             = delete;
-  DirectX11Graphics(const DirectX11Graphics&&)            = delete;
-  DirectX11Graphics& operator=(const DirectX11Graphics&)  = delete;
-  DirectX11Graphics& operator=(const DirectX11Graphics&&) = delete;
+  Dx11RHIDevice(const Dx11RHIDevice&)             = delete;
+  Dx11RHIDevice(const Dx11RHIDevice&&)            = delete;
+  Dx11RHIDevice& operator=(const Dx11RHIDevice&)  = delete;
+  Dx11RHIDevice& operator=(const Dx11RHIDevice&&) = delete;
 
   bool initialize(HWND _outputWindow);
   void presentBuffer();
   void clearBuffer(float red, float green, float blue, float alpha);
   void renderUpdate();
 
-private:
   ComPtr<ID3D11Device>            m_pDevice;
   ComPtr<IDXGISwapChain>          m_pSwapChain;
   ComPtr<ID3D11DeviceContext>     m_pContext;
   ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
   ComPtr<ID3D11DepthStencilView>  m_pDepthStencilView;
 
+private:
   /// TEST FIELDS
   DirectX::XMMATRIX matrix_perspective{};
   DirectX::XMMATRIX matrix_camera{};
 
   ConstantBuffer<VSInputConstantBuffer> __t_constBuffer{};
-
-  uint32 drawCallIndexCount{0};
 
   friend Dx11RHI;
 };

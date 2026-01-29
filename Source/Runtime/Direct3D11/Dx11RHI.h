@@ -21,19 +21,22 @@
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Graphics/IGraphicsRHI.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
+
+//#include "Private/Dx11RHIDevice.h"
+
 #include <iostream>
 #include <vector>
 
-class DirectX11Graphics;
+class Dx11RHIDevice;
 
 enum class ECommandType {
-  bindPipeline,
+  BindPipeline,
   bindVertexBuffer,
   bindIndexBuffer,
   bindTexture,
   drawIndexed,
-
-  BindVertexShader
+  BindVertexShader,
+  BindFragmentShader
 };
 
 struct SCommand {
@@ -75,8 +78,9 @@ public:
 class Dx11RHI final : public IGraphicsRHI 
 {
 public:
-  static ID3D11Device* getDevicePtr();
-  static ID3D11DeviceContext* getContextPtr();
+  static ID3D11Device*            getDevicePtr();
+  static ID3D11DeviceContext*     getContextPtr();
+  static ID3D11RenderTargetView*  getRenderTargetView();
 
   Dx11RHI();
   ~Dx11RHI() override final;
@@ -89,16 +93,19 @@ public:
   IVertexBuffer*    createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) override final;
   IIndexBuffer*     createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) override final;
   IVertexShader*    createVertexShader(const wchar* path) override final;
+  IPixelShader*     createPixelShader(const wchar* path) override final;
   */
 
-  IPixelShader*     createPixelShader(const wchar* path) override final;
   ITextureResource* createTextureResource(const Image* pImage) override final;
   ISampler*         createSamplerResource() override final;
 
+  /*
   virtual void bindVertexBuffer(IVertexBuffer* pVertexBuffer) override final;
   virtual void bindIndexBuffer(IIndexBuffer* pIndexBuffer) override final;
   virtual void bindVertexShader(IVertexShader* pVertexShader) override final;
   virtual void bindPixelShader(IPixelShader* pPixelShader) override final;
+  */
+
   virtual void bindTexture(ITextureResource* pTexture) override final;
   virtual void bindSampler(ISampler* pSampler) override final;
 
@@ -107,19 +114,23 @@ public:
   virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
   virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
   virtual VertexShaderHandle createVertexShader(const char* path) override final;
+  virtual FragmentShaderHandle createFragmentShader(const char* path) override final;
+  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) override final;
 
+  virtual void cmdBindPipeline(PipelineHandle* pPipeline) override final;
   virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) override final;
   virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) override final;
   virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) override final;
-
+  virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) override final;
   virtual void cmdDrawIndexed(uint32 indexCount) override final;
+
   virtual void excecuteCommands() override final;
 
   virtual void freeResource(ResourceHandle handle) override final;
 
 private:
   void* m_hTargetWindow;      // Target Window.
-  DirectX11Graphics* m_pBase;  
+  Dx11RHIDevice* pDx11RHIDevice;  
   static CommandBuffer cmdBuffer;
 };
 

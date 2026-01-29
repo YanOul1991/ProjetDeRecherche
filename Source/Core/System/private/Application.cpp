@@ -29,27 +29,16 @@
 #include "Core/System/ModelLoader.h"
 #include "Core/System/Application.h"
 
-//#include <iostream>
-//#include <sstream>
-//#include <format>
-//#include <memory>
-//#include <fstream>
-//#include <string>
-//#include "Core/Input/Input.h"
-
-/* #########################
-    LOCAL TESTING FIELDS
-######################### */
-
-static IVertexShader*       _TEST_pVertexShader{};
-static IPixelShader*        _TEST_pPixelShader{};
-static ITextureResource*    _TEST_pTextureResource{};
-static ISampler*            _TEST_pSampler{};
+static ITextureResource*    _TEST_pTextureResource  {};
+static ISampler*            _TEST_pSampler          {};
 
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
 static UniquePtr<SystemWindow>      g_uptrSystemWindow{};
 
-static VertexShaderHandle _handle_vertexShader{};
+static PipelineHandle   _handlePipeline{};
+
+static VertexShaderHandle     _handle_vertexShader{};
+static FragmentShaderHandle   _handle_fragmentShader{};
 
 extern "C" CORE_API Application* CreateApplicationProc() {
   return new Application;
@@ -85,17 +74,29 @@ void Application::Quit()
 void Application::ApplicationStart()
 {
   try {
+    // Load system window.
+    // Load graphics then display the window.
     g_uptrSystemWindow.init();
     g_uptrSystemWindow->initialize("Optim Engine");
     Graphics::initalize();
     g_uptrSystemWindow->showWindow();
 
-    /*
-     * OLD POINTER SYSTEM FOR RESOURCE CREATION
-    */
+    // >>>>>>>>>>> TO DO <<<<<<<<<<< 
+    // 
+    // Load the vertex and fragment/pixel shaders.
+    // For now they are hard coded, eventually will 
+    // try to implement Material system, to create 
+    // shaders dynamically and give them to a mesh 
+    // at runtime.
+    _handle_vertexShader    = Graphics::RHI()->createVertexShader("bin/PhongVertexShader.cso");
+    _handle_fragmentShader  = Graphics::RHI()->createFragmentShader("bin/PhongPixelShader.cso");
 
-    _handle_vertexShader = Graphics::RHI()->createVertexShader("bin/PhongVertexShader.cso");
-    _TEST_pPixelShader  = Graphics::RHI()->createPixelShader(TEXT("bin/PhongPixelShader.cso"));
+    SPipelineDesc pipelineDesc{
+      .vertexShaderHandle = _handle_vertexShader,
+      .fragmentShaderHandle = _handle_fragmentShader
+    };
+
+    _handlePipeline =  Graphics::RHI()->createPipeline(&pipelineDesc);
 
     // Load image for texture
     Image srcImage;
@@ -134,17 +135,26 @@ void Application::ApplicationLoop()
       return;
     }
 
-    Graphics::RHI()->bindPixelShader(_TEST_pPixelShader);
+    //Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
+
     Graphics::RHI()->bindTexture(_TEST_pTextureResource);
     Graphics::RHI()->bindSampler(_TEST_pSampler);
-
     Graphics::RHI()->cmdBindVertexShader(&_handle_vertexShader);
+    Graphics::RHI()->cmdBindFragmentShader(&_handle_fragmentShader);
 
+    // >>>>>>>>>>> TO DO <<<<<<<<<<< 
+    // 
+    // For now application iterates through all active meshes to bind
+    // their vertex and index buffers to the command buffer.
+    // Eventually it will instead iterate through active objects in scene,
+    // which will also allow to iterate through their materials.
     for (int i = 0; i < _list_meshes.size(); i++) {
       Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
       Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
       Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
     }
+
+    // Execute the commands afters binding all the appropriate ones.
     Graphics::RHI()->draw();
 
     __now         = op::time::nowHighFreq();

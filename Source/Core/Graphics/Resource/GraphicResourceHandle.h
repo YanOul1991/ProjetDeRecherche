@@ -4,6 +4,7 @@
 
 enum class EResourceTypes : uint8 
 {
+	Pipeline,
 	vertexBuffer,
 	indexbuffer,
 	VertexShader,

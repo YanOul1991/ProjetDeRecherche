@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Dx11RHI.h" />
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.h">
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHIDevice.h">
       <Filter>Private</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h">
@@ -45,7 +45,7 @@
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHI.cpp">
       <Filter>Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\DirectX11Graphics.cpp">
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHIDevice.cpp">
       <Filter>Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceManagement.cpp">
