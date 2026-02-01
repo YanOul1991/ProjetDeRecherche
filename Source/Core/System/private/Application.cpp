@@ -39,8 +39,11 @@
 
 static ITextureResource*    _TEST_pTextureResource  {};
 static ISampler*            _TEST_pSampler          {};
+
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
 static UniquePtr<SystemWindow>      g_uptrSystemWindow{};
+
+static Mesh _worldGridMesh{};
 
 static PipelineHandle         _handlePipeline{};
 static PipelineHandle         _handlePipelineWirframeView{};
@@ -122,7 +125,9 @@ void Application::ApplicationStart()
         .depthTestEnabled = true,
         .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
         .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll
-      }
+      },
+
+      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
     };
 
     _handlePipeline = Graphics::RHI()->createPipeline(&pipelineDesc);
@@ -135,18 +140,20 @@ void Application::ApplicationStart()
       .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/WireframePS.cso"),
 
       .rasterizerDescription = {
-        .fillMode             = ERasterizerFillMode::Wireframe,
-        .cullMode             = ERasterizerCullMode::Back,
+        .fillMode             = ERasterizerFillMode::Solid,
+        .cullMode             = ERasterizerCullMode::None,
         .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-        .depthBias            = -1,
-        .slopeScaledDepthBias = -1.0f
+        .depthBias            = 0,
+        .slopeScaledDepthBias = 0
       },
 
       .depthStencilDescription = {
         .depthTestEnabled         = true,
         .depthComparisonFunction  = EDepthStencilComparisonFunction::Less,
-        .depthWriteMask           = EDepthStencilDepthWriteMask::WriteNone,
-      }
+        .depthWriteMask           = EDepthStencilDepthWriteMask::WriteAll,
+      },
+
+      .primitiveTopology = EPipelinePrimitiveTopology::LineList
     };
     _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
 
@@ -170,7 +177,9 @@ void Application::ApplicationStart()
         .depthTestEnabled         = true,
         .depthComparisonFunction  = EDepthStencilComparisonFunction::Less,
         .depthWriteMask           = EDepthStencilDepthWriteMask::WriteNone,
-      }
+      },
+
+      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
     };
     _handlePipelineOutline = Graphics::RHI()->createPipeline(&l_outlinePipelineDesc);
 
@@ -184,6 +193,20 @@ void Application::ApplicationStart()
 
     // Create sampler resource
     _TEST_pSampler = Graphics::RHI()->createSamplerResource();
+
+    _worldGridMesh = Mesh::createWorldGrid();
+
+    //for (int i = 0; i < 12; i++) {
+    //  _worldGridMesh.vertices[i].print();
+    //}
+
+    //printf("World grid index count %d\n", _worldGridMesh.indexCount);
+
+    //printf("World grid vertex count %d\n", _worldGridMesh.vertexCount);
+
+    _worldGridMesh.vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(_worldGridMesh.vertices, _worldGridMesh.vertexCount);
+    _worldGridMesh.indexBufferHandle = Graphics::RHI()->createResourceIndexBuffer(_worldGridMesh.indices, _worldGridMesh.indexCount);
+
     m_shouldRun = true;
   }
   catch (const Exception& e) {
@@ -232,8 +255,12 @@ void Application::ApplicationLoop()
       Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
     }
 
-    /*
     Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
+    Graphics::RHI()->cmdBindVertexBuffer(&_worldGridMesh.vertexBufferHandle);
+    Graphics::RHI()->cmdBindIndexBuffer(&_worldGridMesh.indexBufferHandle);
+    Graphics::RHI()->cmdDrawIndexed(_worldGridMesh.indexCount);
+
+    /*
     for (int i = 0; i < _list_meshes.size(); i++) {
       Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
       Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);

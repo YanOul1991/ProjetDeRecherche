@@ -21,7 +21,7 @@ class IGraphicsRHI
 {
 public:
   CORE_API virtual ~IGraphicsRHI() {};
-  CORE_API virtual void Initialize(void* _WindowHandle) = 0;
+  CORE_API virtual void Initialize(void* pWindowHandle) = 0;
   CORE_API virtual void draw() = 0;
   CORE_API virtual void Clean() = 0;
 
@@ -38,8 +38,7 @@ public:
    * @return
    * A handle to the graphique resource.
   */
-  CORE_API virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
-
+  CORE_API virtual VertexBufferHandle   createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
   /*
    * @brief
    * Creates and allocates an index buffer resources on the GPU.
@@ -53,15 +52,15 @@ public:
    * @return
    * A handle to the graphique resource.
   */
-  CORE_API virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
-
-  CORE_API virtual VertexShaderHandle createVertexShader(const char* path) = 0;
-
+  CORE_API virtual IndexBufferHandle    createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
+  CORE_API virtual VertexShaderHandle   createVertexShader(const char* path) = 0;
   CORE_API virtual FragmentShaderHandle createFragmentShader(const char* path) = 0;
+  CORE_API virtual PipelineHandle       createPipeline(SPipelineDesc* pPipelineDesc) = 0;
+  CORE_API virtual DepthRTHandle        createDepthRT() = 0;
+  CORE_API virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) = 0;
 
-  CORE_API virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
 
-  CORE_API virtual DepthRTHandle createDepthRT() = 0;
+  CORE_API virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
 
   /*
    * @brief
@@ -81,7 +80,6 @@ public:
    * A pointer to a VertexBufferHandle object.
   */
   CORE_API virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) = 0;
-
 
   /*
    * @brief 
@@ -116,24 +114,14 @@ public:
   */
   CORE_API virtual void excecuteCommands() = 0;
 
-  /*
-   * OLD RESOURCE CREATION SYSTEM
-   * 
-  CORE_API virtual IVertexBuffer*     createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) = 0;
-  CORE_API virtual IIndexBuffer*      createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) = 0;
-  CORE_API virtual IVertexShader*     createVertexShader(const wchar* path) = 0;
-  CORE_API virtual IPixelShader*      createPixelShader(const wchar* path) = 0;
-  */
-  CORE_API virtual ITextureResource*  createTextureResource(const Image* pImage) = 0;
-  CORE_API virtual ISampler*          createSamplerResource() = 0;
+  CORE_API virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) = 0;
 
   /*
-   * OLD BINDING SYSTEM
-  CORE_API virtual void bindVertexBuffer(IVertexBuffer* pVertexBuffer) = 0;
-  CORE_API virtual void bindIndexBuffer(IIndexBuffer* pIndexBuffer) = 0;
-  CORE_API virtual void bindVertexShader(IVertexShader* pVertexShader) = 0;
-  CORE_API virtual void bindPixelShader(IPixelShader* pPixelShader) = 0;
+  * OLD SYSTEMS TO BE UPDATED SOON
   */
+
+  CORE_API virtual ITextureResource* createTextureResource(const Image* pImage) = 0;
+  CORE_API virtual ISampler* createSamplerResource() = 0;
   CORE_API virtual void BindTexture(ITextureResource* pTexture) = 0;
   CORE_API virtual void bindSampler(ISampler* pSampler) = 0;
 };

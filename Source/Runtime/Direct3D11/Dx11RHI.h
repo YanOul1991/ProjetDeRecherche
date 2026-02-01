@@ -37,7 +37,8 @@ enum class ECommandType {
   DrawIndexed,
   BindVertexShader,
   BindFragmentShader,
-  SetRenderTargets
+  SetRenderTargets,
+  BindConstantBuffer
 };
 
 struct SCommand {
@@ -90,17 +91,20 @@ public:
   void Clean() override final;
 
   ITextureResource* createTextureResource(const Image* pImage) override final;
-  ISampler* createSamplerResource() override final;
+  ISampler*         createSamplerResource() override final;
 
   virtual void BindTexture(ITextureResource* pTexture) override final;
   virtual void bindSampler(ISampler* pSampler) override final;
 
-  virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
-  virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
-  virtual VertexShaderHandle createVertexShader(const char* path) override final;
-  virtual FragmentShaderHandle createFragmentShader(const char* path) override final;
-  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) override final;
-  virtual DepthRTHandle createDepthRT() override final;
+  virtual VertexBufferHandle    createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
+  virtual IndexBufferHandle     createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+  virtual VertexShaderHandle    createVertexShader(const char* path) override final;
+  virtual FragmentShaderHandle  createFragmentShader(const char* path) override final;
+  virtual PipelineHandle        createPipeline(SPipelineDesc* pPipelineDesc) override final;
+  virtual DepthRTHandle         createDepthRT() override final;
+  virtual ConstantBufferHandle  createConstantBuffer(uint64 objectByteSize) override final;
+
+  virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) override final;
 
   virtual void cmdBindPipeline(PipelineHandle* pPipeline) override final;
   virtual void cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle) override final;
@@ -110,6 +114,7 @@ public:
   virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) override final;
   virtual void cmdDrawIndexed(uint32 indexCount) override final;
 
+  virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) override final;
 
   virtual void excecuteCommands() override final;
   virtual void freeResource(ResourceHandle handle) override final;

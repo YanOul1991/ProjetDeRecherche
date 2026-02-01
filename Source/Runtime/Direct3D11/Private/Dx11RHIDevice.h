@@ -12,20 +12,18 @@
 #include "Direct3D11/Dx11RHI.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
 
-#include <vector>
-
 struct VSInputConstantBuffer 
 {
-  DirectX::XMFLOAT4X4 transform;  
-  DirectX::XMFLOAT4X4 worldView;  
+  DirectX::XMFLOAT4X4 transform;  // Transform of mesh object
+  DirectX::XMFLOAT4X4 worldView;  // Camera view matrix
 };
 
 class Dx11RHIDevice final
 {
 public:
-  static ID3D11Device* deviceRef;
-  static ID3D11DeviceContext* contextRef;
-  static ID3D11RenderTargetView* renderTargetView;
+  static ID3D11Device*            deviceRef;
+  static ID3D11DeviceContext*     contextRef;
+  static ID3D11RenderTargetView*  renderTargetView;
 
   Dx11RHIDevice();
   ~Dx11RHIDevice();
@@ -36,9 +34,9 @@ public:
   Dx11RHIDevice& operator=(const Dx11RHIDevice&)  = delete;
   Dx11RHIDevice& operator=(const Dx11RHIDevice&&) = delete;
 
-  bool initialize(HWND _outputWindow);
-  void presentBuffer();
-  void clearBuffer(float red, float green, float blue, float alpha);
+  bool initialize(HWND _outputWindow, Dx11RHI* pDx11RHI);
+  void presentBuffer() const;
+  void clearBuffer(float red, float green, float blue, float alpha) const;
   void renderUpdate();
 
   ComPtr<ID3D11Device>            m_pDevice;
@@ -49,10 +47,13 @@ public:
 
 private:
   /// TEST FIELDS
-  DirectX::XMMATRIX matrix_perspective{};
-  DirectX::XMMATRIX matrix_camera{};
+  DirectX::XMMATRIX matrix_perspective{}; // Camera Perspective matrix
+  DirectX::XMMATRIX matrix_camera{};      // Camera World Space Transform
 
-  ConstantBuffer<VSInputConstantBuffer> __t_constBuffer{};
+  ConstantBufferHandle  constantBufferTransformView{};
+  VSInputConstantBuffer vsInputConstBufferData{};
+
+  Dx11RHI* pDxRHI{};
 
   friend Dx11RHI;
 };

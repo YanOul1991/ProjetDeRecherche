@@ -12,13 +12,14 @@
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Runtime/Direct3D11/Dx11RHI.h"
 
+/*
 class IDirectX11Buffer
 {
 public:
   virtual ~IDirectX11Buffer() {}
 
   virtual void init(ID3D11Device* pDevice)         = 0;
-  virtual void bind(ID3D11DeviceContext* pContext) = 0;
+  virtual void bindResource(ID3D11DeviceContext* pContext) = 0;
 
   ComPtr<ID3D11Buffer> pBuffer;
   int32   bufferByteSize  { 0 };
@@ -65,7 +66,7 @@ public:
     //printf("Element at 0x%p is a Constant buffer resource\n", this);
   }
 
-  inline void bind(ID3D11DeviceContext* pContext) override { 
+  inline void bindResource(ID3D11DeviceContext* pContext) override { 
     pContext->VSSetConstantBuffers(0, 1, pBuffer.GetAddressOf());
   }
 
@@ -78,6 +79,42 @@ public:
 
   T data{};
 };
+*/
+
+class Dx11ConstantBuffer
+{
+public:
+  inline Dx11ConstantBuffer(ID3D11Device* pDevice, uint64 param_structByteSize)
+  {
+    byteSize = param_structByteSize;
+    D3D11_BUFFER_DESC desc{};
+
+    desc.ByteWidth        = param_structByteSize;
+    desc.Usage            = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+    desc.BindFlags        = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
+    desc.CPUAccessFlags   = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+    desc.MiscFlags        = 0;
+
+    pDevice->CreateBuffer(&desc, nullptr, &pBuffer);
+  }
+
+  inline void bindResource(ID3D11DeviceContext* pContext)
+  {
+    pContext->VSSetConstantBuffers(0, 1, pBuffer.GetAddressOf());
+  }
+
+  inline void update(ID3D11DeviceContext* pContext, void* param_pNewData) const
+  {
+    D3D11_MAPPED_SUBRESOURCE mapped{};
+    pContext->Map(pBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+    memcpy(mapped.pData, param_pNewData, byteSize);
+    pContext->Unmap(pBuffer.Get(), 0);
+  }
+
+  uint64 byteSize{};
+  ComPtr<ID3D11Buffer> pBuffer{};
+};
+
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++
 // ++++++++++++++++++++++++++++++++++++++++++++++++
@@ -96,24 +133,20 @@ public:
     l_dsDesc.DepthFunc      = static_cast<D3D11_COMPARISON_FUNC>(static_cast<int32>(param_pDepthStencilDesc->depthComparisonFunction) + 1);
     l_dsDesc.StencilEnable  = FALSE;
 
-    /*
-    if (param_pDepthStencilDesc->depthWriteMask == EDepthStencilDepthWriteMask::WriteAll) {
-      l_dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    }
-    else {
-      l_dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    }
-    */
     OPTIM_TRY_DX(pDevice->CreateDepthStencilState(&l_dsDesc, &pState));
   }
 
-  inline void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView)
+  inline void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const
   {
     pContext->OMSetDepthStencilState(pState.Get(), 1);
   }
 
   ComPtr<ID3D11DepthStencilState> pState{};
 };
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++
 
 class Dx11DepthStencilViewTexture
 {
@@ -148,7 +181,7 @@ public:
     OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pView));
   }
 
-  void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView)
+  void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const
   {
     pContext->OMSetRenderTargets(1, ppRenderTargetView, pView.Get());
   }
@@ -182,12 +215,12 @@ public:
     rastDesc.DepthClipEnable        = TRUE;
     rastDesc.ScissorEnable          = FALSE;
     rastDesc.MultisampleEnable      = FALSE;
-    rastDesc.AntialiasedLineEnable  = FALSE;
+    rastDesc.AntialiasedLineEnable  = TRUE;
 
     Dx11RHI::getDevicePtr()->CreateRasterizerState(&rastDesc, &pRasterizer);
   }
 
-  void bind()
+  void bindResource()
   {
     Dx11RHI::getContextPtr()->RSSetState(pRasterizer.Get());
   }

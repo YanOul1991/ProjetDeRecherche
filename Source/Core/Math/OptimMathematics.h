@@ -9,6 +9,8 @@
 
 #include "Core/OptimEngine.h"
 #include "math.h"
+#include <cstdlib>
+#include <cstdio>
 
 namespace mathConst {
 
@@ -28,9 +30,9 @@ struct UVCoord {
 };
 
 struct float3 {
-	float x;
-	float y;
-	float z;
+	float x{0};
+	float y{0};
+	float z{0};
 };
 
 
@@ -55,6 +57,24 @@ struct float4x4 {
 	float m21; float m22; float m23; float m24;
 	float m31; float m32; float m33; float m34;
 	float m41; float m42; float m43; float m44;
+
+	inline void printMatrix() const
+	{
+		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m11, m12, m13, m14);
+		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m21, m22, m23, m24);
+		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m31, m32, m33, m34);
+		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m41, m42, m43, m44);
+	}
+
+	inline float4x4 transpose()
+	{
+		return {
+			m11, m21, m31, m41,
+			m12, m22, m32, m42,
+			m13, m23, m33, m43,
+			m14, m24, m34, m44,
+		};
+	}
 };
 
 

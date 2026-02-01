@@ -7,17 +7,11 @@
     <Filter Include="Private\Resources">
       <UniqueIdentifier>{1ec423ef-f21d-4faa-a1a8-31328daf3be6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Private\Resources\Buffers">
-      <UniqueIdentifier>{380757de-66fe-42cc-9c13-8cdbc13fbebf}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Dx11RHI.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHIDevice.h">
       <Filter>Private</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h">
-      <Filter>Private\Resources\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexShader.h">
       <Filter>Private\Resources</Filter>
@@ -39,6 +33,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceManagement.h">
       <Filter>Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h">
+      <Filter>Private\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

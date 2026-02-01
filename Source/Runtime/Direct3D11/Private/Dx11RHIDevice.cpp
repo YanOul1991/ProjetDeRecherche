@@ -41,13 +41,14 @@ Dx11RHIDevice::Dx11RHIDevice() :
   m_pDevice           { nullptr },
   m_pContext          { nullptr },
   m_pRenderTargetView { nullptr }
-{ }
+{}
 
 Dx11RHIDevice::~Dx11RHIDevice() 
 { }
 
-bool Dx11RHIDevice::initialize(HWND _outputWindow)
+bool Dx11RHIDevice::initialize(HWND _outputWindow, Dx11RHI* param_pDx11RHI)
 {
+
   DXGI_SWAP_CHAIN_DESC swapChainDesc{};
   ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
@@ -102,57 +103,13 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow)
   contextRef        = m_pContext.Get();
   renderTargetView  = m_pRenderTargetView.Get();
 
-
-  /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      DEPTH BUFFER SETTING
-  +++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-  /*
-  // Create Depth stencil state
-  D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-  dsDesc.DepthEnable    = TRUE;
-  dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-  dsDesc.DepthFunc      = D3D11_COMPARISON_LESS_EQUAL;
-
-  ComPtr<ID3D11DepthStencilState> pDepthStencilState;
-  OPTIM_TRY_DX(m_pDevice->CreateDepthStencilState(&dsDesc, &pDepthStencilState));
-
-  // Bind depth state | OM -> Output Merger 
-  m_pContext->OMSetDepthStencilState(pDepthStencilState.Get(), 1);
-
-  // Create depth stencil texture
-  ComPtr<ID3D11Texture2D> pDepthStencil;
-  D3D11_TEXTURE2D_DESC depthDesc = {};
-  depthDesc.Width       = 1920;
-  depthDesc.Height      = 1080;
-  depthDesc.MipLevels   = 1u;
-  depthDesc.ArraySize   = 1u;
-  depthDesc.Format      = DXGI_FORMAT_D32_FLOAT; // D32_FLOAT -> Depth 32bit floating point value
-  depthDesc.Usage       = D3D11_USAGE_DEFAULT;
-  depthDesc.BindFlags   = D3D11_BIND_DEPTH_STENCIL;
-
-  depthDesc.SampleDesc.Count    = 1;
-  depthDesc.SampleDesc.Quality  = 0;
-
-  OPTIM_TRY_DX(m_pDevice->CreateTexture2D(&depthDesc, nullptr, &pDepthStencil));
-
-  // Create view of depth stencil texture
-  D3D11_DEPTH_STENCIL_VIEW_DESC descDSV{};
-
-  descDSV.Format              = DXGI_FORMAT_D32_FLOAT;
-  descDSV.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D;
-  descDSV.Texture2D.MipSlice  = 0u;
-
-  OPTIM_TRY_DX(m_pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &m_pDepthStencilView));
-  // Bind depth stencil view
-  m_pContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-  */
-
   /// ---------------------------------
-  /// CONSTANT BUFFER INITIALIZATION
+  /// Transform and view matrices constant buffer initalization
   /// ---------------------------------
+  pDxRHI = param_pDx11RHI;
+  constantBufferTransformView = pDxRHI->createConstantBuffer(sizeof(VSInputConstantBuffer));
   
-  __t_constBuffer.init(m_pDevice.Get());
+  //__t_constBuffer.init(m_pDevice.Get());
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
@@ -162,10 +119,15 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow)
   return true;
 }
 
-void Dx11RHIDevice::clearBuffer(float red, float green, float blue, float alpha) {
-  const float color[] = { red, green, blue, alpha };
+void Dx11RHIDevice::clearBuffer(float red, float green, float blue, float alpha) const {
+  const float color[4] = { 
+    red, 
+    green, 
+    blue, 
+    alpha 
+  };
+
   m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
-  //m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void Dx11RHIDevice::renderUpdate()
@@ -192,14 +154,14 @@ void Dx11RHIDevice::renderUpdate()
     DirectX::XMLoadFloat3(&up)
   );
 
-  m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  //m_pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);s
 
-  DirectX::XMStoreFloat4x4(&__t_constBuffer.data.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
-  DirectX::XMStoreFloat4x4(&__t_constBuffer.data.worldView, DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective));
+  DirectX::XMStoreFloat4x4(&vsInputConstBufferData.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
+  DirectX::XMStoreFloat4x4(&vsInputConstBufferData.worldView, DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective));
 
-  // Update constant buffer and bind
-  __t_constBuffer.update(m_pContext.Get());
-  __t_constBuffer.bind(m_pContext.Get());
+  // Update constant buffer for camera view and for now also the transform for the mesh object as its always assumed to be 0
+  pDxRHI->updateConstantBuffer(&constantBufferTransformView, &vsInputConstBufferData);
+  pDxRHI->cmdBindConstantBuffer(&constantBufferTransformView);
 
   // Configure Viewport
   D3D11_VIEWPORT vp{};
@@ -214,7 +176,7 @@ void Dx11RHIDevice::renderUpdate()
   m_pContext->RSSetViewports(1u, &vp);
 }
 
-void Dx11RHIDevice::presentBuffer()
+void Dx11RHIDevice::presentBuffer() const
 {
   InterfaceImGui::update();
 

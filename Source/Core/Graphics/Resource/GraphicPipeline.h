@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Core/Graphics/Resource/GraphicResourceHandle.h"
+//#include "Core/Graphics/Resource/GraphicResourceHandle.h"
 
-enum class EPipelinePrimitiveTopologyType : unsigned char {
+enum class EPipelinePrimitiveTopology : unsigned char {
+  Undefined,
+  PointList,
+  LineList,
+  LineStrip,
   TriangleList,
-  LineList
+  TriangleStrip,
 };
 
 enum class EPipelineVertexLayout : unsigned char {
@@ -90,10 +94,11 @@ struct SDepthStencilDescription
 
 struct SPipelineDesc 
 {
-  VertexShaderHandle        vertexShaderHandle;
-  FragmentShaderHandle      fragmentShaderHandle;
-  SRasterizerDescription    rasterizerDescription;
-  SDepthStencilDescription  depthStencilDescription;
+  VertexShaderHandle          vertexShaderHandle{};
+  FragmentShaderHandle        fragmentShaderHandle{};
+  SRasterizerDescription      rasterizerDescription{};
+  SDepthStencilDescription    depthStencilDescription{};
+  EPipelinePrimitiveTopology  primitiveTopology{};
 };
 
 //struct IGraphicsPipeline{};

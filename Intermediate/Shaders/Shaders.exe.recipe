@@ -7,6 +7,12 @@
   </ProjectOutputs>
   <ContentFiles>
     <ContentFile>
+      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\OutlinePS.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\OutlineVS.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
       <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\PhongPixelShader.cso</FullPath>
     </ContentFile>
     <ContentFile>

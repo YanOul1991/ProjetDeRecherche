@@ -9,13 +9,11 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Math/OptimMathematics.h"
-//#include "Core/Graphics/Graphics.h"
 #include "Core/Graphics/Vertex.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
 #include "Core/System/FileStream.h"
 #include "Core/Object/Object.h"
-
 
 #include <iostream>
 #include <fstream>
@@ -40,8 +38,8 @@ public:
 	uint32	vertexCount	{};
 	uint32	indexCount	{};
 
-	VertexBufferHandle vertexBufferHandle	{};
-	IndexBufferHandle indexBufferHandle		{};
+	VertexBufferHandle	vertexBufferHandle	{};
+	IndexBufferHandle		indexBufferHandle		{};
 
 	/*
 	* @brief
@@ -429,5 +427,55 @@ public:
 		instance.indices = indexData;
 
 		return instance;
+	}
+
+	/*
+	 * @brief
+	 * Mesh from world grid 
+	*/
+	static inline Mesh createWorldGrid()
+	{
+		Mesh ret_mesh;
+		float l_dist = 1.0f;
+		float l_span = 100.0f;
+		int		l_lineCount = ((l_span * 2) / l_dist) - 1;
+		int		l_vertexCount = l_lineCount * 4;
+
+		Vertex* l_pVertices = new Vertex[l_vertexCount];
+		uint32* l_pIndices	= new uint32[l_vertexCount];
+
+		float l_pos = -l_span + l_dist;
+
+		for (int32 i = 0; i < l_lineCount; i++) {
+			// VERTICAL GRID LINES
+			l_pVertices[i * 2].position = {
+				-l_span, 0, l_pos
+			};
+			l_pVertices[i * 2 + 1].position = {
+				l_span, 0, l_pos
+			};
+
+			// HORIZONTAL GRID LINES
+			l_pVertices[(l_lineCount * 2) + (i * 2)].position = {
+				l_pos, 0, -l_span
+			};
+			l_pVertices[(l_lineCount * 2) + (i * 2 + 1)].position = {
+				l_pos, 0, l_span
+			};
+
+			// Increment distances
+			l_pos += l_dist;
+		}
+
+		for (int32 i = 0; i < l_vertexCount; i++) {
+			l_pIndices[i] = i;
+		}
+
+		ret_mesh.vertexCount	= l_vertexCount;
+		ret_mesh.indexCount		= l_vertexCount;
+		ret_mesh.vertices			= l_pVertices;
+		ret_mesh.indices			= l_pIndices;
+
+		return ret_mesh;
 	}
 };
