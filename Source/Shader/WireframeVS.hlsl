@@ -25,6 +25,8 @@ VSOut main(float3 pos : POSITION, float2 tex : TEXCOORD, float3 normal : NORMAL)
   vso.norm = mul(float4(normal, 0), transform).xyz;
   
   // The position of the model's vertices from the camera perspective (position in screen space)
+  // vso.pos = mul(float4(pos + (normalize(normal) * 0.01f), 1.0f), mul(transform, viewProj));
+  // vso.pos.xy += normalize(pos.xy) * 0.01f * vso.pos.w;
   vso.pos = mul(float4(pos, 1.0f), mul(transform, viewProj));
   
   vso.tex = tex;

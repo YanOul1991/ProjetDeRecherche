@@ -90,98 +90,29 @@ public:
   {
     HRESULT hr{ S_OK };
 
-    /* ////////////////////////////////////
-     * DEPTH STENCIL STATE CREATION
-    //////////////////////////////////// */
     D3D11_DEPTH_STENCIL_DESC l_dsDesc{};
+    l_dsDesc.DepthEnable    = param_pDepthStencilDesc->depthTestEnabled;
+    l_dsDesc.DepthWriteMask = static_cast<D3D11_DEPTH_WRITE_MASK>(static_cast<int32>(param_pDepthStencilDesc->depthWriteMask));
+    l_dsDesc.DepthFunc      = static_cast<D3D11_COMPARISON_FUNC>(static_cast<int32>(param_pDepthStencilDesc->depthComparisonFunction) + 1);
+    l_dsDesc.StencilEnable  = FALSE;
 
-    l_dsDesc.DepthEnable = static_cast<bool>(param_pDepthStencilDesc->depthTestEnabled);
-
+    /*
     if (param_pDepthStencilDesc->depthWriteMask == EDepthStencilDepthWriteMask::WriteAll) {
       l_dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     }
     else {
       l_dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
     }
-
-    l_dsDesc.DepthFunc = (D3D11_COMPARISON_FUNC)(((int32)param_pDepthStencilDesc->depthComparisonFunction) + 1);
-
-    /*
-    switch (param_pDepthStencilDesc->depthComparaisonFunction) {
-      case EDepthStencilComparaisonFunction::Never: {
-        l_dsDesc.DepthFunc = D3D11_COMPARISON_NEVER;
-        break;
-      }
-      case EDepthStencilComparaisonFunction::Less: {
-        l_dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-        break;
-      }
-      case EDepthStencilComparaisonFunction::LessOrEqual: {
-        l_dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-        break;
-      }
-      case EDepthStencilComparaisonFunction::Equal: {
-        l_dsDesc.DepthFunc = D3D11_COMPARISON_EQUAL;
-        break;
-      }
-      case EDepthStencilComparaisonFunction::Greater: {
-        l_dsDesc.DepthFunc = D3D11_COMPARISON_GREATER;
-        break;
-      }
-      case EDepthStencilComparaisonFunction::GreaterOrEqual: {
-        l_dsDesc.DepthFunc = D3D11_COMP
-      }
-      default: {
-        break;
-      }
-    } // END OF SWITCH CASE
     */
-
-    //l_dsDesc.DepthFunc      = D3D11_COMPARISON_LESS;
-    l_dsDesc.StencilEnable  = FALSE;
-
     OPTIM_TRY_DX(pDevice->CreateDepthStencilState(&l_dsDesc, &pState));
-
-    /* ////////////////////////////////////
-     * DEPTH TEXTURE 2D CREATION
-    //////////////////////////////////// */
-    D3D11_TEXTURE2D_DESC depthDesc{};
-    depthDesc.Width     = 1920;
-    depthDesc.Height    = 1080;
-    depthDesc.MipLevels = 1;
-    depthDesc.ArraySize = 1;
-    depthDesc.Format    = DXGI_FORMAT_D32_FLOAT;
-    depthDesc.Usage     = D3D11_USAGE_DEFAULT;
-    depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
-    depthDesc.SampleDesc.Count    = 1;
-    depthDesc.SampleDesc.Quality  = 0;
-
-    OPTIM_TRY_DX(pDevice->CreateTexture2D(&depthDesc, nullptr, &pDepthStencil));
-
-    // Depth stencil view creation
-    D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-    dsvDesc.Format              = DXGI_FORMAT_D32_FLOAT;
-    dsvDesc.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D;
-    dsvDesc.Texture2D.MipSlice  = 0;
-
-    OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pView));
   }
 
   inline void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView)
   {
     pContext->OMSetDepthStencilState(pState.Get(), 1);
-    pContext->OMSetRenderTargets(1, ppRenderTargetView, pView.Get());
-  }
-
-  inline void clearDepthStencilView(ID3D11DeviceContext* pContext) const
-  {
-    pContext->ClearDepthStencilView(pView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
   }
 
   ComPtr<ID3D11DepthStencilState> pState{};
-  ComPtr<ID3D11Texture2D>         pDepthStencil{};
-  ComPtr<ID3D11DepthStencilView>  pView{};
 };
 
 class Dx11DepthStencilViewTexture
@@ -199,7 +130,7 @@ public:
     depthDesc.Height    = 1080;
     depthDesc.MipLevels = 1;
     depthDesc.ArraySize = 1;
-    depthDesc.Format    = DXGI_FORMAT_D32_FLOAT;
+    depthDesc.Format    = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
     depthDesc.Usage     = D3D11_USAGE_DEFAULT;
     depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
@@ -210,7 +141,7 @@ public:
 
     // Depth stencil view creation
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-    dsvDesc.Format              = DXGI_FORMAT_D32_FLOAT;
+    dsvDesc.Format              = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsvDesc.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Texture2D.MipSlice  = 0;
 
@@ -245,10 +176,9 @@ public:
     rastDesc.FillMode   = static_cast<D3D11_FILL_MODE>(static_cast<int32>(param_pRasterizerDesc->fillMode) + 2);
     rastDesc.CullMode   = static_cast<D3D11_CULL_MODE>(static_cast<int32>(param_pRasterizerDesc->cullMode) + 1);
     rastDesc.FrontCounterClockwise = param_pRasterizerDesc->faceWinding == ERasterizerFaceWinding::CounterClockWise;
-
-    rastDesc.DepthBias              = 0;
+    rastDesc.DepthBias              = param_pRasterizerDesc->depthBias;
     rastDesc.DepthBiasClamp         = 0.0f;
-    rastDesc.SlopeScaledDepthBias   = 0;
+    rastDesc.SlopeScaledDepthBias   = param_pRasterizerDesc->slopeScaledDepthBias;
     rastDesc.DepthClipEnable        = TRUE;
     rastDesc.ScissorEnable          = FALSE;
     rastDesc.MultisampleEnable      = FALSE;

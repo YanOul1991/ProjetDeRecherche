@@ -18,6 +18,12 @@
     <ContentFile>
       <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\VertexShader.cso</FullPath>
     </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\WireframePS.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\yanis\Documents\Code\OptimEngine\Builds\bin\WireframeVS.cso</FullPath>
+    </ContentFile>
   </ContentFiles>
   <SatelliteDlls />
   <NonRecipeFileRefs />

@@ -292,7 +292,7 @@ void Dx11RHI::cmdDrawIndexed(uint32 param_indexCount) {
 */
 void Dx11RHI::excecuteCommands()
 {
-  std::vector<Dx11Pipeline*> l_listPipelinesHandles{};
+  std::vector<Dx11DepthStencilViewTexture*> l_listDepthRT{};
 
 	for (SCommand& cmd : cmdBuffer.commands) {
     uint8* l_pData = cmdBuffer.data.data() + cmd.dataOffset;
@@ -332,14 +332,14 @@ void Dx11RHI::excecuteCommands()
           pDx11RHIDevice->m_pRenderTargetView.GetAddressOf()
         );
 
-        l_listPipelinesHandles.push_back(pPipeline);
         break;
       }
       case ECommandType::SetRenderTargets: {
         Dx11DepthStencilViewTexture* l_pDepthRT = (*reinterpret_cast<Dx11DepthStencilViewTexture**>(l_pData));
 
-        l_pDepthRT->bind(pDx11RHIDevice->m_pContext.Get(),
-                         pDx11RHIDevice->m_pRenderTargetView.GetAddressOf());
+        l_pDepthRT->bind(pDx11RHIDevice->m_pContext.Get(),pDx11RHIDevice->m_pRenderTargetView.GetAddressOf());
+
+        l_listDepthRT.push_back(l_pDepthRT);
         break;
       }
       default: {
@@ -350,8 +350,8 @@ void Dx11RHI::excecuteCommands()
 
   // After all commands have been executed.
   // Clear all pipline depth stencil view
-  for (Dx11Pipeline*& pPipeline : l_listPipelinesHandles) {
-    pPipeline->pDepthStencilState->clearDepthStencilView(pDx11RHIDevice->m_pContext.Get());
+  for (Dx11DepthStencilViewTexture*& pDepthRT : l_listDepthRT) {
+    pDepthRT->clearDepthStencilView(pDx11RHIDevice->m_pContext.Get());
   }
 
   // After executing all commands buffer is cleared

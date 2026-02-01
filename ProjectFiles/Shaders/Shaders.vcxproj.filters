@@ -19,6 +19,12 @@
     <FxCompile Include="..\..\Source\Shader\WireframePS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Source\Shader\OutlinePS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Source\Shader\OutlineVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HLSL">

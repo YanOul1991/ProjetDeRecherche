@@ -51,6 +51,8 @@ struct SRasterizerDescription
   ERasterizerFillMode     fillMode;
   ERasterizerCullMode     cullMode;
   ERasterizerFaceWinding  faceWinding;
+  int32                   depthBias;
+  float                   slopeScaledDepthBias;
 };
 
 /* **************************************
@@ -79,7 +81,7 @@ struct SDepthStencilDescription
 {
   bool depthTestEnabled;
   EDepthStencilComparisonFunction depthComparisonFunction;
-  EDepthStencilDepthWriteMask depthWriteMask;
+  EDepthStencilDepthWriteMask     depthWriteMask;
 };
 
 /* **************************************

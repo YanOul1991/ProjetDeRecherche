@@ -29,17 +29,32 @@
 #include "Core/System/ModelLoader.h"
 #include "Core/System/Application.h"
 
+
+/*
+* STATIC GLOBAL VARIABLES 
+* 
+* >>>> THESE ARE FOR TESTING PURPOSES <<<<
+* 
+*/
+
 static ITextureResource*    _TEST_pTextureResource  {};
 static ISampler*            _TEST_pSampler          {};
-
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
 static UniquePtr<SystemWindow>      g_uptrSystemWindow{};
 
-static PipelineHandle   _handlePipeline{};
-static PipelineHandle   _handlePipelineWirframeView{};
+static PipelineHandle         _handlePipeline{};
+static PipelineHandle         _handlePipelineWirframeView{};
+static PipelineHandle         _handlePipelineOutline{};
 
+static DepthRTHandle          _handle_depthRT{};
 static VertexShaderHandle     _handle_vertexShader{};
 static FragmentShaderHandle   _handle_fragmentShader{};
+
+static bool _bool_drawWireframe{false};
+
+// ////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////
 
 extern "C" CORE_API Application* CreateApplicationProc() {
   return new Application;
@@ -91,11 +106,6 @@ void Application::ApplicationStart()
     // at runtime.
 
     /*
-    _handle_vertexShader    = Graphics::RHI()->createVertexShader("bin/PhongVertexShader.cso");
-    _handle_fragmentShader  = Graphics::RHI()->createFragmentShader("bin/PhongPixelShader.cso");
-    */
-
-    /*
     * Lit shaders pipeline binding
     */
     SPipelineDesc pipelineDesc = {
@@ -114,7 +124,8 @@ void Application::ApplicationStart()
         .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll
       }
     };
-    _handlePipeline =  Graphics::RHI()->createPipeline(&pipelineDesc);
+
+    _handlePipeline = Graphics::RHI()->createPipeline(&pipelineDesc);
 
     /*
     * Wirframe pipeline
@@ -124,18 +135,47 @@ void Application::ApplicationStart()
       .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/WireframePS.cso"),
 
       .rasterizerDescription = {
-        .fillMode = ERasterizerFillMode::Wireframe,
-        .cullMode = ERasterizerCullMode::Back,
-        .faceWinding = ERasterizerFaceWinding::CounterClockWise,
+        .fillMode             = ERasterizerFillMode::Wireframe,
+        .cullMode             = ERasterizerCullMode::Back,
+        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+        .depthBias            = -1,
+        .slopeScaledDepthBias = -1.0f
       },
 
       .depthStencilDescription = {
-        .depthTestEnabled = true,
-        .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
-        .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll
+        .depthTestEnabled         = true,
+        .depthComparisonFunction  = EDepthStencilComparisonFunction::Less,
+        .depthWriteMask           = EDepthStencilDepthWriteMask::WriteNone,
       }
     };
     _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
+
+    /*
+    * Wirframe pipeline
+    */
+
+    SPipelineDesc l_outlinePipelineDesc = {
+      .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/OutlineVS.cso"),
+      .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/OutlinePS.cso"),
+
+      .rasterizerDescription = {
+        .fillMode             = ERasterizerFillMode::Solid,
+        .cullMode             = ERasterizerCullMode::Front,
+        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+        .depthBias            = -2,
+        .slopeScaledDepthBias = -1.0f
+      },
+
+      .depthStencilDescription = {
+        .depthTestEnabled         = true,
+        .depthComparisonFunction  = EDepthStencilComparisonFunction::Less,
+        .depthWriteMask           = EDepthStencilDepthWriteMask::WriteNone,
+      }
+    };
+    _handlePipelineOutline = Graphics::RHI()->createPipeline(&l_outlinePipelineDesc);
+
+    // Create DepthStencil state
+    _handle_depthRT = Graphics::RHI()->createDepthRT();
 
     // Load image for texture
     Image srcImage;
@@ -144,8 +184,6 @@ void Application::ApplicationStart()
 
     // Create sampler resource
     _TEST_pSampler = Graphics::RHI()->createSamplerResource();
-    //_hPixelShader = m_pRenderModule->getPixelShader(TEXT("bin/PixelShader.cso"));
-
     m_shouldRun = true;
   }
   catch (const Exception& e) {
@@ -174,6 +212,7 @@ void Application::ApplicationLoop()
       return;
     }
 
+    Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
     Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
 
     Graphics::RHI()->BindTexture(_TEST_pTextureResource);
@@ -195,12 +234,18 @@ void Application::ApplicationLoop()
 
     /*
     Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
-
     for (int i = 0; i < _list_meshes.size(); i++) {
       Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
       Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
       Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
     }
+
+		Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
+		for (int i = 0; i < _list_meshes.size(); i++) {
+			Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
+			Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
+			Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
+		}
     */
 
     // Execute the commands afters binding all the appropriate ones.
@@ -240,8 +285,8 @@ CORE_API void OptimEditor::processFile(const char* param_cstrFilePath)
 
   OptimEditor::loadFbxModel(*l_uptrMesh, param_cstrFilePath);
 
-  (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
-  (*l_uptrMesh).indexBufferHandle = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
+  (*l_uptrMesh).vertexBufferHandle  = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
+  (*l_uptrMesh).indexBufferHandle   = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
 
   _list_meshes.push_back(l_uptrMesh.move());
 }
