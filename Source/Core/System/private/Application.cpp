@@ -36,6 +36,7 @@ static std::vector<UniquePtr<Mesh>> _list_meshes{};
 static UniquePtr<SystemWindow>      g_uptrSystemWindow{};
 
 static PipelineHandle   _handlePipeline{};
+static PipelineHandle   _handlePipelineWirframeView{};
 
 static VertexShaderHandle     _handle_vertexShader{};
 static FragmentShaderHandle   _handle_fragmentShader{};
@@ -88,15 +89,53 @@ void Application::ApplicationStart()
     // try to implement Material system, to create 
     // shaders dynamically and give them to a mesh 
     // at runtime.
+
+    /*
     _handle_vertexShader    = Graphics::RHI()->createVertexShader("bin/PhongVertexShader.cso");
     _handle_fragmentShader  = Graphics::RHI()->createFragmentShader("bin/PhongPixelShader.cso");
+    */
 
-    SPipelineDesc pipelineDesc{
-      .vertexShaderHandle = _handle_vertexShader,
-      .fragmentShaderHandle = _handle_fragmentShader
+    /*
+    * Lit shaders pipeline binding
+    */
+    SPipelineDesc pipelineDesc = {
+      .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/PhongVertexShader.cso"),
+      .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/PhongPixelShader.cso"),
+
+      .rasterizerDescription = {
+        .fillMode = ERasterizerFillMode::Solid,
+        .cullMode = ERasterizerCullMode::Back,
+        .faceWinding = ERasterizerFaceWinding::CounterClockWise,
+      },
+
+      .depthStencilDescription = {
+        .depthTestEnabled = true,
+        .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+        .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll
+      }
     };
-
     _handlePipeline =  Graphics::RHI()->createPipeline(&pipelineDesc);
+
+    /*
+    * Wirframe pipeline
+    */
+    SPipelineDesc l_wirframePipelineDesc = {
+      .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/WireframeVS.cso"),
+      .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/WireframePS.cso"),
+
+      .rasterizerDescription = {
+        .fillMode = ERasterizerFillMode::Wireframe,
+        .cullMode = ERasterizerCullMode::Back,
+        .faceWinding = ERasterizerFaceWinding::CounterClockWise,
+      },
+
+      .depthStencilDescription = {
+        .depthTestEnabled = true,
+        .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+        .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll
+      }
+    };
+    _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
 
     // Load image for texture
     Image srcImage;
@@ -135,12 +174,12 @@ void Application::ApplicationLoop()
       return;
     }
 
-    //Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
+    Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
 
-    Graphics::RHI()->bindTexture(_TEST_pTextureResource);
+    Graphics::RHI()->BindTexture(_TEST_pTextureResource);
     Graphics::RHI()->bindSampler(_TEST_pSampler);
-    Graphics::RHI()->cmdBindVertexShader(&_handle_vertexShader);
-    Graphics::RHI()->cmdBindFragmentShader(&_handle_fragmentShader);
+    //Graphics::RHI()->cmdBindVertexShader(&_handle_vertexShader);
+    //Graphics::RHI()->cmdBindFragmentShader(&_handle_fragmentShader);
 
     // >>>>>>>>>>> TO DO <<<<<<<<<<< 
     // 
@@ -153,6 +192,16 @@ void Application::ApplicationLoop()
       Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
       Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
     }
+
+    /*
+    Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
+
+    for (int i = 0; i < _list_meshes.size(); i++) {
+      Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
+      Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
+      Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
+    }
+    */
 
     // Execute the commands afters binding all the appropriate ones.
     Graphics::RHI()->draw();

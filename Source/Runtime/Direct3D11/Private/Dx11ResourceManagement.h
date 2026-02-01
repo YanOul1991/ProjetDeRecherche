@@ -74,12 +74,12 @@ public:
     //printf("Trying to free resource at index %d\nGeneration type %d\n", l_index, l_generation);
 
     switch (l_targetEntry.resourceType) {
-      case EResourceTypes::vertexBuffer : {
+      case EResourceTypes::VertexBuffer : {
         //printf("The resource is a vertex buffer.\n");
         delete reinterpret_cast<Dx11VertexBuffer*>(l_targetEntry.pResource);
         break;
       }
-      case EResourceTypes::indexbuffer: {
+      case EResourceTypes::IndexBuffer: {
         //printf("The resource is an indexbuffer.\n");
         delete reinterpret_cast<Dx11IndexBuffer*>(l_targetEntry.pResource);
         break;

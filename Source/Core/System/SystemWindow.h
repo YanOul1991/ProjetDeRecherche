@@ -5,17 +5,6 @@
  *    Yanis Oulmane
 ====================================================================================== */
 
-/*
- * TODO
- *		-	Add error management.
- *		
- *		-	??? Remove SDL initialization and quit logic and transfer to Application class
- *			or even main function. ???
- * 
- *		-	Modify implementation of SystemWindow class to allow creation and management
- *			of multiple windows.
-*/
-
 #pragma once
 
 #include <Core/OptimEngine.h>
@@ -37,7 +26,16 @@ public:
 	*/
 	static void* getSystemPointer();
 
+	/*
+	 * @brief 
+	 * SystemWindow class constructor.
+	*/
 	SystemWindow();
+
+	/*
+	 * @brief
+	 * SystemWindow class deconstructor.
+	*/
 	~SystemWindow();
 
 	/*

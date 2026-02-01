@@ -1,5 +1,5 @@
 /* ======================================================================================
- *  IDirect3D11.h:
+ *  Dx11RHI.h:
  *
  *  By:
  *    Yanis Oulmane
@@ -27,11 +27,12 @@
 #include <vector>
 
 
-struct Dx11Pipeline
+class Dx11Pipeline
 {
-  VertexShaderHandle    vertexShaderHandle;
-  FragmentShaderHandle  fragmentShaderHandle;
-  Dx11DepthStencil*     pDepthStencilState;
+public:
+  VertexShaderHandle    vertexShaderHandle{};
+  FragmentShaderHandle  fragmentShaderHandle{};
+  Dx11DepthStencil*     pDepthStencilState{};
   Dx11RasterizerState*  pRasterizer{};
 };
 
@@ -89,31 +90,6 @@ ID3D11RenderTargetView* Dx11RHI::getRenderTargetView() {
 //    RESOURCE CREATION FUNCTIONS
 // ##################################
 
-/*
-IVertexBuffer* Dx11RHI::createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) {
-  Dx11VertexBuffer* pResource = new Dx11VertexBuffer;
-  pResource->createResources(pVertices, bufferElementCount);
-  return pResource;
-}
-
-IIndexBuffer* Dx11RHI::createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) {
-  Dx11IndexBuffer* pResource = new Dx11IndexBuffer;
-  pResource->createResources(pIndices, bufferElementCount);
-  return pResource;
-}
-IVertexShader* Dx11RHI::createVertexShader(const wchar* path) {
-  Dx11VertexShader* pResource = new Dx11VertexShader;
-  pResource->createResources(path);
-  return pResource;
-}
-IPixelShader* Dx11RHI::createPixelShader(const wchar* path) {
-  Dx11PixelShader* pResource = new Dx11PixelShader;
-  pResource->createResources(path);
-  return pResource;
-}
-*/
-
-
 ITextureResource* Dx11RHI::createTextureResource(const Image* pImage) {
   Dx11TextureResource* pResource = new Dx11TextureResource;
   pResource->createResource(pImage);
@@ -130,24 +106,7 @@ ISampler* Dx11RHI::createSamplerResource() {
 //    BINDING FUNCTIONS
 // ##################################
 
-/*
-void Dx11RHI::bindVertexBuffer(IVertexBuffer* pVertexBuffer) {
-  pVertexBuffer->bindResource();
-}
-
-void Dx11RHI::bindIndexBuffer(IIndexBuffer* pIndexBuffer) {
-  pIndexBuffer->bindResource();
-}
-
-void Dx11RHI::bindVertexShader(IVertexShader* pVertexShader) {
-  pVertexShader->bindResource();
-}
-void Dx11RHI::bindPixelShader(IPixelShader* pPixelShader) {
-  pPixelShader->bindResource();
-}
-*/
-
-void Dx11RHI::bindTexture(ITextureResource* pTexture) {
+void Dx11RHI::BindTexture(ITextureResource* pTexture) {
   pTexture->bindResource();
 }
 
@@ -166,7 +125,7 @@ VertexBufferHandle Dx11RHI::createResourceVertexBuffer(Vertex* pVertices, const 
   l_pResource->createResources(pVertices, elementCount);
 
   return VertexBufferHandle{
-    .data = g_registery.registerResource(EResourceTypes::vertexBuffer, l_pResource).data
+    .data = g_registery.registerResource(EResourceTypes::VertexBuffer, l_pResource).data
   };
 }
 
@@ -176,7 +135,7 @@ IndexBufferHandle Dx11RHI::createResourceIndexBuffer(uint32* pIndices, const uin
   l_pResource->createResources(pIndices, elementCount);
 
   return IndexBufferHandle {
-    .data = g_registery.registerResource(EResourceTypes::indexbuffer, l_pResource).data
+    .data = g_registery.registerResource(EResourceTypes::IndexBuffer, l_pResource).data
   };
 }
 
@@ -213,14 +172,22 @@ FragmentShaderHandle Dx11RHI::createFragmentShader(const char* path)
 
 PipelineHandle Dx11RHI::createPipeline(SPipelineDesc* param_pipelineDesc)
 {
-  Dx11Pipeline* l_pPipeline = new Dx11Pipeline;
+  Dx11Pipeline* l_pPipeline           = new Dx11Pipeline;
   l_pPipeline->vertexShaderHandle     = param_pipelineDesc->vertexShaderHandle;
   l_pPipeline->fragmentShaderHandle   = param_pipelineDesc->fragmentShaderHandle;
-  l_pPipeline->pDepthStencilState     = new Dx11DepthStencil;
-  l_pPipeline->pRasterizer            = new Dx11RasterizerState;
+  l_pPipeline->pDepthStencilState     = new Dx11DepthStencil(pDx11RHIDevice->m_pDevice.Get(), &param_pipelineDesc->depthStencilDescription);
+  l_pPipeline->pRasterizer            = new Dx11RasterizerState(&param_pipelineDesc->rasterizerDescription);
 
   return PipelineHandle{
     .data = g_registery.registerResource(EResourceTypes::Pipeline, l_pPipeline).data
+  };
+}
+
+DepthRTHandle Dx11RHI::createDepthRT()
+{
+  Dx11DepthStencilViewTexture* l_pDepthRT = new Dx11DepthStencilViewTexture(pDx11RHIDevice->m_pDevice.Get());
+  return DepthRTHandle {
+    .data = g_registery.registerResource(EResourceTypes::DepthRT, l_pDepthRT).data
   };
 }
 
@@ -246,15 +213,29 @@ void Dx11RHI::cmdBindPipeline(PipelineHandle* pPipeline)
   );
 }
 
+void Dx11RHI::cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle)
+{
+  if (!g_registery.validateHandle((ResourceHandle*)pDepthRTHandle, EResourceTypes::DepthRT)) {
+    printf("The handle is not a DepthRT resource handle or the resource as been destroyed.\n");
+    return;
+  }
+
+  cmdBuffer.push(
+    ECommandType::SetRenderTargets,
+    &g_registery[(ResourceHandle*)pDepthRTHandle]->pResource,
+    sizeof(void*)
+  );
+}
+
 void Dx11RHI::cmdBindVertexBuffer(VertexBufferHandle* param_pVertexBufferHandle)
 {
-  if (!g_registery.validateHandle((ResourceHandle*)param_pVertexBufferHandle, EResourceTypes::vertexBuffer)) {
+  if (!g_registery.validateHandle((ResourceHandle*)param_pVertexBufferHandle, EResourceTypes::VertexBuffer)) {
     printf("The handle is not a vertex buffer resource handle or the resource as been destroyed.\n");
     return;
   }
 
   cmdBuffer.push(
-    ECommandType::bindVertexBuffer, 
+    ECommandType::BindVertexBuffer, 
     &g_registery[(ResourceHandle*)param_pVertexBufferHandle]->pResource, 
     sizeof(void*)
   );
@@ -262,13 +243,13 @@ void Dx11RHI::cmdBindVertexBuffer(VertexBufferHandle* param_pVertexBufferHandle)
 
 void Dx11RHI::cmdBindIndexBuffer(IndexBufferHandle* pVertexBufferHandle) 
 {
-  if (!g_registery.validateHandle((ResourceHandle*)pVertexBufferHandle, EResourceTypes::indexbuffer)) {
+  if (!g_registery.validateHandle((ResourceHandle*)pVertexBufferHandle, EResourceTypes::IndexBuffer)) {
     printf("The handle is not an index buffer resource handle or the resource as been destroyed.\n");
     return;
   }
 
   cmdBuffer.push(
-    ECommandType::bindIndexBuffer, 
+    ECommandType::BindIndexBuffer, 
     &g_registery[(ResourceHandle*)pVertexBufferHandle]->pResource, 
     sizeof(void*)
   );
@@ -303,7 +284,7 @@ void Dx11RHI::cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader)
 }
 
 void Dx11RHI::cmdDrawIndexed(uint32 param_indexCount) {
-  cmdBuffer.push(ECommandType::drawIndexed, &param_indexCount, sizeof(uint32));
+  cmdBuffer.push(ECommandType::DrawIndexed, &param_indexCount, sizeof(uint32));
 }
 
 /*
@@ -317,16 +298,16 @@ void Dx11RHI::excecuteCommands()
     uint8* l_pData = cmdBuffer.data.data() + cmd.dataOffset;
 
 		switch (cmd.type) {
-			case ECommandType::drawIndexed: {
+			case ECommandType::DrawIndexed: {
         uint32 l_indexCount = *(reinterpret_cast<uint32*>(l_pData));
         pDx11RHIDevice->m_pContext->DrawIndexed(l_indexCount, 0, 0);
         break;
 			}
-      case ECommandType::bindVertexBuffer: {
+      case ECommandType::BindVertexBuffer: {
         (*(reinterpret_cast<Dx11VertexBuffer**>(l_pData)))->bindResource();
         break;
       }
-      case ECommandType::bindIndexBuffer: {
+      case ECommandType::BindIndexBuffer: {
         (*(reinterpret_cast<Dx11IndexBuffer**>(l_pData)))->bindResource();
         break;
       }
@@ -343,10 +324,22 @@ void Dx11RHI::excecuteCommands()
 
         ((Dx11VertexShader*)g_registery[(ResourceHandle*)(&pPipeline->vertexShaderHandle)]->pResource)->bindResource();
         ((Dx11PixelShader*)g_registery[(ResourceHandle*)(&pPipeline->fragmentShaderHandle)]->pResource)->bindResource();
-        pPipeline->pDepthStencilState->bind(pDx11RHIDevice->m_pRenderTargetView.GetAddressOf());
+
         pPipeline->pRasterizer->bind();
 
+        pPipeline->pDepthStencilState->bind(
+          pDx11RHIDevice->m_pContext.Get(), 
+          pDx11RHIDevice->m_pRenderTargetView.GetAddressOf()
+        );
+
         l_listPipelinesHandles.push_back(pPipeline);
+        break;
+      }
+      case ECommandType::SetRenderTargets: {
+        Dx11DepthStencilViewTexture* l_pDepthRT = (*reinterpret_cast<Dx11DepthStencilViewTexture**>(l_pData));
+
+        l_pDepthRT->bind(pDx11RHIDevice->m_pContext.Get(),
+                         pDx11RHIDevice->m_pRenderTargetView.GetAddressOf());
         break;
       }
       default: {
@@ -355,8 +348,10 @@ void Dx11RHI::excecuteCommands()
 		} // switch - END
 	} // for - END
 
+  // After all commands have been executed.
+  // Clear all pipline depth stencil view
   for (Dx11Pipeline*& pPipeline : l_listPipelinesHandles) {
-    pDx11RHIDevice->m_pContext->ClearDepthStencilView(pPipeline->pDepthStencilState->pView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+    pPipeline->pDepthStencilState->clearDepthStencilView(pDx11RHIDevice->m_pContext.Get());
   }
 
   // After executing all commands buffer is cleared

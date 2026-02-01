@@ -61,6 +61,8 @@ public:
 
   CORE_API virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
 
+  CORE_API virtual DepthRTHandle createDepthRT() = 0;
+
   /*
    * @brief
    * Frees the allocated resources by the RHI on the GPU. Once freed
@@ -91,8 +93,12 @@ public:
   CORE_API virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) = 0;
 
   CORE_API virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) = 0;
+
   CORE_API virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) = 0;
+
   CORE_API virtual void cmdBindPipeline(PipelineHandle* pPipeline) = 0;
+
+  CORE_API virtual void cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle) = 0;
 
   /*
    * @brief 
@@ -128,6 +134,6 @@ public:
   CORE_API virtual void bindVertexShader(IVertexShader* pVertexShader) = 0;
   CORE_API virtual void bindPixelShader(IPixelShader* pPixelShader) = 0;
   */
-  CORE_API virtual void bindTexture(ITextureResource* pTexture) = 0;
+  CORE_API virtual void BindTexture(ITextureResource* pTexture) = 0;
   CORE_API virtual void bindSampler(ISampler* pSampler) = 0;
 };

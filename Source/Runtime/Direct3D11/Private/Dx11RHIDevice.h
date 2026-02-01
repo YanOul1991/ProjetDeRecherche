@@ -20,14 +20,6 @@ struct VSInputConstantBuffer
   DirectX::XMFLOAT4X4 worldView;  
 };
 
-struct VSInputLightBuffer
-{
-  float3 lightPosition;
-  float pad1;
-  float3 lightColor;
-  float pad2;
-};
-
 class Dx11RHIDevice final
 {
 public:

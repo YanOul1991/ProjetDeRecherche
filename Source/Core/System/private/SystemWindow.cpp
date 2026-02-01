@@ -47,8 +47,6 @@ SystemWindow::~SystemWindow() { }
 void SystemWindow::showWindow() 
 {
 	SDL_MaximizeWindow(window);
-	//SDL_ShowWindow(window);
-	//SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "MessageBox", "Hello!", window);
 }
 
 void SystemWindow::initialize(const char* windowTitle)
@@ -57,13 +55,13 @@ void SystemWindow::initialize(const char* windowTitle)
 		exit(-1);
 	}
 
-	window = SDL_CreateWindow(windowTitle, 
-														1280, 
-														720, 
-														SDL_WINDOW_RESIZABLE | 
-														SDL_WINDOW_HIGH_PIXEL_DENSITY | 
-														SDL_WINDOW_MINIMIZED
-														//SDL_WINDOW_HIDDEN
+	window = SDL_CreateWindow(
+		windowTitle,
+		1280,
+		720,
+		SDL_WINDOW_RESIZABLE |
+		SDL_WINDOW_HIGH_PIXEL_DENSITY |
+		SDL_WINDOW_MINIMIZED
 	);
 
 	InterfaceImGui::initWindow(window);
@@ -98,15 +96,26 @@ bool SystemWindow::loop()
 			shouldRun = false;
 			break;
 		}
-		if (evt.type == SDL_EVENT_MOUSE_WHEEL) {
-			Camera::position = Camera::position + evt.wheel.y * 0.5f * Camera::forward;
-			break;
-		}
 
-		if (evt.type == SDL_EVENT_DROP_FILE) {
-			const char* path = evt.drop.data;
-			//printf("File drop attempt! %s\n", path);
-			OptimEditor::processFile(path);
+		switch (evt.type) {
+			case SDL_EVENT_MOUSE_WHEEL: {
+				Camera::position = Camera::position + evt.wheel.y * 0.5f * Camera::forward;
+				break;
+			}
+			case SDL_EVENT_DROP_FILE: {
+				const char* path = evt.drop.data;
+				OptimEditor::processFile(path);
+				break;
+			}
+			case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+				//printf("Mouse button click %d.\n", evt.button.button);
+				//printf("Mouse position: (%f, %f)\n", evt.button.x, evt.button.y);
+				//printf("System window clicked: %d\n", evt.button.windowID);
+				break;
+			}
+			default: {
+				break;
+			}
 		}
 	}// While end - Event poll loop
 
@@ -143,7 +152,6 @@ void SystemWindow::setWindowTitle(const char* title)
 {
 	SDL_SetWindowTitle(window, title);
 }
-
 
 void SystemWindow::quit()
 {

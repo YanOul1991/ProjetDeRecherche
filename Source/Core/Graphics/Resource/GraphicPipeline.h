@@ -7,8 +7,6 @@ enum class EPipelinePrimitiveTopologyType : unsigned char {
   LineList
 };
 
-
-
 enum class EPipelineVertexLayout : unsigned char {
   // ENUM_NOT_DEFINED_YET
 };
@@ -31,15 +29,15 @@ enum class EPipelineRenderTargetFormat : unsigned char {
 ************************************** */
 
 enum class ERasterizerFillMode : unsigned char {
+  Wireframe,
   Solid,
-  Wireframe
 };
 
 enum class ERasterizerCullMode : unsigned char
 {
-  Back,
+  None,
   Front,
-  None
+  Back
 };
 
 enum class ERasterizerFaceWinding : unsigned char
@@ -59,29 +57,28 @@ struct SRasterizerDescription
     * DEPTH STENCIL DESCIRPTIONS
 ************************************** */
 
-enum class EDepthStencilComparaisonFunction : unsigned char
+enum class EDepthStencilComparisonFunction : unsigned char
 {
   Never,
-  Near,
-  NearEqual,
+  Less,
   Equal,
-  Far,
-  FarEqual,
+  LessOrEqual,
+  Greater,
   NotEqual,
+  GreaterOrEqual,
   Always
 };
 
 enum class EDepthStencilDepthWriteMask : unsigned char
 {
-  WriteAll,
-  WriteNone
+  WriteNone,
+  WriteAll
 };
 
 struct SDepthStencilDescription
 {
   bool depthTestEnabled;
-  bool depthWriteEnabled;
-  EDepthStencilComparaisonFunction depthComparaisonFunction;
+  EDepthStencilComparisonFunction depthComparisonFunction;
   EDepthStencilDepthWriteMask depthWriteMask;
 };
 
@@ -97,4 +94,6 @@ struct SPipelineDesc
   SDepthStencilDescription  depthStencilDescription;
 };
 
-using PipelineHandle = GraphicResourceHandle<int>;
+//struct IGraphicsPipeline{};
+//
+//using PipelineHandle = GraphicResourceHandle<IGraphicsPipeline>;

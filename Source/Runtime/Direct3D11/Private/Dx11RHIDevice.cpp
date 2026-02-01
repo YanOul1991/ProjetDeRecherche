@@ -102,10 +102,12 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow)
   contextRef        = m_pContext.Get();
   renderTargetView  = m_pRenderTargetView.Get();
 
+
   /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++
       DEPTH BUFFER SETTING
   +++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+  /*
   // Create Depth stencil state
   D3D11_DEPTH_STENCIL_DESC dsDesc = {};
   dsDesc.DepthEnable    = TRUE;
@@ -144,17 +146,12 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow)
   OPTIM_TRY_DX(m_pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &m_pDepthStencilView));
   // Bind depth stencil view
   m_pContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-  /*
   */
 
   /// ---------------------------------
   /// CONSTANT BUFFER INITIALIZATION
   /// ---------------------------------
-  //__t_constBuffer = ConstantBuffer<VSInputConstantBuffer>({
-  //  DirectX::XMMatrixIdentity(),
-  //  DirectX::XMMatrixIdentity(),
-  //});
-  //printf("Loading allocating constant buffer resources...\n");
+  
   __t_constBuffer.init(m_pDevice.Get());
 
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
@@ -168,19 +165,11 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow)
 void Dx11RHIDevice::clearBuffer(float red, float green, float blue, float alpha) {
   const float color[] = { red, green, blue, alpha };
   m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
-  m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+  //m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void Dx11RHIDevice::renderUpdate()
 {
-  D3D11_RASTERIZER_DESC rsDesc{};
-  rsDesc.FillMode = D3D11_FILL_SOLID;
-  rsDesc.CullMode = D3D11_CULL_BACK;
-  rsDesc.FrontCounterClockwise = TRUE;
-  ComPtr<ID3D11RasterizerState> pRsState;
-  m_pDevice->CreateRasterizerState(&rsDesc, &pRsState);
-  m_pContext->RSSetState(pRsState.Get());
-
   DirectX::XMFLOAT3 position = {
     Camera::position.x,
     Camera::position.y,

@@ -1,5 +1,5 @@
 /* ======================================================================================
- *  IDirect3D11.h:
+ *  Dx11RHI.h:
  *    Entry point for D3D11 API implementations.
  * 
  *  By: 
@@ -31,12 +31,13 @@ class Dx11RHIDevice;
 
 enum class ECommandType {
   BindPipeline,
-  bindVertexBuffer,
-  bindIndexBuffer,
-  bindTexture,
-  drawIndexed,
+  BindVertexBuffer,
+  BindIndexBuffer,
+  BindTexture,
+  DrawIndexed,
   BindVertexShader,
-  BindFragmentShader
+  BindFragmentShader,
+  SetRenderTargets
 };
 
 struct SCommand {
@@ -88,44 +89,29 @@ public:
   void draw() override final;
   void Clean() override final;
 
-  /*
-  * OLD RESOURC CREATION SYSTEM
-  IVertexBuffer*    createVertexBuffer(Vertex* pVertices, const uint32& bufferElementCount) override final;
-  IIndexBuffer*     createIndexBuffer(uint32* pIndices, const uint32& bufferElementCount) override final;
-  IVertexShader*    createVertexShader(const wchar* path) override final;
-  IPixelShader*     createPixelShader(const wchar* path) override final;
-  */
-
   ITextureResource* createTextureResource(const Image* pImage) override final;
-  ISampler*         createSamplerResource() override final;
+  ISampler* createSamplerResource() override final;
 
-  /*
-  virtual void bindVertexBuffer(IVertexBuffer* pVertexBuffer) override final;
-  virtual void bindIndexBuffer(IIndexBuffer* pIndexBuffer) override final;
-  virtual void bindVertexShader(IVertexShader* pVertexShader) override final;
-  virtual void bindPixelShader(IPixelShader* pPixelShader) override final;
-  */
-
-  virtual void bindTexture(ITextureResource* pTexture) override final;
+  virtual void BindTexture(ITextureResource* pTexture) override final;
   virtual void bindSampler(ISampler* pSampler) override final;
-
-  // NEW VIRTUAL FUNCTIONS TO TEST
 
   virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
   virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
   virtual VertexShaderHandle createVertexShader(const char* path) override final;
   virtual FragmentShaderHandle createFragmentShader(const char* path) override final;
   virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) override final;
+  virtual DepthRTHandle createDepthRT() override final;
 
   virtual void cmdBindPipeline(PipelineHandle* pPipeline) override final;
+  virtual void cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle) override final;
   virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) override final;
   virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) override final;
   virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) override final;
   virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) override final;
   virtual void cmdDrawIndexed(uint32 indexCount) override final;
 
-  virtual void excecuteCommands() override final;
 
+  virtual void excecuteCommands() override final;
   virtual void freeResource(ResourceHandle handle) override final;
 
 private:
@@ -134,4 +120,7 @@ private:
   static CommandBuffer cmdBuffer;
 };
 
+/*
+ * @brief
+*/
 extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module();
