@@ -43,27 +43,28 @@ struct float4 {
 	float w;
 };
 
-struct float3x3 {
+struct alignas(16) float3x3 {
 	float m11; float m12; float m13;
 	float m21; float m22; float m23;
 	float m31; float m32; float m33;
 };
 
 /*
- *	A structure defining a 4x4 float matrix
+ * @brief
+ * A structure defining a 4x4 float matrix.
 */
-struct float4x4 {
-	float m11; float m12; float m13; float m14;
-	float m21; float m22; float m23; float m24;
-	float m31; float m32; float m33; float m34;
-	float m41; float m42; float m43; float m44;
+struct alignas(16) float4x4 {
+	float m11, m12, m13, m14;
+	float m21, m22, m23, m24;
+	float m31, m32, m33, m34;
+	float m41, m42, m43, m44;
 
 	inline void printMatrix() const
 	{
-		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m11, m12, m13, m14);
-		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m21, m22, m23, m24);
-		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m31, m32, m33, m34);
-		printf("| %2.2f, %2.2f, %2.2f, %2.2f |\n", m41, m42, m43, m44);
+		printf("| %2.7f, %2.7f, %2.7f, %2.7f |\n", m11, m12, m13, m14);
+		printf("| %2.7f, %2.7f, %2.7f, %2.7f |\n", m21, m22, m23, m24);
+		printf("| %2.7f, %2.7f, %2.7f, %2.7f |\n", m31, m32, m33, m34);
+		printf("| %2.7f, %2.7f, %2.7f, %2.7f |\n", m41, m42, m43, m44);
 	}
 
 	inline float4x4 transpose()
@@ -76,7 +77,6 @@ struct float4x4 {
 		};
 	}
 };
-
 
 /**
  * ************************************************
@@ -145,4 +145,9 @@ inline float3 normalize(const float3& v)
 	return{
 		(1.0f / magnitude(v)) * v
 	};
+}
+
+inline float dotProduct(const float3& a, const float3& b)
+{
+	return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
 }

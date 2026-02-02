@@ -154,12 +154,72 @@ void Dx11RHIDevice::renderUpdate()
     DirectX::XMLoadFloat3(&up)
   );
 
+  DirectX::XMFLOAT4X4 mat{};
+  DirectX::XMStoreFloat4x4(&mat, matrix_perspective);
+
+  //printf("DX camera view matrix: \n");
+  //for (int i = 0; i < 4; i++) {
+  //  printf("|%2.7f, %2.7f, %2.7f, %2.7f|\n", mat.m[i][0],  mat.m[i][1],  mat.m[i][2],  mat.m[i][3]);
+  //}
+
+  //printf("LookAt Matrix: \n");
+  float4x4 l_lookAt = {
+    Camera::right.x,  Camera::up.x, -Camera::forward.x, 0,
+    Camera::right.y,  Camera::up.y, -Camera::forward.y, 0,
+    Camera::right.z,  Camera::up.z, -Camera::forward.z, 0,
+    -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), -dotProduct(-1 * Camera::forward, Camera::position), 1,
+  };
+
+  //l_lookAt.printMatrix();
+
   //m_pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);s
 
-  DirectX::XMStoreFloat4x4(&vsInputConstBufferData.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
-  DirectX::XMStoreFloat4x4(&vsInputConstBufferData.worldView, DirectX::XMMatrixTranspose(matrix_camera * matrix_perspective));
+  //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
+  constexpr float pX{0};
+  constexpr float pY{0};
+  constexpr float pZ{0};
+
+  vsInputConstBufferData.transform = float4x4 {
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1
+  };
+
+  //float4x4 l_lookAt = {
+  //  Camera::right.x,    Camera::right.y,    Camera::right.z,   -dotProduct(Camera::right,   Camera::position),
+  //  Camera::up.x,       Camera::up.y,       Camera::up.z,      -dotProduct(Camera::up,      Camera::position),
+  //  -Camera::forward.x,  -Camera::forward.y,  -Camera::forward.z, dotProduct(Camera::forward, Camera::position),
+  //  0, 0, 0, 1,
+  //};
+
+  vsInputConstBufferData.lookAtMatrix = l_lookAt.transpose();
+
+  constexpr float a   = 1920.0f / 1080.0f;
+  constexpr float fov = mathConst::PI / 3.0f;
+  constexpr float n   = 0.1f;
+  constexpr float f   = 1000.0f;
+
+  float yScale = 1.0f / (tan(fov / 2.0f));
+
+  float4x4 perspectiveMatrix = float4x4 {
+    yScale / a, 0, 0, 0,
+    0, yScale, 0, 0,
+    0, 0, f / (n - f), -1,
+    0, 0, (n * f) / (n - f), 0
+  };
+
+  vsInputConstBufferData.perspectiveMatrix = perspectiveMatrix.transpose();
+
+  //printf("Transform Matrix: \n");
+  //vsInputConstBufferData.transform.printMatrix();
+  //vsInputConstBufferData.lookAtMatrix.printMatrix();
+  //printf("Perspective Matrix: \n");
+  //vsInputConstBufferData.perspectiveMatrix.printMatrix();
 
   // Update constant buffer for camera view and for now also the transform for the mesh object as its always assumed to be 0
+  //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.lookAtMatrix, DirectX::XMMatrixTranspose(matrix_camera));
+  //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.perspectiveMatrix, DirectX::XMMatrixTranspose(matrix_perspective));
   pDxRHI->updateConstantBuffer(&constantBufferTransformView, &vsInputConstBufferData);
   pDxRHI->cmdBindConstantBuffer(&constantBufferTransformView);
 

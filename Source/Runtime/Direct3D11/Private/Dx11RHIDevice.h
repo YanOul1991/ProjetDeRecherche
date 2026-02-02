@@ -12,10 +12,19 @@
 #include "Direct3D11/Dx11RHI.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
 
-struct VSInputConstantBuffer 
+//struct VSInputConstantBuffer 
+//{
+//  float4x4 transform;             // Transform of mesh object
+//  DirectX::XMFLOAT4X4 worldView;  // Camera view matrix
+//  float3 cameraPosition;
+//  float padding;
+//};
+
+struct alignas(16) VSInputConstantBuffer 
 {
-  DirectX::XMFLOAT4X4 transform;  // Transform of mesh object
-  DirectX::XMFLOAT4X4 worldView;  // Camera view matrix
+  float4x4 transform;
+  float4x4 lookAtMatrix;
+  float4x4 perspectiveMatrix;
 };
 
 class Dx11RHIDevice final

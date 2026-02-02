@@ -202,6 +202,16 @@ void Application::ApplicationStart()
 
     //printf("World grid index count %d\n", _worldGridMesh.indexCount);
 
+    //float4x4 translationMatrix {
+    //  1, 0, 0, 1,
+    //  0, 1, 0, 2,
+    //  0, 0, 1, 3,
+    //  0, 0, 0, 1
+    //};
+
+    ////translationMatrix = translationMatrix.transpose();
+    //translationMatrix.printMatrix();
+
     //printf("World grid vertex count %d\n", _worldGridMesh.vertexCount);
 
     _worldGridMesh.vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(_worldGridMesh.vertices, _worldGridMesh.vertexCount);
