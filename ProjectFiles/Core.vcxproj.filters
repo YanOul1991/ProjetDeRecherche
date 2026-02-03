@@ -95,6 +95,9 @@
     <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicPipeline.h">
       <Filter>Graphics\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Utilities\Event\Event.h">
+      <Filter>Utilities\Event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -180,6 +183,9 @@
     </Filter>
     <Filter Include="Graphics\Private">
       <UniqueIdentifier>{f632ff4c-20e2-4862-a964-d1845248f7f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Event">
+      <UniqueIdentifier>{61d34c9e-2e03-4e4a-ab0d-f802f12be186}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

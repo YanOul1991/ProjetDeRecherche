@@ -438,7 +438,7 @@ public:
 		Mesh ret_mesh;
 		float l_dist = 1.0f;
 		float l_span = 100.0f;
-		int		l_lineCount = ((l_span * 2) / l_dist) - 1;
+		int		l_lineCount = (int)(((l_span * 2) / l_dist) - 1);
 		int		l_vertexCount = l_lineCount * 4;
 
 		Vertex* l_pVertices = new Vertex[l_vertexCount];

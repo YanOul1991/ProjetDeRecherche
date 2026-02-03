@@ -9,6 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
 
 #include "Core/System/Application.h"
+#include <iostream>
 
 int main() {
   // Create application instance
@@ -20,7 +21,12 @@ int main() {
   // Excecute Application running loop
   while (application->ShouldRun())
   {
-    application->ApplicationLoop();
+    try {
+      application->ApplicationLoop();
+    }
+    catch (const std::exception& e) {
+      printf("Exception thrown: %s", e.what());
+    }
   }
 
   // Perform cleanup

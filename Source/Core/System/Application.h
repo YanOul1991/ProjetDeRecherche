@@ -26,11 +26,12 @@ public:
   static float getRuntime();
   static float getDeltaTime();
 
+
 private:
   static float m_runtime;
   static float m_deltaTime;
-
   bool m_shouldRun{false};
+  void testFunc_eventSubscribtion(int32 buttonId, int32 windowID);
 };
 
 extern "C" {

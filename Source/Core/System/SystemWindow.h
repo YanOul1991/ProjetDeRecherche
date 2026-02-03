@@ -8,6 +8,7 @@
 #pragma once
 
 #include <Core/OptimEngine.h>
+#include "Core/Utilities/Event/Event.h"
 
 /*
  * @brief 
@@ -77,4 +78,13 @@ public:
 	 * Destroys the current window and unitializes SDL.
 	*/
 	void quit();
+
+	/*
+	 * @brief
+	 * Window Click Event.
+	 * 
+	 * @brief
+	 * Values <Mouse Button ID, Window ID>
+	*/
+	EventArgs<int32, int32> onWindowClick{};
 };

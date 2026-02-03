@@ -2,25 +2,22 @@
 
 cbuffer CBuf
 {
-  float4x4  transform; // The transform of the vertex
-  float4x4  viewProj; // The viewprojection matrix
-  float3    cameraPosition; // The position of the camera in world space
+  float4x4 transform; // The transform of the vertex
+  float4x4 lookAtMatrix; // The viewprojection matrix
+  float4x4 perspectiveMatrix;
 };
 
 struct VSOut
 {
-  float3 worldPosition  : POSITION;
-  float3 norm           : NORMAL;
-  float2 tex            : TEXCOORD;
-  float3 camPosition    : CAMPOSITION;
-  float4 pos            : SV_POSITION;
+  float3 worldPosition : POSITION;
+  float3 norm : NORMAL;
+  float2 tex : TEXCOORD;
+  float4 pos : SV_POSITION;
 };
 
 VSOut main(float3 pos : POSITION, float2 tex : TEXCOORD, float3 normal : NORMAL)
 {
   VSOut vso;
-  
-  vso.camPosition = cameraPosition;
   
   // World position of the vertices
   vso.worldPosition = mul(float4(pos, 1.0f), transform).xyz;
@@ -31,7 +28,7 @@ VSOut main(float3 pos : POSITION, float2 tex : TEXCOORD, float3 normal : NORMAL)
   // The position of the model's vertices from the camera perspective (position in screen space)
   // vso.pos = mul(float4(pos + (normalize(normal) * 0.01f), 1.0f), mul(transform, viewProj));
   // vso.pos.xy += normalize(pos.xy) * 0.01f * vso.pos.w;
-  vso.pos = mul(float4(pos, 1.0f), mul(transform, viewProj));
+  vso.pos = mul(float4(pos, 1.0f), mul(transform, mul(lookAtMatrix, perspectiveMatrix)));
   
   vso.tex = tex;
   

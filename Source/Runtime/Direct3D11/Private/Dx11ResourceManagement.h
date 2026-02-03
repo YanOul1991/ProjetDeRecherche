@@ -39,7 +39,7 @@ public:
       l_resEntryData.valid = true;
 
       ret_resourceHandle.data = entries.size() | ((uint64)l_resEntryData.generation<< 32);
-      printf("Created a new entry at index: %llu \n", entries.size());
+      // printf("Created a new entry at index: %llu \n", entries.size());
       entries.push_back(l_resEntryData);
     }
     else {
@@ -50,7 +50,7 @@ public:
       l_entryRealloc.valid = true;
 
       ret_resourceHandle.data = (uint64)validIndices[0] | ((uint64)l_entryRealloc.generation << 32);
-      printf("Reallocared resource to available slot: %d\n", validIndices[0]);
+      // printf("Reallocared resource to available slot: %d\n", validIndices[0]);
       validIndices.erase(validIndices.begin());
     }
 

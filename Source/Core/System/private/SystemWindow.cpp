@@ -111,6 +111,8 @@ bool SystemWindow::loop()
 				//printf("Mouse button click %d.\n", evt.button.button);
 				//printf("Mouse position: (%f, %f)\n", evt.button.x, evt.button.y);
 				//printf("System window clicked: %d\n", evt.button.windowID);
+
+				onWindowClick.broadcast(evt.button.button, evt.button.windowID);
 				break;
 			}
 			default: {

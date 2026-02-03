@@ -53,7 +53,8 @@ static DepthRTHandle          _handle_depthRT{};
 static VertexShaderHandle     _handle_vertexShader{};
 static FragmentShaderHandle   _handle_fragmentShader{};
 
-static bool _bool_drawWireframe{false};
+static bool _bool_drawWireframe {false};
+static bool _bool_drawOutline   {false};
 
 // ////////////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////////////
@@ -84,8 +85,20 @@ float Application::getDeltaTime()
   return m_deltaTime;
 }
 
+void Application::testFunc_eventSubscribtion(int32 buttonId, int32 windowID)
+{
+  printf("[Private function!] An click of mouse button (%d) on window (%d) event has been triggered at %s.\n",buttonId, windowID, __FUNCTION__);
+  if (buttonId == 1) {
+    _bool_drawOutline = !_bool_drawOutline;
+  }
+  if (buttonId == 3) {
+    _bool_drawWireframe = !_bool_drawWireframe;
+  }
+  //g_uptrSystemWindow->onWindowClick.unsubscribe<Application, &Application::testFunc_eventSubscribtion>(this);
+}
+
 void Application::Quit() 
-{ 
+{
   m_shouldRun = false; 
 }
 
@@ -99,6 +112,10 @@ void Application::ApplicationStart()
     g_uptrSystemWindow->initialize("Optim Engine");
     Graphics::initalize();
     g_uptrSystemWindow->showWindow();
+
+    //printf("Variable args event                 %p.\n", &Application::testFunc_eventSubscribtion);
+    //g_uptrSystemWindow->OnClickEvent.subscribe<Application, &Application::testFunc_eventSubscribtion>(this);
+    g_uptrSystemWindow->onWindowClick.subscribe<Application, &Application::testFunc_eventSubscribtion>(this);
 
     // >>>>>>>>>>> TO DO <<<<<<<<<<< 
     // 
@@ -140,11 +157,11 @@ void Application::ApplicationStart()
       .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/WireframePS.cso"),
 
       .rasterizerDescription = {
-        .fillMode             = ERasterizerFillMode::Solid,
+        .fillMode             = ERasterizerFillMode::Wireframe,
         .cullMode             = ERasterizerCullMode::None,
         .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-        .depthBias            = 0,
-        .slopeScaledDepthBias = 0
+        .depthBias            = -1,
+        .slopeScaledDepthBias = -1.0f
       },
 
       .depthStencilDescription = {
@@ -153,7 +170,7 @@ void Application::ApplicationStart()
         .depthWriteMask           = EDepthStencilDepthWriteMask::WriteAll,
       },
 
-      .primitiveTopology = EPipelinePrimitiveTopology::LineList
+      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
     };
     _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
 
@@ -181,6 +198,7 @@ void Application::ApplicationStart()
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
     };
+
     _handlePipelineOutline = Graphics::RHI()->createPipeline(&l_outlinePipelineDesc);
 
     // Create DepthStencil state
@@ -265,25 +283,26 @@ void Application::ApplicationLoop()
       Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
     }
 
-    Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
-    Graphics::RHI()->cmdBindVertexBuffer(&_worldGridMesh.vertexBufferHandle);
-    Graphics::RHI()->cmdBindIndexBuffer(&_worldGridMesh.indexBufferHandle);
-    Graphics::RHI()->cmdDrawIndexed(_worldGridMesh.indexCount);
-
-    /*
-    for (int i = 0; i < _list_meshes.size(); i++) {
-      Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
-      Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
-      Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
+    if (_bool_drawWireframe) {
+      Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
+      for (int i = 0; i < _list_meshes.size(); i++) {
+        Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
+        Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
+        Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
+      }
     }
 
-		Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
-		for (int i = 0; i < _list_meshes.size(); i++) {
-			Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
-			Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
-			Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
-		}
-    */
+    if (_bool_drawOutline) {
+      //Graphics::RHI()->cmdBindVertexBuffer(&_worldGridMesh.vertexBufferHandle);
+      //Graphics::RHI()->cmdBindIndexBuffer(&_worldGridMesh.indexBufferHandle);
+      //Graphics::RHI()->cmdDrawIndexed(_worldGridMesh.indexCount);
+		  Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
+		  for (int i = 0; i < _list_meshes.size(); i++) {
+			  Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
+			  Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
+			  Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
+		  }
+    }
 
     // Execute the commands afters binding all the appropriate ones.
     Graphics::RHI()->draw();
