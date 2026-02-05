@@ -68,14 +68,12 @@ private:
 };
 
 template<typename... Args>
-class EventArgs
+class Delegate
 {
 public:
 	template<typename T, void(T::*func)(Args...)>
 	void subscribe(T* instance)
 	{
-		printf("Member function size %llu.\n", sizeof(func));
-
 		Callback l_callBack{};
 		l_callBack.subscriber = instance;
 
@@ -84,16 +82,12 @@ public:
 					(inst->*func)(args...); 
 		};
 
-
-		l_callBack.procPtr = (void*)&func;
-		printf("Proc ptr at                       | %p.\n", l_callBack.procPtr);
-
 		callbacks.push_back(static_cast<Callback&&>(l_callBack));
 	}
 
 	void broadcast(Args... args)
 	{
-		printf("Variable args event broadcast.\n");
+		//printf("Variable args event broadcast.\n");
 		for (Callback& cb : callbacks) {
 			if (cb.subscriber != nullptr && cb.thunk != nullptr) {
 				cb.thunk(cb.subscriber, args...);
@@ -127,7 +121,7 @@ private:
 	{
 		void* subscriber;
 		void (*thunk)(void*, Args...);
-		void* procPtr;
+		//void* procPtr;
 	};
 
 	std::vector<Callback> callbacks{};

@@ -108,11 +108,19 @@ bool SystemWindow::loop()
 				break;
 			}
 			case SDL_EVENT_MOUSE_BUTTON_DOWN: {
+				int width{};
+				int height{};
+
+				if (SDL_GetWindowSize(window, &width, &height)) {
+					printf("Window Size: %d, %d\n", width, height);
+				}
+
 				//printf("Mouse button click %d.\n", evt.button.button);
-				//printf("Mouse position: (%f, %f)\n", evt.button.x, evt.button.y);
 				//printf("System window clicked: %d\n", evt.button.windowID);
+				//printf("Mouse position: (%f, %f)\n", evt.button.x, evt.button.y);
 
 				onWindowClick.broadcast(evt.button.button, evt.button.windowID);
+				onSystemWindowClick.broadcast(evt.button.x, evt.button.y, evt.button.button);
 				break;
 			}
 			default: {
@@ -159,4 +167,11 @@ void SystemWindow::quit()
 {
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+void SystemWindow::getWindowSize(int32* pWidth, int32* pHeight)
+{
+	if (!SDL_GetWindowSize(window, pWidth, pHeight)) {
+		printf("[Error] Could not fetch the window's size.\n");
+	}
 }

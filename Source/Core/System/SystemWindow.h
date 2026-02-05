@@ -79,6 +79,8 @@ public:
 	*/
 	void quit();
 
+	void getWindowSize(int32* pWidth, int32* pHeight);
+
 	/*
 	 * @brief
 	 * Window Click Event.
@@ -86,5 +88,6 @@ public:
 	 * @brief
 	 * Values <Mouse Button ID, Window ID>
 	*/
-	EventArgs<int32, int32> onWindowClick{};
+	Delegate<int32, int32> onWindowClick{};
+	Delegate<float, float, int32>	onSystemWindowClick{};
 };

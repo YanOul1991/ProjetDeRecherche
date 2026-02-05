@@ -10,8 +10,6 @@
 #include "Core/OptimEngine.h"
 #include "Core/Math/OptimMathematics.h"
 
-//#include <iostream>
-//#include <cmath>
 #include <math.h>
 #include <algorithm>
 
@@ -27,8 +25,8 @@ struct Quaternion {
 
 	static Quaternion fromAxisAngle(const float3& axis, float rad) {
 		float half = 0.5f * rad;
-		float s = sinf(half);
-		float3 n = normalize(axis);
+		float s		 = sinf(half);
+		float3 n	 = normalize(axis);
 
 		return {
 			cosf(half),

@@ -144,7 +144,7 @@ VertexShaderHandle Dx11RHI::createVertexShader(const char* path)
 {
   Dx11VertexShader* l_pResource = new Dx11VertexShader;
 
-  uint64 size = MultiByteToWideChar(CP_UTF8, 0, path, -1, 0, 0);
+  int32 size = MultiByteToWideChar(CP_UTF8, 0, path, -1, 0, 0);
   wchar* l_wstr = new wchar[size];
   MultiByteToWideChar(CP_UTF8, 0, path, -1, l_wstr, size);
   
@@ -159,7 +159,7 @@ VertexShaderHandle Dx11RHI::createVertexShader(const char* path)
 FragmentShaderHandle Dx11RHI::createFragmentShader(const char* path)
 {
   Dx11PixelShader* l_pResource = new Dx11PixelShader;
-  uint64 size = MultiByteToWideChar(CP_UTF8, 0, path, -1, 0, 0);
+  int32 size = MultiByteToWideChar(CP_UTF8, 0, path, -1, 0, 0);
   wchar* l_wstr = new wchar[size];
   MultiByteToWideChar(CP_UTF8, 0, path, -1, l_wstr, size);
   

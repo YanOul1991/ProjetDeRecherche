@@ -84,7 +84,7 @@ public:
 class Dx11ConstantBuffer
 {
 public:
-  inline Dx11ConstantBuffer(ID3D11Device* pDevice, uint64 param_structByteSize)
+  inline Dx11ConstantBuffer(ID3D11Device* pDevice, uint32 param_structByteSize)
   {
     byteSize = param_structByteSize;
     D3D11_BUFFER_DESC desc{};
@@ -111,8 +111,8 @@ public:
     pContext->Unmap(pBuffer.Get(), 0);
   }
 
-  uint64 byteSize{};
   ComPtr<ID3D11Buffer> pBuffer{};
+  uint32 byteSize{};
 };
 
 

@@ -23,15 +23,16 @@ public:
 
   // Should the application continue running and looping.
   bool ShouldRun() const;
-  static float getRuntime();
-  static float getDeltaTime();
-
+  static float  getRuntime();
+  static float  getDeltaTime();
+  static void   getMainWindowSize(int32* pWidth, int32* pHeight);
 
 private:
   static float m_runtime;
   static float m_deltaTime;
   bool m_shouldRun{false};
   void testFunc_eventSubscribtion(int32 buttonId, int32 windowID);
+  void mangeWindowClickEvent(float posX, float posY, int32 buttonID);
 };
 
 extern "C" {

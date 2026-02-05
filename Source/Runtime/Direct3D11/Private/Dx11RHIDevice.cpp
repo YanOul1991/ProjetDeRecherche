@@ -16,10 +16,14 @@
 
 #include "Core/Object/Camera/Camera.h"
 #include "Core/Object/Image/Image.h"
+
 #include "Core/System/FileStream.h"
 #include "Core/System/Application.h"
+
 #include "Core/Types/string.h"
+
 #include "Core/Exception/exception.h"
+
 #include "Core/Input/Input.h"
 
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
@@ -114,7 +118,7 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow, Dx11RHI* param_pDx11RHI)
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
 
   //matrix_perspective =  DirectX::XMMatrixPerspectiveRH(1.0f, 1080.0f / 1920.0f, 1.0f, 1000.0f);
-  matrix_perspective =  DirectX::XMMatrixPerspectiveFovRH(mathConst::PI / 3.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
+  matrix_perspective =  DirectX::XMMatrixPerspectiveFovRH(Optim::Constants::pi / 3.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
 
   return true;
 }
@@ -154,30 +158,18 @@ void Dx11RHIDevice::renderUpdate()
     DirectX::XMLoadFloat3(&up)
   );
 
-  DirectX::XMFLOAT4X4 mat{};
-  DirectX::XMStoreFloat4x4(&mat, matrix_perspective);
 
-  //printf("DX camera view matrix: \n");
-  //for (int i = 0; i < 4; i++) {
-  //  printf("|%2.7f, %2.7f, %2.7f, %2.7f|\n", mat.m[i][0],  mat.m[i][1],  mat.m[i][2],  mat.m[i][3]);
-  //}
-
-  //printf("LookAt Matrix: \n");
-  float4x4 l_lookAt = {
-    Camera::right.x,  Camera::up.x, -Camera::forward.x, 0,
-    Camera::right.y,  Camera::up.y, -Camera::forward.y, 0,
-    Camera::right.z,  Camera::up.z, -Camera::forward.z, 0,
-    -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), -dotProduct(-1 * Camera::forward, Camera::position), 1,
-  };
 
   //l_lookAt.printMatrix();
 
-  //m_pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);s
+  //m_pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
   //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
-  constexpr float pX{0};
-  constexpr float pY{0};
-  constexpr float pZ{0};
+
+  int32 l_windowWidth{};
+  int32 l_windowHeight{};
+
+  Application::getMainWindowSize(&l_windowWidth, &l_windowHeight);
 
   vsInputConstBufferData.transform = float4x4 {
       1, 0, 0, 0,
@@ -186,22 +178,19 @@ void Dx11RHIDevice::renderUpdate()
       0, 0, 0, 1
   };
 
-  //float4x4 l_lookAt = {
-  //  Camera::right.x,    Camera::right.y,    Camera::right.z,   -dotProduct(Camera::right,   Camera::position),
-  //  Camera::up.x,       Camera::up.y,       Camera::up.z,      -dotProduct(Camera::up,      Camera::position),
-  //  -Camera::forward.x,  -Camera::forward.y,  -Camera::forward.z, dotProduct(Camera::forward, Camera::position),
-  //  0, 0, 0, 1,
-  //};
-
-  vsInputConstBufferData.lookAtMatrix = l_lookAt.transpose();
-
-  constexpr float a   = 1920.0f / 1080.0f;
-  constexpr float fov = mathConst::PI / 3.0f;
+  float a = static_cast<float>(l_windowWidth) / static_cast<float>(l_windowHeight);
+  constexpr float fov = Optim::Constants::pi / 3.0f;
   constexpr float n   = 0.1f;
   constexpr float f   = 1000.0f;
 
-  float yScale = 1.0f / (tan(fov / 2.0f));
+  float4x4 l_lookAt = {
+    Camera::right.x,  Camera::up.x, -Camera::forward.x, 0,
+    Camera::right.y,  Camera::up.y, -Camera::forward.y, 0,
+    Camera::right.z,  Camera::up.z, -Camera::forward.z, 0,
+    -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), -dotProduct(-1 * Camera::forward, Camera::position), 1,
+  };
 
+  float yScale = 1.0f / (tan(fov / 2.0f));
   float4x4 perspectiveMatrix = float4x4 {
     yScale / a, 0, 0, 0,
     0, yScale, 0, 0,
@@ -209,7 +198,6 @@ void Dx11RHIDevice::renderUpdate()
     0, 0, (n * f) / (n - f), 0
   };
 
-  vsInputConstBufferData.perspectiveMatrix = perspectiveMatrix.transpose();
 
   //printf("Transform Matrix: \n");
   //vsInputConstBufferData.transform.printMatrix();
@@ -220,6 +208,30 @@ void Dx11RHIDevice::renderUpdate()
   // Update constant buffer for camera view and for now also the transform for the mesh object as its always assumed to be 0
   //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.lookAtMatrix, DirectX::XMMatrixTranspose(matrix_camera));
   //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.perspectiveMatrix, DirectX::XMMatrixTranspose(matrix_perspective));
+
+  DirectX::XMFLOAT4X4 mat{};
+  DirectX::XMStoreFloat4x4(&mat, (matrix_camera * matrix_perspective));
+
+  //printf("DX camera view matrix: \n");
+  //for (int i = 0; i < 4; i++) {
+  //  printf("|%2.7f, %2.7f, %2.7f, %2.7f|\n", mat.m[i][0],  mat.m[i][1],  mat.m[i][2],  mat.m[i][3]);
+  //}
+
+  /*
+  float4x4 myViewProjection = l_lookAt * perspectiveMatrix;
+  printf("------------------------------- Camera matrix:\n");
+  l_lookAt.printMatrix();
+  printf("------------------------------- Perspective matrix:\n");
+  perspectiveMatrix.printMatrix();
+  printf("------------------------------- View projection matrix:\n");
+  myViewProjection.printMatrix();
+  printf("------------------------------- Inverse matrix test matrix:\n");
+  float4x4 _inverse = Optim::Mathematics::getMatrixInverse(myViewProjection);
+  */
+
+  vsInputConstBufferData.lookAtMatrix       = l_lookAt.transpose();
+  vsInputConstBufferData.perspectiveMatrix  = perspectiveMatrix.transpose();
+
   pDxRHI->updateConstantBuffer(&constantBufferTransformView, &vsInputConstBufferData);
   pDxRHI->cmdBindConstantBuffer(&constantBufferTransformView);
 
@@ -238,7 +250,7 @@ void Dx11RHIDevice::renderUpdate()
 
 void Dx11RHIDevice::presentBuffer() const
 {
-  InterfaceImGui::update();
+  //InterfaceImGui::update();
 
   HRESULT hr{ S_OK };
   hr = m_pSwapChain->Present(0u, 0u);
