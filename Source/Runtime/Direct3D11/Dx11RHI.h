@@ -22,8 +22,6 @@
 #include "Core/Graphics/IGraphicsRHI.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
 
-//#include "Private/Dx11RHIDevice.h"
-
 #include <iostream>
 #include <vector>
 
@@ -85,24 +83,147 @@ public:
   static ID3D11RenderTargetView*  initRenderTargetView();
 
   Dx11RHI();
+
+  /**
+   * @brief
+   * Class deconstructor.
+   */
   virtual ~Dx11RHI() override final;
-  virtual void Initialize(void* _WindowHandle) override final;
+
+   /**
+    * @brief
+    * Initalized the appropriate resources to start using the DirectX11
+    * API.
+    * 
+    * @param windowOutput
+    * A pointer to an OS window, for DirectX11 the windows
+    * the window pointer is of type HWND.
+    */
+  virtual void Initialize(void* windowOutput) override final;
+
+  /**
+   * @brief
+   * Start performing all the logic to render the next frame, by
+   * such as clearing the backbuffer, getting the rendering camera's 
+   * states, and reading from the command list.
+   */
   virtual void draw() override final;
+
+  /**
+   * @brief
+   * Performs cleaning operations after rendering a frame.
+   * For now does nothing.
+   */
   virtual void Clean() override final;
 
+  /**
+   * @brief
+   * [THIS FUNCTION IS NOT YET IMPLEMENTED]
+   * 
+   * @brief 
+   * This function updates the information involving about the output window's 
+   * dimensions. It should clear the backbuffer and updates its width and height
+   * data. 
+   *
+   * To make this function work, all DirectX11 resources that hold references
+   * to the backbuffer need to be freed, in order for the backbuffer to be allowed
+   * to be changed by the DirectX11 API.
+   * 
+   * For now the know ressources that need to be freed in order for this operation
+   * to work are the following:
+   * 
+   * - ID3D11RenderTargetView
+   * - ID3D11DepthStencilState
+   * - ID3D11DepthStencilView
+   * - ID3D11Texture2D (Only if used as a depth texture)
+   * 
+   * The management of those resources should be done through their their respective 
+   * implemented container classes such as Dx11DepthStencilViewTexture or Dx11RasterizerState.
+   */
   virtual void updateSystemWindowSize(uint32 newWidth, uint32 newHeight) override final;
 
+  /**
+   * @brief
+   * [THIS FUNCTION WILL BE REPLACED]
+   */
   virtual ITextureResource* createTextureResource(const Image* pImage) override final;
-  virtual ISampler*         createSamplerResource() override final;
 
+  /**
+   * @brief
+   * [THIS FUNCTION WILL BE REPLACED]
+   */
+  virtual ISampler* createSamplerResource() override final;
+
+  /**
+   * @brief
+   * [THIS FUNCTION WILL BE REPLACED]
+   */
   virtual void BindTexture(ITextureResource* pTexture) override final;
+
+  /**
+   * @brief
+   * [THIS FUNCTION WILL BE REPLACED]
+   */
   virtual void bindSampler(ISampler* pSampler) override final;
-  virtual VertexBufferHandle    createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
+
+  /**
+   * @brief
+   * Creates a ID3D11Buffer ressource used for vertices
+   * 
+   * @param pVertices
+   * A pointer to a Vertex struct object buffer.
+   * 
+   * @param elementCount the number of vertices in the buffer.
+   * 
+   * @return
+   * A handle ressource handle to a vertex buffer resource
+   */
+  virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
+
+  /**
+   * @brief
+   * Creates a ID3D11Buffer ressource used for indices
+   * 
+   * @param pIndices
+   * A pointer to a index buffer.
+   * 
+   * @param elementCount the number of indices in the buffer.
+   * 
+   * @return
+   * A handle ressource handle to an index buffer resource
+   */
   virtual IndexBufferHandle     createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+
+  /**
+   * @brief
+   * Creates a ID3D11VertexShader ressource
+   * 
+   * @param path
+   * The path to the compiled .cso object containing the compiled
+   * vertex shader data.
+   * 
+   * @return
+   * A handle ressource handle to a vertex shader resource
+   */
   virtual VertexShaderHandle    createVertexShader(const char* path) override final;
+
+  /**
+   * @brief
+   * Creates a ID3D11PixelShader ressource.
+   * 
+   * @param path
+   * The path to the compiled .cso object containing the compiled
+   * pixel shader data.
+   * 
+   * @return
+   * A handle ressource handle to a pixel shader resource
+   */
   virtual FragmentShaderHandle  createFragmentShader(const char* path) override final;
+
   virtual PipelineHandle        createPipeline(SPipelineDesc* pPipelineDesc) override final;
+
   virtual DepthRTHandle         createDepthRT() override final;
+
   virtual ConstantBufferHandle  createConstantBuffer(uint64 objectByteSize) override final;
 
   virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) override final;
@@ -121,12 +242,9 @@ public:
   virtual void freeResource(ResourceHandle handle) override final;
 
 private:
-  void* m_hTargetWindow;      // Target Window.
+  void* m_outputWindow;      // Target Window.
   Dx11RHIDevice* pDx11RHIDevice;  
   static CommandBuffer cmdBuffer;
 };
 
-/*
- * @brief
-*/
 extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module();

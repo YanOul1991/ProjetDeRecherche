@@ -43,19 +43,31 @@ public:
   Dx11RHIDevice& operator=(const Dx11RHIDevice&)  = delete;
   Dx11RHIDevice& operator=(const Dx11RHIDevice&&) = delete;
 
-  bool initialize(HWND _outputWindow, Dx11RHI* pDx11RHI);
+  bool initialize(HWND outputWindow, Dx11RHI* pDx11RHI);
 
-  void initRenderTargetView();
+  /*
+   * @brief
+   * Initalized an ID3D11RenderTargetView object to get reference to
+   * backbuffer.
+  */
+  void initRenderTargetView(uint32 newWidth, uint32 newHeight);
+
+  /**
+   * @brief
+   * Clears the ID3D11RenderTargetView object references and sets
+   * the render target values of the the render target view and depth stencil 
+   * to null;
+   */
   void clearRenderTargetView();
 
   void presentBuffer() const;
   void clearBuffer(float red, float green, float blue, float alpha) const;
   void renderUpdate();
 
-  ComPtr<ID3D11Device>            m_pDevice;
-  ComPtr<IDXGISwapChain>          m_pSwapChain;
-  ComPtr<ID3D11DeviceContext>     m_pContext;
-  ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
+  ComPtr<ID3D11Device>            m_pDevice           {nullptr};
+  ComPtr<IDXGISwapChain>          m_pSwapChain        {nullptr};
+  ComPtr<ID3D11DeviceContext>     m_pContext          {nullptr};
+  ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView {nullptr};
 
 private:
 

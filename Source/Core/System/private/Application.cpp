@@ -389,8 +389,10 @@ void Application::ApplicationStart()
 
     _handlePipeline = Graphics::RHI()->createPipeline(&pipelineDesc);
 
-    /*
-    * Wirframe pipeline
+    /* 
+     * -----------------------------------------------------------------------------
+     * ---------------------------- WIREFRAME  PIPELINE ----------------------------
+     * -----------------------------------------------------------------------------
     */
     SPipelineDesc l_wirframePipelineDesc = {
       .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/WireframeVS.cso"),
@@ -414,10 +416,11 @@ void Application::ApplicationStart()
     };
     _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
 
-    /*
-    * Wirframe pipeline
+    /* 
+     * -----------------------------------------------------------------------------
+     * ----------------------------- OUTLINE  PIPELINE -----------------------------
+     * -----------------------------------------------------------------------------
     */
-
     SPipelineDesc l_outlinePipelineDesc = {
       .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/OutlineVS.cso"),
       .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/OutlinePS.cso"),
@@ -445,7 +448,6 @@ void Application::ApplicationStart()
      * -------------------------- Line Rendering pipeline --------------------------
      * -----------------------------------------------------------------------------
     */
-
     SPipelineDesc l_pipelineLineDesc = {
       .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/WireframeVS.cso"),
       .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/WireframePS.cso"),
@@ -467,37 +469,6 @@ void Application::ApplicationStart()
       .primitiveTopology = EPipelinePrimitiveTopology::LineStrip
     };
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
-
-    /* 
-     * -----------------------------------------------------------------------------
-     * ------------------------------ Line rendering  ------------------------------
-     * -----------------------------------------------------------------------------
-    */
-
-    /*
-    _meshLineRender.vertices = new Vertex[2];
-
-    _meshLineRender.vertices[0] = Vertex {
-      .position = {0, 0, 0},
-      .uvCoord  = {0, 0},
-      .normal   = {0, 0, 0}
-    };
-    _meshLineRender.vertices[1] = Vertex {
-      .position = {0, 0, 10},
-      .uvCoord  = {0, 0},
-      .normal   = {0, 0, 0}
-    };
-
-    _meshLineRender.indices = new uint32[2]{
-      0, 1
-    };
-
-    _meshLineRender.vertexCount = 2;
-    _meshLineRender.indexCount = 2;
-
-    _meshLineRender.vertexBufferHandle  = Graphics::RHI()->createResourceVertexBuffer(_meshLineRender.vertices, 2);
-    _meshLineRender.indexBufferHandle   = Graphics::RHI()->createResourceIndexBuffer(_meshLineRender.indices, 2);
-    */
 
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
@@ -652,8 +623,9 @@ CORE_API void OptimEditor::processFile(const char* param_cstrFilePath)
   (*l_uptrMesh).vertexBufferHandle  = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
   (*l_uptrMesh).indexBufferHandle   = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
 
+  /*
   printf("Mesh index count: %du\n", l_uptrMesh->indexCount);
   printf("Mesh tri count: %f\n", (float)l_uptrMesh->indexCount / 3);
-
+  */
   _list_meshes.push_back(l_uptrMesh.move());
 }

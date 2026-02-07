@@ -98,6 +98,9 @@
     <ClInclude Include="..\Source\Core\Utilities\Event\Event.h">
       <Filter>Utilities\Event</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsDevice.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">

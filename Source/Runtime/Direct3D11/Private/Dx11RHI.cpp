@@ -26,6 +26,8 @@
 #include <cmath>
 #include <vector>
 
+static std::vector<Dx11DepthStencil*>           g_depthStencilResources{};
+static std::vector<Dx11DepthStencilViewTexture*> g_depthStencilViewTextureResources{};
 
 class Dx11Pipeline
 {
@@ -46,7 +48,7 @@ extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module() {
 }
 
 Dx11RHI::Dx11RHI() :
-  m_hTargetWindow { nullptr },
+  m_outputWindow  { nullptr },
   pDx11RHIDevice  { nullptr }
 {}
 
@@ -55,17 +57,17 @@ Dx11RHI::~Dx11RHI()
 
 void Dx11RHI::Initialize(void* _WindowHandle)
 {
-  m_hTargetWindow =_WindowHandle;
+  m_outputWindow =_WindowHandle;
   pDx11RHIDevice = new Dx11RHIDevice{};
   if (pDx11RHIDevice) { 
-    pDx11RHIDevice->initialize(reinterpret_cast<HWND>(m_hTargetWindow), this);
-    pDx11RHIDevice->initRenderTargetView();
+    pDx11RHIDevice->initialize(reinterpret_cast<HWND>(m_outputWindow), this);
+    pDx11RHIDevice->initRenderTargetView(1920, 1080);
   }
 }
 
-// ##################################
+// ###########################################################
 //    DRAW CALL
-// ##################################
+// ###########################################################
 
 void Dx11RHI::draw() 
 {
@@ -77,19 +79,35 @@ void Dx11RHI::draw()
 
 void Dx11RHI::Clean() {}
 
-void Dx11RHI::updateSystemWindowSize(uint32 param_newWidth, uint32 param_newHeight)
+/**
+ * ----------------------------------------------------------------------------
+ * OUTPUT WINDOW RESIZING MANAGEMENT
+ * ----------------------------------------------------------------------------
+ */
+void Dx11RHI::updateSystemWindowSize(uint32 param_newWidth, uint32 param_newHeight) 
 {
-  return;
+  OPTIM_WIN_COM_CHECK_START();
 
-  OPTIM_CHECK_WIN_COM();
+  printf("Will try to  resize swap chain. new Size : (%du, %du)\n", param_newWidth, param_newHeight);
+  pDx11RHIDevice->clearRenderTargetView();
 
   if (pDx11RHIDevice->m_pSwapChain != nullptr) {
-    OPTIM_TRY_DX(pDx11RHIDevice->m_pSwapChain->ResizeBuffers(0, param_newWidth, param_newHeight, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0));
+    OPTIM_WIN_THROW_ON_FAILED(
+      pDx11RHIDevice->m_pSwapChain->ResizeBuffers(0, param_newWidth, param_newHeight, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0)
+    );
     printf("Swap chain resized!\n");
   }
   else {
     printf("[Error]\nCannot find swap chain.\n");
   }
+
+  for (auto& depthBuffer : g_depthStencilViewTextureResources)     {
+    depthBuffer->resize(pDx11RHIDevice->m_pDevice.Get(), param_newWidth, param_newHeight);
+  }
+
+  printf("Updated all Depth stencils\n");
+
+  pDx11RHIDevice->initRenderTargetView(param_newWidth, param_newHeight);
 }
 
 ID3D11Device* Dx11RHI::getDevicePtr() {
@@ -105,7 +123,7 @@ ID3D11RenderTargetView* Dx11RHI::initRenderTargetView() {
 }
 
 // ##################################
-//    RESOURCE CREATION FUNCTIONS
+//  OLD RESOURCE CREATION FUNCTIONS
 // ##################################
 
 ITextureResource* Dx11RHI::createTextureResource(const Image* pImage) {
@@ -132,9 +150,27 @@ void Dx11RHI::bindSampler(ISampler* pSampler) {
   pSampler->bindResource();
 }
 
-// ##################################
-//    RESOURCE CREATION FUNCTIONS
-// ##################################
+/**
+ * ################################################################
+ *    RESOURCE CREATION FUNCTIONS
+ * ################################################################
+ * 
+ * Each of the functions that creates a resources does so by allocating
+ * memory on the heap for each apporpriate Dx11[XYZ] ressource
+ * 
+ * Each of those functions, then calls the appropriate functions to 
+ * create the necessary ressources from the passed in paramters.
+ * 
+ * Then they are finally added to a registery and by passing in 
+ * the type of the ressource and the pointer to the Dx11 object 
+ * casted as a void*.
+ * 
+ * The function returns a generic ResourceHandle object, where the
+ * data value is passed in as the data value for the correct
+ * resource handle type.
+ * 
+ * ################################################################
+ */
 
 VertexBufferHandle Dx11RHI::createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount)
 {
@@ -197,6 +233,9 @@ PipelineHandle Dx11RHI::createPipeline(SPipelineDesc* param_pipelineDesc)
   l_pPipeline->pRasterizer            = new Dx11RasterizerState(&param_pipelineDesc->rasterizerDescription);
   l_pPipeline->primitveTopology       = static_cast<D3D_PRIMITIVE_TOPOLOGY>(static_cast<int>(param_pipelineDesc->primitiveTopology));
 
+  // Add the depth stencil state to its list
+  g_depthStencilResources.push_back(l_pPipeline->pDepthStencilState);
+
   return PipelineHandle{
     .data = g_registery.registerResource(EResourceTypes::Pipeline, l_pPipeline).data
   };
@@ -205,6 +244,10 @@ PipelineHandle Dx11RHI::createPipeline(SPipelineDesc* param_pipelineDesc)
 DepthRTHandle Dx11RHI::createDepthRT()
 {
   Dx11DepthStencilViewTexture* l_pDepthRT = new Dx11DepthStencilViewTexture(pDx11RHIDevice->m_pDevice.Get());
+
+  // Add the depth stencil view to its list
+  g_depthStencilViewTextureResources.push_back(l_pDepthRT);
+
   return DepthRTHandle {
     .data = g_registery.registerResource(EResourceTypes::DepthRT, l_pDepthRT).data
   };
@@ -212,15 +255,23 @@ DepthRTHandle Dx11RHI::createDepthRT()
 
 ConstantBufferHandle Dx11RHI::createConstantBuffer(uint64 objectByteSize)
 {
-  Dx11ConstantBuffer* l_pConstantBuffer = new Dx11ConstantBuffer(pDx11RHIDevice->m_pDevice.Get(), objectByteSize);
+  Dx11ConstantBuffer* l_pConstantBuffer = new Dx11ConstantBuffer(pDx11RHIDevice->m_pDevice.Get(), static_cast<uint32>(objectByteSize));
   return ConstantBufferHandle {
     .data = g_registery.registerResource(EResourceTypes::ConstantBuffer, l_pConstantBuffer).data
   };
 }
 
-// ##################################
-//    ONCSTANT BUFFER DATA UPDATE
-// ##################################
+/**
+ * ################################################################
+ *    CONSTANT BUFFER UPDATES
+ * ################################################################
+ * 
+ * Constant buffers have a special function that allows them
+ * to be updated at any time through the RHI when binded to 
+ * shader pipelines.
+ * 
+ * ################################################################
+ */
 
 void Dx11RHI::updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData)
 {
@@ -233,17 +284,33 @@ void Dx11RHI::updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* 
     g_registery[(ResourceHandle*)pConstantBuffer]->pResource)->update(pDx11RHIDevice->m_pContext.Get(), pNewData);
 }
 
-// ##################################
-//    FREEING RESOURCES
-// ##################################
+/**
+ * ################################################################
+ *    RESOURCE FREEING
+ * ################################################################
+ */
 
 void Dx11RHI::freeResource(ResourceHandle handle) {
   g_registery.freeResource(handle);
 }
 
-// ##################################
-//    BINDING FUNCTIONS
-// ##################################
+/**
+ * ################################################################
+ *    COMMAND BINDING FUNCTIONS
+ * ################################################################
+ * 
+ * These functions add an instruction to the command buffer.
+ * 
+ * Each of these recieves the corrsponding resource handle
+ * depeneding on the command type. 
+ * 
+ * The handle must be validated to confirm that the registery 
+ * entry's data pointer holds the data to the appropriate resource
+ * type
+ * 
+ * Then when added to the command buffer, must pass in the
+ * appropriate command type.
+ */
 
 void Dx11RHI::cmdBindPipeline(PipelineHandle* pPipeline)
 {
@@ -329,13 +396,6 @@ void Dx11RHI::cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader)
   );
 }
 
-void Dx11RHI::cmdDrawIndexed(uint32 param_indexCount) {
-  cmdBuffer.push(
-    ECommandType::DrawIndexed, 
-    &param_indexCount, 
-    sizeof(uint32)
-  );
-}
 
 void Dx11RHI::cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer)
 {
@@ -351,9 +411,20 @@ void Dx11RHI::cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer)
   );
 }
 
-/*
- * For directX11
-*/
+void Dx11RHI::cmdDrawIndexed(uint32 param_indexCount) {
+  cmdBuffer.push(
+    ECommandType::DrawIndexed, 
+    &param_indexCount, 
+    sizeof(uint32)
+  );
+}
+
+/**
+ * ################################################################
+ *    COMMAND BUFFER EXCECUTION
+ * ################################################################
+ */
+
 void Dx11RHI::excecuteCommands()
 {
   std::vector<Dx11DepthStencilViewTexture*> l_listDepthRT{};

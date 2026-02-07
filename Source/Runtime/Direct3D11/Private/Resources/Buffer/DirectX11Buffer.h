@@ -120,11 +120,14 @@ public:
 // ++++++++++++++++++++++++++++++++++++++++++++++++
 // ++++++++++++++++++++++++++++++++++++++++++++++++
 
+// IF THE BACKBUFFER NEEDS TO BE REIZED DUE TO
+// WINDOW RESIZE. THE INSTANCE MUST BE DELETED
+// AND RECREATED .
+
 class Dx11DepthStencil final
 {
 public:
-  inline Dx11DepthStencil(ID3D11Device* pDevice, SDepthStencilDescription* param_pDepthStencilDesc)
-  {
+  inline Dx11DepthStencil(ID3D11Device* pDevice, SDepthStencilDescription* param_pDepthStencilDesc) {
     OPTIM_CHECK_WIN_COM();
 
     D3D11_DEPTH_STENCIL_DESC l_dsDesc{};
@@ -136,8 +139,7 @@ public:
     OPTIM_TRY_DX(pDevice->CreateDepthStencilState(&l_dsDesc, &pState));
   }
 
-  inline void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const
-  {
+  inline void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const {
     pContext->OMSetDepthStencilState(pState.Get(), 1);
   }
 
@@ -156,18 +158,20 @@ public:
 class Dx11DepthStencilViewTexture
 {
 public:
+
   inline Dx11DepthStencilViewTexture(ID3D11Device* pDevice)
   {
     OPTIM_CHECK_WIN_COM();
 
     D3D11_TEXTURE2D_DESC depthDesc{};
-    depthDesc.Width     = 1920;
-    depthDesc.Height    = 1080;
-    depthDesc.MipLevels = 1;
-    depthDesc.ArraySize = 1;
-    depthDesc.Format    = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depthDesc.Usage     = D3D11_USAGE_DEFAULT;
-    depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+    depthDesc.Width               = 1920;
+    depthDesc.Height              = 1080;
+    depthDesc.MipLevels           = 1;
+    depthDesc.ArraySize           = 1;
+    depthDesc.Format              = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthDesc.Usage               = D3D11_USAGE_DEFAULT;
+    depthDesc.BindFlags           = D3D11_BIND_DEPTH_STENCIL;
     depthDesc.SampleDesc.Count    = 1;
     depthDesc.SampleDesc.Quality  = 0;
 
@@ -175,6 +179,7 @@ public:
 
     // Depth stencil view creation
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+
     dsvDesc.Format              = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsvDesc.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Texture2D.MipSlice  = 0;
@@ -182,13 +187,58 @@ public:
     OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pDepthStencilView));
   }
 
-  inline void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const
+  inline Dx11DepthStencilViewTexture(ID3D11Device* pDevice, uint32 param_width, uint32 param_height)
   {
+    OPTIM_CHECK_WIN_COM();
+
+    D3D11_TEXTURE2D_DESC depthDesc{};
+
+    depthDesc.Width               = param_width;
+    depthDesc.Height              = param_height;
+    depthDesc.MipLevels           = 1;
+    depthDesc.ArraySize           = 1;
+    depthDesc.Format              = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
+    depthDesc.Usage               = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+    depthDesc.BindFlags           = D3D11_BIND_FLAG::D3D11_BIND_DEPTH_STENCIL;
+    depthDesc.SampleDesc.Count    = 1;
+    depthDesc.SampleDesc.Quality  = 0;
+
+    OPTIM_TRY_DX(pDevice->CreateTexture2D(&depthDesc, nullptr, &pDepthStencil));
+
+    // Depth stencil view creation
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+
+    dsvDesc.Format              = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
+    dsvDesc.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D;
+    dsvDesc.Texture2D.MipSlice  = 0;
+
+    OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pDepthStencilView));
+  }
+
+  inline void resize(ID3D11Device* pDevice, uint32 newWidth, uint32 newHeight) {
+    OPTIM_CHECK_WIN_COM();
+
+    D3D11_TEXTURE2D_DESC l_depthDesc  {};
+    D3D11_DEPTH_STENCIL_VIEW_DESC l_dsvDesc{};
+
+    pDepthStencil->GetDesc(&l_depthDesc);
+    pDepthStencilView->GetDesc(&l_dsvDesc);
+
+    l_depthDesc.Width   = newWidth;
+    l_depthDesc.Height  = newHeight;
+
+    pDepthStencil.Reset();
+    pDepthStencilView.Reset();
+
+    OPTIM_WIN_THROW_ON_FAILED(pDevice->CreateTexture2D(&l_depthDesc, nullptr, &pDepthStencil));
+    OPTIM_WIN_THROW_ON_FAILED(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &l_dsvDesc, &pDepthStencilView));
+  }
+
+  inline void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const {
     pContext->OMSetRenderTargets(1, ppRenderTargetView, pDepthStencilView.Get());
   }
 
-  inline void clearDepthStencilView(ID3D11DeviceContext* pContext) const
-  {
+  inline void clearDepthStencilView(ID3D11DeviceContext* pContext) const {
     pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
   }
 
@@ -204,8 +254,7 @@ public:
 class Dx11RasterizerState final
 {
 public:
-  inline Dx11RasterizerState(SRasterizerDescription* param_pRasterizerDesc)
-  {
+  inline Dx11RasterizerState(SRasterizerDescription* param_pRasterizerDesc) {
     D3D11_RASTERIZER_DESC rastDesc{};
     rastDesc.FillMode               = static_cast<D3D11_FILL_MODE>(static_cast<int32>(param_pRasterizerDesc->fillMode) + 2);
     rastDesc.CullMode               = static_cast<D3D11_CULL_MODE>(static_cast<int32>(param_pRasterizerDesc->cullMode) + 1);

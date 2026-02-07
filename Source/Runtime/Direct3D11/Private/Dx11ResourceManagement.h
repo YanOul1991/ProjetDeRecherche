@@ -62,11 +62,6 @@ public:
   */
   inline void freeResource(ResourceHandle resourceHandle) 
   {
-    if (!validate(&resourceHandle)) {
-      //printf("Cannot free the handle, the resource is invalid.\n");
-      return;
-    }
-
     uint32 l_generation = getHandleGen(&resourceHandle);
     uint32 l_index = getHandleIndex(&resourceHandle);
     ResourceEntryData& l_targetEntry = entries[l_index];
@@ -105,9 +100,7 @@ public:
    * @brief
    * DEPRECATED - Use validateHandle() instead.
    * This function does not resource type
-  */
-  inline bool validate(ResourceHandle* pHandle) 
-  {
+  inline bool validate(ResourceHandle* pHandle) {
     uint32 l_generation = getHandleGen(pHandle);
     uint32 l_index = getHandleIndex(pHandle);
 
@@ -117,9 +110,9 @@ public:
 
     return entries[l_index].valid == true && l_generation == entries[l_index].generation;
   }
+  */
 
-  inline bool validateHandle(ResourceHandle* param_pHandle, EResourceTypes param_eResourceType)
-  {
+  inline bool validateHandle(ResourceHandle* param_pHandle, EResourceTypes param_eResourceType) {
     uint32 l_generation = getHandleGen(param_pHandle);
     uint32 l_index = getHandleIndex(param_pHandle);
     const ResourceEntryData& l_targetResource = entries[l_index];
@@ -135,23 +128,19 @@ public:
       l_targetResource.resourceType == param_eResourceType;
   }
 
-  inline uint32 getHandleIndex(ResourceHandle* pHandle) const 
-  {
+  inline uint32 getHandleIndex(ResourceHandle* pHandle) const {
     return (uint32)(pHandle->data & 0x00000000FFFFFFFF);
   }
 
-  inline uint32 getHandleGen(ResourceHandle* pHandle) const 
-  {
+  inline uint32 getHandleGen(ResourceHandle* pHandle) const {
     return (uint32)((pHandle->data & 0xFFFFFFFF00000000) >> 32);
   }
 
-  ResourceEntryData* operator[](ResourceHandle& handle) 
-  {
+  ResourceEntryData* operator[](ResourceHandle& handle) {
     return &entries[getHandleIndex(&handle)];
   }
 
-  ResourceEntryData* operator[](ResourceHandle* param_pHandle)
-  {
+  ResourceEntryData* operator[](ResourceHandle* param_pHandle) {
     return &entries[getHandleIndex(param_pHandle)];
   }
 
@@ -159,4 +148,4 @@ public:
   std::vector<uint32> validIndices{};
 };
 
-}
+} // namespace - END
