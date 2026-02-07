@@ -83,7 +83,7 @@ bool SystemWindow::loop()
 
 	SDL_Event							evt{};
 	SDL_MouseButtonFlags	mouseData			= SDL_GetMouseState(0, 0);
-	const bool*						keyboardState = SDL_GetKeyboardState(0);
+	const bool*						keyboardState					= SDL_GetKeyboardState(0);
 
 	wheelHold			= mouseData & SDL_BUTTON_MASK(SDL_BUTTON_MIDDLE);
 	leftBtnMouse	= mouseData & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
@@ -108,19 +108,19 @@ bool SystemWindow::loop()
 				break;
 			}
 			case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-				int width{};
+				int width{}; 
 				int height{};
-
 				if (SDL_GetWindowSize(window, &width, &height)) {
-					printf("Window Size: %d, %d\n", width, height);
+					onSystemWindowClick.broadcast(evt.button.x, evt.button.y, evt.button.button);
 				}
-
-				//printf("Mouse button click %d.\n", evt.button.button);
-				//printf("System window clicked: %d\n", evt.button.windowID);
-				//printf("Mouse position: (%f, %f)\n", evt.button.x, evt.button.y);
-
-				onWindowClick.broadcast(evt.button.button, evt.button.windowID);
-				onSystemWindowClick.broadcast(evt.button.x, evt.button.y, evt.button.button);
+				else {
+					printf("[Error]Cant get cursor positions on window click events.\n");
+				}
+				break;
+			}
+			case SDL_EVENT_WINDOW_RESIZED: {
+				//printf("The window has been resized: new  size (%d, %d)", evt.window.data1, evt.window.data2);
+				onWindowResize.broadcast(evt.window.data1, evt.window.data2);
 				break;
 			}
 			default: {
@@ -169,9 +169,9 @@ void SystemWindow::quit()
 	SDL_Quit();
 }
 
-void SystemWindow::getWindowSize(int32* pWidth, int32* pHeight)
+void SystemWindow::getWindowSize(int32* pWidth, int32* pHeight) 
 {
-	if (!SDL_GetWindowSize(window, pWidth, pHeight)) {
+	if (!SDL_GetWindowSizeInPixels(window, pWidth, pHeight)) {
 		printf("[Error] Could not fetch the window's size.\n");
 	}
 }

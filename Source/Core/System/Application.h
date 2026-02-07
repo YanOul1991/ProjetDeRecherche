@@ -31,8 +31,11 @@ private:
   static float m_runtime;
   static float m_deltaTime;
   bool m_shouldRun{false};
-  void testFunc_eventSubscribtion(int32 buttonId, int32 windowID);
+
+  // Event management functions
+
   void mangeWindowClickEvent(float posX, float posY, int32 buttonID);
+  void manageWindowResizeEvent(uint32 width, uint32 height);
 };
 
 extern "C" {

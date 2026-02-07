@@ -82,20 +82,21 @@ class Dx11RHI final : public IGraphicsRHI
 public:
   static ID3D11Device*            getDevicePtr();
   static ID3D11DeviceContext*     getContextPtr();
-  static ID3D11RenderTargetView*  getRenderTargetView();
+  static ID3D11RenderTargetView*  initRenderTargetView();
 
   Dx11RHI();
-  ~Dx11RHI() override final;
-  void Initialize(void* _WindowHandle) override final;
-  void draw() override final;
-  void Clean() override final;
+  virtual ~Dx11RHI() override final;
+  virtual void Initialize(void* _WindowHandle) override final;
+  virtual void draw() override final;
+  virtual void Clean() override final;
 
-  ITextureResource* createTextureResource(const Image* pImage) override final;
-  ISampler*         createSamplerResource() override final;
+  virtual void updateSystemWindowSize(uint32 newWidth, uint32 newHeight) override final;
+
+  virtual ITextureResource* createTextureResource(const Image* pImage) override final;
+  virtual ISampler*         createSamplerResource() override final;
 
   virtual void BindTexture(ITextureResource* pTexture) override final;
   virtual void bindSampler(ISampler* pSampler) override final;
-
   virtual VertexBufferHandle    createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
   virtual IndexBufferHandle     createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
   virtual VertexShaderHandle    createVertexShader(const char* path) override final;

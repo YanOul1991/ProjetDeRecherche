@@ -51,7 +51,7 @@ public:
 	 * For now the window does manage any message other than the QUIT message.
 	 * 
 	 * @param windowTitle 
-	 * 
+	 * The title of the window
 	*/
 	void initialize(const char* windowTitle);
 
@@ -86,8 +86,9 @@ public:
 	 * Window Click Event.
 	 * 
 	 * @brief
-	 * Values <Mouse Button ID, Window ID>
+	 * Values <X-Position, Y-Position, Mouse Button>
 	*/
-	Delegate<int32, int32> onWindowClick{};
 	Delegate<float, float, int32>	onSystemWindowClick{};
+
+	Delegate<uint32, uint32> onWindowResize{};
 };

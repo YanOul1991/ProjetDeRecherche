@@ -1,5 +1,5 @@
 /* ======================================================================================
- *  IGraphicsModule.h
+ *  IGraphicsRHI.h
  * 
  *  By:
  *    Yanis Oulmane
@@ -26,6 +26,18 @@ public:
   CORE_API virtual void Clean() = 0;
 
   /*
+   * @brief 
+   * Updates the draw size of the render target, to update rendering settings.
+   * 
+   * @param newWidth
+   * The new width of the window.
+   * 
+   * @param newHeight
+   * The new height of the window.
+  */
+  CORE_API virtual void updateSystemWindowSize(uint32 newWidth, uint32 newHeight) = 0;
+
+  /*
    * @brief
    * Creates and allocates a vertex buffer resources on the GPU.
    * 
@@ -38,7 +50,8 @@ public:
    * @return
    * A handle to the graphique resource.
   */
-  CORE_API virtual VertexBufferHandle   createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
+  CORE_API virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
+
   /*
    * @brief
    * Creates and allocates an index buffer resources on the GPU.
@@ -58,7 +71,6 @@ public:
   CORE_API virtual PipelineHandle       createPipeline(SPipelineDesc* pPipelineDesc) = 0;
   CORE_API virtual DepthRTHandle        createDepthRT() = 0;
   CORE_API virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) = 0;
-
 
   CORE_API virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
 

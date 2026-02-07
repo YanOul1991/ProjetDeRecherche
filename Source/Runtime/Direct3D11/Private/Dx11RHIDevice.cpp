@@ -98,8 +98,8 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow, Dx11RHI* param_pDx11RHI)
   ));
 
   // Get pointer to backbuffer
-  ComPtr<ID3D11Resource> _pBackbuffer;
-  OPTIM_TRY_DX(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &_pBackbuffer));
+  ComPtr<ID3D11Texture2D> _pBackbuffer;
+  OPTIM_TRY_DX(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &_pBackbuffer));
   OPTIM_TRY_DX(m_pDevice->CreateRenderTargetView(_pBackbuffer.Get(), nullptr, &m_pRenderTargetView));
 
   // TEMPORARY - Set static fields for getting device and context
@@ -114,28 +114,36 @@ bool Dx11RHIDevice::initialize(HWND _outputWindow, Dx11RHI* param_pDx11RHI)
   constantBufferTransformView = pDxRHI->createConstantBuffer(sizeof(VSInputConstantBuffer));
   
   //__t_constBuffer.init(m_pDevice.Get());
-
   InterfaceImGui::initDirectX(m_pDevice.Get(), m_pContext.Get());
-
-  //matrix_perspective =  DirectX::XMMatrixPerspectiveRH(1.0f, 1080.0f / 1920.0f, 1.0f, 1000.0f);
-  matrix_perspective =  DirectX::XMMatrixPerspectiveFovRH(Optim::Constants::pi / 3.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
-
+   
+  /*
+    matrix_perspective =  DirectX::XMMatrixPerspectiveFovRH(Optim::Constants::pi / 3.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
+  */
   return true;
 }
 
-void Dx11RHIDevice::clearBuffer(float red, float green, float blue, float alpha) const {
-  const float color[4] = { 
-    red, 
-    green, 
-    blue, 
-    alpha 
-  };
+void Dx11RHIDevice::initRenderTargetView()
+{
+  OPTIM_CHECK_WIN_COM();
+  ComPtr<ID3D11Texture2D> l_pBackbuffer;
+  OPTIM_TRY_DX(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &l_pBackbuffer));
+  OPTIM_TRY_DX(m_pDevice->CreateRenderTargetView(l_pBackbuffer.Get(), nullptr, &m_pRenderTargetView));
+}
 
+void Dx11RHIDevice::clearRenderTargetView()
+{
+  m_pRenderTargetView.Reset();
+  m_pContext->OMSetRenderTargets(1, nullptr, nullptr);
+}
+
+void Dx11RHIDevice::clearBuffer(float red, float green, float blue, float alpha) const {
+  const float color[4] = { red, green, blue, alpha };
   m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
 }
 
 void Dx11RHIDevice::renderUpdate()
 {
+  /*
   DirectX::XMFLOAT3 position = {
     Camera::position.x,
     Camera::position.y,
@@ -157,13 +165,10 @@ void Dx11RHIDevice::renderUpdate()
     DirectX::XMLoadFloat3(&forward),
     DirectX::XMLoadFloat3(&up)
   );
-
-
+  */
 
   //l_lookAt.printMatrix();
-
   //m_pContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
   //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.transform, DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0, 0, 0)));
 
   int32 l_windowWidth{};
@@ -209,24 +214,9 @@ void Dx11RHIDevice::renderUpdate()
   //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.lookAtMatrix, DirectX::XMMatrixTranspose(matrix_camera));
   //DirectX::XMStoreFloat4x4(&vsInputConstBufferData.perspectiveMatrix, DirectX::XMMatrixTranspose(matrix_perspective));
 
+  /*
   DirectX::XMFLOAT4X4 mat{};
   DirectX::XMStoreFloat4x4(&mat, (matrix_camera * matrix_perspective));
-
-  //printf("DX camera view matrix: \n");
-  //for (int i = 0; i < 4; i++) {
-  //  printf("|%2.7f, %2.7f, %2.7f, %2.7f|\n", mat.m[i][0],  mat.m[i][1],  mat.m[i][2],  mat.m[i][3]);
-  //}
-
-  /*
-  float4x4 myViewProjection = l_lookAt * perspectiveMatrix;
-  printf("------------------------------- Camera matrix:\n");
-  l_lookAt.printMatrix();
-  printf("------------------------------- Perspective matrix:\n");
-  perspectiveMatrix.printMatrix();
-  printf("------------------------------- View projection matrix:\n");
-  myViewProjection.printMatrix();
-  printf("------------------------------- Inverse matrix test matrix:\n");
-  float4x4 _inverse = Optim::Mathematics::getMatrixInverse(myViewProjection);
   */
 
   vsInputConstBufferData.lookAtMatrix       = l_lookAt.transpose();
@@ -240,7 +230,6 @@ void Dx11RHIDevice::renderUpdate()
   vp.Width    = 1920;
   vp.Height   = 1080;
   vp.MinDepth = 0;
-
   vp.MaxDepth = 1;
   vp.TopLeftX = 0;
   vp.TopLeftY = 0;

@@ -97,15 +97,12 @@ void Application::getMainWindowSize(int32* pWidth, int32* pHeight)
   g_uptrSystemWindow->getWindowSize(pWidth, pHeight);
 }
 
-void Application::testFunc_eventSubscribtion(int32 buttonId, int32 windowID)
-{
-  if (buttonId == 3) {
-    _bool_drawWireframe = !_bool_drawWireframe;
-  }
-}
-
 void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID)
 {
+  if (buttonID == 3) {
+    _bool_drawWireframe = !_bool_drawWireframe;
+  }
+
   if (buttonID != 1) {
     return;
   }
@@ -321,6 +318,13 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID)
   } // For loop end - mesh list iteration
 }
 
+void Application::manageWindowResizeEvent(uint32 width, uint32 height)
+{
+  //printf("The window has been resized!, new size (%du, %du)\n", width, height);
+  //printf("[CALLER]\n%s\n[FILE]\n%s\n[LINE]\n%d\n", __FUNCTION__, __FILE__, __LINE__);
+  Graphics::RHI()->updateSystemWindowSize(width, height);
+}
+
 void Application::Quit() 
 {
   m_shouldRun = false; 
@@ -335,9 +339,9 @@ void Application::ApplicationStart()
     g_uptrSystemWindow.init();
     g_uptrSystemWindow->initialize("Optim Engine");
     Graphics::initalize();
-    g_uptrSystemWindow->showWindow();
-    g_uptrSystemWindow->onWindowClick.subscribe<Application, &Application::testFunc_eventSubscribtion>(this);
     g_uptrSystemWindow->onSystemWindowClick.subscribe<Application, &Application::mangeWindowClickEvent>(this);
+    g_uptrSystemWindow->onWindowResize.subscribe<Application, &Application::manageWindowResizeEvent>(this);
+    g_uptrSystemWindow->showWindow();
 
     /*
     float4x4 _matrix = {

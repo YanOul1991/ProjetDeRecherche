@@ -125,7 +125,7 @@ class Dx11DepthStencil final
 public:
   inline Dx11DepthStencil(ID3D11Device* pDevice, SDepthStencilDescription* param_pDepthStencilDesc)
   {
-    HRESULT hr{ S_OK };
+    OPTIM_CHECK_WIN_COM();
 
     D3D11_DEPTH_STENCIL_DESC l_dsDesc{};
     l_dsDesc.DepthEnable    = param_pDepthStencilDesc->depthTestEnabled;
@@ -148,16 +148,18 @@ public:
 // ++++++++++++++++++++++++++++++++++++++++++++++++
 // ++++++++++++++++++++++++++++++++++++++++++++++++
 
+
+// IF THE BACKBUFFER NEEDS TO BE REIZED DUE TO
+// WINDOW RESIZE. THE INSTANCE MUST BE DELETED
+// AND RECREATED .
+
 class Dx11DepthStencilViewTexture
 {
 public:
   inline Dx11DepthStencilViewTexture(ID3D11Device* pDevice)
   {
-    HRESULT hr{S_OK};
+    OPTIM_CHECK_WIN_COM();
 
-    /* ////////////////////////////////////
-     * DEPTH TEXTURE 2D CREATION
-    //////////////////////////////////// */
     D3D11_TEXTURE2D_DESC depthDesc{};
     depthDesc.Width     = 1920;
     depthDesc.Height    = 1080;
@@ -166,7 +168,6 @@ public:
     depthDesc.Format    = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
     depthDesc.Usage     = D3D11_USAGE_DEFAULT;
     depthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
     depthDesc.SampleDesc.Count    = 1;
     depthDesc.SampleDesc.Quality  = 0;
 
@@ -178,21 +179,21 @@ public:
     dsvDesc.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Texture2D.MipSlice  = 0;
 
-    OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pView));
+    OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pDepthStencilView));
   }
 
-  void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const
+  inline void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const
   {
-    pContext->OMSetRenderTargets(1, ppRenderTargetView, pView.Get());
+    pContext->OMSetRenderTargets(1, ppRenderTargetView, pDepthStencilView.Get());
   }
 
-  void clearDepthStencilView(ID3D11DeviceContext* pContext) const
+  inline void clearDepthStencilView(ID3D11DeviceContext* pContext) const
   {
-    pContext->ClearDepthStencilView(pView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+    pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
   }
 
   ComPtr<ID3D11Texture2D>         pDepthStencil{};
-  ComPtr<ID3D11DepthStencilView>  pView{};
+  ComPtr<ID3D11DepthStencilView>  pDepthStencilView{};
 };
 
 
@@ -206,9 +207,9 @@ public:
   inline Dx11RasterizerState(SRasterizerDescription* param_pRasterizerDesc)
   {
     D3D11_RASTERIZER_DESC rastDesc{};
-    rastDesc.FillMode   = static_cast<D3D11_FILL_MODE>(static_cast<int32>(param_pRasterizerDesc->fillMode) + 2);
-    rastDesc.CullMode   = static_cast<D3D11_CULL_MODE>(static_cast<int32>(param_pRasterizerDesc->cullMode) + 1);
-    rastDesc.FrontCounterClockwise = param_pRasterizerDesc->faceWinding == ERasterizerFaceWinding::CounterClockWise;
+    rastDesc.FillMode               = static_cast<D3D11_FILL_MODE>(static_cast<int32>(param_pRasterizerDesc->fillMode) + 2);
+    rastDesc.CullMode               = static_cast<D3D11_CULL_MODE>(static_cast<int32>(param_pRasterizerDesc->cullMode) + 1);
+    rastDesc.FrontCounterClockwise  = param_pRasterizerDesc->faceWinding == ERasterizerFaceWinding::CounterClockWise;
     rastDesc.DepthBias              = param_pRasterizerDesc->depthBias;
     rastDesc.DepthBiasClamp         = 0.0f;
     rastDesc.SlopeScaledDepthBias   = param_pRasterizerDesc->slopeScaledDepthBias;
@@ -220,7 +221,7 @@ public:
     Dx11RHI::getDevicePtr()->CreateRasterizerState(&rastDesc, &pRasterizer);
   }
 
-  void bindResource()
+  inline void bindResource() const
   {
     Dx11RHI::getContextPtr()->RSSetState(pRasterizer.Get());
   }

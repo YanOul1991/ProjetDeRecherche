@@ -44,6 +44,10 @@ public:
   Dx11RHIDevice& operator=(const Dx11RHIDevice&&) = delete;
 
   bool initialize(HWND _outputWindow, Dx11RHI* pDx11RHI);
+
+  void initRenderTargetView();
+  void clearRenderTargetView();
+
   void presentBuffer() const;
   void clearBuffer(float red, float green, float blue, float alpha) const;
   void renderUpdate();
@@ -52,17 +56,11 @@ public:
   ComPtr<IDXGISwapChain>          m_pSwapChain;
   ComPtr<ID3D11DeviceContext>     m_pContext;
   ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
-  ComPtr<ID3D11DepthStencilView>  m_pDepthStencilView;
 
 private:
-  /// TEST FIELDS
-  DirectX::XMMATRIX matrix_perspective{}; // Camera Perspective matrix
-  DirectX::XMMATRIX matrix_camera{};      // Camera World Space Transform
 
   ConstantBufferHandle  constantBufferTransformView{};
   VSInputConstantBuffer vsInputConstBufferData{};
-
   Dx11RHI* pDxRHI{};
-
   friend Dx11RHI;
 };

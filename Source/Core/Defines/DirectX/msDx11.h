@@ -19,4 +19,6 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
+#define OPTIM_CHECK_WIN_COM() HRESULT hr = S_OK
+#define OPTIM_WIN_COM_CHECK_START() HRESULT hr = S_OK
 #define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))

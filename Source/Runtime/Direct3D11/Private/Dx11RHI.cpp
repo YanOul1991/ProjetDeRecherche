@@ -46,11 +46,12 @@ extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module() {
 }
 
 Dx11RHI::Dx11RHI() :
-  m_hTargetWindow{ nullptr },
-  pDx11RHIDevice{ nullptr }
+  m_hTargetWindow { nullptr },
+  pDx11RHIDevice  { nullptr }
 {}
 
-Dx11RHI::~Dx11RHI() {}
+Dx11RHI::~Dx11RHI() 
+{}
 
 void Dx11RHI::Initialize(void* _WindowHandle)
 {
@@ -58,6 +59,7 @@ void Dx11RHI::Initialize(void* _WindowHandle)
   pDx11RHIDevice = new Dx11RHIDevice{};
   if (pDx11RHIDevice) { 
     pDx11RHIDevice->initialize(reinterpret_cast<HWND>(m_hTargetWindow), this);
+    pDx11RHIDevice->initRenderTargetView();
   }
 }
 
@@ -75,6 +77,21 @@ void Dx11RHI::draw()
 
 void Dx11RHI::Clean() {}
 
+void Dx11RHI::updateSystemWindowSize(uint32 param_newWidth, uint32 param_newHeight)
+{
+  return;
+
+  OPTIM_CHECK_WIN_COM();
+
+  if (pDx11RHIDevice->m_pSwapChain != nullptr) {
+    OPTIM_TRY_DX(pDx11RHIDevice->m_pSwapChain->ResizeBuffers(0, param_newWidth, param_newHeight, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0));
+    printf("Swap chain resized!\n");
+  }
+  else {
+    printf("[Error]\nCannot find swap chain.\n");
+  }
+}
+
 ID3D11Device* Dx11RHI::getDevicePtr() {
   return Dx11RHIDevice::deviceRef;
 }
@@ -83,7 +100,7 @@ ID3D11DeviceContext* Dx11RHI::getContextPtr() {
   return Dx11RHIDevice::contextRef;
 }
 
-ID3D11RenderTargetView* Dx11RHI::getRenderTargetView() {
+ID3D11RenderTargetView* Dx11RHI::initRenderTargetView() {
   return Dx11RHIDevice::renderTargetView;
 }
 
