@@ -14,19 +14,21 @@
 #include <algorithm>
 
 /*
- * @brief 
+ * @brief
  * A representation of a rotation on an axis.
 */
-struct Quaternion {
+struct Quaternion
+{
 	float w{1.0f};
 	float x{1.0f};
 	float y{1.0f};
 	float z{1.0f};
 
-	static Quaternion fromAxisAngle(const float3& axis, float rad) {
+	static Quaternion fromAxisAngle(const float3& axis, float rad)
+	{
 		float half = 0.5f * rad;
-		float s		 = sinf(half);
-		float3 n	 = normalize(axis);
+		float s = sinf(half);
+		float3 n = normalize(axis);
 
 		return {
 			cosf(half),
@@ -39,16 +41,17 @@ struct Quaternion {
 	/*
 	 * @brief
 	 * Applies the quaternion's rotation to a vector.
-	 * 
+	 *
 	 * @param v
 	 * A float3 to rotate.
-	 * 
+	 *
 	 * @returns
 	 * The value of the rotated vector.
 	*/
-	inline float3 rotate(const float3& v) const {
+	inline float3 rotate(const float3& v) const
+	{
 		// Get Vector part from quaternion
-		float3 qv = { x, y, z };
+		float3 qv = {x, y, z};
 
 		float3 t = 2.0f * cross(qv, v);
 
@@ -59,11 +62,12 @@ struct Quaternion {
 	 * @brief
 	 * Returns the identify quaternion: <w, x, y, z>(1, 0, 0, 0)
 	*/
-	static Quaternion identity() {
+	static Quaternion identity()
+	{
 		return {
-			1.0f, 
-			0.0f, 
-			0.0f, 
+			1.0f,
+			0.0f,
+			0.0f,
 			0.0f
 		};
 	}
@@ -72,9 +76,10 @@ struct Quaternion {
 	 * @brief
 	 * Transforms a quaternion into euler angles in radians
 	*/
-	inline void toEuler(float& pitch, float& yaw, float& roll) const {
+	inline void toEuler(float& pitch, float& yaw, float& roll) const
+	{
 		// Pitch (x-axis)
-		float sinp = 2.0f * (w * x + y *z);
+		float sinp = 2.0f * (w * x + y * z);
 		float cosp = 1.0f - 2.0f * (x * x + y * y);
 		pitch = atan2f(sinp, cosp);
 
@@ -91,14 +96,40 @@ struct Quaternion {
 };
 
 /*
- * @brief 
+ * @brief
  * Quaternion multiplication
 */
-inline Quaternion operator*(const Quaternion& P, const Quaternion& Q) {
+inline Quaternion operator*(const Quaternion& P, const Quaternion& Q)
+{
 	return {
 		(P.w * Q.w) - (P.x * Q.x) - (P.y * Q.y) - (P.z * Q.z),
-		(P.w * Q.x)	+ (P.x * Q.w) + (P.y * Q.z) - (P.z * Q.y),
+		(P.w * Q.x) + (P.x * Q.w) + (P.y * Q.z) - (P.z * Q.y),
 		(P.w * Q.y) - (P.x * Q.z) + (P.y * Q.w) + (P.z * Q.x),
 		(P.w * Q.z) + (P.x * Q.y) - (P.y * Q.x) + (P.z * Q.w)
 	};
 }
+
+namespace Optim::Mathematics
+{
+
+inline float4x4 getMatrixFromQuaternion(const Quaternion& q)
+{
+	float xx = q.x * q.x;
+	float yy = q.y * q.y;
+	float zz = q.z * q.z;
+	float xy = q.x * q.y;
+	float xz = q.x * q.z;
+	float yz = q.y * q.z;
+	float wx = q.w * q.x;
+	float wy = q.w * q.y;
+	float wz = q.w * q.z;
+
+	return float4x4{
+		1 - 2 * (yy + zz), 2 * (xy + wz), 2 * (xz - wy), 0,
+		2 * (xy - wz), 1 - 2 * (xx + zz), 2 * (yz + wx), 0,
+		2 * (xz + wy), 2 * (yz - wx), 1 - 2 * (xx + yy), 0,
+		0, 0, 0, 1
+	};
+}
+
+} // namespace Optim::Mathematics 

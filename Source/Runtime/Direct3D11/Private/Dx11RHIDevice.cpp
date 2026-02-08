@@ -184,9 +184,9 @@ void Dx11RHIDevice::renderUpdate()
 
 void Dx11RHIDevice::presentBuffer() const
 {
+  OPTIM_WIN_COM_CHECK_START();
   //InterfaceImGui::update();
 
-  OPTIM_WIN_COM_CHECK_START();
   hr = m_pSwapChain->Present(1u, 0u);
 
   if (FAILED(hr)) {

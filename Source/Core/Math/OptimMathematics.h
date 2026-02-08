@@ -279,6 +279,45 @@ inline float4x4 operator*(const float4x4& a, const float4x4& b)
 namespace Optim::Mathematics
 {
 
+inline float4 getFloat4FromFloat3(const float3& f) 
+{
+	return float4{
+		f.x,
+		f.y,
+		f.z,
+		1
+	};
+}
+
+inline float3 getFloat3Part(const float4& f)
+{
+	return float3 {
+		f.x,
+		f.y,
+		f.z
+	};
+}
+
+inline float4x4 getMatrixTranslation(float x, float y, float z)
+{
+	return float4x4 {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+			 x,    y,    z, 1.0f
+	};
+}
+
+inline float4x4 getMatrixTranslation(const float3& f)
+{
+	return float4x4 {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		 f.x,   f.y,   f.z, 1.0f
+	};
+}
+
 /* +++++++++++++++++++++++++++++++++++++++++++++++
 		MATRIX DETERMINANT
 +++++++++++++++++++++++++++++++++++++++++++++++ */

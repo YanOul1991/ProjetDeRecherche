@@ -74,6 +74,8 @@ public:
 
   CORE_API virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
 
+  CORE_API virtual void cmdSetNextMeshTransform(float4x4* meshWorldTransform) = 0;
+
   /*
    * @brief
    * Frees the allocated resources by the RHI on the GPU. Once freed

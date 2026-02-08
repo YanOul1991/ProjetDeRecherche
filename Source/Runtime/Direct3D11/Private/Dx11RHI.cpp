@@ -419,6 +419,14 @@ void Dx11RHI::cmdDrawIndexed(uint32 param_indexCount) {
   );
 }
 
+void Dx11RHI::cmdSetNextMeshTransform(float4x4* meshWorldTransform) {
+  cmdBuffer.push(
+    ECommandType::BindConstantBufferTransformMatrix,
+    meshWorldTransform,
+    sizeof(float4x4)
+  );
+}
+
 /**
  * ################################################################
  *    COMMAND BUFFER EXCECUTION
@@ -462,6 +470,15 @@ void Dx11RHI::excecuteCommands()
         Dx11DepthStencilViewTexture* l_pDepthRT = (*reinterpret_cast<Dx11DepthStencilViewTexture**>(l_pData));
         l_pDepthRT->bindResource(pDx11RHIDevice->m_pContext.Get(),pDx11RHIDevice->m_pRenderTargetView.GetAddressOf());
         l_listDepthRT.push_back(l_pDepthRT);
+        break;
+      }
+      case ECommandType::BindConstantBufferTransformMatrix: {
+        float4x4 transform = *reinterpret_cast<float4x4*>(l_pData);
+
+				pDx11RHIDevice->vsInputConstBufferData.transform = transform.transpose();
+
+        updateConstantBuffer(&pDx11RHIDevice->constantBufferTransformView, &pDx11RHIDevice->vsInputConstBufferData);
+
         break;
       }
       case ECommandType::BindPipeline: {

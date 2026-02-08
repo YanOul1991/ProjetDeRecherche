@@ -57,10 +57,10 @@
       <Filter>Object\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Math\OptimMathematics.h">
-      <Filter>Math</Filter>
+      <Filter>Mathematics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Math\Quaternion.h">
-      <Filter>Math</Filter>
+      <Filter>Mathematics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Types\Color.h">
       <Filter>Types</Filter>
@@ -166,9 +166,6 @@
     <Filter Include="Object\Camera">
       <UniqueIdentifier>{6f7948aa-29c7-40e5-afb3-8b5ef976a755}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{7c57a133-1c38-45d7-9be9-c9d251d805d1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\Image">
       <UniqueIdentifier>{2917b471-63de-4dca-8b0d-8dcdc8df44be}</UniqueIdentifier>
     </Filter>
@@ -189,6 +186,9 @@
     </Filter>
     <Filter Include="Utilities\Event">
       <UniqueIdentifier>{61d34c9e-2e03-4e4a-ab0d-f802f12be186}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mathematics">
+      <UniqueIdentifier>{7c57a133-1c38-45d7-9be9-c9d251d805d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

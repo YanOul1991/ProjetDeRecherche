@@ -36,7 +36,8 @@ enum class ECommandType {
   BindVertexShader,
   BindFragmentShader,
   SetRenderTargets,
-  BindConstantBuffer
+  BindConstantBuffer,
+  BindConstantBufferTransformMatrix
 };
 
 struct SCommand {
@@ -235,6 +236,7 @@ public:
   virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) override final;
   virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) override final;
   virtual void cmdDrawIndexed(uint32 indexCount) override final;
+  virtual void cmdSetNextMeshTransform(float4x4* meshWorldTransform) override final;
 
   virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) override final;
 

@@ -214,55 +214,21 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID)
   ----------------------------------- */
 
   for (auto& mesh : _list_meshes) {
+    float4x4 worldTransform = mesh->getWorldMatrix().transpose();
+
     for (int i = 0; i < (int)((float)mesh->indexCount / 3); i++) {
-      /* =========================================
-      * Visualize triangles test
-      ========================================= */
-
-      /*
-			UniquePtr<Mesh> _meshInstance{};
-			_meshInstance.init();
-
-			_meshInstance->vertices = new Vertex[3];
-
-			_meshInstance->vertices[0] = Vertex{
-				.position = mesh->vertices[mesh->indices[3 * i]].position,
-				.uvCoord = {0, 0},
-				.normal = {0, 0, 0}
-			};
-			_meshInstance->vertices[1] = Vertex{
-				.position = mesh->vertices[mesh->indices[3 * i + 1]].position,
-				.uvCoord = {0, 0},
-				.normal = {0, 0, 0}
-			};
-			_meshInstance->vertices[2] = Vertex{
-				.position = mesh->vertices[mesh->indices[3 * i + 2]].position,
-				.uvCoord = {0, 0},
-				.normal = {0, 0, 0}
-			};
-
-			_meshInstance->indices = new uint32[4]{
-				0, 1, 2, 0
-			};
-
-			_meshInstance->vertexCount = 3;
-			_meshInstance->indexCount = 4;
-
-			_meshInstance->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(_meshInstance->vertices, 3);
-			_meshInstance->indexBufferHandle = Graphics::RHI()->createResourceIndexBuffer(_meshInstance->indices, 4);
-
-			_list_Rays.push_back(_meshInstance.move());
-      */
-
-      /* =========================================
-      * END - Visualize triangles test
-      ========================================= */
-
-
       float tHit = 0;
 
       float3 O  = float3 {0, 0, 0};
       float3 D  = rayDirection;
+
+      float4 v0Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i]].position);
+      float4 v1Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 1]].position);
+      float4 v2Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 2]].position);
+
+      v0Local = worldTransform * v0Local;
+      v1Local = worldTransform * v1Local;
+      v2Local = worldTransform * v2Local;
 
       float3 v0 = mesh->vertices[mesh->indices[3 * i]].position;
       float3 v1 = mesh->vertices[mesh->indices[3 * i + 1]].position;
@@ -533,26 +499,63 @@ void Application::ApplicationLoop()
       Quit();
       return;
     }
+    
+    /*
+     * Set default render targets and pipeline 
+     * and textures.
+     */
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
     Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
     Graphics::RHI()->BindTexture(_TEST_pTextureResource);
     Graphics::RHI()->bindSampler(_TEST_pSampler);
 
-    // >>>>>>>>>>> TO DO <<<<<<<<<<< 
-    // 
-    // For now application iterates through all active meshes to bind
-    // their vertex and index buffers to the command buffer.
-    // Eventually it will instead iterate through active objects in scene,
-    // which will also allow to iterate through their materials.
 
-    for (int i = 0; i < _list_meshes.size(); i++) {
-      Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
-      Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
-      Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
+    /**
+     * Iterates through all instanciated mesh objects
+     * and render them in the scene
+     * 
+     * If wireframe view is activated also draw their conressponding wirferame.
+     */
+
+    for (UniquePtr<Mesh>& pMesh : _list_meshes) {
+      float4x4 worldTransform = pMesh->getWorldMatrix();
+
+      Graphics::RHI()->cmdSetNextMeshTransform(&worldTransform);
+      Graphics::RHI()->cmdBindVertexBuffer(&pMesh->vertexBufferHandle);
+      Graphics::RHI()->cmdBindIndexBuffer(&pMesh->indexBufferHandle);
+      Graphics::RHI()->cmdDrawIndexed(pMesh->indexCount);
     }
-    
+
+    // Draw wireframe for all meshes if required
+    if (_bool_drawWireframe) {
+			Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
+
+      for (UniquePtr<Mesh>& pMesh : _list_meshes) {
+        float4x4 worldTransform = pMesh->getWorldMatrix();
+
+        Graphics::RHI()->cmdSetNextMeshTransform(&worldTransform);
+        Graphics::RHI()->cmdBindVertexBuffer(&pMesh->vertexBufferHandle);
+        Graphics::RHI()->cmdBindIndexBuffer(&pMesh->indexBufferHandle);
+        Graphics::RHI()->cmdDrawIndexed(pMesh->indexCount);
+      }
+    }
+
+    // Draw outlines for all meshes if required
+    if (_bool_drawOutline) {
+		  Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
+		  for (UniquePtr<Mesh>& pMesh : _list_meshes) {
+        float4x4 worldTransform = pMesh->getWorldMatrix();
+
+        Graphics::RHI()->cmdSetNextMeshTransform(&worldTransform);
+			  Graphics::RHI()->cmdBindVertexBuffer(&pMesh->vertexBufferHandle);
+			  Graphics::RHI()->cmdBindIndexBuffer(&pMesh->indexBufferHandle);
+			  Graphics::RHI()->cmdDrawIndexed(pMesh->indexCount);
+		  }
+    }
+
     // Draw Ray casts if available
+    /*
     if (_list_Rays.size() > 0) {
       Graphics::RHI()->cmdBindPipeline(&_handlePipelineLineRendering);
 
@@ -562,26 +565,7 @@ void Application::ApplicationLoop()
         Graphics::RHI()->cmdDrawIndexed(_list_Rays[i]->indexCount);
       }
     }
-
-    // Draw wirframe for all meshes if required
-    if (_bool_drawWireframe) {
-      Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
-      for (int i = 0; i < _list_meshes.size(); i++) {
-        Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
-        Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
-        Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
-      }
-    }
-
-    // Draw outlines for all meshes if required
-    if (_bool_drawOutline) {
-		  Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
-		  for (int i = 0; i < _list_meshes.size(); i++) {
-			  Graphics::RHI()->cmdBindVertexBuffer(&_list_meshes[i]->vertexBufferHandle);
-			  Graphics::RHI()->cmdBindIndexBuffer(&_list_meshes[i]->indexBufferHandle);
-			  Graphics::RHI()->cmdDrawIndexed(_list_meshes[i]->indexCount);
-		  }
-    }
+    */
 
     // Execute the commands
     Graphics::RHI()->draw();
@@ -627,5 +611,25 @@ CORE_API void OptimEditor::processFile(const char* param_cstrFilePath)
   printf("Mesh index count: %du\n", l_uptrMesh->indexCount);
   printf("Mesh tri count: %f\n", (float)l_uptrMesh->indexCount / 3);
   */
+
+
+  l_uptrMesh->rotation = {1.0f, 0.0, 0.0, 0.0f};
+
+  std::random_device rd; 
+  std::mt19937 gen(rd()); 
+  std::uniform_real_distribution<float> distrib(-5.0f, 5.0f);
+
+  l_uptrMesh->position = { 0, 0, 0 };
+
+  //l_uptrMesh->position = { distrib(gen), 0, distrib(gen) };
+  //l_uptrMesh->rotation = Quaternion::fromAxisAngle({0.0f, 1.0f, 0.0f}, distrib(gen));
+
+  printf("Mesh rotation:\n");
+  Optim::Mathematics::getMatrixFromQuaternion(l_uptrMesh->rotation).printMatrix();
+
+  printf("Mesh translation:\n");
+  Optim::Mathematics::getMatrixTranslation(l_uptrMesh->position.x, l_uptrMesh->position.y, l_uptrMesh->position.z).printMatrix();
+
+
   _list_meshes.push_back(l_uptrMesh.move());
 }

@@ -12,16 +12,7 @@
 #include "Direct3D11/Dx11RHI.h"
 #include "Private/Resources/Buffer/DirectX11Buffer.h"
 
-//struct VSInputConstantBuffer 
-//{
-//  float4x4 transform;             // Transform of mesh object
-//  DirectX::XMFLOAT4X4 worldView;  // Camera view matrix
-//  float3 cameraPosition;
-//  float padding;
-//};
-
-struct alignas(16) VSInputConstantBuffer 
-{
+struct alignas(16) VSInputConstantBuffer {
   float4x4 transform;
   float4x4 lookAtMatrix;
   float4x4 perspectiveMatrix;
@@ -29,7 +20,7 @@ struct alignas(16) VSInputConstantBuffer
 
 class Dx11RHIDevice final
 {
-public:
+ public:
   static ID3D11Device*            deviceRef;
   static ID3D11DeviceContext*     contextRef;
   static ID3D11RenderTargetView*  renderTargetView;
@@ -72,7 +63,9 @@ public:
 private:
 
   ConstantBufferHandle  constantBufferTransformView{};
+
   VSInputConstantBuffer vsInputConstBufferData{};
+
   Dx11RHI* pDxRHI{};
   friend Dx11RHI;
 };

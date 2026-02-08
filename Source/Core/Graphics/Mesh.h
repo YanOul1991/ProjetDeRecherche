@@ -8,12 +8,16 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-#include "Core/Math/OptimMathematics.h"
 #include "Core/Graphics/Vertex.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
+
 #include "Core/System/FileStream.h"
+
 #include "Core/Object/Object.h"
+
+#include "Core/Math/OptimMathematics.h"
+#include "Core/Math/Quaternion.h"
 
 #include <iostream>
 #include <fstream>
@@ -33,13 +37,24 @@ public:
 	inline Mesh() = default;
 	inline virtual ~Mesh() noexcept override final{}
 
-	Vertex* vertices		{};
-	uint32* indices			{};
-	uint32	vertexCount	{};
-	uint32	indexCount	{};
+	inline float4x4 getWorldMatrix() const
+	{
+		float4x4 l_translation = Optim::Mathematics::getMatrixTranslation(position);
+		float4x4 l_rotation		 = Optim::Mathematics::getMatrixFromQuaternion(rotation);
+		return l_rotation * l_translation;
+	}
+
+	float3			position{};
+	Quaternion	rotation{};
+	Vertex*			vertices{};
+	uint32*			indices{};
+	uint32			vertexCount{};
+	uint32			indexCount{};
 
 	VertexBufferHandle	vertexBufferHandle	{};
 	IndexBufferHandle		indexBufferHandle		{};
+
+
 
 	/*
 	* @brief
