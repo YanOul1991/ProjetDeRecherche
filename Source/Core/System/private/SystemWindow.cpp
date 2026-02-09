@@ -35,6 +35,9 @@
 static SDL_Window* window;
 static bool shouldRun = true;
 
+static float mouseDx;
+static float mouseDy;
+
 void* SystemWindow::getSystemPointer()
 {
 	SDL_PropertiesID props = SDL_GetWindowProperties(window);
@@ -78,12 +81,10 @@ bool SystemWindow::loop()
 {
 	static bool	 wheelHold = false;
 	static bool	 leftBtnMouse = false;
-	static float mouseDx;
-	static float mouseDy;
 
 	SDL_Event							evt{};
-	SDL_MouseButtonFlags	mouseData			= SDL_GetMouseState(0, 0);
-	const bool*						keyboardState					= SDL_GetKeyboardState(0);
+	SDL_MouseButtonFlags	mouseData				= SDL_GetMouseState(0, 0);
+	const bool*						keyboardState		= SDL_GetKeyboardState(0);
 
 	wheelHold			= mouseData & SDL_BUTTON_MASK(SDL_BUTTON_MIDDLE);
 	leftBtnMouse	= mouseData & SDL_BUTTON_MASK(SDL_BUTTON_LEFT);
@@ -104,22 +105,19 @@ bool SystemWindow::loop()
 			}
 			case SDL_EVENT_DROP_FILE: {
 				const char* path = evt.drop.data;
+				printf("File dropped: %s\n", path);
 				OptimEditor::processFile(path);
 				break;
 			}
 			case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-				int width{}; 
-				int height{};
-				if (SDL_GetWindowSize(window, &width, &height)) {
-					onSystemWindowClick.broadcast(evt.button.x, evt.button.y, evt.button.button);
-				}
-				else {
-					printf("[Error]Cant get cursor positions on window click events.\n");
-				}
+				onSystemWindowClick.broadcast(evt.button.x, evt.button.y, evt.button.button);
+				break;
+			}
+			case SDL_EVENT_MOUSE_BUTTON_UP: {
+				onSystemWindowMouseUp.broadcast(evt.button.x, evt.button.y, evt.button.button);
 				break;
 			}
 			case SDL_EVENT_WINDOW_RESIZED: {
-				//printf("The window has been resized: new  size (%d, %d)", evt.window.data1, evt.window.data2);
 				onWindowResize.broadcast(evt.window.data1, evt.window.data2);
 				break;
 			}
@@ -174,4 +172,20 @@ void SystemWindow::getWindowSize(int32* pWidth, int32* pHeight)
 	if (!SDL_GetWindowSizeInPixels(window, pWidth, pHeight)) {
 		printf("[Error] Could not fetch the window's size.\n");
 	}
+}
+
+bool SystemWindow::getMouseHold() {
+	SDL_MouseButtonFlags mouseState = SDL_GetMouseState(0, 0);
+
+	if (mouseState & SDL_BUTTON_LEFT) {
+		return true;
+	}
+
+	return false;
+}
+
+void SystemWindow::getMouseDelta(float* param_mouseX, float* param_mouseY)
+{
+	*param_mouseX = mouseDx;
+	*param_mouseY = mouseDy;
 }

@@ -81,6 +81,10 @@ public:
 
 	void getWindowSize(int32* pWidth, int32* pHeight);
 
+	bool getMouseHold();
+
+	void getMouseDelta(float* mouseX, float* mouseY);
+
 	/*
 	 * @brief
 	 * Window Click Event.
@@ -89,6 +93,6 @@ public:
 	 * Values <X-Position, Y-Position, Mouse Button>
 	*/
 	Delegate<float, float, int32>	onSystemWindowClick{};
-
+	Delegate<float, float, int32>	onSystemWindowMouseUp{};
 	Delegate<uint32, uint32> onWindowResize{};
 };

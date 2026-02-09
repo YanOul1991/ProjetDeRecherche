@@ -35,7 +35,9 @@ private:
   // Event management functions
 
   void mangeWindowClickEvent(float posX, float posY, int32 buttonID);
+  void manageSysWinMouseUp(float posX, float posY, int32 buttonID);
   void manageWindowResizeEvent(uint32 width, uint32 height);
+
 };
 
 extern "C" {

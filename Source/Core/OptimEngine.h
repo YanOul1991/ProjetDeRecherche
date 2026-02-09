@@ -61,13 +61,14 @@ using wchar       = wchar_t;
 #define PROC_PTR(T) T(*)()
 #define PROC_PTR_PARAMS(T)
 
-#if defined(UNICODE)
-  #define STRINGIFY2(x) L#x
-#else
-  #define STRINGIFY2(x) #x
-#endif
+// #if defined(UNICODE)
+//   #define STRINGIFY2(x) L#x
+// #else
+// #endif
 
+#define STRINGIFY2(x) #x
 #define STRINGIFY(x) STRINGIFY2(x)
+
 
 #define CAST(_TYPE_, _VAL_)   static_cast<_TYPE>(_VAL_)
 #define RCAST(_TYPE_, _VAL_)  reinterpret_cast<_TYPE_>(_VAL_)

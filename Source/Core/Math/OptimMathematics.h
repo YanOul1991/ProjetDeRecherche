@@ -665,6 +665,11 @@ inline float magnitude(const float3& v)
 	return sqrtf((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
 }
 
+inline float magnitude(const float2& v)
+{
+	return sqrtf((v.x * v.x) + (v.y * v.y));
+}
+
 inline float3 normalize(const float3& v) 
 {
 	return{

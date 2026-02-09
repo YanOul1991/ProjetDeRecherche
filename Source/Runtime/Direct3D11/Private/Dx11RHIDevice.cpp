@@ -175,6 +175,28 @@ void Dx11RHIDevice::renderUpdate()
     0, 0, (n * f) / (n - f), 0
   };
 
+  /*
+  float a = static_cast<float>(l_windowWidth) / static_cast<float>(l_windowHeight);
+  constexpr float fov = Optim::Constants::pi / 3.0f;
+  constexpr float n   = 0.1f;
+  constexpr float f   = 1000.0f;
+
+  float4x4 l_lookAt = {
+    Camera::right.x,  Camera::up.x, Camera::forward.x, 0,
+    Camera::right.y,  Camera::up.y, Camera::forward.y, 0,
+    Camera::right.z,  Camera::up.z, Camera::forward.z, 0,
+    -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), -dotProduct(Camera::forward, Camera::position), 1,
+  };
+  float yScale = 1.0f / (tan(fov / 2.0f));
+  float4x4 perspectiveMatrix = float4x4 {
+    yScale / a, 0, 0, 0,
+    0, yScale, 0, 0,
+    0, 0, f / (f - n), 1,
+    0, 0, (-n * f) / (f - n), 0
+  };
+
+  */
+
   vsInputConstBufferData.lookAtMatrix       = l_lookAt.transpose();
   vsInputConstBufferData.perspectiveMatrix  = perspectiveMatrix.transpose();
 
@@ -185,7 +207,7 @@ void Dx11RHIDevice::renderUpdate()
 void Dx11RHIDevice::presentBuffer() const
 {
   OPTIM_WIN_COM_CHECK_START();
-  //InterfaceImGui::update();
+  InterfaceImGui::update();
 
   hr = m_pSwapChain->Present(1u, 0u);
 
