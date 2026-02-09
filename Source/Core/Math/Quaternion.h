@@ -20,9 +20,9 @@
 struct Quaternion
 {
 	float w{1.0f};
-	float x{1.0f};
-	float y{1.0f};
-	float z{1.0f};
+	float x{0.0f};
+	float y{0.0f};
+	float z{0.0f};
 
 	static Quaternion fromAxisAngle(const float3& axis, float rad)
 	{

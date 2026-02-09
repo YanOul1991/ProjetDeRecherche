@@ -47,9 +47,12 @@ static UniquePtr<SystemWindow>      g_uptrSystemWindow{};
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
 static std::vector<UniquePtr<Mesh>> _list_Rays{};
 
-static Mesh _worldGridMesh{};
+static UniquePtr<Mesh>* g_ppSelectedMesh{nullptr};
 
+static Mesh _worldGridMesh{};
 //static Mesh _meshLineRender{};
+
+static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
 static PipelineHandle         _handlePipeline{};
 static PipelineHandle         _handlePipelineWirframeView{};
@@ -95,6 +98,142 @@ float Application::getDeltaTime()
 void Application::getMainWindowSize(int32* pWidth, int32* pHeight)
 {
   g_uptrSystemWindow->getWindowSize(pWidth, pHeight);
+}
+
+static void getClickSelection(float3 rayOrigin, float3 rayFarPosition)
+{
+  float3 rayDirection = normalize(rayFarPosition - rayOrigin);
+  	for (UniquePtr<Mesh>& mesh : arrayGizmoSelection) {
+		float4x4 worldTransform = mesh->getWorldMatrix().transpose();
+
+		for (int i = 0; i < (int)((float)mesh->indexCount / 3); i++) {
+			float tHit = 0;
+
+			float3 O = float3{0, 0, 0};
+			float3 D = rayDirection;
+
+			float4 v0Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i]].position);
+			float4 v1Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 1]].position);
+			float4 v2Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 2]].position);
+
+			float3 v0 = Optim::Mathematics::getFloat3Part(worldTransform * v0Local);
+			float3 v1 = Optim::Mathematics::getFloat3Part(worldTransform * v1Local);
+			float3 v2 = Optim::Mathematics::getFloat3Part(worldTransform * v2Local);
+
+			//printf("Triangle: V1(%f, %f, %f) | V2(%f, %f, %f) | V3(%f, %f, %f)\n", v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+
+			// Compute triangle edges
+			float3 e1 = v1 - v0;
+			float3 e2 = v2 - v0;
+
+			constexpr float EPS = 1E-8F;
+
+			float3 p = cross(rayDirection, e2);  // Get Vector perpendicular to ray direction and second triangle edge
+			float det = dotProduct(e1, p);        // Get determinant to check if ray is parallel to triangle 
+
+			if (fabsf(det) < EPS) {
+				// Ray is parralel to the triangle
+				_bool_drawOutline = false;
+				continue;
+			}
+
+			float invDet = 1.0f / det;
+
+			float3 t = rayOrigin - v0; // Vector from triangle first vertex to ray origin
+
+			// Compute barycentric coordinate u
+			float u = dotProduct(t, p) * invDet;
+
+			if (u < 0.0f || u > 1.0f) {
+				_bool_drawOutline = false;
+				continue;
+			}
+
+			float3 q = cross(t, e1);
+
+			float v = dotProduct(rayDirection, q) * invDet;
+			if (v < 0.0f || u + v > 1.0f) {
+				_bool_drawOutline = false;
+				continue;
+			}
+
+			tHit = dotProduct(e2, q) * invDet;
+
+			if (tHit > EPS) {
+				_bool_drawOutline = true;
+				printf("GizmoTouched!\n", tHit);
+        return;
+			}
+		} // for loop end - single mesh indices loop
+	} // For loop end - mesh list iteration
+
+	for (UniquePtr<Mesh>& mesh : _list_meshes) {
+		float4x4 worldTransform = mesh->getWorldMatrix().transpose();
+
+		for (int i = 0; i < (int)((float)mesh->indexCount / 3); i++) {
+			float tHit = 0;
+
+			float3 O = float3{0, 0, 0};
+			float3 D = rayDirection;
+
+			float4 v0Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i]].position);
+			float4 v1Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 1]].position);
+			float4 v2Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 2]].position);
+
+			float3 v0 = Optim::Mathematics::getFloat3Part(worldTransform * v0Local);
+			float3 v1 = Optim::Mathematics::getFloat3Part(worldTransform * v1Local);
+			float3 v2 = Optim::Mathematics::getFloat3Part(worldTransform * v2Local);
+
+			//printf("Triangle: V1(%f, %f, %f) | V2(%f, %f, %f) | V3(%f, %f, %f)\n", v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+
+			// Compute triangle edges
+			float3 e1 = v1 - v0;
+			float3 e2 = v2 - v0;
+
+			constexpr float EPS = 1E-8F;
+
+			float3 p = cross(rayDirection, e2);  // Get Vector perpendicular to ray direction and second triangle edge
+			float det = dotProduct(e1, p);        // Get determinant to check if ray is parallel to triangle 
+
+			if (fabsf(det) < EPS) {
+				// Ray is parralel to the triangle
+				_bool_drawOutline = false;
+				continue;
+			}
+
+			float invDet = 1.0f / det;
+
+			float3 t = rayOrigin - v0; // Vector from triangle first vertex to ray origin
+
+			// Compute barycentric coordinate u
+			float u = dotProduct(t, p) * invDet;
+
+			if (u < 0.0f || u > 1.0f) {
+				_bool_drawOutline = false;
+				continue;
+			}
+
+			float3 q = cross(t, e1);
+
+			float v = dotProduct(rayDirection, q) * invDet;
+			if (v < 0.0f || u + v > 1.0f) {
+				_bool_drawOutline = false;
+				continue;
+			}
+
+			tHit = dotProduct(e2, q) * invDet;
+
+			if (tHit > EPS) {
+				_bool_drawOutline = true;
+				printf("Collision with mesh detected distance: %f\n", tHit);
+        g_ppSelectedMesh = &mesh;
+        return;
+			}
+		} // for loop end - single mesh indices loop
+	} // For loop end - mesh list iteration
+
+  printf("No collision detected with any mesh.\n");
+  g_ppSelectedMesh = nullptr;
 }
 
 void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID)
@@ -162,57 +301,11 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID)
 
 	float3 rayOrigin    = { posNear.x / posNear.w, posNear.y / posNear.w,  posNear.z / posNear.w, };
 	float3 rayFarPosition = { posFar.x / posFar.w, posFar.y / posFar.w, posFar.z / posFar.w, };
-
   float3 rayDirection = normalize(rayFarPosition - rayOrigin);
 
-  // ==================================================
-  // RAYCAST VISUALISATION
-  // ==================================================
+  getClickSelection(rayOrigin, rayFarPosition);
 
   /*
-	UniquePtr<Mesh> _meshInstance{};
-	_meshInstance.init();
-
-	_meshInstance->vertices = new Vertex[2];
-
-	_meshInstance->vertices[0] = Vertex{
-		.position = rayOrigin,
-		.uvCoord = {0, 0},
-		.normal = {0, 0, 0}
-	};
-	_meshInstance->vertices[1] = Vertex{
-		.position = rayFarPosition,
-		.uvCoord = {0, 0},
-		.normal = {0, 0, 0}
-	};
-
-	_meshInstance->indices = new uint32[2]{
-		0, 1
-	};
-
-	_meshInstance->vertexCount = 2;
-	_meshInstance->indexCount = 2;
-
-	_meshInstance->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(_meshInstance->vertices, 2);
-	_meshInstance->indexBufferHandle = Graphics::RHI()->createResourceIndexBuffer(_meshInstance->indices, 2);
-
-	_list_Rays.push_back(_meshInstance.move());
-  */
-  
-  // ==================================================
-  // RAYCAST VISUALISATION - END
-  // ==================================================
-
-  /*
-  printf("Origin Point = (%f, %f, %f)\n", originPoint.x, originPoint.y, originPoint.z);
-  printf("Far Point    = (%f, %f, %f)\n", directionPoint.x, directionPoint.y, directionPoint.z);
-  printf("Far Point    = (%f, %f, %f)\n", rayDirection.x, rayDirection.y, rayDirection.z);
-  */
-
-  /* -----------------------------------
-  * RAY HIT 
-  ----------------------------------- */
-
   for (auto& mesh : _list_meshes) {
     float4x4 worldTransform = mesh->getWorldMatrix().transpose();
 
@@ -226,13 +319,9 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID)
       float4 v1Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 1]].position);
       float4 v2Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 2]].position);
 
-      v0Local = worldTransform * v0Local;
-      v1Local = worldTransform * v1Local;
-      v2Local = worldTransform * v2Local;
-
-      float3 v0 = mesh->vertices[mesh->indices[3 * i]].position;
-      float3 v1 = mesh->vertices[mesh->indices[3 * i + 1]].position;
-      float3 v2 = mesh->vertices[mesh->indices[3 * i + 2]].position;
+      float3 v0 = Optim::Mathematics::getFloat3Part(worldTransform * v0Local);
+      float3 v1 = Optim::Mathematics::getFloat3Part(worldTransform * v1Local);
+      float3 v2 = Optim::Mathematics::getFloat3Part(worldTransform * v2Local);
 
       //printf("Triangle: V1(%f, %f, %f) | V2(%f, %f, %f) | V3(%f, %f, %f)\n", v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
 
@@ -275,19 +364,16 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID)
 
       if (tHit > EPS ) {
         _bool_drawOutline = true;
-        printf("Collision with mesh detected.\n");
-
-        // If mesh is indeed clicked no need to continue loop for other triangles
+        printf("Collision with mesh detected distance: %f\n", tHit);
         break;
       }
     } // for loop end - single mesh indices loop
   } // For loop end - mesh list iteration
+  */
 }
 
-void Application::manageWindowResizeEvent(uint32 width, uint32 height)
+void Application::manageWindowResizeEvent(uint32 width, uint32 height) 
 {
-  //printf("The window has been resized!, new size (%du, %du)\n", width, height);
-  //printf("[CALLER]\n%s\n[FILE]\n%s\n[LINE]\n%d\n", __FUNCTION__, __FILE__, __LINE__);
   Graphics::RHI()->updateSystemWindowSize(width, height);
 }
 
@@ -309,6 +395,48 @@ void Application::ApplicationStart()
     g_uptrSystemWindow->onWindowResize.subscribe<Application, &Application::manageWindowResizeEvent>(this);
     g_uptrSystemWindow->showWindow();
 
+    //Mesh gizmoModel{};
+    //OptimEditor::loadFbxModel(gizmoModel, "Assets/gizmoSelectionArrow.fbx");
+    //std::cout << "Data\n" << gizmoModel.vertexCount << '\n';
+
+    arrayGizmoSelection.push_back(UniquePtr<Mesh>());
+    arrayGizmoSelection.push_back(UniquePtr<Mesh>());
+    arrayGizmoSelection.push_back(UniquePtr<Mesh>());
+
+    for (auto& gizmo : arrayGizmoSelection)       {
+      gizmo.init();
+      OptimEditor::loadFbxModel((*gizmo), "Assets/gizmoSelectionArrow.fbx");
+      gizmo->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(gizmo->vertices, gizmo->vertexCount);
+      gizmo->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(gizmo->indices, gizmo->indexCount);
+    }
+
+    /*
+    arrayGizmoSelection[0].init();
+    arrayGizmoSelection[1].init();
+    arrayGizmoSelection[2].init();
+
+    OptimEditor::loadFbxModel((*arrayGizmoSelection[0]), "Assets/gizmoSelectionArrow.fbx");
+    OptimEditor::loadFbxModel((*arrayGizmoSelection[1]), "Assets/gizmoSelectionArrow.fbx");
+    OptimEditor::loadFbxModel((*arrayGizmoSelection[2]), "Assets/gizmoSelectionArrow.fbx");
+
+    arrayGizmoSelection[0]->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(gizmoModel.vertices, gizmoModel.vertexCount);
+    arrayGizmoSelection[0]->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(gizmoModel.indices, gizmoModel.indexCount);
+
+    arrayGizmoSelection[1]->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(gizmoModel.vertices, gizmoModel.vertexCount);
+    arrayGizmoSelection[1]->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(gizmoModel.indices, gizmoModel.indexCount);
+
+    arrayGizmoSelection[2]->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(gizmoModel.vertices, gizmoModel.vertexCount);
+    arrayGizmoSelection[2]->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(gizmoModel.indices, gizmoModel.indexCount);
+    */
+
+    arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({1, 0, 0}, -Optim::Constants::pi / 2.0f);
+    arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({0, 1, 0}, Optim::Constants::pi / 2.0f);
+
+    printf("Gizmo array size %llu\n", arrayGizmoSelection.size());
+
+		for (auto& pGizmo : arrayGizmoSelection) {
+      std::cout << "Vertex count : " << pGizmo->vertexCount << '\n';
+		}
     /*
     float4x4 _matrix = {
        2, -1,  3,  3,
@@ -420,19 +548,19 @@ void Application::ApplicationStart()
 
       .rasterizerDescription = {
         .fillMode             = ERasterizerFillMode::Solid,
-        .cullMode             = ERasterizerCullMode::None,
+        .cullMode             = ERasterizerCullMode::Back,
         .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
         .depthBias            = 0,
         .slopeScaledDepthBias = 0
       },
 
       .depthStencilDescription = {
-        .depthTestEnabled         = true,
+        .depthTestEnabled         = false,
         .depthComparisonFunction  = EDepthStencilComparisonFunction::Less,
         .depthWriteMask           = EDepthStencilDepthWriteMask::WriteAll,
       },
 
-      .primitiveTopology = EPipelinePrimitiveTopology::LineStrip
+      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
     };
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
 
@@ -527,6 +655,7 @@ void Application::ApplicationLoop()
       Graphics::RHI()->cmdDrawIndexed(pMesh->indexCount);
     }
 
+
     // Draw wireframe for all meshes if required
     if (_bool_drawWireframe) {
 			Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
@@ -541,6 +670,36 @@ void Application::ApplicationLoop()
       }
     }
 
+    if (g_ppSelectedMesh != nullptr) {
+		  Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
+
+      const UniquePtr<Mesh>& selectedMesh = (*g_ppSelectedMesh);
+
+      float4x4 worldTransform = (*g_ppSelectedMesh)->getWorldMatrix();
+
+      Graphics::RHI()->cmdSetNextMeshTransform(&worldTransform);
+			Graphics::RHI()->cmdBindVertexBuffer(&(*g_ppSelectedMesh)->vertexBufferHandle);
+			Graphics::RHI()->cmdBindIndexBuffer(&(*g_ppSelectedMesh)->indexBufferHandle);
+			Graphics::RHI()->cmdDrawIndexed((*g_ppSelectedMesh)->indexCount);
+
+
+      Graphics::RHI()->cmdBindPipeline(&_handlePipelineLineRendering);
+      for (UniquePtr<Mesh>& pGizmo : arrayGizmoSelection) {
+        float3 dir = normalize((*g_ppSelectedMesh)->position - Camera::position);
+        dir = 15.0f * dir;
+
+        pGizmo->position = Camera::position + dir;
+        float4x4 worldTransform = pGizmo->getWorldMatrix();
+
+        Graphics::RHI()->cmdSetNextMeshTransform(&worldTransform);
+        Graphics::RHI()->cmdBindVertexBuffer(&pGizmo->vertexBufferHandle);
+        Graphics::RHI()->cmdBindIndexBuffer(&pGizmo->indexBufferHandle);
+        Graphics::RHI()->cmdDrawIndexed(pGizmo->indexCount);
+      }
+    }
+
+
+    /*
     // Draw outlines for all meshes if required
     if (_bool_drawOutline) {
 		  Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
@@ -553,6 +712,7 @@ void Application::ApplicationLoop()
 			  Graphics::RHI()->cmdDrawIndexed(pMesh->indexCount);
 		  }
     }
+    */
 
     // Draw Ray casts if available
     /*
@@ -614,15 +774,21 @@ CORE_API void OptimEditor::processFile(const char* param_cstrFilePath)
 
 
   l_uptrMesh->rotation = {1.0f, 0.0, 0.0, 0.0f};
+  //l_uptrMesh->position = { 0, 0, 0 };
 
   std::random_device rd; 
   std::mt19937 gen(rd()); 
   std::uniform_real_distribution<float> distrib(-5.0f, 5.0f);
 
-  l_uptrMesh->position = { 0, 0, 0 };
+  l_uptrMesh->position = { distrib(gen), 0, distrib(gen) };
 
-  //l_uptrMesh->position = { distrib(gen), 0, distrib(gen) };
-  //l_uptrMesh->rotation = Quaternion::fromAxisAngle({0.0f, 1.0f, 0.0f}, distrib(gen));
+  Quaternion randPitch  = Quaternion::fromAxisAngle({1.0f, 0.0f, 0.0f}, distrib(gen));
+  Quaternion randYaw    = Quaternion::fromAxisAngle({0.0f, 1.0f, 0.0f}, distrib(gen));
+  Quaternion randRoll   = Quaternion::fromAxisAngle({0.0f, 0.0f, 1.0f}, distrib(gen));
+
+  Quaternion rot = randYaw * randRoll * randPitch;
+
+  l_uptrMesh->rotation = rot;
 
   printf("Mesh rotation:\n");
   Optim::Mathematics::getMatrixFromQuaternion(l_uptrMesh->rotation).printMatrix();
