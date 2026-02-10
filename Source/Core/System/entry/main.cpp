@@ -12,6 +12,8 @@
 #include <iostream>
 
 int main() {
+  std::cout << "---------------- Main start ----------------\n";
+
   // Create application instance
   Application* application{ new Application };
 

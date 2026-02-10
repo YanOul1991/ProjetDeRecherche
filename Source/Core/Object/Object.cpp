@@ -9,7 +9,6 @@
 
 #include "Core/OptimEngine.h"
 #include "Core/Object/Object.h"
-//#include "Core/Graphics/Mesh.h"
 
 #include <iostream>
 #include <random>
@@ -18,7 +17,63 @@
 #include <iomanip>
 #include <unordered_map>
 
+/*
+#define __OPTIM_INTERNAL_REGISTER_OBJECT(_OBJECT_)															\
+TypeInfo* _OBJECT_::StaticTypeInfo() {																					\
+	static TypeInfo info;																													\
+	static bool initialized = false;																							\
+																																								\
+	if (!initialized) {																														\
+		info.name = #_OBJECT_;																											\
+		info.size = sizeof(_OBJECT_);																								\
+		info.createFn = []() -> void* { return new _OBJECT_(); };										\
+																																								\
+		GetTypeRegistry()[info.name] = &info;																				\
+		initialized = true;																													\
+	}																																							\
+																																								\
+	return &info;																																	\
+}																																								\
+																																								\
+static struct _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_ {														\
+	_OPTIM_SYSTEM_REGISTRATION_##_OBJECT_() {																			\
+		_OBJECT_::StaticTypeInfo();																									\
+		printf("Class registered : %s\n", #_OBJECT_);																\
+	}																																							\
+} _OPTIM_SYSTEM_REGISTERED_##_OBJECT_;																					\
+*/
+
+
 static std::unordered_map<SGuid, Object*> objectRegistery{};
+
+__OPTIM_INTERNAL_REGISTER_OBJECT(Object);
+
+/*
+TypeInfo* Object::StaticTypeInfo()
+{
+	static TypeInfo info;
+	static bool initalized = false;
+
+	if (!initalized) {
+		info.name = "Object";
+		info.size = sizeof(Object);
+		info.createFn = []() { return  reinterpret_cast<void*>(new Object()); };
+
+		GetTypeRegistry()[info.name] = &info;
+		initalized = true;
+	}
+	return &info;
+}
+
+static struct __SYSTEM_REFLECTION_REGISTRATION_Object {
+	__SYSTEM_REFLECTION_REGISTRATION_Object() {
+		Object::StaticTypeInfo();
+		printf("Object class registered!\n");
+	}
+} __SYSTEM_REFLECTED_Object;
+*/
+
+
 
 Object::Object()
 {

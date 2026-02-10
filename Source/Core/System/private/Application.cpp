@@ -42,6 +42,13 @@
 static ITextureResource* _TEST_pTextureResource{};
 static ISampler* _TEST_pSampler{};
 
+struct Foo {
+	Foo()
+	{std::cout << "Foo constructed\n"; };
+};
+
+static Foo instance;
+
 static UniquePtr<SystemWindow>      g_uptrSystemWindow{};
 
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
@@ -403,6 +410,11 @@ void Application::Quit()
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart()
 {
+	printf("List of registered classes: \n");
+	for (auto& pair : GetTypeRegistry()) {
+		std::cout << pair.first << "\n";
+	}
+
 	try {
 		// Load system window.
 		// Load graphics then display the window.

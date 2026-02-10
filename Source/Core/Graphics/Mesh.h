@@ -13,7 +13,6 @@
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
 
 #include "Core/System/FileStream.h"
-
 #include "Core/Object/Object.h"
 
 #include "Core/Math/OptimMathematics.h"
@@ -29,9 +28,11 @@
 #include <unordered_map>
 #include <set>
 
-class Mesh final : public Object
+class CORE_API Mesh final : public Object
 {
 public:
+	DECLARE_OBJECT(Mesh);
+
 	OE_OBJECT(Mesh, Object)
 
 	inline Mesh() = default;
@@ -53,8 +54,6 @@ public:
 
 	VertexBufferHandle	vertexBufferHandle	{};
 	IndexBufferHandle		indexBufferHandle		{};
-
-
 
 	/*
 	* @brief
@@ -494,3 +493,5 @@ public:
 		return ret_mesh;
 	}
 };
+
+__OPTIM_INTERNAL_REGISTER_OBJECT(Mesh);

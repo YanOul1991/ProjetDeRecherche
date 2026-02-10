@@ -17,6 +17,45 @@
 #include <iomanip>
 #include <unordered_map>
 
+#define __OPTIM_INTERNAL_REGISTER_OBJECT(_OBJECT_)															\
+TypeInfo* _OBJECT_::StaticTypeInfo() {																					\
+	static TypeInfo info;																													\
+	static bool initialized = false;																							\
+																																								\
+	if (!initialized) {																														\
+		info.name = #_OBJECT_;																											\
+		info.size = sizeof(_OBJECT_);																								\
+		info.createFn = []() -> void* { return new _OBJECT_(); };										\
+																																								\
+		GetTypeRegistry()[info.name] = &info;																				\
+		initialized = true;																													\
+	}																																							\
+																																								\
+	return &info;																																	\
+}																																								\
+																																								\
+static struct _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_ {														\
+	_OPTIM_SYSTEM_REGISTRATION_##_OBJECT_() {																			\
+		_OBJECT_::StaticTypeInfo();																									\
+		printf("Class registered : %s\n", #_OBJECT_);																\
+	}																																							\
+} _OPTIM_SYSTEM_REGISTERED_##_OBJECT_;																					\
+
+struct TypeInfo {
+	const char* name;
+	size_t size;
+	void* (*createFn)();
+};
+
+inline std::unordered_map<std::string, TypeInfo*>& GetTypeRegistry() { 
+  static std::unordered_map<std::string, TypeInfo*> registry; 
+	return registry; 
+}
+
+#define DECLARE_OBJECT(_TYPE_)																								\
+	public: static TypeInfo* StaticTypeInfo();																	\
+	public: virtual TypeInfo* GetTypeInfo() const {return StaticTypeInfo(); }		\
+
 class Object;
 
 struct Type {
@@ -30,11 +69,13 @@ static constexpr Type typeInfo = { #OBJECT, &PARENT_OBJECT::typeInfo }; \
 virtual const Type* getTypeInfo() const override { return &typeInfo; } \
 
 
-class Object 
+class CORE_API Object 
 {
+	DECLARE_OBJECT(Object)
+
 public:
-	CORE_API Object();
-	CORE_API virtual ~Object();
+	Object();
+	virtual ~Object();
 
 	// CLASS TYPE INFO
 	static constexpr Type typeInfo = { "Object", nullptr };
@@ -61,15 +102,14 @@ public:
 		return nullptr;
 	}
 
-	CORE_API static Object* getObject(const SGuid& guid);
+	 static Object* getObject(const SGuid& guid);
 
 protected:
 	SGuid m_guid{};
-
-	CORE_API virtual void onTick(){}
+	virtual void onTick(){}
 
 private:
-	CORE_API inline Object(SGuid param_guid) noexcept 
+	inline Object(SGuid param_guid) noexcept 
 	{
 		m_guid = param_guid;
 	}
