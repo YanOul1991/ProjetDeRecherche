@@ -1,0 +1,4 @@
+// Hint files help the Visual Studio IDE interpret Visual C++ identifiers
+// such as names of functions and macros.
+// For more information see https://go.microsoft.com/fwlink/?linkid=865984
+#define __OPTIM_INTERNAL_REGISTER_OBJECT(_OBJECT_, Base) TypeInfo* _OBJECT_::StaticTypeInfo() { static TypeInfo info; static bool initialized = false; if (!initialized) { info.name = #_OBJECT_; info.size = sizeof(_OBJECT_); info.createFn = []() -> void* { return new _OBJECT_(); }; info.baseType = Base::StaticTypeInfo(); GetTypeRegistry()[info.name] = &info; initialized = true; } return &info; } static struct _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_ { _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_() { _OBJECT_::StaticTypeInfo(); } } _OPTIM_SYSTEM_REGISTERED_##_OBJECT_;

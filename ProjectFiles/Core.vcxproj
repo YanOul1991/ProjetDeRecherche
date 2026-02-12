@@ -79,6 +79,9 @@
     <ClCompile Include="..\Source\ThirdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Source\ThirdParty\imgui\imgui_widgets.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

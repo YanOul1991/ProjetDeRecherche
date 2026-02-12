@@ -17,6 +17,8 @@
 
 static std::unordered_map<SGuid, Object*> objectRegistery{};
 
+OPTIM_DECLARE_PROPERTY(Object, objectField)
+
 Object::Object() {
   m_guid = Optim::Random::getGetGuid();
   objectRegistery.emplace(m_guid, this);
@@ -34,14 +36,20 @@ Object* Object::getObject(const SGuid& guid) {
   return nullptr;
 }
 
-/**
- * Class member fields registration.
- */
+bool Object::isChildOf(const TypeInfo* baseType) const {
+  const TypeInfo* currentType = GetTypeInfo();
 
-__OPTIM_INTERNAL_REGISTER_OBJECT(Object);
-__OPTIM_INTERNAL_REGISTER_OBJECT(ChildClass);
+  while (currentType != nullptr) {
+    if (currentType == baseType) {
+      return true;
+    }  
 
-OPTIM_DECLARE_PROPERTY(Object, objectField)
+    currentType = currentType->baseType;
+  }
+  return false;
+}
+
+
 
 void CORE_API printFields(void* object, const TypeInfo* type, int indent) {
   //std::cout << type->name << '\n';
@@ -62,3 +70,31 @@ void CORE_API printFields(void* object, const TypeInfo* type, int indent) {
     }
   }
 }
+
+// Since Object is the base type for everything else 
+// it ise defined manually for specific fields.
+
+TypeInfo* Object::StaticTypeInfo() {
+  static TypeInfo info;
+  static bool     initialized = false;
+  if (!initialized) {
+    info.name     = "Object";
+    info.size     = sizeof(Object);
+    info.createFn = []() -> void* {
+      return new Object();
+    };
+    info.baseType                = nullptr;
+    GetTypeRegistry()[info.name] = &info;
+    initialized                  = true;
+  }
+  return &info;
+}
+
+static struct _OPTIM_SYSTEM_REGISTRATION_Object {
+  _OPTIM_SYSTEM_REGISTRATION_Object() {
+    Object::StaticTypeInfo();
+  }
+} _OPTIM_SYSTEM_REGISTERED_Object;
+
+
+__OPTIM_INTERNAL_REGISTER_OBJECT(ChildClass, Object)

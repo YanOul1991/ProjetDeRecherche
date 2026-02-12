@@ -337,9 +337,16 @@ void Application::ApplicationStart() {
   printf("\n--------------------------------------------------------------------\n");
   */
 
-  Object obj;
+  ChildClass obj;
 
   TypeInfo* type = obj.GetTypeInfo();
+
+  if (obj.isChildOf(Mesh::StaticTypeInfo())) {
+    printf("ChildClass is of type Mesh !\n");
+  }
+  else {
+    printf("ChildClass is NOT of type Mesh :(\n");
+  }
 
   for (FieldInfo& fieldInfo : type->fields) {
     void* pField = (uint8*)&obj + fieldInfo.offset;

@@ -9,7 +9,7 @@ float4x4 Mesh::getWorldMatrix() const
 	return l_rotation * l_translation;
 }
 
-__OPTIM_INTERNAL_REGISTER_OBJECT(Mesh);
+__OPTIM_INTERNAL_REGISTER_OBJECT(Mesh, Object)
 
 OPTIM_DECLARE_PROPERTY(Mesh, position)
 OPTIM_DECLARE_PROPERTY(Mesh, rotation)

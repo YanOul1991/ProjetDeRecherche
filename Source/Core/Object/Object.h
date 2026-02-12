@@ -26,6 +26,13 @@ enum class TypeData {
   Object,
 };
 
+struct FunctionInfo {
+  const char* name{};
+  void (*call)(void* object, void** args){};
+  std::vector<const TypeInfo*> paramTypes{};
+  const TypeInfo*              returnType{};
+};
+
 struct FieldInfo {
   const char*     name;
   size_t          offset;
@@ -44,7 +51,9 @@ struct TypeInfo {
   std::string (*toString)(void*);
   void (*fromString)(void*, const std::string&);
 
-  std::vector<FieldInfo> fields{};
+  const TypeInfo*           baseType{};
+  std::vector<FieldInfo>    fields{};
+  std::vector<FunctionInfo> functions{};
 };
 
 #define DECLARE_OBJECT(_TYPE_)       \
@@ -62,29 +71,29 @@ struct TypeInfo {
     return StaticTypeInfo();              \
   }
 
-#define __OPTIM_INTERNAL_REGISTER_OBJECT(_OBJECT_)      \
-  TypeInfo* _OBJECT_::StaticTypeInfo() {                \
-    static TypeInfo info;                               \
-    static bool     initialized = false;                \
-                                                        \
-    if (!initialized) {                                 \
-      info.name     = #_OBJECT_;                        \
-      info.size     = sizeof(_OBJECT_);                 \
-      info.createFn = []() -> void* {                   \
-        return new _OBJECT_();                          \
-      };                                                \
-                                                        \
-      GetTypeRegistry()[info.name] = &info;             \
-      initialized                  = true;              \
-    }                                                   \
-                                                        \
-    return &info;                                       \
-  }                                                     \
-                                                        \
-  static struct _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_ { \
-    _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_() {           \
-      _OBJECT_::StaticTypeInfo();                       \
-    }                                                   \
+#define __OPTIM_INTERNAL_REGISTER_OBJECT(_OBJECT_, Base)     \
+  TypeInfo* _OBJECT_::StaticTypeInfo() {                     \
+    static TypeInfo info;                                    \
+    static bool     initialized = false;                     \
+                                                             \
+    if (!initialized) {                                      \
+      info.name     = #_OBJECT_;                             \
+      info.size     = sizeof(_OBJECT_);                      \
+      info.createFn = []() -> void* {                        \
+        return new _OBJECT_();                               \
+      };                                                     \
+      info.baseType                = Base::StaticTypeInfo(); \
+      GetTypeRegistry()[info.name] = &info;                  \
+      initialized                  = true;                   \
+    }                                                        \
+                                                             \
+    return &info;                                            \
+  }                                                          \
+                                                             \
+  static struct _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_ {      \
+    _OPTIM_SYSTEM_REGISTRATION_##_OBJECT_() {                \
+      _OBJECT_::StaticTypeInfo();                            \
+    }                                                        \
   } _OPTIM_SYSTEM_REGISTERED_##_OBJECT_;
 
 #define OPTIM_DECLARE_PROPERTY(CLASS, FIELD)                      \
@@ -105,13 +114,14 @@ inline std::unordered_map<std::string, TypeInfo*>& GetTypeRegistry() {
   return registry;
 }
 
-template <typename T> struct TypeResolver {
+template<typename T> 
+struct TypeResolver {
   static TypeInfo* Get() {
     return T::StaticTypeInfo();
   }
 };
 
-template <> struct TypeResolver<int> {
+template<> struct TypeResolver<int> {
   static TypeInfo* Get() {
     static TypeInfo info = {
       .name     = "int",
@@ -140,7 +150,7 @@ template <> struct TypeResolver<int> {
   }
 };
 
-template <> struct TypeResolver<float> {
+template<> struct TypeResolver<float> {
   static TypeInfo* Get() {
     static TypeInfo info = {
       .name     = "float",
@@ -180,6 +190,8 @@ class CORE_API Object
   static Object* getObject(const SGuid& guid);
 
   int objectField = 10;
+
+  bool isChildOf(const TypeInfo* type) const;
 
  protected:
   SGuid m_guid{};

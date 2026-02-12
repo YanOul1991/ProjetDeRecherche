@@ -265,4 +265,7 @@
       <Filter>Mathematics\Internal</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
 </Project>
