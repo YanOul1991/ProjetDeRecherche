@@ -17,37 +17,48 @@
 #include <string>
 #include <unordered_map>
 
-#include "Core/Math/OptimMathematics.h"
-#include "Core/Math/Quaternion.h"
-
 struct TypeInfo;
 struct FieldInfo;
 
-// Description of a field of a class type object
+enum class TypeData {
+  Primitive,
+  Structure,
+  Object,
+};
+
 struct FieldInfo {
   const char*     name;
   size_t          offset;
   const TypeInfo* typeInfo;
 };
 
-// Description of a type same for primitives and
-// class object types.
-
 struct TypeInfo {
   const char* name{};
   size_t      size{};
   void* (*createFn)(){};
+  TypeData typeData{};
+
   void (*get)(void*){};
   void (*set)(void*, void*){};
+
+  std::string (*toString)(void*);
+  void (*fromString)(void*, const std::string&);
+
   std::vector<FieldInfo> fields{};
 };
 
-#define DECLARE_OBJECT(_TYPE_)            \
- public:                                  \
+#define DECLARE_OBJECT(_TYPE_)       \
+ public:                             \
+  static TypeInfo* StaticTypeInfo(); \
+                                     \
+ public:                             \
+  TypeInfo* GetTypeInfo() const {    \
+    return StaticTypeInfo();         \
+  }
+
+#define DECLARE_STRUCT()                  \
   static TypeInfo* StaticTypeInfo();      \
-                                          \
- public:                                  \
-  virtual TypeInfo* GetTypeInfo() const { \
+  TypeInfo*        GetTypeInfo() const {  \
     return StaticTypeInfo();              \
   }
 
@@ -76,21 +87,18 @@ struct TypeInfo {
     }                                                   \
   } _OPTIM_SYSTEM_REGISTERED_##_OBJECT_;
 
-#define OPTIM_DECLARE_PROPERTY(CLASS, FIELD)                        \
-  static inline struct __OPTIM_INTERNAL_DECLFIELD_##CLASS_##FIELD { \
-    __OPTIM_INTERNAL_DECLFIELD_##CLASS_##FIELD() {                  \
-                                                                    \
-      static FieldInfo fieldInfo = {                                \
-        .name     = #FIELD,                                         \
-        .offset   = offsetof(CLASS, CLASS::FIELD),                  \
-        .typeInfo = TypeResolver<decltype(CLASS::FIELD)>::Get()};   \
-                                                                    \
-      CLASS::StaticTypeInfo()->fields.push_back(fieldInfo);         \
-                                                                    \
-      printf("Field member for Object class initalized!\n");        \
-    };                                                              \
-  } __OPTIM_INTERNAL_FIELD_##CLASS_##FIELD;                         \
-
+#define OPTIM_DECLARE_PROPERTY(CLASS, FIELD)                      \
+  static struct __OPTIM_INTERNAL_DECLFIELD_##CLASS##_##FIELD {    \
+    __OPTIM_INTERNAL_DECLFIELD_##CLASS##_##FIELD() {              \
+                                                                  \
+      static FieldInfo fieldInfo = {                              \
+        .name     = #FIELD,                                       \
+        .offset   = offsetof(CLASS, CLASS::FIELD),                \
+        .typeInfo = TypeResolver<decltype(CLASS::FIELD)>::Get()}; \
+                                                                  \
+      CLASS::StaticTypeInfo()->fields.push_back(fieldInfo);       \
+    };                                                            \
+  } __OPTIM_INTERNAL_FIELD_##CLASS##_##FIELD;
 
 inline std::unordered_map<std::string, TypeInfo*>& GetTypeRegistry() {
   static std::unordered_map<std::string, TypeInfo*> registry;
@@ -103,68 +111,58 @@ template <typename T> struct TypeResolver {
   }
 };
 
-template<> struct TypeResolver<int> {
+template <> struct TypeResolver<int> {
   static TypeInfo* Get() {
-    static TypeInfo info = { 
-      .name = "int", 
-      .size = sizeof(int), 
+    static TypeInfo info = {
+      .name     = "int",
+      .size     = sizeof(int),
       .createFn = nullptr,
-      .get = [](void* ptr) -> void {
+      .typeData = TypeData::Primitive,
+      .get      = [](void* ptr) -> void {
         printf("Printing field! %d\n", *((int*)ptr));
       },
       .set = [](void* ptr, void* value) -> void {
         *reinterpret_cast<int*>(ptr) = *reinterpret_cast<int*>(value);
+      },
+      .toString = [](void* ptr) -> std::string {
+        return std::to_string(*reinterpret_cast<int*>(ptr));
+      },
+      .fromString = [](void* ptr, const std::string& str) -> void {
+        try {
+          *reinterpret_cast<int*>(ptr) = std::stoi(str);
+        }
+        catch (const std::exception&) {
+          printf("Invalid assigned value.\n");
+        }
       }
     };
     return &info;
   }
 };
 
-template<> struct TypeResolver<float> {
+template <> struct TypeResolver<float> {
   static TypeInfo* Get() {
-    static TypeInfo info = { 
-      "float", 
-      sizeof(float), 
-      nullptr,
-      [](void* ptr) -> void {
+    static TypeInfo info = {
+      .name     = "float",
+      .size     = sizeof(float),
+      .createFn = nullptr,
+      .typeData = TypeData::Primitive,
+      .get      = [](void* ptr) -> void {
         printf("Printing field! %f\n", *((float*)ptr));
       },
-      [](void* ptr, void* value) -> void {
+      .set = [](void* ptr, void* value) -> void {
         *reinterpret_cast<float*>(ptr) = *reinterpret_cast<float*>(value);
-      }
-    };
-    return &info;
-  }
-};
-
-template<> struct TypeResolver<float3> {
-  static TypeInfo* Get() {
-    static TypeInfo info = { 
-      "float3", 
-      sizeof(float), 
-      nullptr,
-      [](void* ptr) -> void {
-        printf("X: %f, Y: %f, Z: %f\n", (*(float3*)ptr).x, (*(float3*)ptr).y, (*(float3*)ptr).z);
       },
-      [](void* ptr, void* value) -> void {
-        *reinterpret_cast<float3*>(ptr) = *reinterpret_cast<float3*>(value);
-      }
-    };
-    return &info;
-  }
-};
-
-template<> struct TypeResolver<Quaternion> {
-  static TypeInfo* Get() {
-    static TypeInfo info = { 
-      "Quaternion", 
-      sizeof(float), 
-      nullptr,
-      [](void* ptr) -> void {
-        printf("W: %f, X: %f, Y: %f, Z: %f\n", (*(Quaternion*)ptr).w, (*(Quaternion*)ptr).x, (*(Quaternion*)ptr).y, (*(Quaternion*)ptr).z);
+      .toString = [](void* ptr) -> std::string {
+        return std::to_string(*reinterpret_cast<float*>(ptr));
       },
-      [](void* ptr, void* value) -> void {
-        *reinterpret_cast<Quaternion*>(ptr) = *reinterpret_cast<Quaternion*>(value);
+      .fromString = [](void* ptr, const std::string& str) -> void {
+        try {
+          *reinterpret_cast<float*>(ptr) = std::stof(str);
+        }
+        catch (const std::exception&) {
+          printf("Invalid assigned value.\n");
+        }
       }
     };
     return &info;
@@ -179,33 +177,9 @@ class CORE_API Object
   Object();
   virtual ~Object();
 
-  /*
-  template <typename T>
-  static T* cast(Object* obj) {
-    if (obj == nullptr) {
-      return nullptr;
-    }
-
-    const Type* ti     = obj->getTypeInfo();
-    const Type* target = &T::typeInfo;
-
-    while (ti) {
-      std::cout << "Type comparaison:\n";
-      std::cout << "--- Object type : " << ti << "\n";
-      std::cout << "--- Target type : " << target << "\n";
-      if (ti == target) {
-        return static_cast<T*>(obj);
-      }
-      ti = ti->parent;
-    }
-    return nullptr;
-  }
-   */
-
   static Object* getObject(const SGuid& guid);
 
-  int   objectField = 10;
-  float3 secondField = { 378.999f, -278.38f , 43.3f};
+  int objectField = 10;
 
  protected:
   SGuid m_guid{};
@@ -215,3 +189,5 @@ class CORE_API ChildClass : public Object
 {
   DECLARE_OBJECT(ChildClass)
 };
+
+void CORE_API printFields(void* object, const TypeInfo* type, int indent);

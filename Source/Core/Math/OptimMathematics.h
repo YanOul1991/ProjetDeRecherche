@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
+#include "Core/Object/Object.h"
 #include "math.h"
 #include <cstdlib>
 #include <cstdio>
@@ -52,9 +53,14 @@ struct float2
 };
 
 struct float3 {
+  static TypeInfo* StaticTypeInfo();
+  TypeInfo*        GetTypeInfo() const {
+    return StaticTypeInfo();
+  }
 	float x{0};
 	float y{0};
 	float z{0};
+
 
 	inline void print() const
 	{

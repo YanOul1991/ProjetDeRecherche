@@ -22,12 +22,15 @@
 class CORE_API Mesh final : public Object
 {
 	DECLARE_OBJECT(Mesh)
+
 public:
 
 	Mesh() = default;
 	virtual ~Mesh() noexcept override final;
 
 	float4x4 getWorldMatrix() const;
+
+	float scaleField{443.3489f};
 
 	float3			position{};
 	Quaternion	rotation{};

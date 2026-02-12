@@ -7,18 +7,22 @@
 
 #pragma once
 
-#include "Core/OptimEngine.h"
 #include "Core/Math/OptimMathematics.h"
+#include "Core/Object/Object.h"
+#include "Core/OptimEngine.h"
 
-#include <math.h>
 #include <algorithm>
+#include <math.h>
 
 /*
  * @brief
  * A representation of a rotation on an axis.
 */
-struct Quaternion
-{
+struct Quaternion {
+  static TypeInfo* StaticTypeInfo();
+  TypeInfo*        GetTypeInfo() const {
+    return StaticTypeInfo();
+  }
 	float w{1.0f};
 	float x{0.0f};
 	float y{0.0f};

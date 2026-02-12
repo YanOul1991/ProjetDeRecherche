@@ -227,12 +227,7 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
         g_ppSelectedMesh = &mesh;
 
         printf("Selected Mesh info:\n");
-        for (FieldInfo& fieldInfo : (*g_ppSelectedMesh)->GetTypeInfo()->fields) {
-          //(*g_ppSelectedMesh)->GetTypeInfo()->fields;
-          printf("%s\n", fieldInfo.name);
-          void* pField = (uint8*)(*g_ppSelectedMesh).address() + fieldInfo.offset;
-          fieldInfo.typeInfo->get(pField);
-        }
+        printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
         return;
       }
     } // for loop end - single mesh indices loop
@@ -316,6 +311,11 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
 
 void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
   _bool_manipulate_selected = false;
+
+  if (g_ppSelectedMesh != nullptr) {
+    printf("Mesh Moved.\n");
+    printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
+  }
 }
 
 void Application::manageWindowResizeEvent(uint32 width, uint32 height) {
@@ -328,18 +328,14 @@ void Application::Quit() {
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
+  /*
   printf("--------------------- List of registered classes ---------------------\n");
   for (auto& pair : GetTypeRegistry()) {
-    std::cout << pair.first << "\n";
-
-    std::cout << "   Fields:\n";
-
-    for (auto& field : pair.second->fields) {
-      std::cout << "     " << field.name << " | type : " << field.typeInfo->name << " | offset: " << field.offset << '\n';
-    }
+    printFields(nullptr, pair.second, 3);
+    printf("\n-----------------------------------------\n");
   }
-
   printf("\n--------------------------------------------------------------------\n");
+  */
 
   Object obj;
 
@@ -347,7 +343,9 @@ void Application::ApplicationStart() {
 
   for (FieldInfo& fieldInfo : type->fields) {
     void* pField = (uint8*)&obj + fieldInfo.offset;
-    fieldInfo.typeInfo->get(pField);
+    std::cout << "Field value: " << fieldInfo.typeInfo->toString(pField) << '\n';
+    fieldInfo.typeInfo->fromString(pField, "eee");
+    std::cout << "Field value: " << fieldInfo.typeInfo->toString(pField) << '\n';
   }
 
   try {

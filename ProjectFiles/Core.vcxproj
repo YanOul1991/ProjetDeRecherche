@@ -59,6 +59,8 @@
     <ClCompile Include="..\Source\Core\Graphics\Mesh.cpp" />
     <ClCompile Include="..\Source\Core\Graphics\Private\Graphics.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
+    <ClCompile Include="..\Source\Core\Math\Internal\OptimMathematics.cpp" />
+    <ClCompile Include="..\Source\Core\Math\Internal\Quaternion.cpp" />
     <ClCompile Include="..\Source\Core\Object\Camera\Camera.cpp" />
     <ClCompile Include="..\Source\Core\Object\Image\Image.cpp" />
     <ClCompile Include="..\Source\Core\Object\Object.cpp" />

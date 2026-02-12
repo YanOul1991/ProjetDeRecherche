@@ -190,6 +190,9 @@
     <Filter Include="Mathematics">
       <UniqueIdentifier>{7c57a133-1c38-45d7-9be9-c9d251d805d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mathematics\Internal">
+      <UniqueIdentifier>{44475933-a731-45a8-935c-adaf18893b00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -254,6 +257,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Graphics\Mesh.cpp">
       <Filter>Graphics\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Math\Internal\OptimMathematics.cpp">
+      <Filter>Mathematics\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Math\Internal\Quaternion.cpp">
+      <Filter>Mathematics\Internal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
