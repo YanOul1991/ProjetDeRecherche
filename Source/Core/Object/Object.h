@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
+#include "Core/Reflection/OptimReflection.h"
 #include "Core/Utilities/Random/Random.h"
 
 #include <iomanip>
@@ -17,12 +18,13 @@
 #include <string>
 #include <unordered_map>
 
+/*
 struct TypeInfo;
 struct FieldInfo;
-
 enum class TypeData {
   Primitive,
-  Structure,
+  Array,     // Value Types
+  Structure, // Value Types
   Object,
 };
 
@@ -40,29 +42,33 @@ struct FieldInfo {
 };
 
 struct TypeInfo {
-  const char* name{};
-  size_t      size{};
-  void* (*createFn)(){};
-  TypeData typeData{};
+  const char* name{};                            // Shared
+  size_t      size{};                            // Shared
+  void* (*createFn)(){};                         // Object
+  TypeData typeData{};                           // Shared
 
-  void (*get)(void*){};
-  void (*set)(void*, void*){};
+  void (*get)(void*){};                          // Primitive
+  void (*set)(void*, void*){};                   // Primitive
 
-  std::string (*toString)(void*);
-  void (*fromString)(void*, const std::string&);
+  std::string (*toString)(void*);                // Primitive
+  void (*fromString)(void*, const std::string&); // Primitive
 
-  const TypeInfo*           baseType{};
-  std::vector<FieldInfo>    fields{};
-  std::vector<FunctionInfo> functions{};
+  const TypeInfo*           baseType{};          // Object
+  std::vector<FieldInfo>    fields{};            // Object, Primitives
+  std::vector<FunctionInfo> functions{};         // !!! Not yet implemented !!! Object
+
+  // Array
+  const TypeInfo* elementType{};
+  uint64 (*getArraySize)(void*){};
+  void* (*getArrayElement)(void*, uint64){};
+  void (*resizeArray)(void*, uint64){};
 };
 
-#define DECLARE_OBJECT(_TYPE_)       \
- public:                             \
-  static TypeInfo* StaticTypeInfo(); \
-                                     \
- public:                             \
-  TypeInfo* GetTypeInfo() const {    \
-    return StaticTypeInfo();         \
+#define DECLARE_OBJECT()                 \
+ public:                                 \
+  static TypeInfo* StaticTypeInfo();     \
+  TypeInfo*        GetTypeInfo() const { \
+    return StaticTypeInfo();             \
   }
 
 #define DECLARE_STRUCT()                  \
@@ -178,10 +184,11 @@ template<> struct TypeResolver<float> {
     return &info;
   }
 };
+ */
 
 class CORE_API Object
 {
-  DECLARE_OBJECT(Object)
+  DECLARE_OBJECT()
 
  public:
   Object();
@@ -199,7 +206,10 @@ class CORE_API Object
 
 class CORE_API ChildClass : public Object
 {
-  DECLARE_OBJECT(ChildClass)
+  DECLARE_OBJECT()
 };
 
+
 void CORE_API printFields(void* object, const TypeInfo* type, int indent);
+
+void CORE_API printTypeFields(const TypeInfo* type, int indent = 2);

@@ -328,15 +328,19 @@ void Application::Quit() {
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
-  /*
-  printf("--------------------- List of registered classes ---------------------\n");
-  for (auto& pair : GetTypeRegistry()) {
-    printFields(nullptr, pair.second, 3);
-    printf("\n-----------------------------------------\n");
-  }
-  printf("\n--------------------------------------------------------------------\n");
-  */
+  //for (auto& pair : GetTypeRegistry()) {
+  //  printTypeFields(pair.second);
+  //}
 
+  SkinnedMesh skinnedMeshObj;
+
+  skinnedMeshObj.listOfStuff.push_back({45.567f, 37.9f, -2378.5f});
+  skinnedMeshObj.listOfStuff.push_back({-42.465f, 83.53f, 38.564f});
+  skinnedMeshObj.listOfStuff.push_back({1.7f, 3.9f, -8.51f});
+
+  printFields(&skinnedMeshObj, skinnedMeshObj.GetTypeInfo(), 0);
+
+  /*
   ChildClass obj;
 
   TypeInfo* type = obj.GetTypeInfo();
@@ -354,6 +358,7 @@ void Application::ApplicationStart() {
     fieldInfo.typeInfo->fromString(pField, "eee");
     std::cout << "Field value: " << fieldInfo.typeInfo->toString(pField) << '\n';
   }
+  */
 
   try {
     // Load system window.

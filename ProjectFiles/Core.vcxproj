@@ -37,6 +37,8 @@
     <ClInclude Include="..\Source\Core\Object\Image\Image.h" />
     <ClInclude Include="..\Source\Core\Object\Object.h" />
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
+    <ClInclude Include="..\Source\Core\Reflection\Internal\TypeReflection.h" />
+    <ClInclude Include="..\Source\Core\Reflection\OptimReflection.h" />
     <ClInclude Include="..\Source\Core\System\Application.h" />
     <ClInclude Include="..\Source\Core\System\FileStream.h" />
     <ClInclude Include="..\Source\Core\System\ModelLoader.h" />

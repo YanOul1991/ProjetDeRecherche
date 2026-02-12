@@ -131,39 +131,35 @@ inline void matrixPrint(const float3x3& mat)
  * 
 //////////////////////////////////////////////////// */
 
-inline float3 operator+(float3 left, float3 right)
-{
-	return {
-		left.x + right.x,
-		left.y + right.y,
-		left.z + right.z
+inline float3 operator+(float3 left, float3 right) {
+  return {
+    left.x + right.x,
+    left.y + right.y,
+    left.z + right.z
 	};
 }
 
-inline float3 operator-(float3 left, float3 right)
-{
-	return {
-		left.x - right.x,
-		left.y - right.y,
-		left.z - right.z
+inline float3 operator-(float3 left, float3 right) {
+  return {
+    left.x - right.x,
+    left.y - right.y,
+    left.z - right.z
 	};
 }
 
-inline float3 operator*(float scalar, float3 vector)
-{
-	return{
-		vector.x * scalar,
-		vector.y * scalar,
-		vector.z * scalar
+inline float3 operator*(float scalar, float3 vector) {
+  return {
+    vector.x * scalar,
+    vector.y * scalar,
+    vector.z * scalar
 	};
 }
 
-inline float3 operator/(float scalar, float3 vector)
-{
-	return{
-		vector.x / scalar,
-		vector.y / scalar,
-		vector.z / scalar
+inline float3 operator/(float scalar, float3 vector) {
+  return {
+    vector.x / scalar,
+    vector.y / scalar,
+    vector.z / scalar
 	};
 }
 
@@ -171,16 +167,14 @@ inline float3 operator/(float scalar, float3 vector)
 		MATRIX SCALAR MULTIPLICATION
 +++++++++++++++++++++++++++++++++++++++++++++++ */
 
-inline float2x2 operator*(float s, const float2x2& mat) 
-{
+inline float2x2 operator*(float s, const float2x2& mat) {
 	return {
 		s * mat.m11, s * mat.m12,
 		s * mat.m21, s * mat.m22,
 	};
 }
 
-inline float3x3 operator*(float s, const float3x3& m)
-{
+inline float3x3 operator*(float s, const float3x3& m) {
 	return{
 		m.m11 * s, m.m12 * s, m.m13 * s,
 		m.m21 * s, m.m22 * s, m.m23 * s,
@@ -188,8 +182,7 @@ inline float3x3 operator*(float s, const float3x3& m)
 	};
 }
 
-inline float4x4 operator*(float s, const float4x4& m)
-{
+inline float4x4 operator*(float s, const float4x4& m) {
 	return{
 		m.m11 * s, m.m12 * s, m.m13 * s, m.m14 * s,
 		m.m21 * s, m.m22 * s, m.m23 * s, m.m24 * s,
@@ -198,8 +191,7 @@ inline float4x4 operator*(float s, const float4x4& m)
 	};
 }
 
-inline float4x4 operator*(const float4x4& m, float s)
-{
+inline float4x4 operator*(const float4x4& m, float s) {
 	return s * m;
 }
 
@@ -207,8 +199,7 @@ inline float4x4 operator*(const float4x4& m, float s)
 		MATRIX x VECTOR MULTIPLICATION
 +++++++++++++++++++++++++++++++++++++++++++++++ */
 
-inline float4 operator*(const float4x4& m, const float4& v) 
-{ 
+inline float4 operator*(const float4x4& m, const float4& v) { 
 	return { 
 		m.m11 * v.x + m.m12 * v.y + m.m13 * v.z + m.m14 * v.w, 
 		m.m21 * v.x + m.m22 * v.y + m.m23 * v.z + m.m24 * v.w, 
@@ -254,8 +245,7 @@ inline float4x4 operator*(const float4x4& a, const float4x4& b)
  * 
 //////////////////////////////////////////////////// */
 
-namespace Optim::Mathematics
-{
+namespace Optim::Mathematics {
 
 inline float4 getFloat4FromFloat3(const float3& f) 
 {
@@ -267,7 +257,7 @@ inline float4 getFloat4FromFloat3(const float3& f)
 	};
 }
 
-inline float3 getFloat3Part(const float4& f)
+inline float3 getFloat3Part(const float4& f) 
 {
 	return float3 {
 		f.x,
@@ -276,7 +266,7 @@ inline float3 getFloat3Part(const float4& f)
 	};
 }
 
-inline float4x4 getMatrixTranslation(float x, float y, float z)
+inline float4x4 getMatrixTranslation(float x, float y, float z) 
 {
 	return float4x4 {
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -286,7 +276,7 @@ inline float4x4 getMatrixTranslation(float x, float y, float z)
 	};
 }
 
-inline float4x4 getMatrixTranslation(const float3& f)
+inline float4x4 getMatrixTranslation(const float3& f) 
 {
 	return float4x4 {
 		1.0f, 0.0f, 0.0f, 0.0f,

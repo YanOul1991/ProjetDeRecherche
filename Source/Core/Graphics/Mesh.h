@@ -19,26 +19,35 @@
 
 #include "Core/Object/Object.h"
 
-class CORE_API Mesh final : public Object
+class CORE_API Mesh : public Object
 {
-	DECLARE_OBJECT(Mesh)
+  DECLARE_OBJECT()
 
-public:
+ public:
+  Mesh() = default;
+  virtual ~Mesh() noexcept override;
 
-	Mesh() = default;
-	virtual ~Mesh() noexcept override final;
+  float4x4 getWorldMatrix() const;
 
-	float4x4 getWorldMatrix() const;
+  float scaleField{};
 
-	float scaleField{443.3489f};
+  float3     position{};
+  Quaternion rotation{};
+  Vertex*    vertices{};
+  uint32*    indices{};
+  uint32     vertexCount{};
+  uint32     indexCount{};
 
-	float3			position{};
-	Quaternion	rotation{};
-	Vertex*			vertices{};
-	uint32*			indices{};
-	uint32			vertexCount{};
-	uint32			indexCount{};
+  VertexBufferHandle vertexBufferHandle{};
+  IndexBufferHandle  indexBufferHandle{};
+};
 
-	VertexBufferHandle	vertexBufferHandle {};
-	IndexBufferHandle		indexBufferHandle {};
+class CORE_API SkinnedMesh : public Mesh
+{
+  DECLARE_OBJECT()
+
+ public:
+   float skinnedMeshValue;
+   float3 scale;
+   std::vector<float3> listOfStuff;
 };

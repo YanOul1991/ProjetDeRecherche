@@ -101,6 +101,12 @@
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsDevice.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Reflection\OptimReflection.h">
+      <Filter>Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Reflection\Internal\TypeReflection.h">
+      <Filter>Reflection\Internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -192,6 +198,12 @@
     </Filter>
     <Filter Include="Mathematics\Internal">
       <UniqueIdentifier>{44475933-a731-45a8-935c-adaf18893b00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection">
+      <UniqueIdentifier>{38c604c8-c662-4a1f-bbb8-5353b481cfac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\Internal">
+      <UniqueIdentifier>{090dbd18-9106-4a11-87b6-e1178b2351b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

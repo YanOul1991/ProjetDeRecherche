@@ -19,17 +19,14 @@
  * A representation of a rotation on an axis.
 */
 struct Quaternion {
-  static TypeInfo* StaticTypeInfo();
-  TypeInfo*        GetTypeInfo() const {
-    return StaticTypeInfo();
-  }
+	DECLARE_STRUCT()
+
 	float w{1.0f};
 	float x{0.0f};
 	float y{0.0f};
 	float z{0.0f};
 
-	static Quaternion fromAxisAngle(const float3& axis, float rad)
-	{
+	static Quaternion fromAxisAngle(const float3& axis, float rad) {
 		float half = 0.5f * rad;
 		float s = sinf(half);
 		float3 n = normalize(axis);
@@ -52,8 +49,7 @@ struct Quaternion {
 	 * @returns
 	 * The value of the rotated vector.
 	*/
-	inline float3 rotate(const float3& v) const
-	{
+	inline float3 rotate(const float3& v) const {
 		// Get Vector part from quaternion
 		float3 qv = {x, y, z};
 
@@ -66,8 +62,7 @@ struct Quaternion {
 	 * @brief
 	 * Returns the identify quaternion: <w, x, y, z>(1, 0, 0, 0)
 	*/
-	static Quaternion identity()
-	{
+	static Quaternion identity() {
 		return {
 			1.0f,
 			0.0f,
@@ -80,8 +75,7 @@ struct Quaternion {
 	 * @brief
 	 * Transforms a quaternion into euler angles in radians
 	*/
-	inline void toEuler(float& pitch, float& yaw, float& roll) const
-	{
+	inline void toEuler(float& pitch, float& yaw, float& roll) const {
 		// Pitch (x-axis)
 		float sinp = 2.0f * (w * x + y * z);
 		float cosp = 1.0f - 2.0f * (x * x + y * y);
@@ -103,8 +97,7 @@ struct Quaternion {
  * @brief
  * Quaternion multiplication
 */
-inline Quaternion operator*(const Quaternion& P, const Quaternion& Q)
-{
+inline Quaternion operator*(const Quaternion& P, const Quaternion& Q) {
 	return {
 		(P.w * Q.w) - (P.x * Q.x) - (P.y * Q.y) - (P.z * Q.z),
 		(P.w * Q.x) + (P.x * Q.w) + (P.y * Q.z) - (P.z * Q.y),
@@ -113,11 +106,9 @@ inline Quaternion operator*(const Quaternion& P, const Quaternion& Q)
 	};
 }
 
-namespace Optim::Mathematics
-{
+namespace Optim::Mathematics {
 
-inline float4x4 getMatrixFromQuaternion(const Quaternion& q)
-{
+inline float4x4 getMatrixFromQuaternion(const Quaternion& q) {
 	float xx = q.x * q.x;
 	float yy = q.y * q.y;
 	float zz = q.z * q.z;
