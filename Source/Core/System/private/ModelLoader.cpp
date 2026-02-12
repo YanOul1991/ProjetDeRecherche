@@ -19,7 +19,7 @@ using fbxVector4array = fbxsdk::FbxLayerElementArrayTemplate<fbxsdk::FbxVector4>
 void OptimEditor::loadFbxModel(Mesh& param_meshObject, const char* param_cstrFilename) 
 {
 
-	printf("FBX SDK Version: %d.%d.%d\n", FBXSDK_VERSION_MAJOR, FBXSDK_VERSION_MINOR, FBXSDK_VERSION_REVISION);
+	//printf("FBX SDK Version: %d.%d.%d\n", FBXSDK_VERSION_MAJOR, FBXSDK_VERSION_MINOR, FBXSDK_VERSION_REVISION);
 	/*
 	 * Create FBX SDK manager and create 
 	 * IOS settings object.

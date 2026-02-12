@@ -252,5 +252,8 @@
     <ClCompile Include="..\Source\Core\Graphics\Private\Graphics.cpp">
       <Filter>Graphics\Private</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Core\Graphics\Mesh.cpp">
+      <Filter>Graphics\Private</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

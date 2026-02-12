@@ -7,8 +7,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
-
-class String;
+#include "Core/Types/String.h"
 
 class CORE_API Exception
 {

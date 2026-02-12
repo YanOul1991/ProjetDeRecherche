@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "Core/Graphics/Resource/GraphicResourceHandle.h"
+#include "Core/Graphics/Resource/GraphicResourceHandle.h"
 
 enum class EPipelinePrimitiveTopology : unsigned char {
   Undefined,
@@ -94,13 +94,9 @@ struct SDepthStencilDescription
 
 struct SPipelineDesc 
 {
-  VertexShaderHandle          vertexShaderHandle{};
-  FragmentShaderHandle        fragmentShaderHandle{};
-  SRasterizerDescription      rasterizerDescription{};
-  SDepthStencilDescription    depthStencilDescription{};
-  EPipelinePrimitiveTopology  primitiveTopology{};
+  VertexShaderHandle          vertexShaderHandle;
+  FragmentShaderHandle        fragmentShaderHandle;
+  SRasterizerDescription      rasterizerDescription;
+  SDepthStencilDescription    depthStencilDescription;
+  EPipelinePrimitiveTopology  primitiveTopology;
 };
-
-//struct IGraphicsPipeline{};
-//
-//using PipelineHandle = GraphicResourceHandle<IGraphicsPipeline>;

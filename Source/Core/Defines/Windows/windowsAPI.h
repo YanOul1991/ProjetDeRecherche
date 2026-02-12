@@ -51,7 +51,7 @@ namespace op::sys::windows
       nullptr,
       hr,
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-      RCAST(LPWSTR, &msgBuffer),
+      reinterpret_cast<LPWSTR>(&msgBuffer),
       0,
       nullptr
     );

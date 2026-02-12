@@ -10,9 +10,11 @@
 
 #include "Core/System/Application.h"
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 
 int main() {
-  std::cout << "---------------- Main start ----------------\n";
+  printf("\n----------------------------- Main start -----------------------------\n\n");
 
   // Create application instance
   Application* application{ new Application };

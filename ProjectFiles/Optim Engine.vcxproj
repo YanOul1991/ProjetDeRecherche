@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="..\project.manifest" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\Source\Core\System\entry\main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -127,7 +124,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(SolutionDir)Builds\Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
+      <AdditionalManifestDependencies>
+      </AdditionalManifestDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>

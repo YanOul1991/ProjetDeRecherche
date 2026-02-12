@@ -29,19 +29,3 @@ OP_RESOURCE_HANDLE(DepthRT)
 OP_RESOURCE_HANDLE(ConstantBuffer)
 
 #undef OP_RESOURCE_HANDLE
-
-/*
-template <typename T> 
-struct GraphicResourceHandle 
-{
-	uint64 data;
-};
-
-using ResourceHandle				= GraphicResourceHandle<IGraphicResource>;
-using VertexBufferHandle		= GraphicResourceHandle<IVertexBuffer>;
-using IndexBufferHandle			= GraphicResourceHandle<IIndexBuffer>;
-using VertexShaderHandle		= GraphicResourceHandle<IVertexShader>;
-using FragmentShaderHandle	= GraphicResourceHandle<IFragmentShader>;
-using TextureResourceHandle	= GraphicResourceHandle<ITextureResource>;
-using SamplerHandle					= GraphicResourceHandle<ISampler>;
-*/

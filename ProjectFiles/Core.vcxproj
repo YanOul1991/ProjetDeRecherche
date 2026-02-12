@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
+    <ClCompile Include="..\Source\Core\Graphics\Mesh.cpp" />
     <ClCompile Include="..\Source\Core\Graphics\Private\Graphics.cpp" />
     <ClCompile Include="..\Source\Core\Input\private\Input.cpp" />
     <ClCompile Include="..\Source\Core\Object\Camera\Camera.cpp" />

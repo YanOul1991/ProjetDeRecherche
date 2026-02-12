@@ -37,25 +37,6 @@ constexpr int64		maxInt8		= 0x7F;
 constexpr int64		minInt8		= 0x80;
 
 constexpr float		EPSILONF	= 1E-6F;
-
-/*
-constexpr float		pi				= 3.1415927f;
-constexpr double	pi_d			= 3.141592653589793;
-constexpr uint64	maxUint64 = 0xFFFFFFFFFFFFFFFFull;
-constexpr uint32	maxUint32 = 0xFFFFFFFFu;
-constexpr uint16	maxUint16 = 0xFFFFull;
-constexpr uint8		maxUint8	= 0xFFull;
-
-constexpr int64		maxInt64	= 0x7FFFFFFFFFFFFFFFull;
-constexpr int64		minInt64	= 0x8000000000000000;
-constexpr int32		maxInt32	= 0x7FFFFFFF;
-constexpr int32		minInt32	= 0x80000000;
-constexpr int16		maxInt16	= 0x7FFF;
-constexpr int16		minInt16	= 0x8000;
-constexpr int8		maxInt8		= 0x7F;
-constexpr int8		minInt8		= 0x80;
-*/
-
 } // Namespace - END 
 
 struct UVCoord 
@@ -75,7 +56,7 @@ struct float3 {
 	float y{0};
 	float z{0};
 
-	inline void print()
+	inline void print() const
 	{
 		printf("(%f, %f, %f)\n", x, y, z);
 	}
@@ -220,15 +201,6 @@ inline float4x4 operator*(const float4x4& m, float s)
 		MATRIX x VECTOR MULTIPLICATION
 +++++++++++++++++++++++++++++++++++++++++++++++ */
 
-//inline float4 operator*(const float4x4& mat, const float4& vec)
-//{
-//	return {
-//		vec.x * mat.m11 + vec.y * mat.m12 + vec.z * mat.m13 + vec.w * mat.m14,
-//		vec.x * mat.m21 + vec.y * mat.m22 + vec.z * mat.m23 + vec.w * mat.m24,
-//		vec.x * mat.m31 + vec.y * mat.m32 + vec.z * mat.m33 + vec.w * mat.m34,
-//		vec.x * mat.m41 + vec.y * mat.m42 + vec.z * mat.m43 + vec.w * mat.m44,
-//	};
-//}
 inline float4 operator*(const float4x4& m, const float4& v) 
 { 
 	return { 

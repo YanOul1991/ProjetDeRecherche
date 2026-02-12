@@ -5,7 +5,6 @@
  *    Yanis Oulmane
 ====================================================================================== */
 
-#include "Core/System/Application.h"
 #include "Core/Time/Time.h"
 #include "Core/Types/string.h"
 #include "Core/Exception/exception.h"
@@ -22,6 +21,8 @@
 #include "Private/Dx11RHIDevice.h"
 
 #include "Runtime/Direct3D11/Dx11RHI.h"
+
+#include "Core/System/Application.h"
 
 #include <cmath>
 #include <vector>
