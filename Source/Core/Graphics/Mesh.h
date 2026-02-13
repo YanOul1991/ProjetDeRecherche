@@ -50,4 +50,5 @@ class CORE_API SkinnedMesh : public Mesh
    float skinnedMeshValue;
    float3 scale;
    std::vector<float3> listOfStuff;
+   MyCustomEnum        customEnum{};
 };

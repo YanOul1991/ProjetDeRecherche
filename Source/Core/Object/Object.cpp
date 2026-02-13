@@ -17,7 +17,6 @@
 
 static std::unordered_map<SGuid, Object*> objectRegistery{};
 
-OPTIM_DECLARE_PROPERTY(Object, objectField)
 
 Object::Object() 
 {
@@ -99,6 +98,9 @@ void CORE_API printFields(void* object, const TypeInfo* type, int indent)
         }
       }
     }
+    else if (fieldInfo.typeInfo->typeData == TypeData::Enum) {
+      std::cout << fieldInfo.typeInfo->name << '\n';
+    }
     else {
       /**
        * If the field is either a Structure or an Object
@@ -130,13 +132,13 @@ void CORE_API printTypeFields(const TypeInfo* type, int indent)
     }
   }
 
-  if (type->baseType) {
-    for (size_t i = 0; i < (indent + indent); i++) {
-      std::cout << " ";
-    }
-    std::cout << "Inherited fields from:\n";
-    printTypeFields(type->baseType, indent + indent);
-  }
+  //if (type->baseType) {
+  //  for (size_t i = 0; i < (indent + indent); i++) {
+  //    std::cout << " ";
+  //  }
+  //  std::cout << "Inherited fields from:\n";
+  //  printTypeFields(type->baseType, indent + indent);
+  //}
 
   std::cout << '\n';
 }
@@ -167,5 +169,4 @@ static struct _OPTIM_SYSTEM_REGISTRATION_Object {
   }
 } _OPTIM_SYSTEM_REGISTERED_Object;
 
-
-__OPTIM_INTERNAL_REGISTER_OBJECT(ChildClass, Object)
+OPTIM_DECLARE_PROPERTY(Object, objectField)

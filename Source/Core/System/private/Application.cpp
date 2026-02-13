@@ -328,9 +328,9 @@ void Application::Quit() {
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
-  //for (auto& pair : GetTypeRegistry()) {
-  //  printTypeFields(pair.second);
-  //}
+  for (auto& pair : GetTypeRegistry()) {
+    printTypeFields(pair.second);
+  }
 
   SkinnedMesh skinnedMeshObj;
 
@@ -338,7 +338,12 @@ void Application::ApplicationStart() {
   skinnedMeshObj.listOfStuff.push_back({-42.465f, 83.53f, 38.564f});
   skinnedMeshObj.listOfStuff.push_back({1.7f, 3.9f, -8.51f});
 
+  skinnedMeshObj.customEnum = MyCustomEnum::value4;
+
   printFields(&skinnedMeshObj, skinnedMeshObj.GetTypeInfo(), 0);
+
+  TypeInfo* pEnuminfo = Optim::Internal::Reflection::getTypeInfo<MyCustomEnum>();
+  Optim::Internal::Reflection::printTypeInfo(pEnuminfo);
 
   /*
   ChildClass obj;

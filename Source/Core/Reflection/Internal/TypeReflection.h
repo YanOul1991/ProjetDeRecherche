@@ -9,50 +9,90 @@
 #include <string>
 #include <unordered_map>
 
+//template<typename T> class TList final
+//{
+// public:
+//  TList() = default;
+//
+//  inline void initalAlloc(uint32 param_allocCount) {
+//    pData     = new T[param_allocCount];
+//    capacity  = param_allocCount;
+//    count     = 0;
+//  }
+//
+//  inline void Add(const T& element) {
+//    if (count < capacity) {
+//      pData[count + 1] = element;
+//      count++;
+//    }
+//  }
+//
+//  inline uint32 Count() const {
+//    return count;
+//  }
+//
+// private:
+//  T* pData{};
+//  uint32 count{0};
+//  uint32 capacity{0};
+//};
+//
+//TList<int> myList;
+
 enum class TypeData {
   Primitive,
-  Array,     // Value Types
-  Structure, // Value Types
+  Array,
+  Structure,
+  Enum,
   Object,
 };
 
 struct TypeInfo;
 struct FieldInfo;
 
-struct FunctionInfo {
-  const char* name{};
-  void (*call)(void* object, void** args){};
-  std::vector<const TypeInfo*> paramTypes{};
-  const TypeInfo*              returnType{};
-};
+//struct FunctionInfo {
+//  const char* name{};
+//  void (*call)(void* object, void** args){};
+//  std::vector<const TypeInfo*> paramTypes{};
+//  const TypeInfo*              returnType{};
+//};
 
 struct FieldInfo {
   const char*     name;
-  size_t          offset;
+  uint64          offset;
   const TypeInfo* typeInfo;
 };
 
+struct SEnum {
+  const char* name{};
+  uint64       val{};
+};
+
 struct TypeInfo {
-  const char* name{};                            // Shared
-  size_t      size{};                            // Shared
-  void* (*createFn)(){};                         // Object
-  TypeData typeData{};                           // Shared
+  const char* name{};                              // Shared
+  size_t      size{};                              // Shared
+  void* (*createFn)(){};                           // Object
+  TypeData typeData{};                             // Shared
 
-  void (*get)(void*){};                          // Primitive
-  void (*set)(void*, void*){};                   // Primitive
+  void (*get)(void*){};                            // Primitive
+  void (*set)(void*, void*){};                     // Primitive
 
-  std::string (*toString)(void*);                // Primitive
-  void (*fromString)(void*, const std::string&); // Primitive
+  std::string (*toString)(void*){};                // Primitive
+  void (*fromString)(void*, const std::string&){}; // Primitive
 
-  const TypeInfo*           baseType{};          // Object
-  std::vector<FieldInfo>    fields{};            // Object, Primitives
-  std::vector<FunctionInfo> functions{};         // !!! Not yet implemented !!! Object
+  const TypeInfo*        baseType{};               // Object
+  std::vector<FieldInfo> fields{};                 // Object, Primitives
+
+  //std::vector<FunctionInfo> functions{};           // !!! Not yet implemented !!! Object
 
   // Array
   const TypeInfo* arrayElementTypeInfo{};
   uint64 (*arrayGetSize)(void*){};
   void* (*arrayGetElement)(void*, uint64){};
   void (*arrayResize)(void*, uint64){};
+
+  // Enum Types data
+  std::vector<SEnum> enumFields{};
 };
 
 template<typename T> struct TypeResolver {
@@ -116,7 +156,6 @@ template<> struct TypeResolver<float> {
 };
 
 // TypeResolve for array types
-
 template <typename ListType> struct TypeResolver<std::vector<ListType>>
 {
   static TypeInfo* Get() {
@@ -134,7 +173,7 @@ template <typename ListType> struct TypeResolver<std::vector<ListType>>
       info.fromString = nullptr;
       info.baseType   = nullptr;
       info.fields     = {};
-      info.functions  = {};
+      //info.functions  = {};
 
       info.arrayElementTypeInfo = TypeResolver<ListType>::Get();
 
@@ -155,3 +194,72 @@ template <typename ListType> struct TypeResolver<std::vector<ListType>>
     return &info;
   };
 };
+
+enum class MyCustomEnum {
+  value1,
+  value2,
+  value3,
+  value4,
+  value5
+};
+
+template<> struct TypeResolver<MyCustomEnum>
+{
+  static TypeInfo* Get() {
+    static bool init = false;
+    static TypeInfo info;
+
+    if (!init) {
+      info.name       = "MyCustomEnum",
+      info.size       = sizeof(MyCustomEnum);
+      info.typeData   = TypeData::Enum;
+
+      info.toString = [](void* pEnum) -> std::string {
+        return "hello!";
+      };
+
+      init = true;
+    }
+    return &info;
+  };
+};
+
+
+namespace Optim::Internal::Reflection 
+{
+
+template<typename T> TypeInfo* getTypeInfo() {
+  return TypeResolver<T>::Get();
+}
+
+inline void printTypeInfo(const TypeInfo* pTypeInfo) 
+{
+  switch (pTypeInfo->typeData) {
+  case TypeData::Enum: {
+    std::cout << "Type of " << pTypeInfo->name << " : Enum " << '\n';
+    std::cout << "  Enumerator count: " << pTypeInfo->enumFields.size() << "\n";
+
+    for (const SEnum& eField : pTypeInfo->enumFields) {
+      std::cout << "     Enumerator : " << eField.name << " -> " << eField.val << '\n';
+    }
+
+    break;
+  };
+  default:
+    printf("Unkown Type\n");
+    break;
+  }
+}
+
+} // namespace Optim::Internal::Reflection
+
+//static inline struct __OPTIM_INTERNAL_DECL_ENUM_VAL_MyCustomEnum_value1 {
+//  __OPTIM_INTERNAL_DECL_ENUM_VAL_MyCustomEnum_value1() {
+//    static SEnum enumVal = {
+//      .name = "value1",
+//      .val  = (uint64)MyCustomEnum::value1
+//    };
+//    TypeResolver<decltype(MyCustomEnum::value1)>::Get()->enumFields.push_back(enumVal);
+//    printf("Enum value serialized MyCustomEnum::value1.\n");
+//  }
+//} __OPTIM_INTERNAL_ENUM_EVAL_MyCustomEnum_value1;
