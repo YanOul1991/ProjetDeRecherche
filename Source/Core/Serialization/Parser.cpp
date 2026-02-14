@@ -116,60 +116,6 @@ static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_t
     }
     std::cout << "Peeking parser: " << parser.peek().text << "\n";
   }
-  //std::cout << "Next identifier found: " << identifierName << '\n';
-  /*
-  std::cout << "The object of type: " << typeInfo->name << " contains the following fields:\n";
-  for (auto& field : typeInfo->fields) {
-    std::cout << field.name << ": " << field.typeInfo->name << '\n' ;
-  }
-  */
-  /*
-  // First thing to consume
-  while (!expectSymbol(parser, ")")) {
-
-    if (!expectIdentifier(parser)) {
-      printf("The next token [%s] IS NOT an identifier for field.\n", parser.peek().text.c_str());
-    }
-
-    // Consume Field Identifier and = symbol
-    std::string fieldName = parser.consume().text;
-    parser.consume();
-    const FieldInfo* fieldInfo = findFieldInfo(fieldName, typeInfo);
-
-    printf("Next field name [%s] : %s\n", fieldName.c_str(), fieldInfo->typeInfo->name);
-
-    if (!fieldInfo) {
-      printf("COULD NOT FIND the field info for [%s]\n", fieldName.c_str());
-      return;
-    }
-
-    // If the type is a structure:
-    // Field then parse its fields as well
-    if (Optim::Internal::Reflection::TypeHasFields(fieldInfo->typeInfo)) {
-      parser.consume(); // Consume Symbol (
-
-      void* pField = (char*)instance + fieldInfo->offset;
-      parseFields(parser, pField, fieldInfo->typeInfo);
-
-      // consume (
-      // At this point the next token should be the Identifier for the next field.
-      std::cout << "[CHECKPOINT] " << parser.peek().text << '\n';
-    }
-    // If the Data type is a primitive then write the value
-    if (fieldInfo->typeInfo->typeData == TypeData::Primitive) {
-      std::string strVal = parser.consume().text;
-
-      std::cout << "reading primitive: " << strVal << '\n';
-
-      typeInfo->fromString(instance, strVal);
-
-      std::cout << "Primitive saved: " << strVal << '\n';
-    }
-    if (expectSymbol(parser, ",")) {
-      parser.consume();
-    }
-  }
-  */
 }
 
 // Member functions

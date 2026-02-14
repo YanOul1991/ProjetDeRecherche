@@ -26,6 +26,7 @@
 #include "Core/Utilities/Random/Random.h"
 #include "Core/Serialization/Tokenizer.h"
 #include "Core/Serialization/Parser.h"
+#include "Core/Serialization/Serializer.h"
 
 #include <fstream>
 #include <iostream>
@@ -320,6 +321,19 @@ void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
   }
 
   if (buttonID == 3) {
+    std::vector<Object*> objectList;
+
+    objectList.push_back(new Mesh);
+    objectList.push_back(new Mesh);
+    objectList.push_back(new Mesh);
+    objectList.push_back(new Mesh);
+
+    Serializer::SaveScene(objectList, "SerializationTestSave");
+
+    for (auto& o : objectList) {
+      delete o;
+    }
+
     return;
     printf("Saving...\n");
 
@@ -366,7 +380,6 @@ void Application::ApplicationStart() {
 
   //Mesh mesh{};
 
-  Parser meshParser(Token::Tokenize("Scenes/save.oescene"));
 
   /*
   std::vector<void*> instanciatedObjects;
@@ -382,6 +395,33 @@ void Application::ApplicationStart() {
   //  reinterpret_cast<Mesh*>(obj)->position.print();
   //}
 
+  std::vector<Object*> l_registeredObjects;
+
+  Parser meshParser(Token::Tokenize("Scenes/save.oescene"));
+
+  while (!meshParser.isEnd()) {
+    l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
+  }
+
+  std::cout << "Instanciated Objects count: " << l_registeredObjects.size() << "\n";
+
+  for (auto& obj : l_registeredObjects) {
+    if (obj->isChildOf(Mesh::StaticTypeInfo())) {
+
+      Mesh* meshObj = reinterpret_cast<Mesh*>(obj);
+
+      meshObj->position.print();
+
+      std::cout 
+        << "(" << meshObj->rotation.w
+        << ", " << meshObj->rotation.x
+        << ", " << meshObj->rotation.y
+        << ", " << meshObj->rotation.z
+        << ")\n";
+    }
+  }
+
+  /*
   Mesh* meshObj = (Mesh*)Parser::CreateObject(meshParser);
 
   if (meshParser.isEnd()) {
@@ -416,6 +456,7 @@ void Application::ApplicationStart() {
     std::cout << "Printing mesh data 2:\n";
     meshObj2->position.print();
   }
+  */
 
   //if (meshObj) {
   //  std::cout << "MeshObject sucessfully created! Printing position:\n";

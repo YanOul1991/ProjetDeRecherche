@@ -113,6 +113,9 @@
     <ClInclude Include="..\Source\Core\Serialization\Tokenizer.h">
       <Filter>Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Serialization\Serializer.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -214,6 +217,9 @@
     <Filter Include="Serialization">
       <UniqueIdentifier>{3ad29e5d-ea82-437c-8879-4966df2c4f64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Serialization\Private">
+      <UniqueIdentifier>{bf4737d0-a85a-4de2-8830-e392a519e813}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -286,10 +292,13 @@
       <Filter>Mathematics\Internal</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\Serialization\Tokenizer.cpp">
-      <Filter>Serialization</Filter>
+      <Filter>Serialization\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Serialization\Serializer.cpp">
+      <Filter>Serialization\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Core\Serialization\Parser.cpp">
-      <Filter>Serialization</Filter>
+      <Filter>Serialization\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
