@@ -1,17 +1,17 @@
 #include "Core/Graphics/Mesh.h"
 
 Mesh::Mesh() {
-  printf("[Mesh] Mesh class object instanciated.\n");;
+  //printf("[Mesh] Mesh class object instanciated.\n");
 }
 
 Mesh::~Mesh() noexcept {
 }
 
-float4x4 Mesh::getWorldMatrix() const
+float4x4 Mesh::getWorldMatrix() const 
 {
-	float4x4 l_translation	= Optim::Mathematics::getMatrixTranslation(position);
-	float4x4 l_rotation		= Optim::Mathematics::getMatrixFromQuaternion(rotation);
-	return l_rotation * l_translation;
+  float4x4 l_translation = Optim::Mathematics::getMatrixTranslation(position);
+  float4x4 l_rotation    = Optim::Mathematics::getMatrixFromQuaternion(rotation);
+  return l_rotation * l_translation;
 }
 
 __OPTIM_INTERNAL_REGISTER_OBJECT(Mesh, Object)

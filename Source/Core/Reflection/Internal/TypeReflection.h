@@ -99,6 +99,7 @@ template<> struct TypeResolver<int> {
 
 template<> struct TypeResolver<float> {
   static TypeInfo* Get() {
+    std::cout << "Get function of type float called for typ resolving.\n";
     static TypeInfo info = {
       .name     = "float",
       .size     = sizeof(float),
@@ -114,8 +115,8 @@ template<> struct TypeResolver<float> {
       },
       .fromString = [](void* ptr, const std::string& str) -> void {
         try {
-          *reinterpret_cast<float*>(ptr) = std::stof(str);
           std::cout << "Setting float from string\n";
+          *reinterpret_cast<float*>(ptr) = std::stof(str);
         }
         catch (const std::exception&) {
           std::cout << "Cannot save value as float\n";

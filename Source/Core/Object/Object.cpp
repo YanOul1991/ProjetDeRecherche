@@ -21,7 +21,7 @@ Object::Object()
 {
   m_guid = Optim::Random::getGetGuid();
   objectRegistery.emplace(m_guid, this);
-  printf("[Object] Object class object instanciated\n");
+  //printf("[Object] Object class object instanciated\n");
 }
 
 Object::~Object() 

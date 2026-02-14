@@ -363,29 +363,66 @@ void Application::Quit() {
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
-  printf("[SECTION] Type registraction:\n");
-  printf("Registered types:\n");
-  for (auto& t : GetTypeRegistry()) {
-    printf("--- %s\n", t.first.c_str());
-  }
 
-  printf("[SECTION]\nScene reading:\n");
   //Mesh mesh{};
-
 
   Parser meshParser(Token::Tokenize("Scenes/save.oescene"));
 
-  //meshParser.tokens = Token::Tokenize("Scenes/save.oescene");
+  /*
+  std::vector<void*> instanciatedObjects;
 
-  //printf("Token List:\n");
+  while (!meshParser.isEnd()) {
+    instanciatedObjects.push_back(Parser::CreateObject(meshParser));
+  }
 
-  //for (auto& t : meshParser.tokens) {
-  //  printf("   %s\n", t.text.c_str());
+  std::cout << "Instaciated all objects\n";
+  */
+
+  //for (auto& obj : instanciatedObjects) {
+  //  reinterpret_cast<Mesh*>(obj)->position.print();
   //}
 
-  void* meshObj = Parser::CreateObject(meshParser);
+  Mesh* meshObj = (Mesh*)Parser::CreateObject(meshParser);
 
-  printf("[Section END] Parser finished pasring!!!\n----------\n");
+  if (meshParser.isEnd()) {
+    std::cout << "End of parser!\n";
+  }
+  else {
+    std::cout << "There are more elements to parse\n";
+  }
+
+  if (meshObj) {
+    std::cout << "Printing mesh data:\n";
+    meshObj->position.print();
+  }
+
+  std::cout << "---------------------------------------------------------------------------------\n";
+  std::cout << "-------------------------------- MESH REGISTERED --------------------------------\n";
+  std::cout << "---------------------------------------------------------------------------------\n";
+
+  std::cout << "Peeking mesh " << meshParser.index << " | " << meshParser.tokens.size() << '\n';
+
+  Mesh* meshObj2 = (Mesh*)Parser::CreateObject(meshParser);
+  std::cout << "Mesh2 created!\n";
+
+  if (meshParser.isEnd()) {
+    std::cout << "End of parser!\n";
+  }
+  else {
+    std::cout << "There are more elements to parse\n";
+  }
+
+  if (meshObj2) {
+    std::cout << "Printing mesh data 2:\n";
+    meshObj2->position.print();
+  }
+
+  //if (meshObj) {
+  //  std::cout << "MeshObject sucessfully created! Printing position:\n";
+  //  reinterpret_cast<Mesh*>(meshObj)->position.print();
+  //}
+
+  printf("\n[Section END] Parser finished pasring!!!\n----------\n");
 
   //printf("Parsing scene...\n");
   //printf("Finished parsing scene...\n");

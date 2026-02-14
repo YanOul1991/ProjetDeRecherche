@@ -10,11 +10,7 @@
 class Parser
 {
  public:
-  static std::unordered_map<void*, TypeInfo*> instanciateObjects(std::vector<Token>& tokens);
-
   static void* CreateObject(Parser& parser);
-
-  // static void ParseMeshObject(Parser& p, Mesh& mesh);
 
   Parser(const std::vector<Token>& param_tokens);
 
