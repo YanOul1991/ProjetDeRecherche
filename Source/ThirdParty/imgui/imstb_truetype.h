@@ -810,7 +810,7 @@ typedef struct stbtt_kerningentry
 {
    int glyph1; // use stbtt_FindGlyphIndex
    int glyph2;
-   int advance;
+   int consume;
 } stbtt_kerningentry;
 
 STBTT_DEF int  stbtt_GetKerningTableLength(const stbtt_fontinfo *info);
@@ -2355,7 +2355,7 @@ STBTT_DEF int stbtt_GetKerningTable(const stbtt_fontinfo *info, stbtt_kerningent
    {
       table[k].glyph1 = ttUSHORT(data+18+(k*6));
       table[k].glyph2 = ttUSHORT(data+20+(k*6));
-      table[k].advance = ttSHORT(data+22+(k*6));
+      table[k].consume = ttSHORT(data+22+(k*6));
    }
 
    return length;
@@ -3837,9 +3837,9 @@ static int stbtt_BakeFontBitmap_internal(unsigned char *data, int offset,  // fo
    scale = stbtt_ScaleForPixelHeight(&f, pixel_height);
 
    for (i=0; i < num_chars; ++i) {
-      int advance, lsb, x0,y0,x1,y1,gw,gh;
+      int consume, lsb, x0,y0,x1,y1,gw,gh;
       int g = stbtt_FindGlyphIndex(&f, first_char + i);
-      stbtt_GetGlyphHMetrics(&f, g, &advance, &lsb);
+      stbtt_GetGlyphHMetrics(&f, g, &consume, &lsb);
       stbtt_GetGlyphBitmapBox(&f, g, scale,scale, &x0,&y0,&x1,&y1);
       gw = x1-x0;
       gh = y1-y0;
@@ -3854,7 +3854,7 @@ static int stbtt_BakeFontBitmap_internal(unsigned char *data, int offset,  // fo
       chardata[i].y0 = (stbtt_int16) y;
       chardata[i].x1 = (stbtt_int16) (x + gw);
       chardata[i].y1 = (stbtt_int16) (y + gh);
-      chardata[i].xadvance = scale * advance;
+      chardata[i].xadvance = scale * consume;
       chardata[i].xoff     = (float) x0;
       chardata[i].yoff     = (float) y0;
       x = x + gw + 1;
@@ -4236,7 +4236,7 @@ STBTT_DEF int stbtt_PackFontRangesRenderIntoRects(stbtt_pack_context *spc, const
          stbrp_rect *r = &rects[k];
          if (r->was_packed && r->w != 0 && r->h != 0) {
             stbtt_packedchar *bc = &ranges[i].chardata_for_range[j];
-            int advance, lsb, x0,y0,x1,y1;
+            int consume, lsb, x0,y0,x1,y1;
             int codepoint = ranges[i].array_of_unicode_codepoints == NULL ? ranges[i].first_unicode_codepoint_in_range + j : ranges[i].array_of_unicode_codepoints[j];
             int glyph = stbtt_FindGlyphIndex(info, codepoint);
             stbrp_coord pad = (stbrp_coord) spc->padding;
@@ -4246,7 +4246,7 @@ STBTT_DEF int stbtt_PackFontRangesRenderIntoRects(stbtt_pack_context *spc, const
             r->y += pad;
             r->w -= pad;
             r->h -= pad;
-            stbtt_GetGlyphHMetrics(info, glyph, &advance, &lsb);
+            stbtt_GetGlyphHMetrics(info, glyph, &consume, &lsb);
             stbtt_GetGlyphBitmapBox(info, glyph,
                                     scale * spc->h_oversample,
                                     scale * spc->v_oversample,
@@ -4275,7 +4275,7 @@ STBTT_DEF int stbtt_PackFontRangesRenderIntoRects(stbtt_pack_context *spc, const
             bc->y0       = (stbtt_int16)  r->y;
             bc->x1       = (stbtt_int16) (r->x + r->w);
             bc->y1       = (stbtt_int16) (r->y + r->h);
-            bc->xadvance =                scale * advance;
+            bc->xadvance =                scale * consume;
             bc->xoff     =       (float)  x0 * recip_h + sub_x;
             bc->yoff     =       (float)  y0 * recip_v + sub_y;
             bc->xoff2    =                (x0 + r->w) * recip_h + sub_x;

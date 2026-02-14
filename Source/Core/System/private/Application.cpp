@@ -52,10 +52,10 @@ static float3 controlGizmoDirection{};
 
 static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
-static PipelineHandle _handlePipeline{};
-static PipelineHandle _handlePipelineWirframeView{};
-static PipelineHandle _handlePipelineOutline{};
-static PipelineHandle _handlePipelineLineRendering{};
+static PipelineHandle       _handlePipeline{};
+static PipelineHandle       _handlePipelineWirframeView{};
+static PipelineHandle       _handlePipelineOutline{};
+static PipelineHandle       _handlePipelineLineRendering{};
 
 static DepthRTHandle        _handle_depthRT{};
 static VertexShaderHandle   _handle_vertexShader{};
@@ -64,10 +64,6 @@ static FragmentShaderHandle _handle_fragmentShader{};
 static bool _bool_drawWireframe{false};
 static bool _bool_drawOutline{false};
 static bool _bool_manipulate_selected{false};
-
-// ////////////////////////////////////////////////////////////////
-// ////////////////////////////////////////////////////////////////
-// ////////////////////////////////////////////////////////////////
 
 extern "C" CORE_API Application* CreateApplicationProc() {
   return new Application;
@@ -367,28 +363,32 @@ void Application::Quit() {
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
+  printf("[SECTION] Type registraction:\n");
+  printf("Registered types:\n");
   for (auto& t : GetTypeRegistry()) {
-    std::cout << t.first << '\n';
+    printf("--- %s\n", t.first.c_str());
   }
 
-  Mesh mesh{};
+  printf("[SECTION]\nScene reading:\n");
+  //Mesh mesh{};
 
-  Parser meshParser{};
-  meshParser.tokens = Token::Tokenize("Scenes/save.oescene");
+
+  Parser meshParser(Token::Tokenize("Scenes/save.oescene"));
+
+  //meshParser.tokens = Token::Tokenize("Scenes/save.oescene");
+
+  //printf("Token List:\n");
 
   //for (auto& t : meshParser.tokens) {
-  //  std::cout << t.text;
+  //  printf("   %s\n", t.text.c_str());
   //}
 
-  std::cout << "Starting to parse.\n";
+  void* meshObj = Parser::CreateObject(meshParser);
 
-  //Parser::ParseMeshObject(meshParser, mesh);
+  printf("[Section END] Parser finished pasring!!!\n----------\n");
 
-  //std::unordered_map<void*, TypeInfo*> objects = Parser::instanciateObjects(tok);
-
-  std::cout << "Finished instanciating scene.\n";
-
-  //Token::Tokenize("Scenes/save.oescene");
+  //printf("Parsing scene...\n");
+  //printf("Finished parsing scene...\n");
 
   /*
   for (auto& pair : GetTypeRegistry()) {

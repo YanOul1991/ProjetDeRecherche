@@ -11,17 +11,17 @@
 #include <string>
 #include <unordered_map>
 
-#define DECLARE_OBJECT()                 \
- public:                                 \
+#define DECLARE_OBJECT()                           \
+ public:                                           \
+  static TypeInfo*  StaticTypeInfo();              \
+  virtual TypeInfo* GetTypeInfo() const override { \
+    return StaticTypeInfo();                       \
+  }
+
+#define DECLARE_STRUCT()                 \
   static TypeInfo* StaticTypeInfo();     \
   TypeInfo*        GetTypeInfo() const { \
     return StaticTypeInfo();             \
-  }
-
-#define DECLARE_STRUCT()                  \
-  static TypeInfo* StaticTypeInfo();      \
-  TypeInfo*        GetTypeInfo() const {  \
-    return StaticTypeInfo();              \
   }
 
 #define __OPTIM_INTERNAL_REGISTER_OBJECT(_OBJECT_, Base)     \

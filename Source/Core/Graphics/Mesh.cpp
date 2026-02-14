@@ -1,6 +1,11 @@
 #include "Core/Graphics/Mesh.h"
 
-Mesh::~Mesh() noexcept { }
+Mesh::Mesh() {
+  printf("[Mesh] Mesh class object instanciated.\n");;
+}
+
+Mesh::~Mesh() noexcept {
+}
 
 float4x4 Mesh::getWorldMatrix() const
 {

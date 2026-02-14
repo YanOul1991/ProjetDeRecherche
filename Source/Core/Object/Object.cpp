@@ -17,11 +17,11 @@
 
 static std::unordered_map<SGuid, Object*> objectRegistery{};
 
-
 Object::Object() 
 {
   m_guid = Optim::Random::getGetGuid();
   objectRegistery.emplace(m_guid, this);
+  printf("[Object] Object class object instanciated\n");
 }
 
 Object::~Object() 

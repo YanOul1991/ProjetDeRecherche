@@ -24,7 +24,7 @@ class CORE_API Mesh : public Object
   DECLARE_OBJECT()
 
  public:
-  Mesh() = default;
+  Mesh();
   virtual ~Mesh() noexcept override;
 
   float4x4 getWorldMatrix() const;

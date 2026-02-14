@@ -2,29 +2,29 @@
 
 #pragma once
 
-#include "Core/Serialization/Tokenizer.h"
 #include "Core/Reflection/OptimReflection.h"
-#include "Core/graphics/Mesh.h"
+#include "Core/Serialization/Tokenizer.h"
+
+#include <unordered_map>
 
 class Parser
 {
  public:
   static std::unordered_map<void*, TypeInfo*> instanciateObjects(std::vector<Token>& tokens);
 
-  static void ParseMeshObject(Parser& p, Mesh& mesh);
+  static void* CreateObject(Parser& parser);
 
-  std::vector<Token> tokens;
-  size_t index = 0;
+  // static void ParseMeshObject(Parser& p, Mesh& mesh);
 
-  const Token& peek() const {
-    return tokens[index];
-  }
+  Parser(const std::vector<Token>& param_tokens);
 
-  const Token& advance() {
-    return tokens[index++];
-  }
+  const std::vector<Token> tokens;
 
-  bool isEnd() const {
-    return index >= tokens.size();
-  }
+  size_t       index;
+  const Token& peek(int i = 0) const;
+
+  const Token& consume();
+
+  bool isEnd() const;
+
 };

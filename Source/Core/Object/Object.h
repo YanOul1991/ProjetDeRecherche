@@ -17,7 +17,11 @@
  */
 class CORE_API Object
 {
-  DECLARE_OBJECT()
+ public:
+  static TypeInfo*  StaticTypeInfo();
+  virtual TypeInfo* GetTypeInfo() const {
+    return StaticTypeInfo();
+  }
 
  public:
   Object();

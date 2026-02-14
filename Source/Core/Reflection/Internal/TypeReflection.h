@@ -115,8 +115,10 @@ template<> struct TypeResolver<float> {
       .fromString = [](void* ptr, const std::string& str) -> void {
         try {
           *reinterpret_cast<float*>(ptr) = std::stof(str);
+          std::cout << "Setting float from string\n";
         }
         catch (const std::exception&) {
+          std::cout << "Cannot save value as float\n";
         }
       }
     };
