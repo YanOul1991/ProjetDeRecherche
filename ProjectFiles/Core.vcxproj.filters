@@ -107,6 +107,12 @@
     <ClInclude Include="..\Source\Core\Reflection\Internal\TypeReflection.h">
       <Filter>Reflection\Internal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Serialization\Parser.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Serialization\Tokenizer.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -205,6 +211,9 @@
     <Filter Include="Reflection\Internal">
       <UniqueIdentifier>{090dbd18-9106-4a11-87b6-e1178b2351b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Serialization">
+      <UniqueIdentifier>{3ad29e5d-ea82-437c-8879-4966df2c4f64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -275,6 +284,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Math\Internal\Quaternion.cpp">
       <Filter>Mathematics\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Serialization\Tokenizer.cpp">
+      <Filter>Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Serialization\Parser.cpp">
+      <Filter>Serialization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

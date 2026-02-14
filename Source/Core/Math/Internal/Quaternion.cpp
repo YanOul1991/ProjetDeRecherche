@@ -9,11 +9,26 @@ TypeInfo* Quaternion::StaticTypeInfo() {
     info.size       = sizeof(Quaternion);
     info.createFn   = nullptr;
     info.typeData   = TypeData::Structure;
+
     info.get        = nullptr;
     info.set        = [](void* ptr, void* val) -> void {
       *reinterpret_cast<Quaternion*>(ptr) = *reinterpret_cast<Quaternion*>(val);
     };
-    info.toString   = nullptr;
+
+    info.toString = [](void* pType) -> std::string {
+      std::stringstream ss{};
+      ss << "(";
+      ss << "w=" << reinterpret_cast<Quaternion*>(pType)->w;
+      ss << ",";
+      ss << "x=" << reinterpret_cast<Quaternion*>(pType)->x;
+      ss << ",";
+      ss << "y=" << reinterpret_cast<Quaternion*>(pType)->y;
+      ss << ",";
+      ss << "z=" << reinterpret_cast<Quaternion*>(pType)->z;
+      ss << ")";
+      return ss.str();
+    };
+
     info.fromString = nullptr;
 
     GetTypeRegistry()[info.name] = &info;

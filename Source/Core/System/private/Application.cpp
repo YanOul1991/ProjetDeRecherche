@@ -24,6 +24,12 @@
 #include "Core/Types/string.h"
 #include "Core/Utilities/Pointer/UniquePtr.h"
 #include "Core/Utilities/Random/Random.h"
+#include "Core/Serialization/Tokenizer.h"
+#include "Core/Serialization/Parser.h"
+
+#include <fstream>
+#include <iostream>
+#include <string>
 
 /*
  * STATIC GLOBAL VARIABLES
@@ -316,6 +322,39 @@ void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
     printf("Mesh Moved.\n");
     printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
   }
+
+  if (buttonID == 3) {
+    return;
+    printf("Saving...\n");
+
+    std::ofstream outfile("Scenes/save.oescene");
+
+    if (!outfile.is_open()) {
+      printf("Could not save file.\n");
+      return;
+    }
+
+    for (const UniquePtr<Mesh>& mesh : _list_meshes) {
+      TypeInfo* pInfo = mesh->GetTypeInfo();
+
+      outfile << pInfo->name << "=";
+      outfile << Optim::Internal::Reflection::SerializeObject(mesh.address(), pInfo);
+
+      /*
+      for (auto& field : pInfo->fields) {
+        void* pField = (uint8*)mesh.address() + field.offset;
+        void* pSubField = (uint8*)pField + field.typeInfo->fields[0].offset;
+        outfile << field.name << "=";
+        outfile << field.typeInfo->toString(pField);
+        outfile << ",\n";
+      }
+      */
+    }
+
+    outfile.close();
+
+    printf("File saved.\n");
+  }
 }
 
 void Application::manageWindowResizeEvent(uint32 width, uint32 height) {
@@ -328,6 +367,30 @@ void Application::Quit() {
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
+  for (auto& t : GetTypeRegistry()) {
+    std::cout << t.first << '\n';
+  }
+
+  Mesh mesh{};
+
+  Parser meshParser{};
+  meshParser.tokens = Token::Tokenize("Scenes/save.oescene");
+
+  //for (auto& t : meshParser.tokens) {
+  //  std::cout << t.text;
+  //}
+
+  std::cout << "Starting to parse.\n";
+
+  //Parser::ParseMeshObject(meshParser, mesh);
+
+  //std::unordered_map<void*, TypeInfo*> objects = Parser::instanciateObjects(tok);
+
+  std::cout << "Finished instanciating scene.\n";
+
+  //Token::Tokenize("Scenes/save.oescene");
+
+  /*
   for (auto& pair : GetTypeRegistry()) {
     printTypeFields(pair.second);
   }
@@ -344,8 +407,6 @@ void Application::ApplicationStart() {
 
   TypeInfo* pEnuminfo = Optim::Internal::Reflection::getTypeInfo<MyCustomEnum>();
   Optim::Internal::Reflection::printTypeInfo(pEnuminfo);
-
-  /*
   ChildClass obj;
 
   TypeInfo* type = obj.GetTypeInfo();
@@ -503,7 +564,7 @@ void Application::ApplicationStart() {
 
     m_shouldRun = true;
 
-    printf("\n----------------------- APPLICATION START END -----------------------\n");
+    printf("----------------------- APPLICATION START END -----------------------\n");
   }
   catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());

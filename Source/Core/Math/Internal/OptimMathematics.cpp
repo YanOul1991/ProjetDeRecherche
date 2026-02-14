@@ -1,5 +1,7 @@
 #include "Core/Math/OptimMathematics.h"
 
+#include <sstream>
+
 TypeInfo* float3::StaticTypeInfo() {
   static TypeInfo info;
   static bool     init = false;
@@ -13,7 +15,18 @@ TypeInfo* float3::StaticTypeInfo() {
     info.set        = [](void* ptr, void* val) -> void {
       *reinterpret_cast<float3*>(ptr) = *reinterpret_cast<float3*>(val);
     };
-    info.toString   = nullptr;
+    info.toString     = [](void* pFloat3) -> std::string {
+      std::stringstream ss{};
+      ss << "(";
+      ss << "x=" << reinterpret_cast<float3*>(pFloat3)->x;
+      ss << ",";
+      ss << "y=" << reinterpret_cast<float3*>(pFloat3)->y;
+      ss << ",";
+      ss << "z=" << reinterpret_cast<float3*>(pFloat3)->z;
+      ss << ")";
+      return ss.str();
+    };
+
     info.fromString = nullptr;
 
     GetTypeRegistry()[info.name] = &info;

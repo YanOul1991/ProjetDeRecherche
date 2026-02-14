@@ -16,13 +16,6 @@
 
 class Image;
 
-struct FileMetaHeader
-{
-	char signature[4];
-	const uint32 version;
-	const uint32 objCount;
-};
-
 enum class FileStreamStatus : uint8
 {
 	ok,           // Stream operation success

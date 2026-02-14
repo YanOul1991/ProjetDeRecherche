@@ -9,44 +9,6 @@
 #include <string>
 #include <unordered_map>
 
-//template<typename T> class TList final
-//{
-// public:
-//  TList() = default;
-//
-//  inline void initalAlloc(uint32 param_allocCount) {
-//    pData     = new T[param_allocCount];
-//    capacity  = param_allocCount;
-//    count     = 0;
-//  }
-//
-//  inline void Add(const T& element) {
-//    if (count < capacity) {
-//      pData[count + 1] = element;
-//      count++;
-//    }
-//  }
-//
-//  inline uint32 Count() const {
-//    return count;
-//  }
-//
-// private:
-//  T* pData{};
-//  uint32 count{0};
-//  uint32 capacity{0};
-//};
-//
-//TList<int> myList;
-
-enum class TypeData {
-  Primitive,
-  Array,
-  Structure,
-  Enum,
-  Object,
-};
-
 struct TypeInfo;
 struct FieldInfo;
 
@@ -57,39 +19,46 @@ struct FieldInfo;
 //  const TypeInfo*              returnType{};
 //};
 
+struct SEnum {
+  const char* name{};
+  uint64       val{};
+};
+
 struct FieldInfo {
   const char*     name;
   uint64          offset;
   const TypeInfo* typeInfo;
 };
 
-struct SEnum {
-  const char* name{};
-  uint64       val{};
+enum class TypeData {
+  Primitive,
+  Array,
+  Structure,
+  Enum,
+  Object,
 };
 
 struct TypeInfo {
   const char* name{};                              // Shared
   size_t      size{};                              // Shared
-  void* (*createFn)(){};                           // Object
+  void* (*createFn)(){};                           // Object only
   TypeData typeData{};                             // Shared
 
   void (*get)(void*){};                            // Primitive
   void (*set)(void*, void*){};                     // Primitive
 
-  std::string (*toString)(void*){};                // Primitive
-  void (*fromString)(void*, const std::string&){}; // Primitive
+  std::string (*toString)(void*){};                // Primitive only
+  void (*fromString)(void*, const std::string&){}; // Primitive only
 
-  const TypeInfo*        baseType{};               // Object
-  std::vector<FieldInfo> fields{};                 // Object, Primitives
+  const TypeInfo*        baseType{};               // Object only
+  std::vector<FieldInfo> fields{};                 // Object, Strcutues
 
-  //std::vector<FunctionInfo> functions{};           // !!! Not yet implemented !!! Object
 
   // Array
-  const TypeInfo* arrayElementTypeInfo{};
-  uint64 (*arrayGetSize)(void*){};
-  void* (*arrayGetElement)(void*, uint64){};
-  void (*arrayResize)(void*, uint64){};
+  const TypeInfo* arrayElementTypeInfo{};    // For array types
+  uint64 (*arrayGetSize)(void*){};           // For array types
+  void* (*arrayGetElement)(void*, uint64){}; // For array types
+  void (*arrayResize)(void*, uint64){};      // For array types
 
   // Enum Types data
   std::vector<SEnum> enumFields{};
@@ -173,7 +142,6 @@ template <typename ListType> struct TypeResolver<std::vector<ListType>>
       info.fromString = nullptr;
       info.baseType   = nullptr;
       info.fields     = {};
-      //info.functions  = {};
 
       info.arrayElementTypeInfo = TypeResolver<ListType>::Get();
 
@@ -215,7 +183,7 @@ template<> struct TypeResolver<MyCustomEnum>
       info.typeData   = TypeData::Enum;
 
       info.toString = [](void* pEnum) -> std::string {
-        return "hello!";
+        return "Enum to string not implemented yet :(\n";
       };
 
       init = true;
@@ -224,9 +192,97 @@ template<> struct TypeResolver<MyCustomEnum>
   };
 };
 
-
 namespace Optim::Internal::Reflection 
 {
+
+inline std::string indent(int level) {
+  return std::string(level * 2, ' ');
+}
+
+/**
+ * @brief
+ * Is the type one that can hold fields,
+ * so is it an Object or a Structure.
+ */
+inline bool TypeHasFields(const TypeInfo* typeInfo) {
+  return typeInfo->typeData == TypeData::Object || typeInfo->typeData == TypeData::Structure;
+}
+
+inline bool TypeFieldsNested(const TypeInfo* typeInfo) {
+  if (TypeHasFields(typeInfo)) {
+    for (auto& field : typeInfo->fields) {
+      if (TypeHasFields(typeInfo)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+inline std::string SerializeObject(void* pObject, const TypeInfo* typeInfo, uint32 indentLevel = 0) {
+  std::stringstream ss{};
+
+  // If the type of the Object can contain fields,
+  // then serialized those fields.
+  /*
+  if (TypeHasFields(typeInfo)) {
+    uint64 fieldIndex = 0;
+    uint64 lastFieldIndex  = typeInfo->fields.size() - 1;
+    ss << "(";
+    for (auto& field : typeInfo->fields) {
+      if (fieldIndex == 0) {
+        ss << '\n';
+      }
+
+      // Get a pointer to the field data using 
+      // pointer  arithmeics.
+      void* pField = (uint8*)pObject + field.offset;
+
+      ss << field.name << "=";
+
+      ss << SerializeObject(pField, field.typeInfo, indentLevel++);
+
+      if (fieldIndex != lastFieldIndex) {
+        ss << ",";
+      }
+      else {
+        ss << ")";
+      }
+      fieldIndex++;
+      ss << '\n';
+    }
+    ss << '\n';
+  }
+  */
+
+  // If the object is of type Object or Structure
+  if (TypeHasFields(typeInfo)) {
+    ss << "(\n";
+    bool first = true;
+    for (auto& field : typeInfo->fields) {
+      if (!first) {
+        ss << ",\n";
+      }
+      first = false;
+
+      void* pField = (uint8*)pObject + field.offset;
+
+      ss << indent(indentLevel + 1);
+      ss << field.name;
+      ss << "=";
+      ss << SerializeObject(pField, field.typeInfo, indentLevel + 1);
+    }
+
+    ss << "\n";
+    ss << indent(indentLevel);
+    ss << ")";
+  }
+
+  if (typeInfo->typeData == TypeData::Primitive) {
+    ss << typeInfo->toString(pObject);
+  }
+  return ss.str();
+}
 
 template<typename T> TypeInfo* getTypeInfo() {
   return TypeResolver<T>::Get();

@@ -32,6 +32,7 @@
     if (!initialized) {                                      \
       info.name     = #_OBJECT_;                             \
       info.size     = sizeof(_OBJECT_);                      \
+      info.typeData   = TypeData::Object;                    \
       info.createFn = []() -> void* {                        \
         return new _OBJECT_();                               \
       };                                                     \

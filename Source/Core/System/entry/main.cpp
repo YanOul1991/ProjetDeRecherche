@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 int main() {
-  printf("\n----------------------------- Main start -----------------------------\n\n");
+  printf("\n----------------------------- Main start -----------------------------\n");
 
   // Create application instance
   Application* application{ new Application };

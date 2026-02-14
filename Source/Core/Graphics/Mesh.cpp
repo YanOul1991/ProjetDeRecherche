@@ -13,13 +13,14 @@ __OPTIM_INTERNAL_REGISTER_OBJECT(Mesh, Object)
 
 OPTIM_DECLARE_PROPERTY(Mesh, position)
 OPTIM_DECLARE_PROPERTY(Mesh, rotation)
-OPTIM_DECLARE_PROPERTY(Mesh, scaleField)
 
+/*
 __OPTIM_INTERNAL_REGISTER_OBJECT(SkinnedMesh, Mesh)
 OPTIM_DECLARE_PROPERTY(SkinnedMesh, skinnedMeshValue)
 OPTIM_DECLARE_PROPERTY(SkinnedMesh, scale)
 OPTIM_DECLARE_PROPERTY(SkinnedMesh, listOfStuff)
 OPTIM_DECLARE_PROPERTY(SkinnedMesh, customEnum)
+
 
 #define OPTIM_DECLARE_ENUM_FIELD(ENUM, FIELD)                                    \
   static struct __OPTIM_INTERNAL_DECL_ENUM_VAL_##ENUM##_##FIELD {                \
@@ -39,13 +40,14 @@ OPTIM_DECLARE_ENUM_FIELD(MyCustomEnum, value4)
 OPTIM_DECLARE_ENUM_FIELD(MyCustomEnum, value5)
 
 
-//static struct __OPTIM_INTERNAL_DECL_ENUM_VAL_MyCustomEnum_value1 {
-//  __OPTIM_INTERNAL_DECL_ENUM_VAL_MyCustomEnum_value1() {
-//    static SEnum enumVal = {
-//      .name = "value1",
-//      .val  = (uint64)MyCustomEnum::value1
-//    };
-//    TypeResolver<decltype(MyCustomEnum::value1)>::Get()->enumFields.push_back(enumVal);
-//    printf("Enum value serialized MyCustomEnum::value1.\n");
-//  }
-//} __OPTIM_INTERNAL_ENUM_EVAL_MyCustomEnum_value1;
+static struct __OPTIM_INTERNAL_DECL_ENUM_VAL_MyCustomEnum_value1 {
+  __OPTIM_INTERNAL_DECL_ENUM_VAL_MyCustomEnum_value1() {
+    static SEnum enumVal = {
+      .name = "value1",
+      .val  = (uint64)MyCustomEnum::value1
+    };
+    TypeResolver<decltype(MyCustomEnum::value1)>::Get()->enumFields.push_back(enumVal);
+    printf("Enum value serialized MyCustomEnum::value1.\n");
+  }
+} __OPTIM_INTERNAL_ENUM_EVAL_MyCustomEnum_value1;
+*/

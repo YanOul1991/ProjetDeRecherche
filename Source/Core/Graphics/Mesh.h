@@ -29,12 +29,12 @@ class CORE_API Mesh : public Object
 
   float4x4 getWorldMatrix() const;
 
-  float scaleField{};
-
   float3     position{};
   Quaternion rotation{};
+
   Vertex*    vertices{};
   uint32*    indices{};
+
   uint32     vertexCount{};
   uint32     indexCount{};
 
@@ -42,6 +42,7 @@ class CORE_API Mesh : public Object
   IndexBufferHandle  indexBufferHandle{};
 };
 
+/*
 class CORE_API SkinnedMesh : public Mesh
 {
   DECLARE_OBJECT()
@@ -52,3 +53,4 @@ class CORE_API SkinnedMesh : public Mesh
    std::vector<float3> listOfStuff;
    MyCustomEnum        customEnum{};
 };
+*/
