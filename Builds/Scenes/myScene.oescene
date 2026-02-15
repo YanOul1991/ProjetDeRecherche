@@ -1,7 +1,7 @@
 Mesh=(
   position=(
     x=1.865459,
-    y=0.000000,
+    y=2.318478,
     z=0.000000
     ),
   rotation=(
@@ -11,4 +11,32 @@ Mesh=(
     z=0.000000
     ),
   sourcePath="C:\Users\yanis\Documents\Code\OptimEngine\Builds\Assets\monkey.fbx"
+  ),
+Mesh=(
+  position=(
+    x=-1.877810,
+    y=0.000000,
+    z=3.715654
+    ),
+  rotation=(
+    w=1.000000,
+    x=0.000000,
+    y=0.000000,
+    z=0.000000
+    ),
+  sourcePath="C:\Users\yanis\Documents\Code\OptimEngine\Builds\Assets\monkey.fbx"
+  ),
+Mesh=(
+  position=(
+    x=0.000000,
+    y=0.000000,
+    z=0.000000
+    ),
+  rotation=(
+    w=1.000000,
+    x=0.000000,
+    y=0.000000,
+    z=0.000000
+    ),
+  sourcePath="C:\Users\yanis\Documents\Code\OptimEngine\Builds\Assets\cube.fbx"
   )

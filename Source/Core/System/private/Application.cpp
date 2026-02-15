@@ -348,75 +348,6 @@ void Application::Quit() {
 
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
-
-  //Optim::Internal::Reflection::printTypeInfo(Mesh::StaticTypeInfo());
-
-  //for (auto& fieldInfo : Mesh::StaticTypeInfo()->fields) {
-  //  std::cout << fieldInfo.name << " : " << fieldInfo.typeInfo->name << '\n';
-  //}
-
-  //Token::Tokenize("Scenes/SerializationTestSave.oescene");
-  /*
-  */
-
-  std::vector<Object*> l_registeredObjects;
-
-  printf("Loading scene...\n");
-
-  Parser meshParser(Token::Tokenize("Scenes/myScene.oescene"));
-
-  printf("Pasing files...\n");
-
-  while (!meshParser.isEnd()) {
-    l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
-  }
-
-  printf("Creating objects...\n");
-
-  for (auto& i : l_registeredObjects) {
-    if (i->isChildOf(Mesh::StaticTypeInfo())) {
-      //std::cout << "Created a new mesh object\n" << "  Position:\n";
-      //objMesh.position.print();
-      //std::cout << "Original mesh path: " << objMesh.sourcePath << "\n";
-
-      Mesh& objMesh = *reinterpret_cast<Mesh*>(i);
-
-      OptimEditor::loadFbxModel(objMesh, objMesh.sourcePath.c_str());
-
-      objMesh.vertexBufferHandle  = Graphics::RHI()->createResourceVertexBuffer(objMesh.vertices, objMesh.vertexCount);
-      objMesh.indexBufferHandle   = Graphics::RHI()->createResourceIndexBuffer(objMesh.indices, objMesh.indexCount);
-
-      UniquePtr<Mesh> _meshRef(&objMesh);
-
-      _list_meshes.push_back(_meshRef.move());
-    }
-  }
-
-  /*
-  std::cout << "Instanciated Objects count: " << l_registeredObjects.size() << "\n";
-
-  for (auto& obj : l_registeredObjects) {
-    if (obj->isChildOf(Mesh::StaticTypeInfo())) {
-      std::cout << "Object:\n";
-
-      Mesh* meshObj = reinterpret_cast<Mesh*>(obj);
-
-      meshObj->position.print();
-
-      std::cout 
-        << "(" << meshObj->rotation.w
-        << ", " << meshObj->rotation.x
-        << ", " << meshObj->rotation.y
-        << ", " << meshObj->rotation.z
-        << ")\n";
-
-      std::cout << meshObj->sourcePath << '\n';
-    }
-  }
-  */
-
-  printf("\n[Section END] Parser finished pasring!!!\n----------\n");
-
   try {
     // Load system window.
     // Load graphics then display the window.
@@ -552,6 +483,47 @@ void Application::ApplicationStart() {
 
     // Create sampler resource
     _TEST_pSampler = Graphics::RHI()->createSamplerResource();
+
+
+    /// ---------------------------------------------------------------------------
+    /// ------------------------------ LOADING SCENE ------------------------------
+
+    std::vector<Object*> l_registeredObjects;
+
+    printf("Loading scene...\n");
+
+    Parser meshParser(Token::Tokenize("Scenes/myScene.oescene"));
+
+    printf("Pasing files...\n");
+
+    while (!meshParser.isEnd()) {
+      l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
+    }
+
+    printf("Creating objects...\n");
+
+    for (auto& i : l_registeredObjects) {
+      if (i->isChildOf(Mesh::StaticTypeInfo())) {
+        printf("Creating mesh...\n");
+
+        Mesh* objMesh = reinterpret_cast<Mesh*>(i);
+
+        printf("Creating loading model...\n");
+        OptimEditor::loadFbxModel(*objMesh, objMesh->sourcePath.c_str());
+
+        printf("Loading creating buffers...\n");
+        objMesh->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(objMesh->vertices, objMesh->vertexCount);
+        objMesh->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(objMesh->indices, objMesh->indexCount);
+
+        printf("Making unique...\n");
+        UniquePtr<Mesh> _meshRef(objMesh);
+
+        printf("Making pushing to list...\n");
+        _list_meshes.push_back(_meshRef.move());
+
+        printf("Mesh added...\n");
+      }
+    }
 
     m_shouldRun = true;
 
