@@ -101,8 +101,8 @@ static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_t
 
       void* pField = (uint8*)pInstance + fieldInfo->offset;
 
-      std::cout << "Address of next field: " << std::hex << pField << std::dec << '\n';
-      std::cout << "Address of function:   " << std::hex << fieldInfo->typeInfo->fromString << std::dec << '\n';
+      //std::cout << "Address of next field: " << std::hex << pField << std::dec << '\n';
+      //std::cout << "Address of function:   " << std::hex << fieldInfo->typeInfo->fromString << std::dec << '\n';
 
       fieldInfo->typeInfo->fromString(pField, parser.consume().text);
 

@@ -325,8 +325,6 @@ void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
 
     objectList.push_back(new Mesh);
     objectList.push_back(new Mesh);
-    objectList.push_back(new Mesh);
-    objectList.push_back(new Mesh);
 
     Serializer::SaveScene(objectList, "SerializationTestSave");
 
@@ -344,22 +342,21 @@ void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
       return;
     }
 
+    /*
     for (const UniquePtr<Mesh>& mesh : _list_meshes) {
       TypeInfo* pInfo = mesh->GetTypeInfo();
 
       outfile << pInfo->name << "=";
       outfile << Optim::Internal::Reflection::SerializeObject(mesh.address(), pInfo);
-
-      /*
       for (auto& field : pInfo->fields) {
-        void* pField = (uint8*)mesh.address() + field.offset;
+        void* pField    = (uint8*)mesh.address() + field.offset;
         void* pSubField = (uint8*)pField + field.typeInfo->fields[0].offset;
         outfile << field.name << "=";
         outfile << field.typeInfo->toString(pField);
         outfile << ",\n";
       }
-      */
     }
+    */
 
     outfile.close();
 
@@ -378,9 +375,20 @@ void Application::Quit() {
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
 
+  //Optim::Internal::Reflection::printTypeInfo(Mesh::StaticTypeInfo());
+
+  for (auto& fieldInfo : Mesh::StaticTypeInfo()->fields) {
+    std::cout << fieldInfo.name << " : " << fieldInfo.typeInfo->name << '\n';
+  }
+
+  //Token::Tokenize("Scenes/SerializationTestSave.oescene");
+
+  /*
+  */
+
   std::vector<Object*> l_registeredObjects;
 
-  Parser meshParser(Token::Tokenize("Scenes/save.oescene"));
+  Parser meshParser(Token::Tokenize("Scenes/SerializationTestSave.oescene"));
 
   while (!meshParser.isEnd()) {
     l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
@@ -390,6 +398,7 @@ void Application::ApplicationStart() {
 
   for (auto& obj : l_registeredObjects) {
     if (obj->isChildOf(Mesh::StaticTypeInfo())) {
+      std::cout << "Object:\n";
 
       Mesh* meshObj = reinterpret_cast<Mesh*>(obj);
 
@@ -401,91 +410,12 @@ void Application::ApplicationStart() {
         << ", " << meshObj->rotation.y
         << ", " << meshObj->rotation.z
         << ")\n";
+
+      std::cout << meshObj->sourcePath << '\n';
     }
   }
 
-  /*
-  Mesh* meshObj = (Mesh*)Parser::CreateObject(meshParser);
-
-  if (meshParser.isEnd()) {
-    std::cout << "End of parser!\n";
-  }
-  else {
-    std::cout << "There are more elements to parse\n";
-  }
-
-  if (meshObj) {
-    std::cout << "Printing mesh data:\n";
-    meshObj->position.print();
-  }
-
-  std::cout << "---------------------------------------------------------------------------------\n";
-  std::cout << "-------------------------------- MESH REGISTERED --------------------------------\n";
-  std::cout << "---------------------------------------------------------------------------------\n";
-
-  std::cout << "Peeking mesh " << meshParser.index << " | " << meshParser.tokens.size() << '\n';
-
-  Mesh* meshObj2 = (Mesh*)Parser::CreateObject(meshParser);
-  std::cout << "Mesh2 created!\n";
-
-  if (meshParser.isEnd()) {
-    std::cout << "End of parser!\n";
-  }
-  else {
-    std::cout << "There are more elements to parse\n";
-  }
-
-  if (meshObj2) {
-    std::cout << "Printing mesh data 2:\n";
-    meshObj2->position.print();
-  }
-  */
-
-  //if (meshObj) {
-  //  std::cout << "MeshObject sucessfully created! Printing position:\n";
-  //  reinterpret_cast<Mesh*>(meshObj)->position.print();
-  //}
-
   printf("\n[Section END] Parser finished pasring!!!\n----------\n");
-
-  //printf("Parsing scene...\n");
-  //printf("Finished parsing scene...\n");
-
-  /*
-  for (auto& pair : GetTypeRegistry()) {
-    printTypeFields(pair.second);
-  }
-
-  SkinnedMesh skinnedMeshObj;
-
-  skinnedMeshObj.listOfStuff.push_back({45.567f, 37.9f, -2378.5f});
-  skinnedMeshObj.listOfStuff.push_back({-42.465f, 83.53f, 38.564f});
-  skinnedMeshObj.listOfStuff.push_back({1.7f, 3.9f, -8.51f});
-
-  skinnedMeshObj.customEnum = MyCustomEnum::value4;
-
-  printFields(&skinnedMeshObj, skinnedMeshObj.GetTypeInfo(), 0);
-
-  TypeInfo* pEnuminfo = Optim::Internal::Reflection::getTypeInfo<MyCustomEnum>();
-  Optim::Internal::Reflection::printTypeInfo(pEnuminfo);
-  ChildClass obj;
-
-  TypeInfo* type = obj.GetTypeInfo();
-
-  if (obj.isChildOf(Mesh::StaticTypeInfo())) {
-    printf("ChildClass is of type Mesh !\n");
-  }
-  else {
-    printf("ChildClass is NOT of type Mesh :(\n");
-  }
-
-  for (FieldInfo& fieldInfo : type->fields) {
-    void* pField = (uint8*)&obj + fieldInfo.offset;
-    std::cout << "Field value: " << fieldInfo.typeInfo->toString(pField) << '\n';
-    fieldInfo.typeInfo->fromString(pField, "eee");
-    std::cout << "Field value: " << fieldInfo.typeInfo->toString(pField) << '\n';
-  }
-  */
 
   try {
     // Load system window.

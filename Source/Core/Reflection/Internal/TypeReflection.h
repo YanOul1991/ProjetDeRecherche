@@ -99,7 +99,6 @@ template<> struct TypeResolver<int> {
 
 template<> struct TypeResolver<float> {
   static TypeInfo* Get() {
-    std::cout << "Get function of type float called for typ resolving.\n";
     static TypeInfo info = {
       .name     = "float",
       .size     = sizeof(float),
@@ -139,10 +138,19 @@ template <> struct TypeResolver<std::string>
       typeInfo.size     = sizeof(std::string);
       typeInfo.typeData = TypeData::Primitive;
       typeInfo.toString = [](void* ptr) -> std::string {
-        return *(reinterpret_cast<std::string*>(ptr));
+        std::string _ret;
+        _ret += '"';
+        _ret += *(reinterpret_cast<std::string*>(ptr));
+        _ret += '"';
+        return _ret;
       };
       typeInfo.fromString = [](void* ptr, const std::string& str) -> void {
-        *reinterpret_cast<std::string*>(ptr) = str;
+        std::string retStr = str;
+
+        retStr.erase(0, 1);
+        retStr.pop_back();
+
+        (*reinterpret_cast<std::string*>(ptr)) = retStr;
       };
 
       init = true;
@@ -312,6 +320,8 @@ template<typename T> TypeInfo* getTypeInfo() {
 
 inline void printTypeInfo(const TypeInfo* pTypeInfo) 
 {
+
+
   switch (pTypeInfo->typeData) {
   case TypeData::Enum: {
     std::cout << "Type of " << pTypeInfo->name << " : Enum " << '\n';

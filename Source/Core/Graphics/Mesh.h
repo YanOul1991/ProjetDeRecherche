@@ -17,6 +17,8 @@
 #include "Core/Math/OptimMathematics.h"
 #include "Core/Math/Quaternion.h"
 
+#include <string>
+
 #include "Core/Object/Object.h"
 
 class CORE_API Mesh : public Object
@@ -31,6 +33,8 @@ class CORE_API Mesh : public Object
 
   float3     position{};
   Quaternion rotation{};
+
+  std::string sourcePath{"This/is/a/random/path/to/a/mesh.fbx"};
 
   Vertex*    vertices{};
   uint32*    indices{};
