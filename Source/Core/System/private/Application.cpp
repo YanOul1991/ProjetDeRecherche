@@ -53,6 +53,9 @@ static float3 controlGizmoDirection{};
 
 static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
+
+static std::vector<Mesh> g_objectMeshes;
+
 static PipelineHandle       _handlePipeline{};
 static PipelineHandle       _handlePipelineWirframeView{};
 static PipelineHandle       _handlePipelineOutline{};
@@ -321,46 +324,17 @@ void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
   }
 
   if (buttonID == 3) {
-    std::vector<Object*> objectList;
-
-    objectList.push_back(new Mesh);
-    objectList.push_back(new Mesh);
-
-    Serializer::SaveScene(objectList, "SerializationTestSave");
-
-    for (auto& o : objectList) {
-      delete o;
-    }
-
-    return;
     printf("Saving...\n");
 
-    std::ofstream outfile("Scenes/save.oescene");
+    std::vector<Object*> objectList;
 
-    if (!outfile.is_open()) {
-      printf("Could not save file.\n");
-      return;
+    for (auto& refMesh : _list_meshes) {
+      objectList.push_back(refMesh.address());
     }
 
-    /*
-    for (const UniquePtr<Mesh>& mesh : _list_meshes) {
-      TypeInfo* pInfo = mesh->GetTypeInfo();
+    Serializer::SaveScene(objectList, "myScene");
 
-      outfile << pInfo->name << "=";
-      outfile << Optim::Internal::Reflection::SerializeObject(mesh.address(), pInfo);
-      for (auto& field : pInfo->fields) {
-        void* pField    = (uint8*)mesh.address() + field.offset;
-        void* pSubField = (uint8*)pField + field.typeInfo->fields[0].offset;
-        outfile << field.name << "=";
-        outfile << field.typeInfo->toString(pField);
-        outfile << ",\n";
-      }
-    }
-    */
-
-    outfile.close();
-
-    printf("File saved.\n");
+    printf("Scene saved!\n");
   }
 }
 
@@ -377,23 +351,48 @@ void Application::ApplicationStart() {
 
   //Optim::Internal::Reflection::printTypeInfo(Mesh::StaticTypeInfo());
 
-  for (auto& fieldInfo : Mesh::StaticTypeInfo()->fields) {
-    std::cout << fieldInfo.name << " : " << fieldInfo.typeInfo->name << '\n';
-  }
+  //for (auto& fieldInfo : Mesh::StaticTypeInfo()->fields) {
+  //  std::cout << fieldInfo.name << " : " << fieldInfo.typeInfo->name << '\n';
+  //}
 
   //Token::Tokenize("Scenes/SerializationTestSave.oescene");
-
   /*
   */
 
   std::vector<Object*> l_registeredObjects;
 
-  Parser meshParser(Token::Tokenize("Scenes/SerializationTestSave.oescene"));
+  printf("Loading scene...\n");
+
+  Parser meshParser(Token::Tokenize("Scenes/myScene.oescene"));
+
+  printf("Pasing files...\n");
 
   while (!meshParser.isEnd()) {
     l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
   }
 
+  printf("Creating objects...\n");
+
+  for (auto& i : l_registeredObjects) {
+    if (i->isChildOf(Mesh::StaticTypeInfo())) {
+      //std::cout << "Created a new mesh object\n" << "  Position:\n";
+      //objMesh.position.print();
+      //std::cout << "Original mesh path: " << objMesh.sourcePath << "\n";
+
+      Mesh& objMesh = *reinterpret_cast<Mesh*>(i);
+
+      OptimEditor::loadFbxModel(objMesh, objMesh.sourcePath.c_str());
+
+      objMesh.vertexBufferHandle  = Graphics::RHI()->createResourceVertexBuffer(objMesh.vertices, objMesh.vertexCount);
+      objMesh.indexBufferHandle   = Graphics::RHI()->createResourceIndexBuffer(objMesh.indices, objMesh.indexCount);
+
+      UniquePtr<Mesh> _meshRef(&objMesh);
+
+      _list_meshes.push_back(_meshRef.move());
+    }
+  }
+
+  /*
   std::cout << "Instanciated Objects count: " << l_registeredObjects.size() << "\n";
 
   for (auto& obj : l_registeredObjects) {
@@ -414,6 +413,7 @@ void Application::ApplicationStart() {
       std::cout << meshObj->sourcePath << '\n';
     }
   }
+  */
 
   printf("\n[Section END] Parser finished pasring!!!\n----------\n");
 
@@ -709,6 +709,7 @@ void Application::ApplicationQuit() {
 
 void OptimEditor::processFile(const char* param_cstrFilePath) {
   UniquePtr<Mesh> l_uptrMesh;
+
   l_uptrMesh.init();
 
   OptimEditor::loadFbxModel(*l_uptrMesh, param_cstrFilePath);
@@ -719,6 +720,7 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
   l_uptrMesh->rotation = {1.0f, 0.0, 0.0, 0.0f};
   l_uptrMesh->position = {0, 0, 0};
 
+  /*
   if (l_uptrMesh.address() == nullptr || l_uptrMesh->vertices == nullptr || l_uptrMesh->indices == nullptr) {
     printf("Invalid mesh import data pointers\n");
     return;
@@ -727,14 +729,16 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
     printf("Invalid mesh import data count\n");
     return;
   }
+  */
 
   g_ppSelectedMesh = nullptr;
 
   (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
   (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
-  _list_meshes.push_back(l_uptrMesh.move());
+  (*l_uptrMesh).sourcePath = param_cstrFilePath;
+
+  _list_meshes.push_back(l_uptrMesh.move()); // Add Mesh to list
 
   // printf("Mesh added\n");
-
-  g_ppSelectedMesh = &_list_meshes.back();
+  g_ppSelectedMesh = &_list_meshes.back(); // Make the newly created mesh the selected one.
 }

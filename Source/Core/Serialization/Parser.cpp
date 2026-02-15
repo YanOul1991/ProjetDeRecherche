@@ -44,11 +44,11 @@ static const FieldInfo* findFieldInfo(const std::string& fieldName, const TypeIn
  *
  */
 static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_typeInfo) {
-  std::cout << "[Call]\n" << __FUNCSIG__ << '\n';
+  //std::cout << "[Call]\n" << __FUNCSIG__ << '\n';
 
   // Iterrate through object until end
   while (!expectSymbol(parser, ")")) {
-    std::cout << "Loop start......\n";
+    //std::cout << "Loop start......\n";
 
     //std::cout << "Next identifier: " << parser.peek().text << '\n';
     if (!expectIdentifier(parser)) {
@@ -70,20 +70,20 @@ static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_t
       //std::cout << "An object of type <" << typeInfo->name << "> contains a field of <" << fieldInfo->name << "> of type <" << fieldInfo->typeInfo->name << ">\n";
     }
     else {
-      std::cout << "An object of type: <" << param_typeInfo->name << "> DOES NOT HAVE A FIELD <" << identifierName << ">\n";
+      //std::cout << "An object of type: <" << param_typeInfo->name << "> DOES NOT HAVE A FIELD <" << identifierName << ">\n";
       throw std::exception("[Parser Exception] Could not find field in object.\n");
     }
 
 
     if (fieldInfo->typeInfo->typeData == TypeData::Structure || fieldInfo->typeInfo->typeData == TypeData::Object) {
-      std::cout << "The field <" << identifierName << "> is of type <Strcuture/Object>\n";
+      //std::cout << "The field <" << identifierName << "> is of type <Strcuture/Object>\n";
       //std::cout << "Address of next field: " << std::hex << pField << std::dec << '\n';
 
       if (!expectSymbol(parser, "(")) {
         throw std::exception("Expected symbol token: =.\n");
       }
       parser.consume();
-      std::cout << "Peeking parser: " << parser.peek().text << "\n";
+      //std::cout << "Peeking parser: " << parser.peek().text << "\n";
 
       void* pField = (uint8*)pInstance + fieldInfo->offset;
 
@@ -96,8 +96,10 @@ static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_t
       parser.consume();
     }
     else if(fieldInfo->typeInfo->typeData == TypeData::Primitive) {
+      /*
       std::cout << "The field <" << identifierName << "> is of type <Primitive>\n";
       std::cout << "Peeking parser: " << parser.peek().text << "\n";
+      */
 
       void* pField = (uint8*)pInstance + fieldInfo->offset;
 
@@ -105,7 +107,6 @@ static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_t
       //std::cout << "Address of function:   " << std::hex << fieldInfo->typeInfo->fromString << std::dec << '\n';
 
       fieldInfo->typeInfo->fromString(pField, parser.consume().text);
-
     }
     else {
       throw std::exception("[Parser Exception] - Unkownd or unsupported type data.\n");
@@ -114,7 +115,7 @@ static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_t
     if (expectSymbol(parser, ",")) {
       parser.consume();
     }
-    std::cout << "Peeking parser: " << parser.peek().text << "\n";
+    //std::cout << "Peeking parser: " << parser.peek().text << "\n";
   }
 }
 
@@ -147,13 +148,13 @@ void* Parser::CreateObject(Parser& parser) {
       return nullptr;
     }
     else {
-      printf("The iditifier [%s] IS a valid type.\n", parser.peek().text.c_str());
+      //printf("The iditifier [%s] IS a valid type.\n", parser.peek().text.c_str());
     }
 
     const TypeInfo* pInfo = GetTypeRegistry()[parser.peek().text.c_str()];
 
     if (pInfo->typeData == TypeData::Object) {
-      printf("The iditifier [%s] IS an Object type.\n", parser.peek().text.c_str());
+      //printf("The iditifier [%s] IS an Object type.\n", parser.peek().text.c_str());
     }
     else {
       printf("The iditifier [%s] IS an Object type.\n", parser.peek().text.c_str());
@@ -193,14 +194,10 @@ void* Parser::CreateObject(Parser& parser) {
 
     parser.consume();
 
-    std::cout << "All fields have been parsed\n";
+    //std::cout << "All fields have been parsed\n";
 
-    //if (expectSymbol(parser, ",")) {
-    //  std::cout << "Found symbol ,\n";
-    //  parser.consume();
-    //}
+    std::cout << "Object created...\n";
 
-    std::cout << "Returning new instance\n";
     return instance;
   }
   catch (const std::exception& e) {
@@ -220,7 +217,7 @@ const Token& Parser::peek(int i) const {
 }
 
 const Token& Parser::consume() {
-  std::cout << "Consuming token: " << peek().text << '\n';
+  //std::cout << "Consuming token: " << peek().text << '\n';
   return tokens[index++];
 }
 

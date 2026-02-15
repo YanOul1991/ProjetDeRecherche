@@ -45,42 +45,6 @@ static void serializeObject(std::ofstream& out, void* param_pObject, const TypeI
   default:
     break;
   }
-
-  /*
-  for (auto& fieldInfo : param_typeInfo->fields) {
-    // Indent then output the name if the field and the = symbol
-    out << _indent;
-    out << fieldInfo.name << "=";
-
-    // Get a pointer to the field
-    void* pField = (char*)param_pObject + fieldInfo.offset;
-
-    switch (fieldInfo.typeInfo->typeData) {
-    case TypeData::Primitive:
-      out << param_typeInfo->toString(pField);
-      break;
-
-    case TypeData::Enum:
-      out << param_typeInfo->toString(pField);
-      break;
-
-    case TypeData::Structure:
-    case TypeData::Object:
-      out << "(\n";
-      serializeObject(out, pField, fieldInfo.typeInfo, param_indent + 1);
-      out << ")";
-      break;
-
-    default:
-      throw std::exception("Trying to serialize unkown type.");
-      break;
-    }
-
-    if (++index < param_typeInfo->fields.size()) {
-      out << ",";
-    }
-  }
-  */
 }
 
 bool Serializer::SaveScene(const std::vector<Object*>& objects, const char* sceneName) {

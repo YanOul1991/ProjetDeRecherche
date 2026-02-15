@@ -114,7 +114,6 @@ template<> struct TypeResolver<float> {
       },
       .fromString = [](void* ptr, const std::string& str) -> void {
         try {
-          std::cout << "Setting float from string\n";
           *reinterpret_cast<float*>(ptr) = std::stof(str);
         }
         catch (const std::exception&) {
@@ -126,7 +125,7 @@ template<> struct TypeResolver<float> {
   }
 };
 
-template <> struct TypeResolver<std::string>
+template<> struct TypeResolver<std::string>
 {
   static TypeInfo* Get() 
   {
@@ -146,10 +145,14 @@ template <> struct TypeResolver<std::string>
       };
       typeInfo.fromString = [](void* ptr, const std::string& str) -> void {
         std::string retStr = str;
-
+        if (retStr.empty()) {
+          (*reinterpret_cast<std::string*>(ptr)) = "";
+        }
         retStr.erase(0, 1);
+        if (retStr.empty()) {
+          (*reinterpret_cast<std::string*>(ptr)) = "";
+        }
         retStr.pop_back();
-
         (*reinterpret_cast<std::string*>(ptr)) = retStr;
       };
 

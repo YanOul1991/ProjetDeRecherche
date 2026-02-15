@@ -159,7 +159,7 @@ std::vector<Token> Token::Tokenize(const std::string& file) {
       nextToken.text = strToken;
       nextToken.type = expectedTokenType;
       tokenList.push_back(nextToken);
-       std::cout << "IDENTIFIER : " << strToken << '\n';
+       // std::cout << "IDENTIFIER : " << strToken << '\n';
       break;
     }
     case ETokenType::Symbol: {
@@ -168,7 +168,7 @@ std::vector<Token> Token::Tokenize(const std::string& file) {
       nextToken.text = strToken;
       nextToken.type = expectedTokenType;
       tokenList.push_back(nextToken);
-       std::cout << "SYMBOL     : " << strToken << '\n';
+       // std::cout << "SYMBOL     : " << strToken << '\n';
       break;
     }
     case ETokenType::Number: {
@@ -176,7 +176,7 @@ std::vector<Token> Token::Tokenize(const std::string& file) {
       nextToken.text = strToken;
       nextToken.type = expectedTokenType;
       tokenList.push_back(nextToken);
-       std::cout << "NUMERIC    : " << strToken << '\n';
+       // std::cout << "NUMERIC    : " << strToken << '\n';
       break;
     }
     case ETokenType::String: {
@@ -184,7 +184,7 @@ std::vector<Token> Token::Tokenize(const std::string& file) {
       nextToken.text = strToken;
       nextToken.type = expectedTokenType;
       tokenList.push_back(nextToken);
-       std::cout << "STRING     : " << strToken << '\n';
+       // std::cout << "STRING     : " << strToken << '\n';
       break;
     }
     default:
