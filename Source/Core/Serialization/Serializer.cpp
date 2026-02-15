@@ -59,7 +59,7 @@ bool Serializer::SaveScene(const std::vector<Object*>& objects, const char* scen
 
     if (!out.is_open()) {
       std::string _errMessage = "Cannot open file at: ";
-      _errMessage + saveLocation;
+      _errMessage += saveLocation;
       throw std::exception(_errMessage.c_str());
     }
 

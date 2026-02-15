@@ -1,14 +1,12 @@
 #include "Core/Graphics/Mesh.h"
 
 Mesh::Mesh() {
-  //printf("[Mesh] Mesh class object instanciated.\n");
 }
 
 Mesh::~Mesh() noexcept {
 }
 
-float4x4 Mesh::getWorldMatrix() const 
-{
+float4x4 Mesh::getWorldMatrix() const {
   float4x4 l_translation = Optim::Mathematics::getMatrixTranslation(position);
   float4x4 l_rotation    = Optim::Mathematics::getMatrixFromQuaternion(rotation);
   return l_rotation * l_translation;
@@ -21,13 +19,6 @@ OPTIM_DECLARE_PROPERTY(Mesh, rotation)
 OPTIM_DECLARE_PROPERTY(Mesh, sourcePath)
 
 /*
-__OPTIM_INTERNAL_REGISTER_OBJECT(SkinnedMesh, Mesh)
-OPTIM_DECLARE_PROPERTY(SkinnedMesh, skinnedMeshValue)
-OPTIM_DECLARE_PROPERTY(SkinnedMesh, scale)
-OPTIM_DECLARE_PROPERTY(SkinnedMesh, listOfStuff)
-OPTIM_DECLARE_PROPERTY(SkinnedMesh, customEnum)
-
-
 #define OPTIM_DECLARE_ENUM_FIELD(ENUM, FIELD)                                    \
   static struct __OPTIM_INTERNAL_DECL_ENUM_VAL_##ENUM##_##FIELD {                \
     __OPTIM_INTERNAL_DECL_ENUM_VAL_##ENUM##_##FIELD() {                          \

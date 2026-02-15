@@ -27,6 +27,9 @@
 
 class Dx11RHIDevice;
 
+
+
+
 enum class ECommandType {
   BindPipeline,
   BindVertexBuffer,
@@ -151,7 +154,6 @@ public:
 
   /**
    * @brief
-   * [THIS FUNCTION WILL BE REPLACED]
    */
   virtual ISampler* createSamplerResource() override final;
 

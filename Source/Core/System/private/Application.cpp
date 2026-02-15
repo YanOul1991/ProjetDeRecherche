@@ -10,23 +10,30 @@
 #include "Core/System/Application.h"
 
 #include "Core/Exception/exception.h"
+
 #include "Core/Graphics/Graphics.h"
 #include "Core/Graphics/IGraphicsRHI.h"
 #include "Core/Graphics/Mesh.h"
+
 #include "Core/Object/Camera/Camera.h"
 #include "Core/Object/Image/Image.h"
 #include "Core/Object/Object.h"
+
+#include "Core/Serialization/Parser.h"
+#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/Tokenizer.h"
+
 #include "Core/System/FileStream.h"
 #include "Core/System/ModelLoader.h"
 #include "Core/System/SystemWindow.h"
+
 #include "Core/Time/Time.h"
+
 #include "Core/Types/Color.h"
 #include "Core/Types/string.h"
+
 #include "Core/Utilities/Pointer/UniquePtr.h"
 #include "Core/Utilities/Random/Random.h"
-#include "Core/Serialization/Tokenizer.h"
-#include "Core/Serialization/Parser.h"
-#include "Core/Serialization/Serializer.h"
 
 #include <fstream>
 #include <iostream>
@@ -322,24 +329,28 @@ void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
     printf("Mesh Moved.\n");
     printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
   }
-
-  if (buttonID == 3) {
-    printf("Saving...\n");
-
-    std::vector<Object*> objectList;
-
-    for (auto& refMesh : _list_meshes) {
-      objectList.push_back(refMesh.address());
-    }
-
-    Serializer::SaveScene(objectList, "myScene");
-
-    printf("Scene saved!\n");
-  }
 }
 
 void Application::manageWindowResizeEvent(uint32 width, uint32 height) {
   Graphics::RHI()->updateSystemWindowSize(width, height);
+}
+
+/**
+ * @brief 
+ * Response to a SystemWindow's onSaveEvent being triggered.
+ */
+void Application::manageOnSaveEvent() {
+  printf("Saving...\n");
+
+  std::vector<Object*> objectList;
+
+  for (auto& refMesh : _list_meshes) {
+    objectList.push_back(refMesh.address());
+  }
+
+  Serializer::SaveScene(objectList, "myScene");
+
+  printf("Scene saved!\n");
 }
 
 void Application::Quit() {
@@ -358,6 +369,7 @@ void Application::ApplicationStart() {
     g_uptrSystemWindow->onSystemWindowClick.subscribe<Application, &Application::mangeWindowClickEvent>(this);
     g_uptrSystemWindow->onWindowResize.subscribe<Application, &Application::manageWindowResizeEvent>(this);
     g_uptrSystemWindow->onSystemWindowMouseUp.subscribe<Application, &Application::manageSysWinMouseUp>(this);
+    g_uptrSystemWindow->onSaveEvent.subscribe<Application, &Application::manageOnSaveEvent>(this);
 
     g_uptrSystemWindow->showWindow();
 
@@ -686,22 +698,8 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
 
   OptimEditor::loadFbxModel(*l_uptrMesh, param_cstrFilePath);
 
-  // printf("Mesh vertex count: %du\n", l_uptrMesh->vertexCount);
-  // printf("Mesh index count: %du\n", l_uptrMesh->indexCount);
-
   l_uptrMesh->rotation = {1.0f, 0.0, 0.0, 0.0f};
   l_uptrMesh->position = {0, 0, 0};
-
-  /*
-  if (l_uptrMesh.address() == nullptr || l_uptrMesh->vertices == nullptr || l_uptrMesh->indices == nullptr) {
-    printf("Invalid mesh import data pointers\n");
-    return;
-  }
-  if (l_uptrMesh->vertexCount == 0 || l_uptrMesh->indexCount == 0) {
-    printf("Invalid mesh import data count\n");
-    return;
-  }
-  */
 
   g_ppSelectedMesh = nullptr;
 
@@ -711,6 +709,5 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
 
   _list_meshes.push_back(l_uptrMesh.move()); // Add Mesh to list
 
-  // printf("Mesh added\n");
   g_ppSelectedMesh = &_list_meshes.back(); // Make the newly created mesh the selected one.
 }
