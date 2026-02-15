@@ -127,6 +127,31 @@ template<> struct TypeResolver<float> {
   }
 };
 
+template <> struct TypeResolver<std::string>
+{
+  static TypeInfo* Get() 
+  {
+    static TypeInfo typeInfo;
+    static bool init = false;
+
+    if (!init) {
+      typeInfo.name     = "string";
+      typeInfo.size     = sizeof(std::string);
+      typeInfo.typeData = TypeData::Primitive;
+      typeInfo.toString = [](void* ptr) -> std::string {
+        return *(reinterpret_cast<std::string*>(ptr));
+      };
+      typeInfo.fromString = [](void* ptr, const std::string& str) -> void {
+        *reinterpret_cast<std::string*>(ptr) = str;
+      };
+
+      init = true;
+    }
+
+    return &typeInfo;
+  }
+};
+
 // TypeResolve for array types
 template <typename ListType> struct TypeResolver<std::vector<ListType>>
 {
@@ -137,13 +162,7 @@ template <typename ListType> struct TypeResolver<std::vector<ListType>>
     if (!init) {
       info.name       = "std::vector",
       info.size       = sizeof(std::vector<ListType>);
-      info.createFn   = nullptr;
       info.typeData   = TypeData::Array;
-      info.get        = nullptr;
-      info.set        = nullptr;
-      info.toString   = nullptr;
-      info.fromString = nullptr;
-      info.baseType   = nullptr;
       info.fields     = {};
 
       info.arrayElementTypeInfo = TypeResolver<ListType>::Get();

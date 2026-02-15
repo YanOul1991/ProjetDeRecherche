@@ -378,23 +378,6 @@ void Application::Quit() {
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
 
-  //Mesh mesh{};
-
-
-  /*
-  std::vector<void*> instanciatedObjects;
-
-  while (!meshParser.isEnd()) {
-    instanciatedObjects.push_back(Parser::CreateObject(meshParser));
-  }
-
-  std::cout << "Instaciated all objects\n";
-  */
-
-  //for (auto& obj : instanciatedObjects) {
-  //  reinterpret_cast<Mesh*>(obj)->position.print();
-  //}
-
   std::vector<Object*> l_registeredObjects;
 
   Parser meshParser(Token::Tokenize("Scenes/save.oescene"));
