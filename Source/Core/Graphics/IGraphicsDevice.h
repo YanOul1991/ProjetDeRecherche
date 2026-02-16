@@ -27,7 +27,7 @@ class CORE_API IGraphicsDevice
 
   virtual IndexBufferHandle createIndexVertex(uint32* pIndices, uint32 elementCount) = 0;
 
-  virtual PipelineHandle createPipeline(SPipelineDescription* pPipelineDescription) = 0;
+  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDescription) = 0;
 
   virtual DepthRTHandle createDepthRT() = 0;
 

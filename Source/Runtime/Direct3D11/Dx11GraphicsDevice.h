@@ -18,7 +18,7 @@ class Dx11GraphicsDevice override final : public IGraphicsDevice
 
   virtual IndexBufferHandle createIndexVertex(uint32* pIndices, uint32 elementCount) override final;
 
-  virtual PipelineHandle createPipeline(SPipelineDescription* pPipelineDescription) override final;
+  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDescription) override final;
 
   virtual DepthRTHandle createDepthRT() override final;
 

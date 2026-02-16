@@ -1,23 +1,24 @@
 #pragma once
 
-#include "Core/OptimEngine.h"
-#include "Core/Defines/Windows/windowsAPI.h"
+#include "./IDx11Resource.h"
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Dx11RHI.h"
+#include "Core/Defines/Windows/windowsAPI.h"
+#include "Core/OptimEngine.h"
 
-class Dx11TextureResource_old final : public ITextureResource 
+class Dx11TextureResource final : public IDx11Resource
 {
-public:
-	virtual ~Dx11TextureResource_old() override final {}
+ public:
+  virtual ~Dx11TextureResource() override final {
+  }
 
-	void createResource(const Image* pImage) override final {
+  inline void createResource(ID3D11Device* pDevice, const Image* pImage) {
     HRESULT hr = S_OK;
 
     // ################# TEXTURE RESOURCE INITIALIZATION
-		D3D11_TEXTURE2D_DESC		textDesc{};
-    D3D11_SUBRESOURCE_DATA  subRes{};
+    D3D11_TEXTURE2D_DESC   textDesc{};
+    D3D11_SUBRESOURCE_DATA subRes{};
 
-		textDesc.Width              = pImage->width;
+    textDesc.Width              = pImage->width;
     textDesc.Height             = pImage->height;
     textDesc.MipLevels          = 1;
     textDesc.ArraySize          = 1;
@@ -33,8 +34,8 @@ public:
     subRes.SysMemPitch      = pImage->width * sizeof(op::color::SColor);
     subRes.SysMemSlicePitch = 0;
 
-    OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateTexture2D(&textDesc, &subRes, &pTexture));
-    //printf("Texture resource created.\n");
+    OPTIM_TRY_DX(pDevice->CreateTexture2D(&textDesc, &subRes, &pTexture));
+    printf("[Dx11TextureResource] Texture2D resource created\n");
 
     // ################# SHADER RESOURCE VIEW INITIALIZATION
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -44,14 +45,17 @@ public:
     srvDesc.Texture2D.MostDetailedMip = 0;
     srvDesc.Texture2D.MipLevels       = 1;
 
-    OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pResourceView));
-    //printf("Shader resource view created.\n");
-	}
+    OPTIM_TRY_DX(pDevice->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pResourceView));
 
-	void bindResource() override final {
-    Dx11RHI::getContextPtr()->PSSetShaderResources(0, 1, pResourceView.GetAddressOf());
-	}
+    printf("[Dx11TextureResource] Shader Resource View resource created\n");
+  }
 
-	ComPtr<ID3D11Texture2D> pTexture{};
-	ComPtr<ID3D11ShaderResourceView> pResourceView{};
+  virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
+    //printf("[Dx11TextureResource] Binding resource...\n");
+    pContext->PSSetShaderResources(0, 1, pResourceView.GetAddressOf());
+    //printf("[Dx11TextureResource] Resource bound\n");
+  }
+
+  ComPtr<ID3D11Texture2D>          pTexture{};
+  ComPtr<ID3D11ShaderResourceView> pResourceView{};
 };

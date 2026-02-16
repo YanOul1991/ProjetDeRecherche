@@ -11,7 +11,7 @@
 class Dx11IndexBuffer final : public IDx11Resource
 {
  public:
-  inline void createResources(uint32* pIndices, uint32 elementCount) {
+  inline void create(uint32* pIndices, uint32 elementCount) {
     bufferElementCount = elementCount;
     stride             = 0;
     offset             = 0;
@@ -30,16 +30,18 @@ class Dx11IndexBuffer final : public IDx11Resource
 
     HRESULT hr{S_OK};
     OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
-    // printf("Index Buffer was initalized!\n");
+    printf("[Dx11IndexBuffer] Index Buffer resource created\n");
   }
 
 
-  void bindResource() const {
-    Dx11RHI::getContextPtr()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-  }
+  //void bindResource() const {
+  //  Dx11RHI::getContextPtr()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+  //}
 
   inline virtual ~Dx11IndexBuffer() override final {
+
   }
+
   inline virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
     pContext->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
   }

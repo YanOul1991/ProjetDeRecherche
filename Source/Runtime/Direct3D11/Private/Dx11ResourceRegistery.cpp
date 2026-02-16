@@ -13,7 +13,7 @@ static constexpr uint32 _gen(const ResourceHandle& val) {
   return static_cast<uint32>((val.data & maskGeneration) >> 32);
 }
 
-ResourceHandle GraphicResourceRegistery::registerResource(EResourceTypes param_resourceType, void* param_pResource) {
+ResourceHandle GraphicResourceRegistery::registerResource(EResourceTypes param_resourceType, IDx11Resource* param_pResource) {
   ResourceHandle ret_resourceHandle{};
 
   if (validIndices.size() == 0) {

@@ -1,9 +1,9 @@
 #pragma once
 
+/*
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Direct3D11/Dx11RHI.h"
-
 class Dx11Sampler final : public ISampler
 {
 public:
@@ -29,3 +29,4 @@ public:
 
 	ComPtr<ID3D11SamplerState> pSampler{};
 };
+*/

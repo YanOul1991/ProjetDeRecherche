@@ -12,10 +12,7 @@ class Dx11VertexBuffer final : public IDx11Resource
  public:
   virtual ~Dx11VertexBuffer() override final {
   }
-  virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
-  }
-
-  inline void createResources(Vertex* pVertexBuffer, uint32 elementCount) {
+  inline void create(Vertex* pVertexBuffer, uint32 elementCount) {
     bufferElementCount = elementCount;
     stride             = sizeof(Vertex);
     offset             = 0;
@@ -35,11 +32,11 @@ class Dx11VertexBuffer final : public IDx11Resource
     HRESULT hr = S_OK;
     OPTIM_TRY_DX(Dx11RHI::getDevicePtr()->CreateBuffer(&desc, &subres, &pBuffer));
 
-    // printf("Vertex Buffer was initalized!\n");
+     printf("[Dx11VertexBuffer] Vertex Buffer resource created\n");
   }
 
-  inline void bindResource() {
-    Dx11RHI::getContextPtr()->IASetVertexBuffers(0, 1, pBuffer.GetAddressOf(), &stride, &offset);
+  virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
+    pContext->IASetVertexBuffers(0, 1, pBuffer.GetAddressOf(), &stride, &offset);
   }
 
   ComPtr<ID3D11Buffer> pBuffer{};

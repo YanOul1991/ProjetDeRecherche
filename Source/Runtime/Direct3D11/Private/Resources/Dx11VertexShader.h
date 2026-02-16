@@ -2,11 +2,11 @@
 
 #pragma once
 
+/*
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/OptimEngine.h"
 #include "Dx11RHI.h"
-
 class Dx11VertexShader final
 {
  public:
@@ -50,3 +50,4 @@ class Dx11VertexShader final
   ComPtr<ID3D11VertexShader> pShader{};
   ComPtr<ID3D11InputLayout>  pInput{};
 };
+*/

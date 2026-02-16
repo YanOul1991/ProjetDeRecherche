@@ -33,8 +33,6 @@ enum class ECommandType {
   BindIndexBuffer,
   BindTexture,
   DrawIndexed,
-  BindVertexShader,
-  BindFragmentShader,
   SetRenderTargets,
   BindConstantBuffer,
   BindConstantBufferTransformMatrix
@@ -56,7 +54,7 @@ class CommandBuffer
    * The command type from the ECommandType class enum.
    *
    * @param param_pData
-   * A pointer to the required data to bind the resource.
+   * A pointer to the required data to bind the resource, these will be stored as raw bytes.
    * For a drawIndex command pass a pointer to an index count.
    * For a pipeline pass a pointer to a pipeline object (to be created).
    * For a resource binding a pointer to a ResourceHandle object.
@@ -139,52 +137,31 @@ class Dx11RHI final : public IGraphicsRHI
    * @brief
    * [THIS FUNCTION WILL BE REPLACED]
    */
-  virtual ITextureResource* createTextureResource(const Image* pImage) override final;
+  // virtual ITextureResource* createTextureResource(const Image* pImage) override final;
 
   /**
    * @brief
    */
-  virtual ISampler* createSamplerResource() override final;
-
-  /**
-   * @brief
-   * [THIS FUNCTION WILL BE REPLACED]
-   */
-  virtual void BindTexture(ITextureResource* pTexture) override final;
+  // virtual ISampler* createSamplerResource() override final;
 
   /**
    * @brief
    * [THIS FUNCTION WILL BE REPLACED]
    */
-  virtual void bindSampler(ISampler* pSampler) override final;
+  // virtual void BindTexture(ITextureResource* pTexture) override final;
 
   /**
    * @brief
-   * Creates a ID3D11Buffer ressource used for vertices
-   *
-   * @param pVertices
-   * A pointer to a Vertex struct object buffer.
-   *
-   * @param elementCount the number of vertices in the buffer.
-   *
-   * @return
-   * A handle ressource handle to a vertex buffer resource
+   * [THIS FUNCTION WILL BE REPLACED]
    */
-  virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
+  // virtual void bindSampler(ISampler* pSampler) override final;
 
-  /**
-   * @brief
-   * Creates a ID3D11Buffer ressource used for indices
-   *
-   * @param pIndices
-   * A pointer to a index buffer.
-   *
-   * @param elementCount the number of indices in the buffer.
-   *
-   * @return
-   * A handle ressource handle to an index buffer resource
-   */
-  virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+  virtual VertexBufferHandle    createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) override final;
+  virtual IndexBufferHandle     createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+  virtual PipelineHandle        createPipeline(SPipelineDesc* pPipelineDesc) override final;
+  virtual DepthRTHandle         createDepthRT() override final;
+  virtual ConstantBufferHandle  createConstantBuffer(uint64 objectByteSize) override final;
+  virtual TextureResourceHandle createTextureResource(const Image* pImage) override final;
 
   /**
    * @brief
@@ -197,7 +174,7 @@ class Dx11RHI final : public IGraphicsRHI
    * @return
    * A handle ressource handle to a vertex shader resource
    */
-  virtual VertexShaderHandle createVertexShader(const char* path) override final;
+  // virtual VertexShaderHandle createVertexShader(const char* path) override final;
 
   /**
    * @brief
@@ -210,15 +187,9 @@ class Dx11RHI final : public IGraphicsRHI
    * @return
    * A handle ressource handle to a pixel shader resource
    */
-  virtual FragmentShaderHandle createFragmentShader(const char* path) override final;
+  // virtual FragmentShaderHandle createFragmentShader(const char* path) override final;
 
-  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) override final;
-
-  virtual PipelineHandle createPipelineResource(SPipelineDescription* pPipelineDesc) override final;
-
-  virtual DepthRTHandle createDepthRT() override final;
-
-  virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) override final;
+  // virtual PipelineHandle createPipelineResource(SPipelineDescription* pPipelineDesc) override final;
 
   virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) override final;
 
@@ -226,12 +197,13 @@ class Dx11RHI final : public IGraphicsRHI
   virtual void cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle) override final;
   virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) override final;
   virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) override final;
-  virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) override final;
-  virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) override final;
+  virtual void cmdBindTexture(TextureResourceHandle* pTextureResourceHandle) override final;
   virtual void cmdDrawIndexed(uint32 indexCount) override final;
   virtual void cmdSetNextMeshTransform(float4x4* meshWorldTransform) override final;
-
   virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) override final;
+
+  // virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) override final;
+  // virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) override final;
 
   virtual void excecuteCommands() override final;
   virtual void freeResource(ResourceHandle handle) override final;

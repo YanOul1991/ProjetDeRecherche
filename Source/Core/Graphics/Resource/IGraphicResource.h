@@ -10,9 +10,6 @@ enum class EResourceCPUAccess {
 };
 
 /*
- * @brief
- * Base class interface for all graphic resource types.
- */
 class IGraphicResource
 {
  public:
@@ -35,10 +32,6 @@ class IIndexBuffer : public IGraphicResource
   CORE_API virtual void bindResource()                                         = 0;
 };
 
-/*
- * @brief
- * CONSTANT DATA
- */
 class IConstantBuffer : public IGraphicResource
 {
  public:
@@ -84,3 +77,4 @@ class ITextureResource : public IGraphicResource
 };
 
 using IFragmentShader = IPixelShader;
+*/

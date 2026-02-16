@@ -46,8 +46,8 @@
  *
  */
 
-static ITextureResource* _TEST_pTextureResource{};
-static ISampler*         _TEST_pSampler{};
+//static ITextureResource* _TEST_pTextureResource{};
+//static ISampler*         _TEST_pSampler{};
 
 static UniquePtr<SystemWindow> g_uptrSystemWindow{};
 
@@ -60,7 +60,6 @@ static float3 controlGizmoDirection{};
 
 static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
-
 static std::vector<Mesh> g_objectMeshes;
 
 static PipelineHandle       _newPipelineHandleTest;
@@ -70,9 +69,12 @@ static PipelineHandle       _handlePipelineWirframeView{};
 static PipelineHandle       _handlePipelineOutline{};
 static PipelineHandle       _handlePipelineLineRendering{};
 
+static TextureResourceHandle _handleTextureResource {};
+
 static DepthRTHandle        _handle_depthRT{};
-static VertexShaderHandle   _handle_vertexShader{};
-static FragmentShaderHandle _handle_fragmentShader{};
+
+//static VertexShaderHandle   _handle_vertexShader{};
+//static FragmentShaderHandle _handle_fragmentShader{};
 
 static bool _bool_drawWireframe{false};
 static bool _bool_drawOutline{false};
@@ -391,7 +393,7 @@ void Application::ApplicationStart() {
 
     //////////////////////////////// TEST NEW PIPELINE SYSTEM
 
-    SPipelineDescription testBasicPipelineDesc{};
+    SPipelineDesc testBasicPipelineDesc{};
 
     testBasicPipelineDesc.vertexShader   = "bin/PhongVertexShader.cso";
     testBasicPipelineDesc.fragmentShader = "bin/PhongPixelShader.cso";
@@ -412,7 +414,7 @@ void Application::ApplicationStart() {
 
     testBasicPipelineDesc.primitiveTopology = EPipelinePrimitiveTopology::TriangleList;
 
-    _newPipelineHandleTest = Graphics::RHI()->createPipelineResource(&testBasicPipelineDesc);
+    _newPipelineHandleTest = Graphics::RHI()->createPipeline(&testBasicPipelineDesc);
 
 
     /////////////////////////////////////////////////////////
@@ -421,8 +423,8 @@ void Application::ApplicationStart() {
      * Lit shaders pipeline binding
      */
     SPipelineDesc pipelineDesc = {
-      .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/PhongVertexShader.cso"),
-      .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/PhongPixelShader.cso"),
+      .vertexShader   = "bin/PhongVertexShader.cso",
+      .fragmentShader = "bin/PhongPixelShader.cso",
 
       .rasterizerDescription = {
                                 .fillMode    = ERasterizerFillMode::Solid,
@@ -443,8 +445,8 @@ void Application::ApplicationStart() {
      * -----------------------------------------------------------------------------
      */
     SPipelineDesc l_wirframePipelineDesc = {
-      .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/WireframeVS.cso"),
-      .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/WireframePS.cso"),
+      .vertexShader   = "bin/WireframeVS.cso",
+      .fragmentShader = "bin/WireframePS.cso",
 
       .rasterizerDescription = {
                                 .fillMode             = ERasterizerFillMode::Wireframe,
@@ -469,8 +471,8 @@ void Application::ApplicationStart() {
      * -----------------------------------------------------------------------------
      */
     SPipelineDesc l_outlinePipelineDesc = {
-      .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/OutlineVS.cso"),
-      .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/OutlinePS.cso"),
+      .vertexShader   = "bin/OutlineVS.cso",
+      .fragmentShader = "bin/OutlinePS.cso",
 
       .rasterizerDescription = {
                                 .fillMode             = ERasterizerFillMode::Solid,
@@ -495,8 +497,8 @@ void Application::ApplicationStart() {
      * -----------------------------------------------------------------------------
      */
     SPipelineDesc l_pipelineLineDesc = {
-      .vertexShaderHandle   = Graphics::RHI()->createVertexShader("bin/WireframeVS.cso"),
-      .fragmentShaderHandle = Graphics::RHI()->createFragmentShader("bin/WireframePS.cso"),
+      .vertexShader   = "bin/WireframeVS.cso",
+      .fragmentShader = "bin/WireframePS.cso",
 
       .rasterizerDescription = {
                                 .fillMode             = ERasterizerFillMode::Solid,
@@ -521,10 +523,10 @@ void Application::ApplicationStart() {
     // Load image for texture
     Image srcImage;
     FileStream::readPngImage("images/jeff2.png", srcImage);
-    _TEST_pTextureResource = Graphics::RHI()->createTextureResource(&srcImage);
+    _handleTextureResource = Graphics::RHI()->createTextureResource(&srcImage);
 
     // Create sampler resource
-    _TEST_pSampler = Graphics::RHI()->createSamplerResource();
+    //_TEST_pSampler = Graphics::RHI()->createSamplerResource();
 
 
     /// ---------------------------------------------------------------------------
@@ -603,8 +605,9 @@ void Application::ApplicationLoop() {
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
     Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
-    Graphics::RHI()->BindTexture(_TEST_pTextureResource);
-    Graphics::RHI()->bindSampler(_TEST_pSampler);
+    Graphics::RHI()->cmdBindTexture(&_handleTextureResource);
+
+    //Graphics::RHI()->bindSampler(_TEST_pSampler);
 
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
       float mouseDx{};

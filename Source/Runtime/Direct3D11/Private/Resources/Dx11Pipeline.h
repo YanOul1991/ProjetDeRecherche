@@ -17,7 +17,7 @@ class Dx11Pipeline final : public IDx11Resource
 
   virtual ~Dx11Pipeline() override final;
 
-  void create(ID3D11Device* pDevice, const SPipelineDescription& pipelineDesc);
+  void create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDesc);
 
   // Inherited via IDx11Resource
   virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final;

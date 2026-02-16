@@ -13,10 +13,12 @@
 #include "Core/OptimEngine.h"
 #include "Runtime/Direct3D11/Dx11RHI.h"
 
-class Dx11ConstantBuffer
+class Dx11ConstantBuffer final : public IDx11Resource
 {
  public:
-  inline Dx11ConstantBuffer(ID3D11Device* pDevice, uint32 param_structByteSize) {
+  virtual ~Dx11ConstantBuffer() override final{}
+
+  inline void create(ID3D11Device* pDevice, uint32 param_structByteSize) {
     byteSize = param_structByteSize;
     D3D11_BUFFER_DESC desc{};
 
@@ -27,9 +29,11 @@ class Dx11ConstantBuffer
     desc.MiscFlags      = 0;
 
     pDevice->CreateBuffer(&desc, nullptr, &pBuffer);
+
+    printf("[Dx11ConstantBuffer] Constant buffer resource created\n");
   }
 
-  inline void bindResource(ID3D11DeviceContext* pContext) {
+  inline virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
     pContext->VSSetConstantBuffers(0, 1, pBuffer.GetAddressOf());
   }
 
@@ -47,7 +51,6 @@ class Dx11ConstantBuffer
 /**
  * @brief
  * Wrapper class for ID3D11DepthStencilState resource.
- */
 class Dx11DepthStencil final
 {
  public:
@@ -69,6 +72,7 @@ class Dx11DepthStencil final
 
   ComPtr<ID3D11DepthStencilState> pState{};
 };
+ */
 
 /**
  * @brief
@@ -78,11 +82,10 @@ class Dx11DepthStencilViewTexture : public IDx11Resource
 {
  public:
   virtual ~Dx11DepthStencilViewTexture() override final {
-  }
-  virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
+
   }
 
-  inline Dx11DepthStencilViewTexture(ID3D11Device* pDevice) {
+  inline void create(ID3D11Device* pDevice) {
     OPTIM_CHECK_WIN_COM();
 
     D3D11_TEXTURE2D_DESC depthDesc{};
@@ -99,6 +102,8 @@ class Dx11DepthStencilViewTexture : public IDx11Resource
 
     OPTIM_TRY_DX(pDevice->CreateTexture2D(&depthDesc, nullptr, &pDepthStencil));
 
+    printf("[Dx11DSView] Depth Stencil texture resource created\n");
+
     // Depth stencil view creation
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 
@@ -107,8 +112,15 @@ class Dx11DepthStencilViewTexture : public IDx11Resource
     dsvDesc.Texture2D.MipSlice = 0;
 
     OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pDepthStencilView));
+
+    printf("[Dx11DSView] Depth Stencil view resource created\n");
   }
 
+  virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
+    pContext->OMSetRenderTargets(1, ppRenderTargetView, pDepthStencilView.Get());
+  }
+
+  /*
   inline Dx11DepthStencilViewTexture(ID3D11Device* pDevice, uint32 param_width, uint32 param_height) {
     OPTIM_CHECK_WIN_COM();
 
@@ -135,6 +147,7 @@ class Dx11DepthStencilViewTexture : public IDx11Resource
 
     OPTIM_TRY_DX(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &dsvDesc, &pDepthStencilView));
   }
+  */
 
   inline void resize(ID3D11Device* pDevice, uint32 newWidth, uint32 newHeight) {
     OPTIM_CHECK_WIN_COM();
@@ -155,9 +168,11 @@ class Dx11DepthStencilViewTexture : public IDx11Resource
     OPTIM_WIN_THROW_ON_FAILED(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &l_dsvDesc, &pDepthStencilView));
   }
 
+  /*
   inline void bindResource(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) const {
     pContext->OMSetRenderTargets(1, ppRenderTargetView, pDepthStencilView.Get());
   }
+  */
 
   inline void clearDepthStencilView(ID3D11DeviceContext* pContext) const {
     pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -171,6 +186,7 @@ class Dx11DepthStencilViewTexture : public IDx11Resource
 // ++++++++++++++++++++++++++++++++++++++++++++++++
 // ++++++++++++++++++++++++++++++++++++++++++++++++
 
+/*
 class Dx11RasterizerState final
 {
  public:
@@ -196,3 +212,4 @@ class Dx11RasterizerState final
 
   ComPtr<ID3D11RasterizerState> pRasterizer{};
 };
+*/

@@ -18,7 +18,7 @@ static void StaticCreateVertexShader(ID3D11Device* pDevice, const char* path) {
 Dx11Pipeline::~Dx11Pipeline() {
 }
 
-void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDescription& pipelineDesc) {
+void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDesc) {
   OPTIM_CHECK_WIN_COM();
 
   primitiveTopology = static_cast<D3D11_PRIMITIVE_TOPOLOGY>(static_cast<int32>(pipelineDesc.primitiveTopology));
@@ -128,6 +128,8 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDescription& pip
  */ 
 
 void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
+  //printf("Binding pipeline...\n");
+
   pContext->IASetPrimitiveTopology(primitiveTopology);
 
   pContext->IASetInputLayout(inputLayout.Get());
@@ -141,4 +143,6 @@ void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** 
   pContext->RSSetState(rasterizerState.Get());
 
   pContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
+
+  //printf("Pipeline Bound...\n");
 }

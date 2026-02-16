@@ -17,7 +17,7 @@
 ================================================================= */
 
 struct ResourceEntryData {
-  void*          pResource;
+  IDx11Resource* pResource;
   uint32         generation;
   EResourceTypes resourceType;
   bool           valid;
@@ -36,7 +36,7 @@ class GraphicResourceRegistery
    * @param pResource
    * A raw pointer to the graphics resource related to its type.
    */
-  ResourceHandle registerResource(EResourceTypes resourceType, void* pResource);
+  ResourceHandle registerResource(EResourceTypes resourceType, IDx11Resource* pResource);
 
   /**
    * @brief

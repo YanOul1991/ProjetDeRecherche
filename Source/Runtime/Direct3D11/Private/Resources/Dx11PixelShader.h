@@ -3,6 +3,7 @@
 
 #pragma once
 
+/*
 #include "Core/OptimEngine.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Dx11RHI.h"
@@ -32,3 +33,4 @@ public:
 
 	ComPtr<ID3D11PixelShader> pShader;
 };
+*/

@@ -21,12 +21,12 @@
 class CORE_API IGraphicsRHI
 {
  public:
-   virtual ~IGraphicsRHI(){};
-   virtual void Initialize(void* pWindowHandle) = 0;
-   virtual void draw()                          = 0;
-   virtual void Clean()                         = 0;
+  virtual ~IGraphicsRHI() {};
+  virtual void Initialize(void* pWindowHandle) = 0;
+  virtual void draw()                          = 0;
+  virtual void Clean()                         = 0;
 
-  //virtual IGraphicsDevice* GetDevice() = 0;
+  // virtual IGraphicsDevice* GetDevice() = 0;
 
   /*
    * @brief
@@ -38,7 +38,7 @@ class CORE_API IGraphicsRHI
    * @param newHeight
    * The new height of the window.
    */
-   virtual void updateSystemWindowSize(uint32 newWidth, uint32 newHeight) = 0;
+  virtual void updateSystemWindowSize(uint32 newWidth, uint32 newHeight) = 0;
 
   /*
    * @brief
@@ -53,7 +53,7 @@ class CORE_API IGraphicsRHI
    * @return
    * A handle to the graphique resource.
    */
-   virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
+  virtual VertexBufferHandle createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) = 0;
 
   /*
    * @brief
@@ -68,23 +68,26 @@ class CORE_API IGraphicsRHI
    * @return
    * A handle to the graphique resource.
    */
-   virtual IndexBufferHandle    createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
-   virtual VertexShaderHandle   createVertexShader(const char* path)                                   = 0;
-   virtual FragmentShaderHandle createFragmentShader(const char* path)                                 = 0;
-   virtual DepthRTHandle        createDepthRT()                                                        = 0;
-   virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize)                            = 0;
+  virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
+  // virtual VertexShaderHandle   createVertexShader(const char* path)                                   = 0;
+  // virtual FragmentShaderHandle createFragmentShader(const char* path)                                 = 0;
+  virtual DepthRTHandle createDepthRT() = 0;
 
-   virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
+  virtual TextureResourceHandle createTextureResource(const Image* pImage) = 0;
+
+  virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) = 0;
+
+  // virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
 
   /**
    * @brief
    * New version of createPipeline function.
    */
-   virtual PipelineHandle createPipelineResource(SPipelineDescription* pPipelineDesc) = 0;
+  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
 
-   virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
+  virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
 
-   virtual void cmdSetNextMeshTransform(float4x4* meshWorldTransform) = 0;
+  virtual void cmdSetNextMeshTransform(float4x4* meshWorldTransform) = 0;
 
   /*
    * @brief
@@ -94,7 +97,7 @@ class CORE_API IGraphicsRHI
    * @param handle
    * A handle to the resource to free.
    */
-   virtual void freeResource(ResourceHandle handle) = 0;
+  virtual void freeResource(ResourceHandle handle) = 0;
 
   /*
    * @brief
@@ -103,7 +106,7 @@ class CORE_API IGraphicsRHI
    * @param pVertexBufferHandle
    * A pointer to a VertexBufferHandle object.
    */
-   virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) = 0;
+  virtual void cmdBindVertexBuffer(VertexBufferHandle* pVertexBufferHandle) = 0;
 
   /*
    * @brief
@@ -112,15 +115,15 @@ class CORE_API IGraphicsRHI
    * @param pIndexBufferHandle
    * A pointer to a IndexBufferHandle object.
    */
-   virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) = 0;
+  virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) = 0;
 
-   virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) = 0;
+  // virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) = 0;
 
-   virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) = 0;
+  // virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) = 0;
 
-   virtual void cmdBindPipeline(PipelineHandle* pPipeline) = 0;
+  virtual void cmdBindPipeline(PipelineHandle* pPipeline) = 0;
 
-   virtual void cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle) = 0;
+  virtual void cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle) = 0;
 
   /*
    * @brief
@@ -129,23 +132,24 @@ class CORE_API IGraphicsRHI
    * @param indexCount
    * The index count of the draw indexed command.
    */
-   virtual void cmdDrawIndexed(uint32 indexCount) = 0;
+  virtual void cmdDrawIndexed(uint32 indexCount) = 0;
 
   /*
    * @brief
    * Excecutes all the commands in the command buffer.
    * The command buffer gets cleared once all its commands have be ran.
    */
-   virtual void excecuteCommands() = 0;
+  virtual void excecuteCommands() = 0;
 
-   virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) = 0;
+  virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) = 0;
+
+  virtual void cmdBindTexture(TextureResourceHandle* pTextureResourceHandle) = 0;
 
   /*
    * OLD SYSTEMS TO BE UPDATED SOON
-   */
-
    virtual ITextureResource* createTextureResource(const Image* pImage) = 0;
    virtual ISampler*         createSamplerResource()                    = 0;
    virtual void              BindTexture(ITextureResource* pTexture)    = 0;
    virtual void              bindSampler(ISampler* pSampler)            = 0;
+   */
 };
