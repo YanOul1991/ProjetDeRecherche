@@ -12,6 +12,10 @@
 #include "Private/Resources/Dx11VertexBuffer.h"
 #include "Private/Resources/Dx11VertexShader.h"
 
+/* =================================================================
+  REMAKING OF RESOURCE REGISTERY
+================================================================= */
+
 struct ResourceEntryData {
   void*          pResource;
   uint32         generation;
@@ -52,7 +56,6 @@ class GraphicResourceRegistery
   bool validateHandle(ResourceHandle* pHandle, EResourceTypes resourceType);
 
   ResourceEntryData* operator[](ResourceHandle& handle);
-
   ResourceEntryData* operator[](ResourceHandle* param_pHandle);
 
   std::vector<ResourceEntryData> entries{};

@@ -45,8 +45,6 @@ struct SCommand {
   uint32       dataOffset;
 };
 
-// static inline std::unordered_map<ECommandType, void(*)(void*)> StaticCommandRegistery{};
-
 class CommandBuffer
 {
  public:

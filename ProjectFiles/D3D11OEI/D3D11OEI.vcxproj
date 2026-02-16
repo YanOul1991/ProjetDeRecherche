@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Dx11GraphicsDevice.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Dx11RHI.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11CommandBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHIDevice.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceRegistery.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Buffer.h" />

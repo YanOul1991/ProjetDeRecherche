@@ -46,6 +46,10 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Pipeline.h">
       <Filter>Private\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11CommandBuffer.h">
+      <Filter>Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Dx11GraphicsDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHI.cpp">

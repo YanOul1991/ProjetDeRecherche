@@ -5,10 +5,10 @@
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Dx11RHI.h"
 
-class Dx11TextureResource final : public ITextureResource 
+class Dx11TextureResource_old final : public ITextureResource 
 {
 public:
-	~Dx11TextureResource() override final {}
+	virtual ~Dx11TextureResource_old() override final {}
 
 	void createResource(const Image* pImage) override final {
     HRESULT hr = S_OK;

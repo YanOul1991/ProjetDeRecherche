@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "./IDx11Resource.h"
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/OptimEngine.h"
@@ -73,9 +74,14 @@ class Dx11DepthStencil final
  * @brief
  * Wrapper class for ID3D11DepthStencilState resource.
  */
-class Dx11DepthStencilViewTexture
+class Dx11DepthStencilViewTexture : public IDx11Resource
 {
  public:
+  virtual ~Dx11DepthStencilViewTexture() override final {
+  }
+  virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final {
+  }
+
   inline Dx11DepthStencilViewTexture(ID3D11Device* pDevice) {
     OPTIM_CHECK_WIN_COM();
 

@@ -15,6 +15,9 @@ static std::wstring optim_towstr(std::string& str) {
 static void StaticCreateVertexShader(ID3D11Device* pDevice, const char* path) {
 }
 
+Dx11Pipeline::~Dx11Pipeline() {
+}
+
 void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDescription& pipelineDesc) {
   OPTIM_CHECK_WIN_COM();
 
@@ -122,7 +125,8 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDescription& pip
  * @brief
  * Binds resources of the pipeline, descibing how to 
  * perform rendering.
- */
+ */ 
+
 void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
   pContext->IASetPrimitiveTopology(primitiveTopology);
 

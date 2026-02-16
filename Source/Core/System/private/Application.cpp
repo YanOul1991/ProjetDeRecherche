@@ -63,6 +63,8 @@ static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
 static std::vector<Mesh> g_objectMeshes;
 
+static PipelineHandle       _newPipelineHandleTest;
+
 static PipelineHandle       _handlePipeline{};
 static PipelineHandle       _handlePipelineWirframeView{};
 static PipelineHandle       _handlePipelineOutline{};
@@ -386,6 +388,34 @@ void Application::ApplicationStart() {
 
     arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({1, 0, 0}, -Optim::Constants::pi / 2.0f);
     arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({0, 1, 0}, Optim::Constants::pi / 2.0f);
+
+    //////////////////////////////// TEST NEW PIPELINE SYSTEM
+
+    SPipelineDescription testBasicPipelineDesc{};
+
+    testBasicPipelineDesc.vertexShader   = "bin/PhongVertexShader.cso";
+    testBasicPipelineDesc.fragmentShader = "bin/PhongPixelShader.cso";
+
+    testBasicPipelineDesc.rasterizerDescription = {
+      .fillMode             = ERasterizerFillMode::Solid,
+      .cullMode             = ERasterizerCullMode::Back,
+      .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+      .depthBias            = 0,
+      .slopeScaledDepthBias = 0
+    };
+
+    testBasicPipelineDesc.depthStencilDescription = {
+      .depthTestEnabled = true,
+      .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+      .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll
+    };
+
+    testBasicPipelineDesc.primitiveTopology = EPipelinePrimitiveTopology::TriangleList;
+
+    _newPipelineHandleTest = Graphics::RHI()->createPipelineResource(&testBasicPipelineDesc);
+
+
+    /////////////////////////////////////////////////////////
 
     /*
      * Lit shaders pipeline binding

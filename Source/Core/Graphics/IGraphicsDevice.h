@@ -20,15 +20,14 @@ class CORE_API IGraphicsDevice
  public:
   virtual ~IGraphicsDevice() {
   }
+
   virtual void initalize() = 0;
 
   virtual VertexBufferHandle createVertexBuffer(Vertex* pVertices, uint32 elementCount) = 0;
 
   virtual IndexBufferHandle createIndexVertex(uint32* pIndices, uint32 elementCount) = 0;
 
-  virtual FragmentShaderHandle createFragmentShader(const char* path) = 0;
-
-  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
+  virtual PipelineHandle createPipeline(SPipelineDescription* pPipelineDescription) = 0;
 
   virtual DepthRTHandle createDepthRT() = 0;
 

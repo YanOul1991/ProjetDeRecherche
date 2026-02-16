@@ -27,6 +27,10 @@
 #include <vector>
 #include <array>
 
+extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module() {
+  return new Dx11RHI;
+}
+
 static std::wstring towstr(std::string& str) {
   uint32 size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
   std::wstring wstr(size, 0);
@@ -34,9 +38,11 @@ static std::wstring towstr(std::string& str) {
   return wstr;
 }
 
-//static std::vector<Dx11DepthStencil*>            g_depthStencilResources{};
 static std::vector<Dx11DepthStencilViewTexture*> g_depthStencilViewTextureResources{};
 
+CommandBuffer Dx11RHI::cmdBuffer{};
+
+/*
 static std::unordered_map<ECommandType, void (*)(void*)>& StaticGraphicsBinding() {
   static std::unordered_map<ECommandType, void (*)(void*)> functions{
     { ECommandType::DrawIndexed,
@@ -47,6 +53,7 @@ static std::unordered_map<ECommandType, void (*)(void*)>& StaticGraphicsBinding(
   };
   return functions;
 }
+*/
 
 /*
  * @brief
@@ -62,13 +69,9 @@ class Dx11Pipeline_old
   D3D_PRIMITIVE_TOPOLOGY primitveTopology{D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED};
 };
 
-CommandBuffer Dx11RHI::cmdBuffer{};
 
 static GraphicResourceRegistery g_registery{};
 
-extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module() {
-  return new Dx11RHI;
-}
 
 Dx11RHI::Dx11RHI() :
     m_outputWindow{nullptr},
@@ -109,13 +112,13 @@ void Dx11RHI::Clean() {
 void Dx11RHI::updateSystemWindowSize(uint32 param_newWidth, uint32 param_newHeight) {
   OPTIM_WIN_COM_CHECK_START();
 
-  printf("Will try to  resize swap chain. new Size : (%du, %du)\n", param_newWidth, param_newHeight);
+  //printf("Will try to  resize swap chain. new Size : (%du, %du)\n", param_newWidth, param_newHeight);
   pDx11RHIDevice->clearRenderTargetView();
 
   if (pDx11RHIDevice->m_pSwapChain != nullptr) {
     OPTIM_WIN_THROW_ON_FAILED(
       pDx11RHIDevice->m_pSwapChain->ResizeBuffers(0, param_newWidth, param_newHeight, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0));
-    printf("Swap chain resized!\n");
+    //printf("Swap chain resized!\n");
   }
   else {
     printf("[Error]\nCannot find swap chain.\n");
@@ -125,8 +128,7 @@ void Dx11RHI::updateSystemWindowSize(uint32 param_newWidth, uint32 param_newHeig
     depthBuffer->resize(pDx11RHIDevice->m_pDevice.Get(), param_newWidth, param_newHeight);
   }
 
-  printf("Updated all Depth stencils\n");
-
+  //printf("Updated all Depth stencils\n");
   pDx11RHIDevice->initRenderTargetView(param_newWidth, param_newHeight);
 }
 
@@ -147,7 +149,7 @@ ID3D11RenderTargetView* Dx11RHI::initRenderTargetView() {
 // ##################################
 
 ITextureResource* Dx11RHI::createTextureResource(const Image* pImage) {
-  Dx11TextureResource* pResource = new Dx11TextureResource;
+  Dx11TextureResource_old* pResource = new Dx11TextureResource_old;
   pResource->createResource(pImage);
   return pResource;
 }
@@ -198,7 +200,8 @@ VertexBufferHandle Dx11RHI::createResourceVertexBuffer(Vertex* pVertices, const 
   l_pResource->createResources(pVertices, elementCount);
 
   return VertexBufferHandle{
-    .data = g_registery.registerResource(EResourceTypes::VertexBuffer, l_pResource).data};
+    .data = g_registery.registerResource(EResourceTypes::VertexBuffer, l_pResource).data
+  };
 }
 
 IndexBufferHandle Dx11RHI::createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) {
@@ -255,7 +258,6 @@ PipelineHandle Dx11RHI::createPipeline(SPipelineDesc* param_pipelineDesc) {
 PipelineHandle Dx11RHI::createPipelineResource(SPipelineDescription* param_pPipelineDesc) {
   Dx11Pipeline* l_pResource = new Dx11Pipeline;
   l_pResource->create(pDx11RHIDevice->m_pDevice.Get(), *param_pPipelineDesc);
-
   return PipelineHandle{0};
 }
 
@@ -371,7 +373,8 @@ void Dx11RHI::cmdBindIndexBuffer(IndexBufferHandle* pVertexBufferHandle) {
   cmdBuffer.push(
     ECommandType::BindIndexBuffer,
     &g_registery[(ResourceHandle*)pVertexBufferHandle]->pResource,
-    sizeof(void*));
+    sizeof(void*)
+  );
 }
 
 void Dx11RHI::cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) {
@@ -383,7 +386,8 @@ void Dx11RHI::cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) {
   cmdBuffer.push(
     ECommandType::BindVertexShader,
     &g_registery[(ResourceHandle*)pVertexShaderHandle]->pResource,
-    sizeof(void*));
+    sizeof(void*)
+  );
 }
 
 void Dx11RHI::cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) {
