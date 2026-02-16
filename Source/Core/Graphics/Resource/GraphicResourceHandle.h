@@ -2,7 +2,7 @@
 
 // #include "Core/Graphics/Resource/IGraphicResource.h"
 
-#define OP_RESOURCE_HANDLE(_TYPE_) \
+#define OPTIM_MAKE_HANDLE(_TYPE_) \
   struct _TYPE_##Handle {          \
     uint64 data;                   \
   };
@@ -19,15 +19,15 @@ enum class EResourceTypes : uint8 {
   DepthRT
 };
 
-OP_RESOURCE_HANDLE(Resource)
-OP_RESOURCE_HANDLE(Pipeline)
-OP_RESOURCE_HANDLE(VertexBuffer)
-OP_RESOURCE_HANDLE(IndexBuffer)
-OP_RESOURCE_HANDLE(VertexShader)
-OP_RESOURCE_HANDLE(FragmentShader)
-OP_RESOURCE_HANDLE(TextureResource)
-OP_RESOURCE_HANDLE(Sampler)
-OP_RESOURCE_HANDLE(DepthRT)
-OP_RESOURCE_HANDLE(ConstantBuffer)
+OPTIM_MAKE_HANDLE(Resource)
+OPTIM_MAKE_HANDLE(Pipeline)
+OPTIM_MAKE_HANDLE(VertexBuffer)
+OPTIM_MAKE_HANDLE(IndexBuffer)
+OPTIM_MAKE_HANDLE(VertexShader)
+OPTIM_MAKE_HANDLE(FragmentShader)
+OPTIM_MAKE_HANDLE(TextureResource)
+OPTIM_MAKE_HANDLE(Sampler)
+OPTIM_MAKE_HANDLE(DepthRT)
+OPTIM_MAKE_HANDLE(ConstantBuffer)
 
 #undef OP_RESOURCE_HANDLE

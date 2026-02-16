@@ -52,7 +52,7 @@ class Dx11Pipeline
 
 CommandBuffer Dx11RHI::cmdBuffer{};
 
-static Optim::RHI::Directx11::GraphicResourceRegistery g_registery{};
+static GraphicResourceRegistery g_registery{};
 
 extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module() {
   return new Dx11RHI;
