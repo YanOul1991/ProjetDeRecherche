@@ -21,12 +21,20 @@
 #include "Private/Resources/Dx11Texture.h"
 #include "Private/Resources/Dx11VertexBuffer.h"
 #include "Private/Resources/Dx11VertexShader.h"
+#include "Private/Resources/Dx11Pipeline.h"
 
 #include <cmath>
 #include <vector>
 #include <array>
 
-static std::vector<Dx11DepthStencil*>            g_depthStencilResources{};
+static std::wstring towstr(std::string& str) {
+  uint32 size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+  std::wstring wstr(size, 0);
+  MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], size);
+  return wstr;
+}
+
+//static std::vector<Dx11DepthStencil*>            g_depthStencilResources{};
 static std::vector<Dx11DepthStencilViewTexture*> g_depthStencilViewTextureResources{};
 
 static std::unordered_map<ECommandType, void (*)(void*)>& StaticGraphicsBinding() {
@@ -40,7 +48,11 @@ static std::unordered_map<ECommandType, void (*)(void*)>& StaticGraphicsBinding(
   return functions;
 }
 
-class Dx11Pipeline
+/*
+ * @brief
+ * [DISCLAIMER] This class will soon be deprecated/
+ */
+class Dx11Pipeline_old
 {
  public:
   VertexShaderHandle     vertexShaderHandle{0};
@@ -201,12 +213,9 @@ IndexBufferHandle Dx11RHI::createResourceIndexBuffer(uint32* pIndices, const uin
 VertexShaderHandle Dx11RHI::createVertexShader(const char* path) {
   Dx11VertexShader* l_pResource = new Dx11VertexShader;
 
-  int32  size   = MultiByteToWideChar(CP_UTF8, 0, path, -1, 0, 0);
-  wchar* l_wstr = new wchar[size];
-  MultiByteToWideChar(CP_UTF8, 0, path, -1, l_wstr, size);
-
-  l_pResource->createResources(l_wstr);
-  delete[] l_wstr;
+  std::string str = path;
+  std::wstring wstrPath = towstr(str);
+  l_pResource->createResources(wstrPath.c_str());
 
   return VertexShaderHandle{
     .data = g_registery.registerResource(EResourceTypes::VertexShader, l_pResource).data};
@@ -214,19 +223,17 @@ VertexShaderHandle Dx11RHI::createVertexShader(const char* path) {
 
 FragmentShaderHandle Dx11RHI::createFragmentShader(const char* path) {
   Dx11PixelShader* l_pResource = new Dx11PixelShader;
-  int32            size        = MultiByteToWideChar(CP_UTF8, 0, path, -1, 0, 0);
-  wchar*           l_wstr      = new wchar[size];
-  MultiByteToWideChar(CP_UTF8, 0, path, -1, l_wstr, size);
 
-  l_pResource->createResources(l_wstr);
-  delete[] l_wstr;
+  std::string str = path;
+  std::wstring wstrPath = towstr(str);
+  l_pResource->createResources(wstrPath.c_str());
 
   return FragmentShaderHandle{
     .data = g_registery.registerResource(EResourceTypes::FragmentShader, l_pResource).data};
 }
 
 PipelineHandle Dx11RHI::createPipeline(SPipelineDesc* param_pipelineDesc) {
-  Dx11Pipeline* l_pPipeline         = new Dx11Pipeline;
+  Dx11Pipeline_old* l_pPipeline         = new Dx11Pipeline_old;
   l_pPipeline->vertexShaderHandle   = param_pipelineDesc->vertexShaderHandle;
   l_pPipeline->fragmentShaderHandle = param_pipelineDesc->fragmentShaderHandle;
   l_pPipeline->pDepthStencilState   = new Dx11DepthStencil(pDx11RHIDevice->m_pDevice.Get(), &param_pipelineDesc->depthStencilDescription);
@@ -234,10 +241,22 @@ PipelineHandle Dx11RHI::createPipeline(SPipelineDesc* param_pipelineDesc) {
   l_pPipeline->primitveTopology     = static_cast<D3D_PRIMITIVE_TOPOLOGY>(static_cast<int>(param_pipelineDesc->primitiveTopology));
 
   // Add the depth stencil state to its list
-  g_depthStencilResources.push_back(l_pPipeline->pDepthStencilState);
+  //g_depthStencilResources.push_back(l_pPipeline->pDepthStencilState);
 
   return PipelineHandle{
     .data = g_registery.registerResource(EResourceTypes::Pipeline, l_pPipeline).data};
+}
+
+/**
+ * @brief
+ * 
+ * New version of Dx11RHI::createPipeline;
+ */
+PipelineHandle Dx11RHI::createPipelineResource(SPipelineDescription* param_pPipelineDesc) {
+  Dx11Pipeline* l_pResource = new Dx11Pipeline;
+  l_pResource->create(pDx11RHIDevice->m_pDevice.Get(), *param_pPipelineDesc);
+
+  return PipelineHandle{0};
 }
 
 DepthRTHandle Dx11RHI::createDepthRT() {
@@ -459,7 +478,7 @@ void Dx11RHI::excecuteCommands() {
       break;
     }
     case ECommandType::BindPipeline: {
-      Dx11Pipeline* pPipeline = (*reinterpret_cast<Dx11Pipeline**>(l_pData));
+      Dx11Pipeline_old* pPipeline = (*reinterpret_cast<Dx11Pipeline_old**>(l_pData));
 
       ((Dx11VertexShader*)g_registery[(ResourceHandle*)(&pPipeline->vertexShaderHandle)]->pResource)->bindResource();
       ((Dx11PixelShader*)g_registery[(ResourceHandle*)(&pPipeline->fragmentShaderHandle)]->pResource)->bindResource();

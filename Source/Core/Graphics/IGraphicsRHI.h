@@ -68,9 +68,16 @@ class IGraphicsRHI
   CORE_API virtual IndexBufferHandle    createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
   CORE_API virtual VertexShaderHandle   createVertexShader(const char* path)                                   = 0;
   CORE_API virtual FragmentShaderHandle createFragmentShader(const char* path)                                 = 0;
-  CORE_API virtual PipelineHandle       createPipeline(SPipelineDesc* pPipelineDesc)                           = 0;
   CORE_API virtual DepthRTHandle        createDepthRT()                                                        = 0;
   CORE_API virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize)                            = 0;
+
+  CORE_API virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
+
+  /**
+   * @brief
+   * New version of createPipeline function.
+   */
+  CORE_API virtual PipelineHandle createPipelineResource(SPipelineDescription* pPipelineDesc) = 0;
 
   CORE_API virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
 

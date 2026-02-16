@@ -7,13 +7,13 @@
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Dx11RHI.h"
 
-class Dx11PixelShader final : public IPixelShader
+class Dx11PixelShader final
 {
 public:
-	~Dx11PixelShader() override final 
+	~Dx11PixelShader() 
 	{}
 
-	void createResources(const wchar* path) override final {
+	void createResources(const wchar* path) {
 		ComPtr<ID3DBlob> pBlob;
 
 		D3DReadFileToBlob(path, &pBlob);
@@ -24,11 +24,9 @@ public:
 			nullptr,
 			&pShader
 		);
-
-		//printf("Pixel Shader Resources initalized.\n");
 	}
 
-	void bindResource() override final {
+	void bindResource() {
 		Dx11RHI::getContextPtr()->PSSetShader(pShader.Get(), nullptr, 0);
 	}
 

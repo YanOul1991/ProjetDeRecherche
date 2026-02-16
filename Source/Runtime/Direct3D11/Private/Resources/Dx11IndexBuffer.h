@@ -7,10 +7,10 @@
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Direct3D11/Dx11RHI.h"
 
-class Dx11IndexBuffer final : public IIndexBuffer
+class Dx11IndexBuffer final
 {
 public:
-  void createResources(uint32* pIndices, uint32 elementCount) override final {
+  void createResources(uint32* pIndices, uint32 elementCount){
     bufferElementCount = elementCount;
     stride = 0;
     offset = 0;
@@ -32,7 +32,7 @@ public:
     //printf("Index Buffer was initalized!\n");
   }
 
-  void bindResource() override final {
+  void bindResource() {
      Dx11RHI::getContextPtr()->IASetIndexBuffer(pBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
   }
 

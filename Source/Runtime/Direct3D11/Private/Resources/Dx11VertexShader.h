@@ -7,13 +7,13 @@
 #include "Core/OptimEngine.h"
 #include "Dx11RHI.h"
 
-class Dx11VertexShader final : public IVertexShader
+class Dx11VertexShader final
 {
  public:
-  ~Dx11VertexShader() override final {
+  ~Dx11VertexShader() {
   }
 
-  void createResources(const wchar* path) override final {
+  void createResources(const wchar* path) {
     ComPtr<ID3DBlob> pBlob{};
     ID3D11Device*    pDevice = Dx11RHI::getDevicePtr();
 
@@ -38,11 +38,9 @@ class Dx11VertexShader final : public IVertexShader
       pBlob->GetBufferPointer(),
       pBlob->GetBufferSize(),
       &pInput);
-
-    // printf("Vertex Shader Resources initalized.\n");
   }
 
-  void bindResource() override final {
+  void bindResource() {
     ID3D11DeviceContext* pContext = Dx11RHI::getContextPtr();
 
     pContext->IASetInputLayout(pInput.Get());

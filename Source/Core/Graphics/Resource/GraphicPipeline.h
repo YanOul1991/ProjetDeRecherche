@@ -15,7 +15,6 @@ enum class EPipelineVertexLayout : unsigned char {
   // ENUM_NOT_DEFINED_YET
 };
 
-
 enum class EPipelineDepthDesc : unsigned char {
   // ENUM_NOT_DEFINED_YET
 };
@@ -29,42 +28,38 @@ enum class EPipelineRenderTargetFormat : unsigned char {
 };
 
 /* **************************************
-    * RASTERIZER DESCIRPTIONS
-************************************** */
+ * RASTERIZER DESCIRPTIONS
+ ************************************** */
 
 enum class ERasterizerFillMode : unsigned char {
   Wireframe,
   Solid,
 };
 
-enum class ERasterizerCullMode : unsigned char
-{
+enum class ERasterizerCullMode : unsigned char {
   None,
   Front,
   Back
 };
 
-enum class ERasterizerFaceWinding : unsigned char
-{
+enum class ERasterizerFaceWinding : unsigned char {
   ClockWise,
   CounterClockWise
 };
 
-struct SRasterizerDescription
-{
-  ERasterizerFillMode     fillMode;
-  ERasterizerCullMode     cullMode;
-  ERasterizerFaceWinding  faceWinding;
-  int32                   depthBias;
-  float                   slopeScaledDepthBias;
+struct SRasterizerDescription {
+  ERasterizerFillMode    fillMode;
+  ERasterizerCullMode    cullMode;
+  ERasterizerFaceWinding faceWinding;
+  int32                  depthBias;
+  float                  slopeScaledDepthBias;
 };
 
 /* **************************************
-    * DEPTH STENCIL DESCIRPTIONS
-************************************** */
+ * DEPTH STENCIL DESCIRPTIONS
+ ************************************** */
 
-enum class EDepthStencilComparisonFunction : unsigned char
-{
+enum class EDepthStencilComparisonFunction : unsigned char {
   Never,
   Less,
   Equal,
@@ -75,15 +70,13 @@ enum class EDepthStencilComparisonFunction : unsigned char
   Always
 };
 
-enum class EDepthStencilDepthWriteMask : unsigned char
-{
+enum class EDepthStencilDepthWriteMask : unsigned char {
   WriteNone,
   WriteAll
 };
 
-struct SDepthStencilDescription
-{
-  bool depthTestEnabled;
+struct SDepthStencilDescription {
+  bool                            depthTestEnabled;
   EDepthStencilComparisonFunction depthComparisonFunction;
   EDepthStencilDepthWriteMask     depthWriteMask;
 };
@@ -94,23 +87,28 @@ enum class EShaderInputFormat {
   FLOAT4
 };
 
-
-struct SPipelineInputDescription
-{
-  const char* name;
-  uint32 index;
+struct SPipelineInputDescription {
+  const char*        name;
+  uint32             index;
   EShaderInputFormat inputFormat;
 };
 
 /* **************************************
-    * PIPELINE DESCIRPTION
-************************************** */
+ * PIPELINE DESCIRPTION
+ ************************************** */
 
-struct SPipelineDesc 
-{
-  VertexShaderHandle          vertexShaderHandle;
-  FragmentShaderHandle        fragmentShaderHandle;
-  SRasterizerDescription      rasterizerDescription;
-  SDepthStencilDescription    depthStencilDescription;
-  EPipelinePrimitiveTopology  primitiveTopology;
+struct SPipelineDesc {
+  VertexShaderHandle         vertexShaderHandle;
+  FragmentShaderHandle       fragmentShaderHandle;
+  SRasterizerDescription     rasterizerDescription;
+  SDepthStencilDescription   depthStencilDescription;
+  EPipelinePrimitiveTopology primitiveTopology;
+};
+
+struct SPipelineDescription {
+  const char*                vertexShader;
+  const char*                fragmentShader;
+  SRasterizerDescription     rasterizerDescription;
+  SDepthStencilDescription   depthStencilDescription;
+  EPipelinePrimitiveTopology primitiveTopology;
 };

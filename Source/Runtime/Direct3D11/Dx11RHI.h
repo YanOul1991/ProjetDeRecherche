@@ -1,26 +1,26 @@
 /* ======================================================================================
  *  Dx11RHI.h:
  *    Entry point for D3D11 API implementations.
- * 
- *  By: 
+ *
+ *  By:
  *    Yanis Oulmane
- * 
+ *
  * --------------------------------------------------------------------------------------
- * 
- *  REFERENCES  
+ *
+ *  REFERENCES
  *    References from Microsoft documentation for DIRECTX11 and DXGI.
  *      DXGI    - https://learn.microsoft.com/en-us/windows/win32/api/_direct3ddxgi/
  *      D3D11   - https://learn.microsoft.com/en-us/windows/win32/api/d3d11/
- * 
+ *
 ====================================================================================== */
 
 #pragma once
 
-#include "Core/OptimEngine.h"
-#include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Defines/DirectX/msDx11.h"
+#include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Graphics/IGraphicsRHI.h"
 #include "Core/Graphics/Resource/IGraphicResource.h"
+#include "Core/OptimEngine.h"
 
 #include <iostream>
 #include <vector>
@@ -42,38 +42,38 @@ enum class ECommandType {
 
 struct SCommand {
   ECommandType type;
-  uint32 dataOffset;
+  uint32       dataOffset;
 };
 
-//static inline std::unordered_map<ECommandType, void(*)(void*)> StaticCommandRegistery{};
+// static inline std::unordered_map<ECommandType, void(*)(void*)> StaticCommandRegistery{};
 
-class CommandBuffer 
+class CommandBuffer
 {
-public:
+ public:
   /*
-   * @brief 
+   * @brief
    * Add a command to the command buffer.
-   * 
+   *
    * @param param_cmd_Type
    * The command type from the ECommandType class enum.
-   * 
-   * @param param_pData  
+   *
+   * @param param_pData
    * A pointer to the required data to bind the resource.
    * For a drawIndex command pass a pointer to an index count.
    * For a pipeline pass a pointer to a pipeline object (to be created).
    * For a resource binding a pointer to a ResourceHandle object.
-   * 
-   * @param the byte size if the data passed in the 
-   * 
-  */
+   *
+   * @param the byte size if the data passed in the
+   *
+   */
   void push(ECommandType param_cmdType, void* param_pData, uint32 param_dataSize) {
     // Create a new command structure
-    // Assign the type of the data and 
+    // Assign the type of the data and
     // the offset of the data to be placed
     // inside the data buffer.
 
     SCommand cmd{};
-    cmd.type = param_cmdType;
+    cmd.type       = param_cmdType;
     cmd.dataOffset = (uint32)data.size();
 
     commands.push_back(cmd);
@@ -81,15 +81,15 @@ public:
   }
 
   std::vector<SCommand> commands;
-  std::vector<uint8> data;
+  std::vector<uint8>    data;
 };
 
-class Dx11RHI final : public IGraphicsRHI 
+class Dx11RHI final : public IGraphicsRHI
 {
-public:
-  static ID3D11Device*            getDevicePtr();
-  static ID3D11DeviceContext*     getContextPtr();
-  static ID3D11RenderTargetView*  initRenderTargetView();
+ public:
+  static ID3D11Device*           getDevicePtr();
+  static ID3D11DeviceContext*    getContextPtr();
+  static ID3D11RenderTargetView* initRenderTargetView();
 
   Dx11RHI();
 
@@ -99,21 +99,21 @@ public:
    */
   virtual ~Dx11RHI() override final;
 
-   /**
-    * @brief
-    * Initalized the appropriate resources to start using the DirectX11
-    * API.
-    * 
-    * @param windowOutput
-    * A pointer to an OS window, for DirectX11 the windows
-    * the window pointer is of type HWND.
-    */
+  /**
+   * @brief
+   * Initalized the appropriate resources to start using the DirectX11
+   * API.
+   *
+   * @param windowOutput
+   * A pointer to an OS window, for DirectX11 the windows
+   * the window pointer is of type HWND.
+   */
   virtual void Initialize(void* windowOutput) override final;
 
   /**
    * @brief
    * Start performing all the logic to render the next frame, by
-   * such as clearing the backbuffer, getting the rendering camera's 
+   * such as clearing the backbuffer, getting the rendering camera's
    * states, and reading from the command list.
    */
   virtual void draw() override final;
@@ -126,10 +126,10 @@ public:
   virtual void Clean() override final;
 
   /**
-   * @brief 
-   * This function updates the information involving about the output window's 
+   * @brief
+   * This function updates the information involving about the output window's
    * dimensions. It should clear the backbuffer and updates its width and height
-   * data. 
+   * data.
    *
    * To make this function work, all DirectX11 resources that hold references
    * to the backbuffer need to be freed, in order for the backbuffer to be allowed
@@ -163,12 +163,12 @@ public:
   /**
    * @brief
    * Creates a ID3D11Buffer ressource used for vertices
-   * 
+   *
    * @param pVertices
    * A pointer to a Vertex struct object buffer.
-   * 
+   *
    * @param elementCount the number of vertices in the buffer.
-   * 
+   *
    * @return
    * A handle ressource handle to a vertex buffer resource
    */
@@ -177,48 +177,50 @@ public:
   /**
    * @brief
    * Creates a ID3D11Buffer ressource used for indices
-   * 
+   *
    * @param pIndices
    * A pointer to a index buffer.
-   * 
+   *
    * @param elementCount the number of indices in the buffer.
-   * 
+   *
    * @return
    * A handle ressource handle to an index buffer resource
    */
-  virtual IndexBufferHandle     createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
+  virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) override final;
 
   /**
    * @brief
    * Creates a ID3D11VertexShader ressource
-   * 
+   *
    * @param path
    * The path to the compiled .cso object containing the compiled
    * vertex shader data.
-   * 
+   *
    * @return
    * A handle ressource handle to a vertex shader resource
    */
-  virtual VertexShaderHandle    createVertexShader(const char* path) override final;
+  virtual VertexShaderHandle createVertexShader(const char* path) override final;
 
   /**
    * @brief
    * Creates a ID3D11PixelShader ressource.
-   * 
+   *
    * @param path
    * The path to the compiled .cso object containing the compiled
    * pixel shader data.
-   * 
+   *
    * @return
    * A handle ressource handle to a pixel shader resource
    */
-  virtual FragmentShaderHandle  createFragmentShader(const char* path) override final;
+  virtual FragmentShaderHandle createFragmentShader(const char* path) override final;
 
-  virtual PipelineHandle        createPipeline(SPipelineDesc* pPipelineDesc) override final;
+  virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) override final;
 
-  virtual DepthRTHandle         createDepthRT() override final;
+  virtual PipelineHandle createPipelineResource(SPipelineDescription* pPipelineDesc) override final;
 
-  virtual ConstantBufferHandle  createConstantBuffer(uint64 objectByteSize) override final;
+  virtual DepthRTHandle createDepthRT() override final;
+
+  virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) override final;
 
   virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) override final;
 
@@ -236,9 +238,9 @@ public:
   virtual void excecuteCommands() override final;
   virtual void freeResource(ResourceHandle handle) override final;
 
-private:
-  void* m_outputWindow;      // Target Window.
-  Dx11RHIDevice* pDx11RHIDevice;  
+ private:
+  void*                m_outputWindow; // Target Window.
+  Dx11RHIDevice*       pDx11RHIDevice;
   static CommandBuffer cmdBuffer;
 };
 

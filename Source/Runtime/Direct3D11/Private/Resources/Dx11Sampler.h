@@ -7,9 +7,9 @@
 class Dx11Sampler final : public ISampler
 {
 public:
-	~Dx11Sampler() override final{}
+	~Dx11Sampler() override final {}
 
-	void createResource() override final {
+	void createResource() {
 		D3D11_SAMPLER_DESC samplerDesc{};
 
     samplerDesc.Filter    = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
