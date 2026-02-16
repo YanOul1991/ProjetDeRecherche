@@ -1,6 +1,6 @@
 // Dx11ResourceManagement.cpp
 
-#include "Private/Dx11ResourceManagement.h"
+#include "Private/Dx11ResourceRegistery.h"
 
 constexpr uint64 maskIndex      = 0x00000000FFFFFFFF;
 constexpr uint64 maskGeneration = 0xFFFFFFFF00000000;

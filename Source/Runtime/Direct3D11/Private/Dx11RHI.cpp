@@ -13,7 +13,7 @@
 #include "Core/Time/Time.h"
 #include "Core/Types/string.h"
 #include "Private/Dx11RHIDevice.h"
-#include "Private/Dx11ResourceManagement.h"
+#include "Private/Dx11ResourceRegistery.h"
 #include "Private/Resources/DirectX11Buffer.h"
 #include "Private/Resources/Dx11IndexBuffer.h"
 #include "Private/Resources/Dx11PixelShader.h"
