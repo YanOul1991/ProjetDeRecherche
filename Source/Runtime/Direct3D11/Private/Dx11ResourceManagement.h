@@ -92,22 +92,6 @@ class GraphicResourceRegistery
     }
   }
 
-  /*
-   * @brief
-   * DEPRECATED - Use validateHandle() instead.
-   * This function does not resource type
-  inline bool validate(ResourceHandle* pHandle) {
-    uint32 l_generation = getHandleGen(pHandle);
-    uint32 l_index = getHandleIndex(pHandle);
-
-    if (l_index >= entries.size() || entries.size() == 0) {
-      return false;
-    }
-
-    return entries[l_index].valid == true && l_generation == entries[l_index].generation;
-  }
-  */
-
   inline bool validateHandle(ResourceHandle* param_pHandle, EResourceTypes param_eResourceType) {
     uint32                   l_generation     = getHandleGen(param_pHandle);
     uint32                   l_index          = getHandleIndex(param_pHandle);

@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include "Core/Types/Color.h"
 #include "Core/Object/Image/Image.h"
+#include "Core/Types/Color.h"
 #include "Direct3D11/Dx11RHI.h"
-#include "Private/Resources/Buffer/DirectX11Buffer.h"
+#include "Private/Resources/DirectX11Buffer.h"
 
 struct alignas(16) VSInputConstantBuffer {
   float4x4 transform;

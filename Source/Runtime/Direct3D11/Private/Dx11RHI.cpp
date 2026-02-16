@@ -14,7 +14,7 @@
 #include "Core/Types/string.h"
 #include "Private/Dx11RHIDevice.h"
 #include "Private/Dx11ResourceManagement.h"
-#include "Private/Resources/Buffer/DirectX11Buffer.h"
+#include "Private/Resources/DirectX11Buffer.h"
 #include "Private/Resources/Dx11IndexBuffer.h"
 #include "Private/Resources/Dx11PixelShader.h"
 #include "Private/Resources/Dx11Sampler.h"
@@ -24,12 +24,21 @@
 
 #include <cmath>
 #include <vector>
-
-
-
+#include <array>
 
 static std::vector<Dx11DepthStencil*>            g_depthStencilResources{};
 static std::vector<Dx11DepthStencilViewTexture*> g_depthStencilViewTextureResources{};
+
+static std::unordered_map<ECommandType, void (*)(void*)>& StaticGraphicsBinding() {
+  static std::unordered_map<ECommandType, void (*)(void*)> functions{
+    { ECommandType::DrawIndexed,
+      [](void* pData) -> void {
+        printf("Calling draw from binding: %d\n", *reinterpret_cast<uint32*>(pData));
+      }
+    }
+  };
+  return functions;
+}
 
 class Dx11Pipeline
 {

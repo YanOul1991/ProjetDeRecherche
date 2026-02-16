@@ -34,7 +34,10 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceManagement.h">
       <Filter>Private</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Buffer\DirectX11Buffer.h">
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\DirectX11Buffer.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\IDx11Resource.h">
       <Filter>Private\Resources</Filter>
     </ClInclude>
   </ItemGroup>

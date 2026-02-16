@@ -14,27 +14,22 @@
  * 
 ====================================================================================== */
 
-#include "Core/Object/Camera/Camera.h"
-#include "Core/Object/Image/Image.h"
-
-#include "Core/System/FileStream.h"
-#include "Core/System/Application.h"
-
-#include "Core/Types/string.h"
-
-#include "Core/Exception/exception.h"
-
-#include "Core/Input/Input.h"
-
-#include "Private/Resources/Buffer/DirectX11Buffer.h"
 #include "Private/Dx11RHIDevice.h"
 
-#include <iostream>
-#include <sstream>
-#include <random>
-#include <iomanip>
-
+#include "Core/Exception/exception.h"
+#include "Core/Input/Input.h"
+#include "Core/Object/Camera/Camera.h"
+#include "Core/Object/Image/Image.h"
+#include "Core/System/Application.h"
+#include "Core/System/FileStream.h"
+#include "Core/Types/string.h"
 #include "Core/_Temporary/InterfaceImGui.h"
+#include "Private/Resources/DirectX11Buffer.h"
+
+#include <iomanip>
+#include <iostream>
+#include <random>
+#include <sstream>
 
 ID3D11Device*           Dx11RHIDevice::deviceRef{nullptr};
 ID3D11DeviceContext*    Dx11RHIDevice::contextRef{nullptr};
@@ -148,13 +143,6 @@ void Dx11RHIDevice::renderUpdate()
 
   Application::getMainWindowSize(&l_windowWidth, &l_windowHeight);
 
-  vsInputConstBufferData.transform = float4x4 {
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-  };
-
   float a = static_cast<float>(l_windowWidth) / static_cast<float>(l_windowHeight);
   constexpr float fov = Optim::Constants::pi / 3.0f;
   constexpr float n   = 0.1f;
@@ -174,28 +162,6 @@ void Dx11RHIDevice::renderUpdate()
     0, 0, f / (n - f), -1,
     0, 0, (n * f) / (n - f), 0
   };
-
-  /*
-  float a = static_cast<float>(l_windowWidth) / static_cast<float>(l_windowHeight);
-  constexpr float fov = Optim::Constants::pi / 3.0f;
-  constexpr float n   = 0.1f;
-  constexpr float f   = 1000.0f;
-
-  float4x4 l_lookAt = {
-    Camera::right.x,  Camera::up.x, Camera::forward.x, 0,
-    Camera::right.y,  Camera::up.y, Camera::forward.y, 0,
-    Camera::right.z,  Camera::up.z, Camera::forward.z, 0,
-    -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), -dotProduct(Camera::forward, Camera::position), 1,
-  };
-  float yScale = 1.0f / (tan(fov / 2.0f));
-  float4x4 perspectiveMatrix = float4x4 {
-    yScale / a, 0, 0, 0,
-    0, yScale, 0, 0,
-    0, 0, f / (f - n), 1,
-    0, 0, (-n * f) / (f - n), 0
-  };
-
-  */
 
   vsInputConstBufferData.lookAtMatrix       = l_lookAt.transpose();
   vsInputConstBufferData.perspectiveMatrix  = perspectiveMatrix.transpose();

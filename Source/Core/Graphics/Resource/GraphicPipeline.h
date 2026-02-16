@@ -88,6 +88,20 @@ struct SDepthStencilDescription
   EDepthStencilDepthWriteMask     depthWriteMask;
 };
 
+enum class EShaderInputFormat {
+  FLOAT2,
+  FLOAT3,
+  FLOAT4
+};
+
+
+struct SPipelineInputDescription
+{
+  const char* name;
+  uint32 index;
+  EShaderInputFormat inputFormat;
+};
+
 /* **************************************
     * PIPELINE DESCIRPTION
 ************************************** */

@@ -27,9 +27,6 @@
 
 class Dx11RHIDevice;
 
-
-
-
 enum class ECommandType {
   BindPipeline,
   BindVertexBuffer,
@@ -47,6 +44,8 @@ struct SCommand {
   ECommandType type;
   uint32 dataOffset;
 };
+
+//static inline std::unordered_map<ECommandType, void(*)(void*)> StaticCommandRegistery{};
 
 class CommandBuffer 
 {
@@ -68,9 +67,15 @@ public:
    * 
   */
   void push(ECommandType param_cmdType, void* param_pData, uint32 param_dataSize) {
+    // Create a new command structure
+    // Assign the type of the data and 
+    // the offset of the data to be placed
+    // inside the data buffer.
+
     SCommand cmd{};
     cmd.type = param_cmdType;
     cmd.dataOffset = (uint32)data.size();
+
     commands.push_back(cmd);
     data.insert(data.end(), reinterpret_cast<uint8*>(param_pData), reinterpret_cast<uint8*>(param_pData) + param_dataSize);
   }
@@ -121,9 +126,6 @@ public:
   virtual void Clean() override final;
 
   /**
-   * @brief
-   * [THIS FUNCTION IS NOT YET IMPLEMENTED]
-   * 
    * @brief 
    * This function updates the information involving about the output window's 
    * dimensions. It should clear the backbuffer and updates its width and height
@@ -132,17 +134,6 @@ public:
    * To make this function work, all DirectX11 resources that hold references
    * to the backbuffer need to be freed, in order for the backbuffer to be allowed
    * to be changed by the DirectX11 API.
-   * 
-   * For now the know ressources that need to be freed in order for this operation
-   * to work are the following:
-   * 
-   * - ID3D11RenderTargetView
-   * - ID3D11DepthStencilState
-   * - ID3D11DepthStencilView
-   * - ID3D11Texture2D (Only if used as a depth texture)
-   * 
-   * The management of those resources should be done through their their respective 
-   * implemented container classes such as Dx11DepthStencilViewTexture or Dx11RasterizerState.
    */
   virtual void updateSystemWindowSize(uint32 newWidth, uint32 newHeight) override final;
 
