@@ -10,8 +10,8 @@
 #include "Core/Graphics/IGraphicsDevice.h"
 #include "Core/Graphics/Resource/GraphicPipeline.h"
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
-#include "Core/Graphics/Resource/IGraphicResource.h"
 #include "Core/Graphics/Vertex.h"
+#include "Core/Object/Image/Image.h"
 #include "Core/OptimEngine.h"
 
 /*
@@ -25,8 +25,6 @@ class CORE_API IGraphicsRHI
   virtual void Initialize(void* pWindowHandle) = 0;
   virtual void draw()                          = 0;
   virtual void Clean()                         = 0;
-
-  // virtual IGraphicsDevice* GetDevice() = 0;
 
   /*
    * @brief
@@ -69,20 +67,13 @@ class CORE_API IGraphicsRHI
    * A handle to the graphique resource.
    */
   virtual IndexBufferHandle createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) = 0;
-  // virtual VertexShaderHandle   createVertexShader(const char* path)                                   = 0;
-  // virtual FragmentShaderHandle createFragmentShader(const char* path)                                 = 0;
+
   virtual DepthRTHandle createDepthRT() = 0;
 
   virtual TextureResourceHandle createTextureResource(const Image* pImage) = 0;
 
   virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) = 0;
 
-  // virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
-
-  /**
-   * @brief
-   * New version of createPipeline function.
-   */
   virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
 
   virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
@@ -117,10 +108,6 @@ class CORE_API IGraphicsRHI
    */
   virtual void cmdBindIndexBuffer(IndexBufferHandle* pIndexBufferHandle) = 0;
 
-  // virtual void cmdBindVertexShader(VertexShaderHandle* pVertexShaderHandle) = 0;
-
-  // virtual void cmdBindFragmentShader(FragmentShaderHandle* pFragmentShader) = 0;
-
   virtual void cmdBindPipeline(PipelineHandle* pPipeline) = 0;
 
   virtual void cmdSetRenderTargets(DepthRTHandle* pDepthRTHandle) = 0;
@@ -134,22 +121,14 @@ class CORE_API IGraphicsRHI
    */
   virtual void cmdDrawIndexed(uint32 indexCount) = 0;
 
+  virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) = 0;
+
+  virtual void cmdBindTexture(TextureResourceHandle* pTextureResourceHandle) = 0;
+
   /*
    * @brief
    * Excecutes all the commands in the command buffer.
    * The command buffer gets cleared once all its commands have be ran.
    */
   virtual void excecuteCommands() = 0;
-
-  virtual void cmdBindConstantBuffer(ConstantBufferHandle* pConstantBuffer) = 0;
-
-  virtual void cmdBindTexture(TextureResourceHandle* pTextureResourceHandle) = 0;
-
-  /*
-   * OLD SYSTEMS TO BE UPDATED SOON
-   virtual ITextureResource* createTextureResource(const Image* pImage) = 0;
-   virtual ISampler*         createSamplerResource()                    = 0;
-   virtual void              BindTexture(ITextureResource* pTexture)    = 0;
-   virtual void              bindSampler(ISampler* pSampler)            = 0;
-   */
 };

@@ -1,30 +1,20 @@
-/* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      + main.cpp:
-          Optim Engine system application entry point.
-
-      + By:
-          Yanis Oulmane
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; */
+// main.cpp
 
 #include "Core/System/Application.h"
-#include <iostream>
+
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 int main() {
-  printf("\n----------------------------- Main start -----------------------------\n");
-
   // Create application instance
-  Application* application{ new Application };
+  Application* application{new Application};
 
   // Initialize application
   application->ApplicationStart();
 
   // Excecute Application running loop
-  while (application->ShouldRun())
-  {
+  while (application->ShouldRun()) {
     try {
       application->ApplicationLoop();
     }

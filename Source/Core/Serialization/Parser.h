@@ -14,13 +14,12 @@ class Parser
 
   Parser(const std::vector<Token>& param_tokens);
 
-  const std::vector<Token> tokens;
-
-  size_t       index;
   const Token& peek(int i = 0) const;
 
   const Token& consume();
 
   bool isEnd() const;
 
+  const std::vector<Token> tokens;
+  size_t index;
 };

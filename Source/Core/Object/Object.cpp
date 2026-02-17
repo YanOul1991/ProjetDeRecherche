@@ -6,6 +6,7 @@
 ====================================================================================== */
 
 #include "Core/Object/Object.h"
+
 #include "Core/OptimEngine.h"
 
 #include <iomanip>
@@ -17,15 +18,12 @@
 
 static std::unordered_map<SGuid, Object*> objectRegistery{};
 
-Object::Object() 
-{
+Object::Object() {
   m_guid = Optim::Random::getGetGuid();
   objectRegistery.emplace(m_guid, this);
-  //printf("[Object] Object class object instanciated\n");
 }
 
-Object::~Object() 
-{
+Object::~Object() {
   auto target = objectRegistery.find(m_guid);
 
   if (target != objectRegistery.end()) {
@@ -37,14 +35,13 @@ Object* Object::getObject(const SGuid& guid) {
   return nullptr;
 }
 
-bool Object::isChildOf(const TypeInfo* baseType) const 
-{
+bool Object::isChildOf(const TypeInfo* baseType) const {
   const TypeInfo* currentType = GetTypeInfo();
 
   while (currentType != nullptr) {
     if (currentType == baseType) {
       return true;
-    }  
+    }
 
     currentType = currentType->baseType;
   }
@@ -52,12 +49,11 @@ bool Object::isChildOf(const TypeInfo* baseType) const
 }
 
 /**
- * @brief 
+ * @brief
  * Print all the fields of and instance of a reflected object
  * and its reflected fields.
  */
-void CORE_API printFields(void* object, const TypeInfo* type, int indent) 
-{
+void CORE_API printFields(void* object, const TypeInfo* type, int indent) {
   for (const FieldInfo& fieldInfo : type->fields) {
     void* pField = (uint8*)object + fieldInfo.offset;
 
@@ -68,7 +64,7 @@ void CORE_API printFields(void* object, const TypeInfo* type, int indent)
     if (fieldInfo.typeInfo->typeData == TypeData::Primitive) {
       /**
        * If the the data of the type is a primitive,
-       * then simply then call its toString method to 
+       * then simply then call its toString method to
        * print it.
        */
       std::cout << fieldInfo.typeInfo->toString(pField) << '\n';
@@ -77,9 +73,9 @@ void CORE_API printFields(void* object, const TypeInfo* type, int indent)
       /**
        * If the field is of an array type, then use the arrayRelatedFields,
        * to get the size of the array type object.
-       * 
+       *
        * When iterating must check if the TypeData of the elements,
-       * if they are of type primitive, then their values can simply 
+       * if they are of type primitive, then their values can simply
        * be printed, else recall the printField function to get
        * the field of the data.
        */
@@ -104,7 +100,7 @@ void CORE_API printFields(void* object, const TypeInfo* type, int indent)
     else {
       /**
        * If the field is either a Structure or an Object
-       * then call the 
+       * then call the
        */
       std::cout << "\n";
       printFields(pField, fieldInfo.typeInfo, indent + 2);
@@ -112,8 +108,7 @@ void CORE_API printFields(void* object, const TypeInfo* type, int indent)
   }
 }
 
-void CORE_API printTypeFields(const TypeInfo* type, int indent) 
-{
+void CORE_API printTypeFields(const TypeInfo* type, int indent) {
   for (size_t i = 0; i < indent; i++) {
     std::cout << " ";
   }
@@ -132,22 +127,21 @@ void CORE_API printTypeFields(const TypeInfo* type, int indent)
     }
   }
 
-  //if (type->baseType) {
-  //  for (size_t i = 0; i < (indent + indent); i++) {
-  //    std::cout << " ";
-  //  }
-  //  std::cout << "Inherited fields from:\n";
-  //  printTypeFields(type->baseType, indent + indent);
-  //}
+  // if (type->baseType) {
+  //   for (size_t i = 0; i < (indent + indent); i++) {
+  //     std::cout << " ";
+  //   }
+  //   std::cout << "Inherited fields from:\n";
+  //   printTypeFields(type->baseType, indent + indent);
+  // }
 
   std::cout << '\n';
 }
 
-// Since Object is the base type for everything else 
+// Since Object is the base type for everything else
 // it ise defined manually for specific fields.
 
-TypeInfo* Object::StaticTypeInfo() 
-{
+TypeInfo* Object::StaticTypeInfo() {
   static TypeInfo info;
   static bool     initialized = false;
   if (!initialized) {

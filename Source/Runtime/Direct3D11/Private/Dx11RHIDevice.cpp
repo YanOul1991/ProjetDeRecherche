@@ -1,17 +1,17 @@
 /* ======================================================================================
  *  DirectX11Graphics.cpp:
- * 
+ *
  *  By:
  *    Yanis Oulmane
  *
  * --------------------------------------------------------------------------------------
  *  Sources for detailed description of important concepts.
- * 
+ *
  *    DXGI_SWAP_CHAIN_DESC            [ https://learn.microsoft.com/en-us/windows/win32/api/dxgi/ns-dxgi-dxgi_swap_chain_desc ]
  *    D3D11CreateDeviceAndSwapChain() [ https://learn.microsoft.com/en-us/windows/win32/api/d3d11/nf-d3d11-d3d11createdeviceandswapchain ]
  *    D3D11_BUFFER_DESC               [ https://learn.microsoft.com/en-us/windows/win32/api/d3d11/ns-d3d11-d3d11_buffer_desc ]
  *    Primitive Topologies            [ https://learn.microsoft.com/en-us/windows/win32/direct3d11/d3d10-graphics-programming-guide-primitive-topologies ]
- * 
+ *
 ====================================================================================== */
 
 #include "Private/Dx11RHIDevice.h"
@@ -24,41 +24,36 @@
 #include "Core/System/FileStream.h"
 #include "Core/Types/string.h"
 #include "Core/_Temporary/InterfaceImGui.h"
-#include "Private/Resources/DirectX11Buffer.h"
+#include "Private/Resources/Dx11ConstantBuffer.h"
 
 #include <iomanip>
 #include <iostream>
 #include <random>
 #include <sstream>
 
-ID3D11Device*           Dx11RHIDevice::deviceRef{nullptr};
-ID3D11DeviceContext*    Dx11RHIDevice::contextRef{nullptr};
-ID3D11RenderTargetView* Dx11RHIDevice::renderTargetView{nullptr};
+Dx11RHIDevice::Dx11RHIDevice() {
+}
 
-Dx11RHIDevice::Dx11RHIDevice()
-{}
+Dx11RHIDevice::~Dx11RHIDevice() {
+}
 
-Dx11RHIDevice::~Dx11RHIDevice() 
-{ }
-
-bool Dx11RHIDevice::initialize(HWND param_outputWindow, Dx11RHI* param_pDx11RHI)
-{
+bool Dx11RHIDevice::initialize(HWND param_outputWindow, Dx11RHI* param_pDx11RHI) {
   OPTIM_WIN_COM_CHECK_START();
 
   DXGI_SWAP_CHAIN_DESC swapChainDesc{};
   ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
-  swapChainDesc.BufferDesc.Width              = 1920;
-  swapChainDesc.BufferDesc.Height             = 1080;
-  swapChainDesc.BufferDesc.Format             = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-  swapChainDesc.BufferDesc.Scaling            = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED;
-  swapChainDesc.BufferDesc.ScanlineOrdering   = DXGI_MODE_SCANLINE_ORDER::DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+  swapChainDesc.BufferDesc.Width            = 1920;
+  swapChainDesc.BufferDesc.Height           = 1080;
+  swapChainDesc.BufferDesc.Format           = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+  swapChainDesc.BufferDesc.Scaling          = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED;
+  swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER::DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 
-  swapChainDesc.BufferDesc.RefreshRate.Numerator    = 0;
-  swapChainDesc.BufferDesc.RefreshRate.Denominator  = 0;
+  swapChainDesc.BufferDesc.RefreshRate.Numerator   = 0;
+  swapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
 
-  swapChainDesc.SampleDesc.Count    = 1;
-  swapChainDesc.SampleDesc.Quality  = 0;
+  swapChainDesc.SampleDesc.Count   = 1;
+  swapChainDesc.SampleDesc.Quality = 0;
 
   swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
   swapChainDesc.BufferCount = 1;
@@ -84,22 +79,14 @@ bool Dx11RHIDevice::initialize(HWND param_outputWindow, Dx11RHI* param_pDx11RHI)
     &m_pSwapChain,
     &m_pDevice,
     nullptr,
-    &m_pContext
-  ));
-
-  /// ------------------------------------------------------------
-  /// TEMPORARY - Set static fields for getting device and context
-  /// ------------------------------------------------------------
-  deviceRef         = m_pDevice.Get();
-  contextRef        = m_pContext.Get();
-  renderTargetView  = m_pRenderTargetView.Get();
+    &m_pContext));
 
   /// ------------------------------------------------------------
   /// Transform and view matrices constant buffer initalization
   /// ------------------------------------------------------------
-  pDxRHI = param_pDx11RHI;
+  pDxRHI                      = param_pDx11RHI;
   constantBufferTransformView = pDxRHI->createConstantBuffer(sizeof(VSInputConstantBuffer));
-  
+
   /// ------------------------------------------------------------
   /// Initalize ImGUI
   /// ------------------------------------------------------------
@@ -108,8 +95,7 @@ bool Dx11RHIDevice::initialize(HWND param_outputWindow, Dx11RHI* param_pDx11RHI)
   return true;
 }
 
-void Dx11RHIDevice::initRenderTargetView(uint32 param_newWidth, uint32 param_newHeight)
-{
+void Dx11RHIDevice::initRenderTargetView(uint32 param_newWidth, uint32 param_newHeight) {
   OPTIM_CHECK_WIN_COM();
   ComPtr<ID3D11Texture2D> l_pBackbuffer;
   OPTIM_TRY_DX(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &l_pBackbuffer));
@@ -132,46 +118,52 @@ void Dx11RHIDevice::clearRenderTargetView() {
 }
 
 void Dx11RHIDevice::clearBuffer(float red, float green, float blue, float alpha) const {
-  const float color[4] = { red, green, blue, alpha };
+  const float color[4] = {red, green, blue, alpha};
   m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), color);
 }
 
-void Dx11RHIDevice::renderUpdate()
-{
+void Dx11RHIDevice::renderUpdate() {
   int32 l_windowWidth{};
   int32 l_windowHeight{};
 
   Application::getMainWindowSize(&l_windowWidth, &l_windowHeight);
 
-  float a = static_cast<float>(l_windowWidth) / static_cast<float>(l_windowHeight);
+  float           a   = static_cast<float>(l_windowWidth) / static_cast<float>(l_windowHeight);
   constexpr float fov = Optim::Constants::pi / 3.0f;
   constexpr float n   = 0.1f;
   constexpr float f   = 1000.0f;
 
   float4x4 l_lookAt = {
-    Camera::right.x,  Camera::up.x, -Camera::forward.x, 0,
-    Camera::right.y,  Camera::up.y, -Camera::forward.y, 0,
-    Camera::right.z,  Camera::up.z, -Camera::forward.z, 0,
-    -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), -dotProduct(-1 * Camera::forward, Camera::position), 1,
+    Camera::right.x,
+    Camera::up.x,
+    -Camera::forward.x,
+    0,
+    Camera::right.y,
+    Camera::up.y,
+    -Camera::forward.y,
+    0,
+    Camera::right.z,
+    Camera::up.z,
+    -Camera::forward.z,
+    0,
+    -dotProduct(Camera::right, Camera::position),
+    -dotProduct(Camera::up, Camera::position),
+    -dotProduct(-1 * Camera::forward, Camera::position),
+    1,
   };
 
-  float yScale = 1.0f / (tan(fov / 2.0f));
-  float4x4 perspectiveMatrix = float4x4 {
-    yScale / a, 0, 0, 0,
-    0, yScale, 0, 0,
-    0, 0, f / (n - f), -1,
-    0, 0, (n * f) / (n - f), 0
-  };
+  float    yScale            = 1.0f / (tan(fov / 2.0f));
+  float4x4 perspectiveMatrix = float4x4{
+    yScale / a, 0, 0, 0, 0, yScale, 0, 0, 0, 0, f / (n - f), -1, 0, 0, (n * f) / (n - f), 0};
 
-  vsInputConstBufferData.lookAtMatrix       = l_lookAt.transpose();
-  vsInputConstBufferData.perspectiveMatrix  = perspectiveMatrix.transpose();
+  vsInputConstBufferData.lookAtMatrix      = l_lookAt.transpose();
+  vsInputConstBufferData.perspectiveMatrix = perspectiveMatrix.transpose();
 
   pDxRHI->updateConstantBuffer(&constantBufferTransformView, &vsInputConstBufferData);
   pDxRHI->cmdBindConstantBuffer(&constantBufferTransformView);
 }
 
-void Dx11RHIDevice::presentBuffer() const
-{
+void Dx11RHIDevice::presentBuffer() const {
   OPTIM_WIN_COM_CHECK_START();
   InterfaceImGui::update();
 

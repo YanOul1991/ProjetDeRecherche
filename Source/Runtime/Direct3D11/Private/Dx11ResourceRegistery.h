@@ -4,17 +4,11 @@
 
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Defines/Windows/windowsAPI.h"
+#include "Core/Graphics/Resource/GraphicResourceHandle.h"
 #include "Core/Utilities/Pointer/UniquePtr.h"
 #include "Private/Resources/Dx11IndexBuffer.h"
-#include "Private/Resources/Dx11PixelShader.h"
-#include "Private/Resources/Dx11Sampler.h"
 #include "Private/Resources/Dx11Texture.h"
 #include "Private/Resources/Dx11VertexBuffer.h"
-#include "Private/Resources/Dx11VertexShader.h"
-
-/* =================================================================
-  REMAKING OF RESOURCE REGISTERY
-================================================================= */
 
 struct ResourceEntryData {
   IDx11Resource* pResource;

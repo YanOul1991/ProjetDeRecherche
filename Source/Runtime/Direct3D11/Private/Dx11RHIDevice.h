@@ -1,5 +1,5 @@
 /* ======================================================================================
- *  DirectX11Graphics.h:
+ *  Dx11RHIDevice.h:
  *
  *  By:
  *    Yanis Oulmane
@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include "Core/Object/Image/Image.h"
-#include "Core/Types/Color.h"
+#include "Core/Defines/DirectX/msDx11.h"
+#include "Core/Defines/Windows/windowsAPI.h"
+#include "Core/Math/OptimMathematics.h"
 #include "Direct3D11/Dx11RHI.h"
-#include "Private/Resources/DirectX11Buffer.h"
 
 struct alignas(16) VSInputConstantBuffer {
   float4x4 transform;
@@ -21,10 +21,6 @@ struct alignas(16) VSInputConstantBuffer {
 class Dx11RHIDevice final
 {
  public:
-  static ID3D11Device*            deviceRef;
-  static ID3D11DeviceContext*     contextRef;
-  static ID3D11RenderTargetView*  renderTargetView;
-
   Dx11RHIDevice();
   ~Dx11RHIDevice();
 
@@ -40,13 +36,13 @@ class Dx11RHIDevice final
    * @brief
    * Initalized an ID3D11RenderTargetView object to get reference to
    * backbuffer.
-  */
+   */
   void initRenderTargetView(uint32 newWidth, uint32 newHeight);
 
   /**
    * @brief
    * Clears the ID3D11RenderTargetView object references and sets
-   * the render target values of the the render target view and depth stencil 
+   * the render target values of the the render target view and depth stencil
    * to null;
    */
   void clearRenderTargetView();
@@ -55,14 +51,13 @@ class Dx11RHIDevice final
   void clearBuffer(float red, float green, float blue, float alpha) const;
   void renderUpdate();
 
-  ComPtr<ID3D11Device>            m_pDevice           {nullptr};
-  ComPtr<IDXGISwapChain>          m_pSwapChain        {nullptr};
-  ComPtr<ID3D11DeviceContext>     m_pContext          {nullptr};
-  ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView {nullptr};
+  ComPtr<ID3D11Device>           m_pDevice{nullptr};
+  ComPtr<IDXGISwapChain>         m_pSwapChain{nullptr};
+  ComPtr<ID3D11DeviceContext>    m_pContext{nullptr};
+  ComPtr<ID3D11RenderTargetView> m_pRenderTargetView{nullptr};
 
-private:
-
-  ConstantBufferHandle  constantBufferTransformView{};
+ private:
+  ConstantBufferHandle constantBufferTransformView{};
 
   VSInputConstantBuffer vsInputConstBufferData{};
 

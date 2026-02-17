@@ -80,17 +80,11 @@
     <ClInclude Include="..\Source\Core\Graphics\IGraphicsRHI.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h">
-      <Filter>Graphics\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\Graphics.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\System\ModelLoader.h">
       <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h">
-      <Filter>Graphics\Resource</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicPipeline.h">
       <Filter>Graphics\Resource</Filter>
@@ -115,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\Serialization\Serializer.h">
       <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h">
+      <Filter>Graphics\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,6 @@
 
 #include "Core/Graphics/Resource/GraphicPipeline.h"
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
-#include "Core/Graphics/Resource/IGraphicResource.h"
 #include "Core/Graphics/Vertex.h"
 #include "Core/OptimEngine.h"
 

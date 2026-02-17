@@ -28,7 +28,6 @@
     <ClInclude Include="..\Source\Core\Graphics\Mesh.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicPipeline.h" />
     <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h" />
-    <ClInclude Include="..\Source\Core\Graphics\Resource\IGraphicResource.h" />
     <ClInclude Include="..\Source\Core\Graphics\Vertex.h" />
     <ClInclude Include="..\Source\Core\Input\Input.h" />
     <ClInclude Include="..\Source\Core\Math\OptimMathematics.h" />

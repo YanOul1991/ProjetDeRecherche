@@ -1,27 +1,52 @@
 #include "Core/Serialization/Parser.h"
-#include "Core/Reflection/OptimReflection.h"
+
 #include "Core/Math/OptimMathematics.h"
+#include "Core/Reflection/OptimReflection.h"
 
 /**
- * Helper functions
+ * @brief
+ * Check if the next token is an identifier
  */
-
 static bool expectIdentifier(Parser& parser) {
   return parser.peek().type == ETokenType::Identifier;
 }
 
+/**
+ * @brief
+ * Check if the next token is a certain symbole
+ */
 static bool expectSymbol(Parser& parser, const char* symbol) {
   return parser.peek().text == symbol;
 }
 
+/**
+ * @brief
+ * Checks if the current object type object
+ * contains a certain field.
+ */
 static const FieldInfo* findFieldInfo(const std::string& fieldName, const TypeInfo* type) {
   for (auto& field : type->fields) {
     if (fieldName == field.name) {
       return &field;
     }
   }
-
   return nullptr;
+}
+
+/**
+ * @brief
+ * Skip object type field (Object/Structures)
+ */
+static void skipObjectField(Parser& parser) {
+  // Consume all tokens tokens until end of object
+  while (!expectSymbol(parser, ")")) {
+    // If another object is detected skip the object
+    if (expectSymbol(parser, "(")) {
+      skipObjectField(parser);
+    }
+    parser.consume();
+  }
+  parser.consume();
 }
 
 /**
@@ -44,16 +69,13 @@ static const FieldInfo* findFieldInfo(const std::string& fieldName, const TypeIn
  *
  */
 static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_typeInfo) {
-  //std::cout << "[Call]\n" << __FUNCSIG__ << '\n';
-
-  // Iterrate through object until end
+    // Itterate through fields of object.
   while (!expectSymbol(parser, ")")) {
-    //std::cout << "Loop start......\n";
 
-    //std::cout << "Next identifier: " << parser.peek().text << '\n';
     if (!expectIdentifier(parser)) {
       throw std::exception("Expected identifier token.\n");
     }
+
     // Get the identifier and validate if the identifier
     // is a field name of the object.
     std::string identifierName = parser.consume().text;
@@ -64,58 +86,56 @@ static void parseFields(Parser& parser, void* pInstance, const TypeInfo* param_t
     if (!expectSymbol(parser, "=")) {
       throw std::exception("Expected symbol token: =.\n");
     }
+
     parser.consume();
 
     if (fieldInfo != nullptr) {
-      //std::cout << "An object of type <" << typeInfo->name << "> contains a field of <" << fieldInfo->name << "> of type <" << fieldInfo->typeInfo->name << ">\n";
-    }
-    else {
-      //std::cout << "An object of type: <" << param_typeInfo->name << "> DOES NOT HAVE A FIELD <" << identifierName << ">\n";
-      throw std::exception("[Parser Exception] Could not find field in object.\n");
-    }
+      if (fieldInfo->typeInfo->typeData == TypeData::Structure || fieldInfo->typeInfo->typeData == TypeData::Object) {
 
+        if (!expectSymbol(parser, "(")) {
+          throw std::exception("Expected symbol token: =.\n");
+        }
+        parser.consume();
+        // std::cout << "Peeking parser: " << parser.peek().text << "\n";
 
-    if (fieldInfo->typeInfo->typeData == TypeData::Structure || fieldInfo->typeInfo->typeData == TypeData::Object) {
-      //std::cout << "The field <" << identifierName << "> is of type <Strcuture/Object>\n";
-      //std::cout << "Address of next field: " << std::hex << pField << std::dec << '\n';
+        void* pField = (uint8*)pInstance + fieldInfo->offset;
 
-      if (!expectSymbol(parser, "(")) {
-        throw std::exception("Expected symbol token: =.\n");
+        parseFields(parser, pField, fieldInfo->typeInfo);
+
+        if (!expectSymbol(parser, ")")) {
+          throw std::exception("Expected symbol token: =.\n");
+        }
+
+        parser.consume();
       }
-      parser.consume();
-      //std::cout << "Peeking parser: " << parser.peek().text << "\n";
-
-      void* pField = (uint8*)pInstance + fieldInfo->offset;
-
-      parseFields(parser, pField, fieldInfo->typeInfo);
-
-      if (!expectSymbol(parser, ")")) {
-        throw std::exception("Expected symbol token: =.\n");
+      else if (fieldInfo->typeInfo->typeData == TypeData::Primitive) {
+        void* pField = (uint8*)pInstance + fieldInfo->offset;
+        fieldInfo->typeInfo->fromString(pField, parser.consume().text);
       }
-
-      parser.consume();
+      else {
+        throw std::exception("[Parser Exception] - Unkownd or unsupported type data.\n");
+      }
     }
-    else if(fieldInfo->typeInfo->typeData == TypeData::Primitive) {
-      /*
-      std::cout << "The field <" << identifierName << "> is of type <Primitive>\n";
-      std::cout << "Peeking parser: " << parser.peek().text << "\n";
-      */
+    else { // IF CANNOT FIND FIELD
+      std::cout << "An object of type: <" << param_typeInfo->name << "> DOES NOT HAVE A FIELD <" << identifierName << ">. Skipping field.\n";
 
-      void* pField = (uint8*)pInstance + fieldInfo->offset;
+      if (expectSymbol(parser, "(")) {
+        parser.consume();
+        skipObjectField(parser);
+      }
+      else {
+        // If the filed is a primitive like value then simply skip the field
+        parser.consume();
 
-      //std::cout << "Address of next field: " << std::hex << pField << std::dec << '\n';
-      //std::cout << "Address of function:   " << std::hex << fieldInfo->typeInfo->fromString << std::dec << '\n';
-
-      fieldInfo->typeInfo->fromString(pField, parser.consume().text);
-    }
-    else {
-      throw std::exception("[Parser Exception] - Unkownd or unsupported type data.\n");
+        if (expectSymbol(parser, ",")) {
+          parser.consume();
+        }
+      }
     }
 
     if (expectSymbol(parser, ",")) {
       parser.consume();
     }
-    //std::cout << "Peeking parser: " << parser.peek().text << "\n";
   }
 }
 
@@ -135,29 +155,30 @@ void* Parser::CreateObject(Parser& parser) {
     }
 
     if (!expectIdentifier(parser)) {
-      throw std::exception("The next token is NOT an identifier");
-      //printf("The next token %s is NOT an identifier\n", parser.peek().text.c_str());
-      return nullptr;
+      std::string message;
+
+      message.append("The next token:<").append(parser.peek().text).append("> is NOT an identifier: Peek->").append(parser.peek().text);
+
+      throw std::exception(message.c_str());
     }
 
     // Get if the indetifier is a registered type and if its
     // of a type Object.
-
     if (!GetTypeRegistry().contains(parser.peek().text.c_str())) {
       printf("The iditifier [%s] is not a valid type.\n", parser.peek().text.c_str());
       return nullptr;
     }
     else {
-      //printf("The iditifier [%s] IS a valid type.\n", parser.peek().text.c_str());
+      // printf("The iditifier [%s] IS a valid type.\n", parser.peek().text.c_str());
     }
 
     const TypeInfo* pInfo = GetTypeRegistry()[parser.peek().text.c_str()];
 
     if (pInfo->typeData == TypeData::Object) {
-      //printf("The iditifier [%s] IS an Object type.\n", parser.peek().text.c_str());
+      // printf("The iditifier [%s] IS an Object type.\n", parser.peek().text.c_str());
     }
     else {
-      printf("The iditifier [%s] IS an Object type.\n", parser.peek().text.c_str());
+      //printf("The iditifier [%s] IS an Object type.\n", parser.peek().text.c_str());
       return nullptr;
     }
 
@@ -168,7 +189,7 @@ void* Parser::CreateObject(Parser& parser) {
     void* instance = pInfo->createFn();
 
     if (!expectSymbol(parser, "=")) {
-      printf("[Parser] Error: Could not find symbol \"=\"\n");
+      //printf("[Parser] Error: Could not find symbol \"=\"\n");
     }
     else {
       // printf("[Parser] Found symbol \"=\"\n");
@@ -176,7 +197,7 @@ void* Parser::CreateObject(Parser& parser) {
     }
 
     if (!expectSymbol(parser, "(")) {
-      printf("[Parser] Error: Could not find symbol \"(\"\n");
+      //printf("[Parser] Error: Could not find symbol \"(\"\n");
     }
     else {
       // printf("[Parser] Found symbol \"(\"\n");
@@ -194,17 +215,16 @@ void* Parser::CreateObject(Parser& parser) {
 
     parser.consume();
 
-    //std::cout << "All fields have been parsed\n";
+    // std::cout << "All fields have been parsed\n";
 
-    std::cout << "Object created...\n";
+    //std::cout << "Object created...\n";
 
     return instance;
   }
   catch (const std::exception& e) {
-    std::cout << "[Error - Exception]:\n" << e.what();
+    std::cout << "[Error - Exception]: " << e.what();
     return nullptr;
   }
-
 }
 
 Parser::Parser(const std::vector<Token>& param_tokens) :
@@ -217,7 +237,7 @@ const Token& Parser::peek(int i) const {
 }
 
 const Token& Parser::consume() {
-  //std::cout << "Consuming token: " << peek().text << '\n';
+  // std::cout << "Consuming token: " << peek().text << '\n';
   return tokens[index++];
 }
 

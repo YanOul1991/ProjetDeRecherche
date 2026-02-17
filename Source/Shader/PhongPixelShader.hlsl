@@ -6,7 +6,7 @@ static const float3 materialColor = { 0.0f, 1.0f, 1.0f }; // Color of the fragme
 static const float3 ambient = { 0.15f, 0.15f, 0.15f };
 
 // static const float3 diffuseColor = { 1.0f, 0.75f, 0.52f }; // Light Color
-static const float3 diffuseColor      = { 1.0f, 0.6f, 1.0f }; // Light Color
+static const float3 diffuseColor      = { 1.0f, 1.0f, 1.0f }; // Light Color
 static const float  diffuseIntensity  = 5.0f;              // Light intensity ,k
 
 static const float attenuation_constant   = 1.00f;

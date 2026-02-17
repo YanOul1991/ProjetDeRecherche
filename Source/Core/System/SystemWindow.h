@@ -86,19 +86,32 @@ class SystemWindow final
 
   void getMouseDelta(float* mouseX, float* mouseY);
 
-  /*
+  /**
    * @brief
-   * Window Click Event.
-   * 
-   * 
+   * On System window click event
+   *
+   * Callback parameters:
+   *  - float positionX: The X position where the mouse down event occured
+   *  - float positionY: The Y position where the mouse down event occured
+   *  - int32 Button   : The mouse button.
    */
   Delegate<float, float, int32> onSystemWindowClick{};
+
+  /**
+   * @brief
+   * On System window click event
+   *
+   * Callback parameters:
+   *  - float positionX: The X position where the mouse up event occured
+   *  - float positionY: The Y position where the mouse up event occured
+   *  - int32 Button   : The mouse button.
+   */
   Delegate<float, float, int32> onSystemWindowMouseUp{};
 
   /**
    * @brief
    * Window event triggered when it is resized.
-   * 
+   *
    * Callback parameters:
    *  - uint32 width: New width in pixels
    *  - uint32 height: New hieght in pixels

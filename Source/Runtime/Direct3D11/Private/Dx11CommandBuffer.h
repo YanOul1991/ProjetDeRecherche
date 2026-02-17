@@ -7,30 +7,52 @@
 
 #include <vector>
 
-enum ECmdBufferInstructionType {
+enum class ECommandType {
   BindPipeline,
   BindVertexBuffer,
   BindIndexBuffer,
   BindTexture,
+  DrawIndexed,
   SetRenderTargets,
   BindConstantBuffer,
-  DrawIndexed
+  BindConstantBufferTransformMatrix
 };
 
-struct SCmdBufferInstruction {
-  ECmdBufferInstructionType type;
-
-  uint32 dataOffset;
+struct SCommand {
+  ECommandType type;
+  uint32       dataOffset;
 };
 
-class Dx11CommandBuffer
+class CommandBuffer final
 {
  public:
-  inline void addCommand(ECmdBufferInstructionType commandType, void* pData, uint32 dataSize) {
+  /*
+   * @brief
+   * Add a command to the command buffer.
+   *
+   * @param param_cmd_Type
+   * The command type from the ECommandType class enum.
+   *
+   * @param param_pData
+   * A pointer to the required data to bind the resource, these will be stored as raw bytes.
+   * 
+   * @param the byte size if the data passed in the
+   *
+   */
+  void push(ECommandType param_cmdType, void* param_pData, uint32 param_dataSize) {
+    // Create a new command structure
+    // Assign the type of the data and
+    // the offset of the data to be placed
+    // inside the data buffer.
 
+    SCommand cmd{};
+    cmd.type       = param_cmdType;
+    cmd.dataOffset = (uint32)data.size();
+
+    commands.push_back(cmd);
+    data.insert(data.end(), reinterpret_cast<uint8*>(param_pData), reinterpret_cast<uint8*>(param_pData) + param_dataSize);
   }
 
-  inline void excecuteCommands() {
-  
-  }
+  std::vector<SCommand> commands;
+  std::vector<uint8>    data;
 };

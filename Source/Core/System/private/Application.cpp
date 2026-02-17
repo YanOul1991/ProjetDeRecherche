@@ -10,34 +10,30 @@
 #include "Core/System/Application.h"
 
 #include "Core/Exception/exception.h"
-
 #include "Core/Graphics/Graphics.h"
 #include "Core/Graphics/IGraphicsRHI.h"
 #include "Core/Graphics/Mesh.h"
-
 #include "Core/Object/Camera/Camera.h"
 #include "Core/Object/Image/Image.h"
 #include "Core/Object/Object.h"
-
 #include "Core/Serialization/Parser.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Tokenizer.h"
-
 #include "Core/System/FileStream.h"
 #include "Core/System/ModelLoader.h"
 #include "Core/System/SystemWindow.h"
-
 #include "Core/Time/Time.h"
-
 #include "Core/Types/Color.h"
 #include "Core/Types/string.h"
-
 #include "Core/Utilities/Pointer/UniquePtr.h"
 #include "Core/Utilities/Random/Random.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
+
+static const std::string staticWorkingDirectory = std::filesystem::current_path().string().append("\\");
 
 /*
  * STATIC GLOBAL VARIABLES
@@ -46,8 +42,8 @@
  *
  */
 
-//static ITextureResource* _TEST_pTextureResource{};
-//static ISampler*         _TEST_pSampler{};
+// static ITextureResource* _TEST_pTextureResource{};
+// static ISampler*         _TEST_pSampler{};
 
 static UniquePtr<SystemWindow> g_uptrSystemWindow{};
 
@@ -62,19 +58,19 @@ static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
 static std::vector<Mesh> g_objectMeshes;
 
-static PipelineHandle       _newPipelineHandleTest;
+static PipelineHandle _newPipelineHandleTest;
 
-static PipelineHandle       _handlePipeline{};
-static PipelineHandle       _handlePipelineWirframeView{};
-static PipelineHandle       _handlePipelineOutline{};
-static PipelineHandle       _handlePipelineLineRendering{};
+static PipelineHandle _handlePipeline{};
+static PipelineHandle _handlePipelineWirframeView{};
+static PipelineHandle _handlePipelineOutline{};
+static PipelineHandle _handlePipelineLineRendering{};
 
-static TextureResourceHandle _handleTextureResource {};
+static TextureResourceHandle _handleTextureResource{};
 
-static DepthRTHandle        _handle_depthRT{};
+static DepthRTHandle _handle_depthRT{};
 
-//static VertexShaderHandle   _handle_vertexShader{};
-//static FragmentShaderHandle _handle_fragmentShader{};
+// static VertexShaderHandle   _handle_vertexShader{};
+// static FragmentShaderHandle _handle_fragmentShader{};
 
 static bool _bool_drawWireframe{false};
 static bool _bool_drawOutline{false};
@@ -243,8 +239,8 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
         // printf("Collision with mesh detected distance: %f\n", tHit);
         g_ppSelectedMesh = &mesh;
 
-        printf("Selected Mesh info:\n");
-        printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
+        // printf("Selected Mesh info:\n");
+        // printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
         return;
       }
     } // for loop end - single mesh indices loop
@@ -275,22 +271,16 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
     ndcX,
     ndcY,
     0.0f,
-    1.0f
-  };
+    1.0f};
 
   float4 farPoint = {
     ndcX,
     ndcY,
     1.0f,
-    1.0f
-  };
+    1.0f};
 
   float4x4 viewMatrix = {
-    Camera::right.x, Camera::up.x, -Camera::forward.x, 0,
-    Camera::right.y, Camera::up.y, -Camera::forward.y, 0,
-    Camera::right.z, Camera::up.z, -Camera::forward.z, 0,
-    -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), dotProduct(Camera::forward, Camera::position), 1
-  };
+    Camera::right.x, Camera::up.x, -Camera::forward.x, 0, Camera::right.y, Camera::up.y, -Camera::forward.y, 0, Camera::right.z, Camera::up.z, -Camera::forward.z, 0, -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), dotProduct(Camera::forward, Camera::position), 1};
 
   viewMatrix = Optim::Mathematics::getMatrixTranspose(viewMatrix);
 
@@ -328,11 +318,6 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
 
 void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
   _bool_manipulate_selected = false;
-
-  if (g_ppSelectedMesh != nullptr) {
-    printf("Mesh Moved.\n");
-    printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
-  }
 }
 
 void Application::manageWindowResizeEvent(uint32 width, uint32 height) {
@@ -340,7 +325,7 @@ void Application::manageWindowResizeEvent(uint32 width, uint32 height) {
 }
 
 /**
- * @brief 
+ * @brief
  * Response to a SystemWindow's onSaveEvent being triggered.
  */
 void Application::manageOnSaveEvent() {
@@ -403,19 +388,16 @@ void Application::ApplicationStart() {
       .cullMode             = ERasterizerCullMode::Back,
       .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
       .depthBias            = 0,
-      .slopeScaledDepthBias = 0
-    };
+      .slopeScaledDepthBias = 0};
 
     testBasicPipelineDesc.depthStencilDescription = {
-      .depthTestEnabled = true,
+      .depthTestEnabled        = true,
       .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
-      .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll
-    };
+      .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll};
 
     testBasicPipelineDesc.primitiveTopology = EPipelinePrimitiveTopology::TriangleList;
 
     _newPipelineHandleTest = Graphics::RHI()->createPipeline(&testBasicPipelineDesc);
-
 
     /////////////////////////////////////////////////////////
 
@@ -476,14 +458,14 @@ void Application::ApplicationStart() {
 
       .rasterizerDescription = {
                                 .fillMode             = ERasterizerFillMode::Solid,
-                                .cullMode             = ERasterizerCullMode::Front,
+                                .cullMode             = ERasterizerCullMode::Back,
                                 .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-                                .depthBias            = -2,
-                                .slopeScaledDepthBias = -1.0f},
+                                .depthBias            = -1,
+                                .slopeScaledDepthBias = -10.0f},
 
       .depthStencilDescription = {
                                 .depthTestEnabled        = true,
-                                .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+                                .depthComparisonFunction = EDepthStencilComparisonFunction::Greater,
                                 .depthWriteMask          = EDepthStencilDepthWriteMask::WriteNone,
                                 },
 
@@ -522,12 +504,8 @@ void Application::ApplicationStart() {
 
     // Load image for texture
     Image srcImage;
-    FileStream::readPngImage("images/jeff2.png", srcImage);
+    FileStream::readPngImage("images/flat.png", srcImage);
     _handleTextureResource = Graphics::RHI()->createTextureResource(&srcImage);
-
-    // Create sampler resource
-    //_TEST_pSampler = Graphics::RHI()->createSamplerResource();
-
 
     /// ---------------------------------------------------------------------------
     /// ------------------------------ LOADING SCENE ------------------------------
@@ -572,6 +550,8 @@ void Application::ApplicationStart() {
     m_shouldRun = true;
 
     printf("----------------------- APPLICATION START END -----------------------\n");
+
+    std::cout << "Current working directory: " << staticWorkingDirectory << "\n";
   }
   catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());
@@ -607,7 +587,7 @@ void Application::ApplicationLoop() {
     Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
     Graphics::RHI()->cmdBindTexture(&_handleTextureResource);
 
-    //Graphics::RHI()->bindSampler(_TEST_pSampler);
+    // Graphics::RHI()->bindSampler(_TEST_pSampler);
 
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
       float mouseDx{};
@@ -652,6 +632,7 @@ void Application::ApplicationLoop() {
     }
 
     // Draw wireframe for all meshes if required
+
     if (_bool_drawWireframe) {
       Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
 
@@ -725,11 +706,36 @@ void Application::ApplicationQuit() {
 }
 
 void OptimEditor::processFile(const char* param_cstrFilePath) {
+  std::string droppedFilePath = param_cstrFilePath;
+  droppedFilePath            += "\\";
+
+  std::filesystem::path filePath = param_cstrFilePath;
+
+  const std::string fileExtension = filePath.extension().string();
+
+  uint64 pos = droppedFilePath.find(staticWorkingDirectory);
+
+  if (pos != std::string::npos) {
+    droppedFilePath.erase(pos, staticWorkingDirectory.length());
+    std::cout << "Relative file location: " << droppedFilePath << "\n";
+  }
+  else {
+    std::cout << "Could not get relative path of file.\n";
+  }
+
+  if (fileExtension == ".fbx") {
+    std::cout << "The file is an fbx file.\n";
+  }
+  else {
+    std::cout << "Unkownd or unsupported file type.\n";
+    return;
+  }
+
   UniquePtr<Mesh> l_uptrMesh;
 
   l_uptrMesh.init();
 
-  OptimEditor::loadFbxModel(*l_uptrMesh, param_cstrFilePath);
+  OptimEditor::loadFbxModel(*l_uptrMesh, droppedFilePath.c_str());
 
   l_uptrMesh->rotation = {1.0f, 0.0, 0.0, 0.0f};
   l_uptrMesh->position = {0, 0, 0};
@@ -738,9 +744,9 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
 
   (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
   (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
-  (*l_uptrMesh).sourcePath = param_cstrFilePath;
+  (*l_uptrMesh).sourcePath         = droppedFilePath;
 
   _list_meshes.push_back(l_uptrMesh.move()); // Add Mesh to list
 
-  g_ppSelectedMesh = &_list_meshes.back(); // Make the newly created mesh the selected one.
+  g_ppSelectedMesh = &_list_meshes.back();   // Make the newly created mesh the selected one.
 }

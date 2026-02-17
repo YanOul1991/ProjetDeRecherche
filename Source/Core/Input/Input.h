@@ -1,5 +1,5 @@
 /* ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
+
       + Input.h:
           Interface for system input management.
 
@@ -10,9 +10,11 @@
 
 #pragma once
 
+#include "Core/OptimEngine.h"
+
 class CORE_API Mouse
 {
-public:
+ public:
   static int posX;
   static int posY;
 };

@@ -17,6 +17,7 @@ __OPTIM_INTERNAL_REGISTER_OBJECT(Mesh, Object)
 OPTIM_DECLARE_PROPERTY(Mesh, position)
 OPTIM_DECLARE_PROPERTY(Mesh, rotation)
 OPTIM_DECLARE_PROPERTY(Mesh, sourcePath)
+// OPTIM_DECLARE_PROPERTY(Mesh, scale)
 
 /*
 #define OPTIM_DECLARE_ENUM_FIELD(ENUM, FIELD)                                    \

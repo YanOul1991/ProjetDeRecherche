@@ -1,8 +1,8 @@
 /* ======================================================================================
  *  Application.h:
- *      This class serves as a central module that managed lifetimes of other Engine 
+ *      This class serves as a central module that managed lifetimes of other Engine
  *      implemented modules, and manages the life time of the application.
- * 
+ *
  *  By:
  *    Yanis Oulmane
 ====================================================================================== */
@@ -13,7 +13,7 @@
 
 class CORE_API Application final
 {
-public:
+ public:
   Application();
   ~Application();
   void ApplicationStart();
@@ -22,15 +22,15 @@ public:
   void Quit();
 
   // Should the application continue running and looping.
-  bool ShouldRun() const;
-  static float  getRuntime();
-  static float  getDeltaTime();
-  static void   getMainWindowSize(int32* pWidth, int32* pHeight);
+  bool         ShouldRun() const;
+  static float getRuntime();
+  static float getDeltaTime();
+  static void  getMainWindowSize(int32* pWidth, int32* pHeight);
 
-private:
+ private:
   static float m_runtime;
   static float m_deltaTime;
-  bool m_shouldRun{false};
+  bool         m_shouldRun{false};
 
   // Event management functions
 
@@ -38,15 +38,14 @@ private:
   void manageSysWinMouseUp(float posX, float posY, int32 buttonID);
   void manageWindowResizeEvent(uint32 width, uint32 height);
   void manageOnSaveEvent();
-
 };
 
 extern "C" {
-  CORE_API Application* CreateApplicationProc();
+CORE_API Application* CreateApplicationProc();
 }
 
 namespace OptimEditor {
 
-  CORE_API void processFile(const char* cstrFilePath);
+CORE_API void processFile(const char* cstrFilePath);
 
-} // END - namespace OptimEditor
+} // namespace OptimEditor

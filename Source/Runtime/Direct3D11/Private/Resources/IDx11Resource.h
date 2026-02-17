@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Core/Defines/DirectX/msDx11.h"
-#include "Core/OptimEngine.h"
 
 class IDx11Resource
 {

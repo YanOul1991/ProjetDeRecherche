@@ -93,18 +93,6 @@ struct SPipelineInputDescription {
   EShaderInputFormat inputFormat;
 };
 
-/* **************************************
- * PIPELINE DESCIRPTION
- ************************************** */
-
-//struct SPipelineDesc {
-//  VertexShaderHandle         vertexShaderHandle;
-//  FragmentShaderHandle       fragmentShaderHandle;
-//  SRasterizerDescription     rasterizerDescription;
-//  SDepthStencilDescription   depthStencilDescription;
-//  EPipelinePrimitiveTopology primitiveTopology;
-//};
-
 struct SPipelineDesc {
   const char*                vertexShader;
   const char*                fragmentShader;
