@@ -7,26 +7,32 @@
 
 #include <chrono>
 
-class Time final
+class CORE_API Time final
 {
+ public:
+  static double getMachineFrequency();
+  static uint64 getNow();
+  static uint64 getEpoch();
+  static double getDeltaTime();
+
+  static constexpr uint64 UnitSecond   = static_cast<uint64>(1 * 1e0);
+  static constexpr uint64 UnitMillisec = static_cast<uint64>(1 * 1e3);
+  static constexpr uint64 UnitMicroSec = static_cast<uint64>(1 * 1e6);
+  static constexpr uint64 UnitNanoSec  = static_cast<uint64>(1 * 1e9);
+
+  static void onNewFrame();
+  static void onFrameEnd();
 };
 
+/*
 namespace op::time {
-/*
-  Representation of different time values and their ratio
-  relative to 1 second.
-*/
 enum class ETimeUnits : uint64 {
-  sec          = (unsigned long)(1 * 1e0),
-  milliseconds = (unsigned long)(1 * 1e3),
-  microseconds = (unsigned long)(1 * 1e6),
-  nanoseconds  = (unsigned long)(1 * 1e9)
+  sec          = static_cast<uint64>(1 * 1e0),
+  milliseconds = static_cast<uint64>(1 * 1e3),
+  microseconds = static_cast<uint64>(1 * 1e6),
+  nanoseconds  = static_cast<uint64>(1 * 1e9)
 };
 
-/*
-  Get the machine's frequency rate ticks per seconds. A frequency of 1,000Hz indiquates that
-  the lowest time unit the hardware can measure is 1 / 1000 seconds, which is 1ms.
-*/
 inline uint64 getMachineFrequency() {
 #ifdef OS_WINDOWS
   static LARGE_INTEGER freq;
@@ -57,15 +63,6 @@ inline uint64 getEpoch() {
   return _msTime;
 }
 
-/*
-  Get the interval of time since the last time this function was called.
-  The first time it it called it returns 0.
-
-  @param timeUnit Takes as argument a unit of time, representing the desired scale.
-  By default value is set to milliseconds.
-
-  @return Time interval since last time the function was called.
-*/
 inline double getDeltaTime(ETimeUnits timeUnit = ETimeUnits::milliseconds) {
 #ifdef OS_WINDOWS
   static bool          init = false;
@@ -89,3 +86,4 @@ inline double getDeltaTime(ETimeUnits timeUnit = ETimeUnits::milliseconds) {
 #endif
 }
 } // namespace op::time
+*/

@@ -102,7 +102,7 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
   l_rastDesc.DepthClipEnable       = TRUE;
   l_rastDesc.ScissorEnable         = FALSE;
   l_rastDesc.MultisampleEnable     = FALSE;
-  l_rastDesc.AntialiasedLineEnable = TRUE;
+  l_rastDesc.AntialiasedLineEnable = FALSE;
 
   pDevice->CreateRasterizerState(&l_rastDesc, &rasterizerState);
 

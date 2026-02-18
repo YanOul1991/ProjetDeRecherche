@@ -570,8 +570,9 @@ void Application::ApplicationStart() {
 
 void Application::ApplicationLoop() {
   try {
-    static uint64 __now;
-    static uint64 __last = op::time::nowHighFreq();
+    Time::onNewFrame();
+    //static uint64 __now;
+    //static uint64 __last = op::time::nowHighFreq();
 
     if (!g_uptrSystemWindow->loop()) {
       Quit();
@@ -679,9 +680,13 @@ void Application::ApplicationLoop() {
     // Execute the commands
     Graphics::RHI()->draw();
 
-    __now       = op::time::nowHighFreq();
-    m_deltaTime = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
-    __last      = __now;
+    //__now       = op::time::nowHighFreq();
+    // m_deltaTime = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
+    //__last      = __now;
+    // m_runtime  += m_deltaTime;
+
+    Time::onFrameEnd();
+    m_deltaTime = Time::getDeltaTime();
     m_runtime  += m_deltaTime;
   }
   catch (const Exception& e) {
