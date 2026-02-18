@@ -1,4 +1,3 @@
-
 // Dx11IndexBuffer.h
 
 #pragma once

@@ -1,5 +1,7 @@
 // Dx11Pipeline.h
 
+#pragma once
+
 #include "Core/Defines/DirectX/msDx11.h"
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/Graphics/Resource/GraphicPipeline.h"

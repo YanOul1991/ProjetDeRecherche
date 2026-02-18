@@ -44,18 +44,18 @@ namespace op::sys::windows {
 // Help function to translate HRESULT codes into
 // descriptive text.
 inline String translateError(HRESULT hr) {
-  wchar* msgBuffer = nullptr;
-  DWORD  msgLength = FormatMessageW(
+  char* msgBuffer = nullptr;
+  DWORD msgLength = FormatMessageA(
     FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
     nullptr,
     hr,
     MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-    reinterpret_cast<LPWSTR>(&msgBuffer),
+    reinterpret_cast<LPSTR>(&msgBuffer),
     0,
     nullptr);
 
   if (msgLength == 0) {
-    return String(TEXT("Unknown error code"));
+    return String("Unknown error code");
   }
 
   String errMsg = String(msgBuffer);

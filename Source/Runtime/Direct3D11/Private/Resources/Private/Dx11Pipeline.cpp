@@ -125,9 +125,9 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
 /**
  * @brief
- * Binds resources of the pipeline, descibing how to 
+ * Binds resources of the pipeline, descibing how to
  * perform rendering.
- */ 
+ */
 void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
   pContext->IASetPrimitiveTopology(primitiveTopology);
   pContext->IASetInputLayout(inputLayout.Get());

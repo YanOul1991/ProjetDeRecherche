@@ -12,35 +12,54 @@
 
 #include <clocale>
 #include <cstdarg>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cwchar>
+#include <vector>
 
-int32 String::getLiteralSize(const wchar* str) {
-  setlocale(LC_ALL, "");
-  return (int32)wcsnlen(str, 256);
+uint32 String::getLiteralSize(const char* str, uint64 maxSize) {
+  //setlocale(LC_ALL, "");
+  return static_cast<uint32>(strnlen(str, maxSize));
 }
 
-String String::sprintf(const wchar* string, ...) {
-  wchar   buffer[256];
+String String::sprintf(const char* format, ...) {
   va_list args;
+  va_start(args, format);
 
-  va_start(args, string);
+  // Make copy of args get needed buffer
+  // size to hold output.
+  va_list argsCpy;
+  va_copy(argsCpy, args);
+  int needed = ::vsnprintf(nullptr, 0, format, argsCpy);
+  va_end(argsCpy);
 
-  vswprintf(buffer, 256, string, args);
+  printf("[String::sprintf] Need count: %d\n", needed);
+
+  // In case of formatting error
+  // return empty string
+  if (needed < 0) {
+    va_end(args);
+    return String();
+  }
+
+  // Allocate buffer
+  // String class automatically adds null terminator
+  std::vector<char> buffer(needed + 1);
+
+  ::vsnprintf(buffer.data(), buffer.size(), format, args);
 
   va_end(args);
 
-  return String(buffer);
+  return String(buffer.data());
 }
 
 void String::printf(const char* format, ...) {
-  char    buffer[256]{};
+  char    buffer[512]{};
   va_list args{};
 
   va_start(args, format);
 
-  vprintf(format, args);
+  ::vprintf(format, args);
 
   va_end(args);
 }
@@ -53,13 +72,13 @@ bool String::compare(const String& string1, const String& string2) {
   if (string1.length() != string2.length()) {
     return false;
   }
-  return memcmp(string1.value(), string2.value(), sizeof(wchar) * string1.length()) == 0;
+  return memcmp(string1.value(), string2.value(), sizeof(char) * string1.length()) == 0;
 }
 
 String::String() noexcept :
     m_length{0},
     m_buffer{nullptr} {
-  m_buffer    = new wchar[1];
+  m_buffer    = new char[1];
   m_buffer[0] = '\0';
 }
 
@@ -68,10 +87,10 @@ String::~String() noexcept {
   freeBuffer();
 }
 
-String::String(const wchar* str) noexcept :
+String::String(const char* str) noexcept :
     m_length{String::getLiteralSize(str)},
     m_buffer{nullptr} {
-  m_buffer = new wchar[m_length + 1];
+  m_buffer = new char[m_length + 1];
   memcpy(m_buffer, str, sizeof(*str) * (m_length + 1));
 }
 
@@ -79,8 +98,8 @@ String::String(const String& other) noexcept :
     m_length{0},
     m_buffer{nullptr} {
   m_length = other.length();
-  m_buffer = new wchar[m_length];
-  memcpy(m_buffer, other.value(), sizeof(wchar) * m_length);
+  m_buffer = new char[m_length];
+  memcpy(m_buffer, other.value(), sizeof(char) * m_length);
 }
 
 String::String(String&& other) noexcept :
@@ -90,10 +109,13 @@ String::String(String&& other) noexcept :
   other.m_length = 0;
 }
 
-int32 String::length() const {
+uint32 String::length() const {
   return m_length;
 }
-const wchar* String::value() const {
+uint32 String::capacity() const {
+  return 0;
+}
+const char* String::value() const {
   return m_buffer;
 }
 
@@ -101,12 +123,12 @@ const wchar* String::value() const {
     Operator Overloads
 ####################################### */
 
-String& String::operator=(const wchar* str) noexcept {
-  printf("Using overload: operator=(const wchar* str)\n");
+String& String::operator=(const char* str) noexcept {
+  printf("Using overload: operator=(const char* str)\n");
   freeBuffer();
   int size = getLiteralSize(str);
   m_length = size;
-  m_buffer = new wchar[size + 1];
+  m_buffer = new char[size + 1];
   memcpy(m_buffer, str, sizeof(*m_buffer) * (size + 1));
   return *this;
 }
@@ -115,7 +137,7 @@ String& String::operator=(const String& other) noexcept {
   if (this != &other) {
     freeBuffer();
     m_length = other.m_length;
-    m_buffer = new wchar[m_length + 1];
+    m_buffer = new char[m_length + 1];
     memcpy(m_buffer, other.m_buffer, sizeof(*m_buffer) * (m_length + 1));
   }
   return *this;
@@ -132,17 +154,17 @@ String& String::operator=(String&& other) noexcept {
   return *this;
 }
 
-String& String::operator+=(const wchar* str) noexcept {
-  int32 strSize{String::getLiteralSize(str)};
+String& String::operator+=(const char* str) noexcept {
+  uint32 strSize{String::getLiteralSize(str)};
 
   if (strSize > 0 && str != nullptr) {
-    int32 _bufferStrLength{m_length + strSize};
+    uint32 _bufferStrLength{m_length + strSize};
 
     // Alloc new buffer memeory
-    wchar* newbuffer = new wchar[_bufferStrLength + 1];
+    char* newbuffer = new char[_bufferStrLength + 1];
 
     memcpy(newbuffer, m_buffer, sizeof(*m_buffer) * m_length);
-    memcpy(newbuffer + m_length, str, sizeof(wchar) * strSize);
+    memcpy(newbuffer + m_length, str, sizeof(char) * strSize);
 
     newbuffer[_bufferStrLength] = '\0';
 
@@ -157,14 +179,14 @@ String& String::operator+=(const wchar* str) noexcept {
 }
 
 String& String::operator+=(const String& other) noexcept {
-  int32 otherSize{other.length()};
+  uint32 otherSize{other.length()};
   if (otherSize > 0 && other.m_buffer != nullptr) {
     *this += other.m_buffer;
   }
   return *this;
 }
 
-String String::operator+(const wchar* str) noexcept {
+String String::operator+(const char* str) noexcept {
   String _newStr = String(this->value());
   _newStr       += str;
   return _newStr;

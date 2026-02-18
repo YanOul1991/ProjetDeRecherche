@@ -62,4 +62,4 @@ using wchar  = wchar_t;
 
 // #endif
 
-#define THROW_EXCEPTION(_MSG_) throw Exception(__LINE__, __FILEW__, _MSG_)
+#define THROW_EXCEPTION(_MSG_) throw Exception(__LINE__, __FILE__, _MSG_)

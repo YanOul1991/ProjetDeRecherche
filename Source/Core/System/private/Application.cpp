@@ -554,11 +554,13 @@ void Application::ApplicationStart() {
 
     printf("----------------------- APPLICATION START END -----------------------\n");
 
-    std::cout << "Current working directory: " << staticWorkingDirectory << "\n";
+    String _testString = String::sprintf("This is a test String::sprintf: dirLocation: %s\n", staticWorkingDirectory.c_str());
+    String::printf(_testString.value());
+
   }
   catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());
-    MessageBoxW(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
+    MessageBoxA(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
   catch (const std::exception& e) {
@@ -682,14 +684,14 @@ void Application::ApplicationLoop() {
     Graphics::RHI()->draw();
 
     Time::onFrameEnd();
-    m_deltaTime = Time::getDeltaTime();
+    m_deltaTime = static_cast<float>(Time::getDeltaTime());
     m_runtime  += m_deltaTime;
   }
   catch (const Exception& e) {
     String fullMessage = String(e.type());
-    fullMessage       += String(TEXT("\n\n[Description]\n")) + String(e.what()) + String(TEXT("\n[File]\n")) + e.getFile();
+    fullMessage       += String("\n\n[Description]\n") + String(e.what()) + String("\n[File]\n") + e.getFile();
 
-    MessageBoxW(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
+    MessageBoxA(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
   catch (const std::exception& e) {
