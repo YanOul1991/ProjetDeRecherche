@@ -33,6 +33,12 @@
 #include <iostream>
 #include <string>
 
+#if defined(_WIN32) | defined(_WIN64)
+  #include "Core/Defines/Windows/windowsAPI.h"
+#endif // _WIN32 || _WIN64
+
+// WINDOW API
+
 static const std::string staticWorkingDirectory = std::filesystem::current_path().string().append("\\");
 
 /*
@@ -68,9 +74,6 @@ static PipelineHandle _handlePipelineLineRendering{};
 static TextureResourceHandle _handleTextureResource{};
 
 static DepthRTHandle _handle_depthRT{};
-
-// static VertexShaderHandle   _handle_vertexShader{};
-// static FragmentShaderHandle _handle_fragmentShader{};
 
 static bool _bool_drawWireframe{false};
 static bool _bool_drawOutline{false};
@@ -571,8 +574,6 @@ void Application::ApplicationStart() {
 void Application::ApplicationLoop() {
   try {
     Time::onNewFrame();
-    //static uint64 __now;
-    //static uint64 __last = op::time::nowHighFreq();
 
     if (!g_uptrSystemWindow->loop()) {
       Quit();
@@ -679,11 +680,6 @@ void Application::ApplicationLoop() {
 
     // Execute the commands
     Graphics::RHI()->draw();
-
-    //__now       = op::time::nowHighFreq();
-    // m_deltaTime = (__now - __last) * (1000.0f / (float)op::time::getMachineFrequency()) / 1000.0f;
-    //__last      = __now;
-    // m_runtime  += m_deltaTime;
 
     Time::onFrameEnd();
     m_deltaTime = Time::getDeltaTime();
