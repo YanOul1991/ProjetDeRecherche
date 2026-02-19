@@ -78,6 +78,10 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   std::vector<D3D11_INPUT_ELEMENT_DESC> ieds;
 
+  /**
+   * Translate the inputs list from the SPipelineDesc
+   * object into a list of D3D11_INPUT_ELEMENT_DESC
+   */
   for (auto& input : pipelineDesc.inputs) {
     ieds.push_back(translateInput(input));
   }
@@ -90,7 +94,7 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   OPTIM_TRY_DX(pDevice->CreateInputLayout(
     ieds.data(),
-    ieds.size(),
+    static_cast<UINT>(ieds.size()),
     pBlob->GetBufferPointer(),
     pBlob->GetBufferSize(),
     &inputLayout));
