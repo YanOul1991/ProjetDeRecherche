@@ -79,7 +79,8 @@ bool Dx11RHIDevice::initialize(HWND param_outputWindow, Dx11RHI* param_pDx11RHI)
     &m_pSwapChain,
     &m_pDevice,
     nullptr,
-    &m_pContext));
+    &m_pContext)
+  );
 
   /// ------------------------------------------------------------
   /// Transform and view matrices constant buffer initalization
@@ -133,30 +134,11 @@ void Dx11RHIDevice::renderUpdate() {
   constexpr float n   = 0.1f;
   constexpr float f   = 1000.0f;
 
-  float4x4 l_lookAt = {
-    Camera::right.x,
-    Camera::up.x,
-    -Camera::forward.x,
-    0,
-    Camera::right.y,
-    Camera::up.y,
-    -Camera::forward.y,
-    0,
-    Camera::right.z,
-    Camera::up.z,
-    -Camera::forward.z,
-    0,
-    -dotProduct(Camera::right, Camera::position),
-    -dotProduct(Camera::up, Camera::position),
-    -dotProduct(-1 * Camera::forward, Camera::position),
-    1,
-  };
-
   float    yScale            = 1.0f / (tan(fov / 2.0f));
   float4x4 perspectiveMatrix = float4x4{
     yScale / a, 0, 0, 0, 0, yScale, 0, 0, 0, 0, f / (n - f), -1, 0, 0, (n * f) / (n - f), 0};
 
-  vsInputConstBufferData.lookAtMatrix      = l_lookAt.transpose();
+  vsInputConstBufferData.lookAtMatrix      = Camera::getViewMatrix().transpose();
   vsInputConstBufferData.perspectiveMatrix = perspectiveMatrix.transpose();
 
   pDxRHI->updateConstantBuffer(&constantBufferTransformView, &vsInputConstBufferData);

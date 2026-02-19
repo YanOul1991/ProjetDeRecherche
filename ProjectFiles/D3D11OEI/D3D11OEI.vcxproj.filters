@@ -44,6 +44,12 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11DepthStencilView.h">
       <Filter>Private\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11StructuredBuffer.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11DescriptorSet.h">
+      <Filter>Private\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Dx11RHI.cpp">
@@ -71,6 +77,9 @@
       <Filter>Private\Resources\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11VertexBuffer.cpp">
+      <Filter>Private\Resources\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11StructuredBuffer.cpp">
       <Filter>Private\Resources\Source</Filter>
     </ClCompile>
   </ItemGroup>

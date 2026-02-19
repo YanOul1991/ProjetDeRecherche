@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
+#include <vector>
 
 enum class EPipelinePrimitiveTopology : unsigned char {
   Undefined,
@@ -81,22 +82,35 @@ struct SDepthStencilDescription {
   EDepthStencilDepthWriteMask     depthWriteMask;
 };
 
-enum class EShaderInputFormat {
-  FLOAT2,
-  FLOAT3,
-  FLOAT4
+enum class EGraphicsFormat {
+  Unkown,
+
+  r32g32b32a32_typeless,
+  r32g32b32a32_float,
+  r32g32b32a32_uint,
+  r32g32b32a32_sint,
+
+  r32g32b32_typeless,
+  r32g32b32_float,
+  r32g32b32_uint,
+  r32g32b32_sint,
+
+  r32g32_typeless,
+  r32g32_float,
+  r32g32_uint,
+  r32g32_sint,
 };
 
 struct SPipelineInputDescription {
-  const char*        name;
-  uint32             index;
-  EShaderInputFormat inputFormat;
+  const char*     name;
+  EGraphicsFormat format;
 };
 
 struct SPipelineDesc {
-  const char*                vertexShader;
-  const char*                fragmentShader;
-  SRasterizerDescription     rasterizerDescription;
-  SDepthStencilDescription   depthStencilDescription;
-  EPipelinePrimitiveTopology primitiveTopology;
+  const char*                            vertexShader;
+  const char*                            fragmentShader;
+  SRasterizerDescription                 rasterizerDescription;
+  SDepthStencilDescription               depthStencilDescription;
+  EPipelinePrimitiveTopology             primitiveTopology;
+  std::vector<SPipelineInputDescription> inputs;
 };

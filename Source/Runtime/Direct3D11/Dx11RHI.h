@@ -11,7 +11,7 @@
  *    References from Microsoft documentation for DIRECTX11 and DXGI.
  *      DXGI    - https://learn.microsoft.com/en-us/windows/win32/api/_direct3ddxgi/
  *      D3D11   - https://learn.microsoft.com/en-us/windows/win32/api/d3d11/
- *
+ * 
 ====================================================================================== */
 
 #pragma once

@@ -41,16 +41,6 @@
 
 static const std::string staticWorkingDirectory = std::filesystem::current_path().string().append("\\");
 
-/*
- * STATIC GLOBAL VARIABLES
- *
- * >>>> THESE ARE FOR TESTING PURPOSES <<<<
- *
- */
-
-// static ITextureResource* _TEST_pTextureResource{};
-// static ISampler*         _TEST_pSampler{};
-
 static UniquePtr<SystemWindow> g_uptrSystemWindow{};
 
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
@@ -66,7 +56,7 @@ static std::vector<Mesh> g_objectMeshes;
 
 static PipelineHandle _newPipelineHandleTest;
 
-static PipelineHandle _handlePipeline{};
+//static PipelineHandle _handlePipeline{};
 static PipelineHandle _handlePipelineWirframeView{};
 static PipelineHandle _handlePipelineOutline{};
 static PipelineHandle _handlePipelineLineRendering{};
@@ -282,8 +272,7 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
     1.0f,
     1.0f};
 
-  float4x4 viewMatrix = {
-    Camera::right.x, Camera::up.x, -Camera::forward.x, 0, Camera::right.y, Camera::up.y, -Camera::forward.y, 0, Camera::right.z, Camera::up.z, -Camera::forward.z, 0, -dotProduct(Camera::right, Camera::position), -dotProduct(Camera::up, Camera::position), dotProduct(Camera::forward, Camera::position), 1};
+  float4x4 viewMatrix = Camera::getViewMatrix();
 
   viewMatrix = Optim::Mathematics::getMatrixTranspose(viewMatrix);
 
@@ -294,8 +283,12 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
   constexpr float f      = 1000.0f;
   float           yScale = 1.0f / (tan(fov / 2.0f));
 
-  float4x4 perspectiveMatrix = float4x4{
-    yScale / a, 0, 0, 0, 0, yScale, 0, 0, 0, 0, f / (n - f), -1, 0, 0, (n * f) / (n - f), 0};
+  float4x4 perspectiveMatrix = float4x4 {
+    yScale / a, 0, 0, 0, 
+    0, yScale, 0, 0, 
+    0, 0, f / (n - f), -1, 
+    0, 0, (n * f) / (n - f), 0
+  };
 
   perspectiveMatrix = Optim::Mathematics::getMatrixTranspose(perspectiveMatrix);
 
@@ -309,11 +302,13 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
     posNear.y / posNear.w,
     posNear.z / posNear.w,
   };
+
   float3 rayFarPosition = {
     posFar.x / posFar.w,
     posFar.y / posFar.w,
     posFar.z / posFar.w,
   };
+
   float3 rayDirection = normalize(rayFarPosition - rayOrigin);
 
   getClickSelection(rayOrigin, rayFarPosition);
@@ -381,6 +376,29 @@ void Application::ApplicationStart() {
 
     //////////////////////////////// TEST NEW PIPELINE SYSTEM
 
+    SPipelineInputDescription inputPosition{
+      .name = "POSITION",
+      .format = EGraphicsFormat::r32g32b32_float
+    };
+    SPipelineInputDescription inputUv{
+      .name = "TEXCOORD",
+      .format = EGraphicsFormat::r32g32_float
+    };
+    SPipelineInputDescription inputNorm{
+      .name = "NORMAL",
+      .format = EGraphicsFormat::r32g32b32_float
+    };
+
+    std::vector<SPipelineInputDescription> pipeLineInputs = {
+      inputPosition, inputUv, inputNorm
+    };
+
+    /*
+     * -----------------------------------------------------------------------------
+     * ---------------------------- PHONG SHADER  PIPELINE -------------------------
+     * -----------------------------------------------------------------------------
+     */
+
     SPipelineDesc testBasicPipelineDesc{};
 
     testBasicPipelineDesc.vertexShader   = "bin/PhongVertexShader.cso";
@@ -391,38 +409,25 @@ void Application::ApplicationStart() {
       .cullMode             = ERasterizerCullMode::Back,
       .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
       .depthBias            = 0,
-      .slopeScaledDepthBias = 0};
+      .slopeScaledDepthBias = 0
+    };
 
     testBasicPipelineDesc.depthStencilDescription = {
       .depthTestEnabled        = true,
       .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
-      .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll};
+      .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll
+    };
+
+    testBasicPipelineDesc.inputs = pipeLineInputs;
 
     testBasicPipelineDesc.primitiveTopology = EPipelinePrimitiveTopology::TriangleList;
+
+    testBasicPipelineDesc.inputs = pipeLineInputs;
 
     _newPipelineHandleTest = Graphics::RHI()->createPipeline(&testBasicPipelineDesc);
 
     /////////////////////////////////////////////////////////
 
-    /*
-     * Lit shaders pipeline binding
-     */
-    SPipelineDesc pipelineDesc = {
-      .vertexShader   = "bin/PhongVertexShader.cso",
-      .fragmentShader = "bin/PhongPixelShader.cso",
-
-      .rasterizerDescription = {
-                                .fillMode    = ERasterizerFillMode::Solid,
-                                .cullMode    = ERasterizerCullMode::Back,
-                                .faceWinding = ERasterizerFaceWinding::CounterClockWise,
-                                },
-
-      .depthStencilDescription = {.depthTestEnabled = true, .depthComparisonFunction = EDepthStencilComparisonFunction::Less, .depthWriteMask = EDepthStencilDepthWriteMask::WriteAll},
-
-      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
-    };
-
-    _handlePipeline = Graphics::RHI()->createPipeline(&pipelineDesc);
 
     /*
      * -----------------------------------------------------------------------------
@@ -434,19 +439,22 @@ void Application::ApplicationStart() {
       .fragmentShader = "bin/WireframePS.cso",
 
       .rasterizerDescription = {
-                                .fillMode             = ERasterizerFillMode::Wireframe,
-                                .cullMode             = ERasterizerCullMode::None,
-                                .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-                                .depthBias            = -1,
-                                .slopeScaledDepthBias = -1.0f},
+        .fillMode             = ERasterizerFillMode::Wireframe,
+        .cullMode             = ERasterizerCullMode::None,
+        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+        .depthBias            = -1,
+        .slopeScaledDepthBias = -1.0f
+      },
 
       .depthStencilDescription = {
-                                .depthTestEnabled        = true,
-                                .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
-                                .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
-                                },
+        .depthTestEnabled        = true,
+        .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+        .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
+      },
 
-      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
+      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
+
+      .inputs = pipeLineInputs
     };
     _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
 
@@ -460,19 +468,22 @@ void Application::ApplicationStart() {
       .fragmentShader = "bin/OutlinePS.cso",
 
       .rasterizerDescription = {
-                                .fillMode             = ERasterizerFillMode::Solid,
-                                .cullMode             = ERasterizerCullMode::Back,
-                                .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-                                .depthBias            = -1,
-                                .slopeScaledDepthBias = -10.0f},
+        .fillMode             = ERasterizerFillMode::Solid,
+        .cullMode             = ERasterizerCullMode::Back,
+        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+        .depthBias            = -1,
+        .slopeScaledDepthBias = -10.0f
+      },
 
       .depthStencilDescription = {
-                                .depthTestEnabled        = true,
-                                .depthComparisonFunction = EDepthStencilComparisonFunction::Greater,
-                                .depthWriteMask          = EDepthStencilDepthWriteMask::WriteNone,
-                                },
+        .depthTestEnabled        = true,
+        .depthComparisonFunction = EDepthStencilComparisonFunction::Greater,
+        .depthWriteMask          = EDepthStencilDepthWriteMask::WriteNone,
+      },
 
-      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
+      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
+
+      .inputs = pipeLineInputs
     };
     _handlePipelineOutline = Graphics::RHI()->createPipeline(&l_outlinePipelineDesc);
 
@@ -486,24 +497,30 @@ void Application::ApplicationStart() {
       .fragmentShader = "bin/WireframePS.cso",
 
       .rasterizerDescription = {
-                                .fillMode             = ERasterizerFillMode::Solid,
-                                .cullMode             = ERasterizerCullMode::Back,
-                                .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-                                .depthBias            = 0,
-                                .slopeScaledDepthBias = 0},
+        .fillMode             = ERasterizerFillMode::Solid,
+        .cullMode             = ERasterizerCullMode::Back,
+        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+        .depthBias            = 0,
+        .slopeScaledDepthBias = 0
+      },
 
       .depthStencilDescription = {
-                                .depthTestEnabled        = false,
-                                .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
-                                .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
-                                },
+        .depthTestEnabled        = false,
+        .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+        .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
+      },
 
-      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList
+      .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
+
+      .inputs = pipeLineInputs
     };
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
 
+
+
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
+
 
     // Load image for texture
     Image srcImage;
@@ -588,7 +605,7 @@ void Application::ApplicationLoop() {
      */
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
-    Graphics::RHI()->cmdBindPipeline(&_handlePipeline);
+    Graphics::RHI()->cmdBindPipeline(&_newPipelineHandleTest);
     Graphics::RHI()->cmdBindTexture(&_handleTextureResource);
 
     // Graphics::RHI()->bindSampler(_TEST_pSampler);

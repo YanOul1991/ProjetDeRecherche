@@ -26,8 +26,10 @@
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Dx11ResourceRegistery.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11ConstantBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11DepthStencilView.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11DescriptorSet.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11IndexBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Pipeline.h" />
+    <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11StructuredBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11Texture.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Dx11VertexBuffer.h" />
     <ClInclude Include="..\..\Source\Runtime\Direct3D11\Private\Resources\IDx11Resource.h" />
@@ -40,6 +42,7 @@
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11DepthStencilView.cpp" />
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11IndexBuffer.cpp" />
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11Pipeline.cpp" />
+    <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11StructuredBuffer.cpp" />
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11Texture.cpp" />
     <ClCompile Include="..\..\Source\Runtime\Direct3D11\Private\Resources\Private\Dx11VertexBuffer.cpp" />
   </ItemGroup>

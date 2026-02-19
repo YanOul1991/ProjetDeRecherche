@@ -15,17 +15,19 @@
  * @brief
  * Camera class for scene render view.
  */
-class Camera final
+class CORE_API Camera final
 {
  public:
-  CORE_API static float3     position;
-  CORE_API static Quaternion rotation;
+  static float3     position;
+  static Quaternion rotation;
+  static float      pitch; // The X rotation of the camera.
+  static float      yaw;   // The Y rotation of the camera.
+  static float      roll;  // The Z rotation of the camera.
+  static float3     forward;
+  static float3     right;
+  static float3     up;
 
-  CORE_API static float pitch; // The X rotation of the camera.
-  CORE_API static float yaw;   // The Y rotation of the camera.
-  CORE_API static float roll;  // The Z rotation of the camera.
+  static float4x4 getViewMatrix();
 
-  CORE_API static float3 forward;
-  CORE_API static float3 right;
-  CORE_API static float3 up;
+  static float4x4 getProjectionMatrix();
 };

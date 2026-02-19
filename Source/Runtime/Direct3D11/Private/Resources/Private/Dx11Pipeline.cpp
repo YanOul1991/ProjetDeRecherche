@@ -6,6 +6,39 @@
 #include <cstdlib>
 #include <cwchar>
 #include <iostream>
+#include <vector>
+
+static constexpr DXGI_FORMAT translateDXGIFormat(EGraphicsFormat format) {
+  switch (format) {
+  case EGraphicsFormat::r32g32b32a32_typeless: return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+  case EGraphicsFormat::r32g32b32a32_float   : return DXGI_FORMAT_R32G32B32A32_FLOAT;
+  case EGraphicsFormat::r32g32b32a32_uint    : return DXGI_FORMAT_R32G32B32A32_UINT;
+  case EGraphicsFormat::r32g32b32a32_sint    : return DXGI_FORMAT_R32G32B32A32_SINT;
+  case EGraphicsFormat::r32g32b32_typeless   : return DXGI_FORMAT_R32G32B32_TYPELESS;
+  case EGraphicsFormat::r32g32b32_float      : return DXGI_FORMAT_R32G32B32_FLOAT;
+  case EGraphicsFormat::r32g32b32_uint       : return DXGI_FORMAT_R32G32B32_UINT;
+  case EGraphicsFormat::r32g32b32_sint       : return DXGI_FORMAT_R32G32B32_SINT;
+  case EGraphicsFormat::r32g32_typeless      : return DXGI_FORMAT_R32G32_TYPELESS;
+  case EGraphicsFormat::r32g32_float         : return DXGI_FORMAT_R32G32_FLOAT;
+  case EGraphicsFormat::r32g32_uint          : return DXGI_FORMAT_R32G32_UINT;
+  case EGraphicsFormat::r32g32_sint          : return DXGI_FORMAT_R32G32_SINT;
+  default                                    : return DXGI_FORMAT_UNKNOWN;
+  }
+}
+
+static D3D11_INPUT_ELEMENT_DESC translateInput(SPipelineInputDescription param_desc) {
+  D3D11_INPUT_ELEMENT_DESC _retVal{};
+
+  _retVal.SemanticName         = param_desc.name;
+  _retVal.SemanticIndex        = 0;
+  _retVal.Format               = translateDXGIFormat(param_desc.format);
+  _retVal.InputSlot            = 0;
+  _retVal.AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
+  _retVal.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+  _retVal.InstanceDataStepRate = 0;
+
+  return _retVal;
+}
 
 static std::wstring optim_towstr(std::string& str) {
   uint32       size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
@@ -43,15 +76,21 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
   // ------------------------  INPUT LAYOUT CREATION
   // -----------------------------------------------
 
-  const D3D11_INPUT_ELEMENT_DESC ied[] = {
-    {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"TEXCOORD", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {  "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
-  };
+  std::vector<D3D11_INPUT_ELEMENT_DESC> ieds;
+
+  for (auto& input : pipelineDesc.inputs) {
+    ieds.push_back(translateInput(input));
+  }
+
+   //std::vector<D3D11_INPUT_ELEMENT_DESC> ieds = {
+   //  {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+   //  {"TEXCOORD", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+   //  {  "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+   //};
 
   OPTIM_TRY_DX(pDevice->CreateInputLayout(
-    ied,
-    (sizeof(ied) / sizeof(*ied)),
+    ieds.data(),
+    ieds.size(),
     pBlob->GetBufferPointer(),
     pBlob->GetBufferSize(),
     &inputLayout));
@@ -125,7 +164,7 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
 /**
  * @brief
- * Binds resources of the pipeline, descibing how to
+ * Binds resources of the pipeline, param_descibing how to
  * perform rendering.
  */
 void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
