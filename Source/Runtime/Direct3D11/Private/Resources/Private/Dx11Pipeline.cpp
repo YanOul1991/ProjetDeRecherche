@@ -76,21 +76,16 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
   // ------------------------  INPUT LAYOUT CREATION
   // -----------------------------------------------
 
-  std::vector<D3D11_INPUT_ELEMENT_DESC> ieds;
 
   /**
    * Translate the inputs list from the SPipelineDesc
    * object into a list of D3D11_INPUT_ELEMENT_DESC
    */
+  std::vector<D3D11_INPUT_ELEMENT_DESC> ieds;
+
   for (auto& input : pipelineDesc.inputs) {
     ieds.push_back(translateInput(input));
   }
-
-   //std::vector<D3D11_INPUT_ELEMENT_DESC> ieds = {
-   //  {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-   //  {"TEXCOORD", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-   //  {  "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
-   //};
 
   OPTIM_TRY_DX(pDevice->CreateInputLayout(
     ieds.data(),

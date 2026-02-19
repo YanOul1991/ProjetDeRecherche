@@ -517,6 +517,15 @@ void Application::ApplicationStart() {
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
 
 
+    /*
+     * -----------------------------------------------------------------------------
+     * -------------------------- TRANSFORM GIZMOS PIPELINE --------------------------
+     * -----------------------------------------------------------------------------
+    */
+
+    //std::vector<SPipelineDesc>
+
+
 
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
