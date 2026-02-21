@@ -12,11 +12,12 @@
 
 class Image
 {
-public:
-	CORE_API Image();
-	CORE_API ~Image();
+ public:
+  CORE_API Image();
+  CORE_API ~Image();
 
-	int width;
-	int height;
-	op::color::SColor* pixels{};
+  int32 width;
+  int32 height;
+
+  op::color::SColor* pixels{};
 };

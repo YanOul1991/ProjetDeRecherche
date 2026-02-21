@@ -8,145 +8,67 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
+#include "Core/Reflection/OptimReflection.h"
 #include "Core/Utilities/Random/Random.h"
 
-#include <iostream>
-#include <random>
-#include <sstream>
-#include <string>
-#include <iomanip>
-#include <unordered_map>
-
-/*
-enum ETypes {
-	type_none = 0,
-	type_int = 0,
-	type_float = 0,
-	type_bool = 0,
-};
-
-struct Type {
-	const char* name = 0;
-	void* data = 0;
-	int type = 0;
-
-	inline void assign(double number) {
-		switch (type) {
-			case type_int: {
-				*((int*)data) = number;
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-	}
-
-	inline double read() {
-		switch (type) {
-			case type_int: {
-				return *((int*)data);
-			}
-			default: {
-				break;
-			}
-		}
-	}
-};
-*/
-
-class Object;
-
-struct Type {
-	const char*	name;
-	const Type* parent;
-	static Object* getObject(const char* type);
-};
-
-struct property {
-	const char* name;
-	void* value;
-};
-
-class Object 
+/**
+ * @brief 
+ * Base class for all class Types that support reflection.
+ */
+class CORE_API Object
 {
-public:
-	template<typename T>
-	static T* type_cast(Object* obj) {
-		if (obj == nullptr) {
-			return nullptr;
-		}
+ public:
+  static TypeInfo*  StaticTypeInfo();
+  virtual TypeInfo* GetTypeInfo() const {
+    return StaticTypeInfo();
+  }
 
-		const Type* ti = obj->getTypeInfo();
-		const Type* target = &T::typeInfo;
+ public:
+  Object();
+  virtual ~Object();
 
-		while (ti) {
-			std::cout << "Type comparaison:\n";
-			std::cout << "--- Object type : "	<< ti << "\n";
-			std::cout << "--- Target type : "	<< target << "\n";
-			if (ti == target) {
-				return static_cast<T*>(obj);
-			}
-			ti = ti->parent;
-		}
-		return nullptr;
-	}
+  /**
+   * @brief
+   * Get a an Object reference by its GUID.
+   * 
+   * @param guid
+   * The GUID of the Object to look for.
+   * 
+   * @return
+   * If found, returns a pointer to the Object,
+   * if not returns nullptr.
+   */
+  static Object* getObject(const SGuid& guid);
 
-	// CLASS TYPE INFO
-	static constexpr Type typeInfo = { "Object", nullptr };
-	virtual const Type* getTypeInfo() const		{ return &typeInfo; }
+  int objectField = 10;
 
-	static CORE_API Object* getObject(const SGuid& guid);
+  /**
+   * @brief 
+   * Get this object inherites from another type object.
+   * This only works for classes that inherite from Object hierarchy.
+   * 
+   * @param type
+   * Pointer to the TypeInfo struct of the Object type class to check.
+   */
+  bool isChildOf(const TypeInfo* type) const;
 
-	CORE_API Object();
-	CORE_API virtual ~Object() = default;
-
-	virtual inline SGuid getGuid() const {
-		return m_guid;
-	}
-	virtual inline void printHello() const {
-		printf("Hello! I am a \"Object\" class object\n");
-	}
-
-protected:
-	SGuid m_guid{};
+ protected:
+  SGuid m_guid{};
 };
 
-/*
-class ChildClass : public Object
-{
-public:
-	// CLASS TYPE INFO
-	static constexpr Type typeInfo = { 
-		"ChildClass", 
-		&Object::typeInfo 
-	};
+/**
+ * @brief
+ * Prints all the fields and their values of an Object or Structure type instance.
+ * 
+ * @param object
+ * Pointer to the instance.
+ * 
+ * @param type
+ * Pointer to the object's TypeInfo.
+ * 
+ * @param indent
+ * Indentation when printing.
+ */
+void CORE_API printFields(void* object, const TypeInfo* type, int indent);
 
-	virtual const Type* getTypeInfo() const { 
-		return &typeInfo; 
-	}
-
-	inline void printHello() const override { 
-		printf("Hello! I am a \"Child class\" class object\n"); 
-	}
-};
-
-class GrandChildClass : public ChildClass
-{
-public:
-	// CLASS TYPE INFO
-	static constexpr Type typeInfo = { 
-		"GrandChildClass", 
-		&ChildClass::typeInfo 
-	};
-
-	virtual const Type* getTypeInfo() const { 
-		return &typeInfo; 
-	}
-
-
-	inline void printHello() const override { 
-		printf("Hello! I am a \"GrandChildClass\" class object\n"); 
-	}
-};
-*/
+void CORE_API printTypeFields(const TypeInfo* type, int indent = 2);

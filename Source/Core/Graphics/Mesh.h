@@ -1,27 +1,45 @@
 /* ======================================================================================
- *  Mesh.h:
+ *  TestMeshClass.h:
  *
  *  By:
  *    Yanis Oulmane
 ====================================================================================== */
 
-#include "Core/OptimEngine.h"
-#include "Core/Utilities/Random/Random.h"
-#include "Core/Math/OptimMathematics.h"
+#pragma once
+
+#include "Core/Graphics/Resource/GraphicResourceHandle.h"
 #include "Core/Graphics/Vertex.h"
+#include "Core/Math/OptimMathematics.h"
+#include "Core/Math/Quaternion.h"
+#include "Core/Object/Object.h"
+#include "Core/OptimEngine.h"
+#include "Core/System/FileStream.h"
 
-/*
-class Mesh final
+#include <string>
+
+#define UPROPERTY()
+
+class CORE_API Mesh : public Object
 {
-public:
-	inline Mesh() = default;
-	float3 position{};
+  DECLARE_OBJECT()
 
-	Vertex* vertices{};
-	uint16* indices{};
+ public:
+  Mesh();
+  virtual ~Mesh() noexcept override;
 
-	SGuid*	vertexBufferResourceID{};
-	SGuid*	indexBufferResourceID{};
+  float4x4 getWorldMatrix() const;
+
+  float3     position{};
+  Quaternion rotation{};
+
+  std::string sourcePath{""};
+
+  Vertex* vertices{};
+  uint32* indices{};
+
+  uint32 vertexCount{};
+  uint32 indexCount{};
+
+  VertexBufferHandle vertexBufferHandle{};
+  IndexBufferHandle  indexBufferHandle{};
 };
-*/
-

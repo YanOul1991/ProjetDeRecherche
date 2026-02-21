@@ -9,12 +9,28 @@
 
 #pragma once
 
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <d3dcompiler.h>
+#if defined(_WIN32) || defined(_WIN64)
 
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3dcompiler.lib")
+  #include "Core/Exception/exception.h"
 
-#define OPTIM_TRY_DX(_PROC_) if(FAILED( hr = _PROC_)) throw Exception(__LINE__, __FILEW__, hr, TEXT("DirectX Error"), op::sys::windows::translateError(hr))
+  #include <DirectXMath.h>
+  #include <d3d11.h>
+  #include <d3dcompiler.h>
+
+  #pragma comment(lib, "d3d11.lib")
+  #pragma comment(lib, "dxgi.lib")
+  #pragma comment(lib, "d3dcompiler.lib")
+
+  #define OPTIM_CHECK_WIN_COM() HRESULT hr = S_OK
+
+  #define OPTIM_WIN_COM_CHECK_START() HRESULT hr = S_OK
+
+  #define OPTIM_TRY_DX(_PROC_)                                                                     \
+    if (FAILED(hr = _PROC_))                                                                       \
+    throw Exception(__LINE__, __FILE__, hr, "DirectX Error", op::sys::windows::translateError(hr))
+
+  #define OPTIM_WIN_THROW_ON_FAILED(_PROC_)                                                        \
+    if (FAILED(hr = _PROC_))                                                                       \
+    throw Exception(__LINE__, __FILE__, hr, "DirectX Error", op::sys::windows::translateError(hr))
+
+#endif

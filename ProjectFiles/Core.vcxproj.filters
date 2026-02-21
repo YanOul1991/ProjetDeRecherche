@@ -57,10 +57,10 @@
       <Filter>Object\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Math\OptimMathematics.h">
-      <Filter>Math</Filter>
+      <Filter>Mathematics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Math\Quaternion.h">
-      <Filter>Math</Filter>
+      <Filter>Mathematics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Core\Types\Color.h">
       <Filter>Types</Filter>
@@ -77,8 +77,41 @@
     <ClInclude Include="..\Source\Core\Utilities\Pointer\UniquePtr.h">
       <Filter>Utilities\Pointer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Core\Graphics\IGraphicsModule.h">
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsRHI.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Graphics.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\System\ModelLoader.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicPipeline.h">
+      <Filter>Graphics\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Utilities\Event\Event.h">
+      <Filter>Utilities\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\IGraphicsDevice.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Reflection\OptimReflection.h">
+      <Filter>Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Reflection\Internal\TypeReflection.h">
+      <Filter>Reflection\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Serialization\Parser.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Serialization\Tokenizer.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Serialization\Serializer.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h">
+      <Filter>Graphics\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -145,9 +178,6 @@
     <Filter Include="Object\Camera">
       <UniqueIdentifier>{6f7948aa-29c7-40e5-afb3-8b5ef976a755}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{7c57a133-1c38-45d7-9be9-c9d251d805d1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\Image">
       <UniqueIdentifier>{2917b471-63de-4dca-8b0d-8dcdc8df44be}</UniqueIdentifier>
     </Filter>
@@ -159,6 +189,33 @@
     </Filter>
     <Filter Include="Utilities\Pointer">
       <UniqueIdentifier>{45c6573d-53d5-40c0-b05d-de78d2fc2ce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Resource">
+      <UniqueIdentifier>{9a5e5c76-61ca-47e2-b796-60ee35846566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Private">
+      <UniqueIdentifier>{f632ff4c-20e2-4862-a964-d1845248f7f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Event">
+      <UniqueIdentifier>{61d34c9e-2e03-4e4a-ab0d-f802f12be186}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mathematics">
+      <UniqueIdentifier>{7c57a133-1c38-45d7-9be9-c9d251d805d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mathematics\Internal">
+      <UniqueIdentifier>{44475933-a731-45a8-935c-adaf18893b00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection">
+      <UniqueIdentifier>{38c604c8-c662-4a1f-bbb8-5353b481cfac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reflection\Internal">
+      <UniqueIdentifier>{090dbd18-9106-4a11-87b6-e1178b2351b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Serialization">
+      <UniqueIdentifier>{3ad29e5d-ea82-437c-8879-4966df2c4f64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Serialization\Private">
+      <UniqueIdentifier>{bf4737d0-a85a-4de2-8830-e392a519e813}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +272,30 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Utilities\Random\Random.cpp">
       <Filter>Utilities\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\System\private\ModelLoader.cpp">
+      <Filter>System\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Graphics\Private\Graphics.cpp">
+      <Filter>Graphics\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Graphics\Mesh.cpp">
+      <Filter>Graphics\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Math\Internal\OptimMathematics.cpp">
+      <Filter>Mathematics\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Math\Internal\Quaternion.cpp">
+      <Filter>Mathematics\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Serialization\Tokenizer.cpp">
+      <Filter>Serialization\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Serialization\Serializer.cpp">
+      <Filter>Serialization\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Serialization\Parser.cpp">
+      <Filter>Serialization\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
