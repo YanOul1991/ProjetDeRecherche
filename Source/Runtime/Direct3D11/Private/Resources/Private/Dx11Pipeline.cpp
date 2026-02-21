@@ -2,6 +2,8 @@
 
 #include "../Dx11Pipeline.h"
 
+#include "Runtime/Direct3D11/Dx11RHI.h"
+
 #include <clocale>
 #include <cstdlib>
 #include <cwchar>
@@ -47,9 +49,6 @@ static std::wstring optim_towstr(std::string& str) {
   return wstr;
 }
 
-static void StaticCreateVertexShader(ID3D11Device* pDevice, const char* path) {
-}
-
 Dx11Pipeline::~Dx11Pipeline() {
 }
 
@@ -76,7 +75,6 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
   // ------------------------  INPUT LAYOUT CREATION
   // -----------------------------------------------
 
-
   /**
    * Translate the inputs list from the SPipelineDesc
    * object into a list of D3D11_INPUT_ELEMENT_DESC
@@ -85,6 +83,8 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   for (auto& input : pipelineDesc.inputs) {
     ieds.push_back(translateInput(input));
+
+    inputFlags |= 1 << static_cast<uint32>(input.inputUsage);
   }
 
   OPTIM_TRY_DX(pDevice->CreateInputLayout(
@@ -168,10 +168,18 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
  */
 void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
   pContext->IASetPrimitiveTopology(primitiveTopology);
+
   pContext->IASetInputLayout(inputLayout.Get());
+
   pContext->VSSetShader(vertexShader.Get(), nullptr, 0);
+
   pContext->PSSetShader(pixelShader.Get(), nullptr, 0);
+
   pContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
+
   pContext->RSSetState(rasterizerState.Get());
+
   pContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
+
+  Dx11RHI::StaticUpdateActivePipelineInputs(inputFlags);
 }

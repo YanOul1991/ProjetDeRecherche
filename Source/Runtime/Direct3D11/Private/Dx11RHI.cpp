@@ -29,10 +29,8 @@ extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module() {
   return new Dx11RHI;
 }
 
-/**
- * @brief
- * Utility function to convert to wide strings
- */
+std::vector<uint32> Dx11RHI::staticActivePipelineInputs{};
+
 static std::wstring towstr(std::string& str) {
   uint32       size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
   std::wstring wstr(size, 0);
@@ -45,6 +43,39 @@ static std::vector<Dx11DepthStencilViewTexture*> g_depthStencilViewTextureResour
 static GraphicResourceRegistery g_registery{};
 
 CommandBuffer Dx11RHI::cmdBuffer{};
+
+std::vector<uint32>& Dx11RHI::getActivePipelineInputs() {
+  return staticActivePipelineInputs;
+}
+
+void Dx11RHI::StaticUpdateActivePipelineInputs(uint32 inputMask) {
+  static bool init = false;
+
+  staticActivePipelineInputs.clear();
+
+  uint32 _mask = inputMask;
+
+  while (_mask) {
+    // __builtin_ctz for unix ?
+    uint32 i = _tzcnt_u32(_mask);
+    staticActivePipelineInputs.push_back(i);
+    _mask &= _mask - 1;
+  }
+
+  //for (uint32 i = 0; i < sizeof(inputMask) * 8; i++) {
+  //  if (((inputMask >> i) & 1)) {
+  //    staticActivePipelineInputs.push_back(i);
+  //  }
+  //}
+
+  //if (!init) {
+  //  std::cout << "[Dx11RHI] Checking active pipeline with _tzcnt_u32 mask: \n";
+  //  for (auto& i : staticActivePipelineInputs) {
+  //    std::cout << "    " << i << '\n';
+  //  }
+  //  init = true;
+  //}
+}
 
 Dx11RHI::Dx11RHI() :
     m_outputWindow{nullptr},

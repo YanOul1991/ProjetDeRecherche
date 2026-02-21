@@ -103,17 +103,18 @@ enum class EGraphicsFormat {
 };
 
 enum class EInputUsageSlot {
-  position = 0,
-  uvCoord  = 1,
-  normal   = 2,
-  tangent  = 3,
-  color    = 4,
+  position  = 0,
+  textCoord = 1,
+  normal    = 2,
+  tangent   = 3,
+  color     = 4,
 };
 
 struct SPipelineInputDescription {
   const char*     name;
   EGraphicsFormat format;
   uint32          inputSlot;
+  EInputUsageSlot inputUsage;
 };
 
 struct SPipelineDesc {

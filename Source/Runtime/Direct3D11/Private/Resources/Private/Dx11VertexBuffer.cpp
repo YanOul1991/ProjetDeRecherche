@@ -1,4 +1,5 @@
 #include "../Dx11VertexBuffer.h"
+#include "Dx11RHI.h"
 
 Dx11VertexBuffer::~Dx11VertexBuffer() {
 }
@@ -52,7 +53,7 @@ void Dx11VertexBuffer::create(ID3D11Device* pDevice, Vertex* pVertexBuffer, uint
   printf("[Dx11VertexBuffer] Vertex Buffer resource created\n");
 }
 
-inline void Dx11VertexBuffer::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
+void Dx11VertexBuffer::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
   // NOTES
   //
   // Input Assembler supports 16 slots for Dx11
@@ -71,6 +72,7 @@ inline void Dx11VertexBuffer::bind(ID3D11DeviceContext* pContext, ID3D11RenderTa
   //
 
   // build buffers
+  /*
   std::vector<ID3D11Buffer*> l_buffers{
     pBuffer.Get(),
     uvStream.Get(),
@@ -86,7 +88,31 @@ inline void Dx11VertexBuffer::bind(ID3D11DeviceContext* pContext, ID3D11RenderTa
   std::vector<uint32> l_offsets{
     0, 0, 0
   };
+  */
+
+  std::vector<ID3D11Buffer*> l_buffers;
+  std::vector<uint32> l_strides;
+  std::vector<uint32> l_offsets;
+
+  for (uint32& i : Dx11RHI::getActivePipelineInputs()) {
+    if (i == 0) {
+      l_buffers.push_back(pBuffer.Get());
+      l_strides.push_back(stride);
+      l_offsets.push_back(0);
+    }
+
+    if (i == 1) {
+      l_buffers.push_back(uvStream.Get());
+      l_strides.push_back(uvStreamStride);
+      l_offsets.push_back(0);
+    }
+
+    if (i == 2) {
+      l_buffers.push_back(normalStream.Get());
+      l_strides.push_back(normalStreamStride);
+      l_offsets.push_back(0);
+    }
+  }
 
   pContext->IASetVertexBuffers(0, static_cast<uint32>(l_buffers.size()), l_buffers.data(), l_strides.data(), l_offsets.data());
-  //pContext->IASetVertexBuffers(0, 3, pBuffer.GetAddressOf(), &stride, &offset);
 }
