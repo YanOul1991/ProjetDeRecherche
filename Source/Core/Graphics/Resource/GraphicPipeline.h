@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
+
 #include <vector>
 
 enum class EPipelinePrimitiveTopology : unsigned char {
@@ -101,9 +102,18 @@ enum class EGraphicsFormat {
   r32g32_sint,
 };
 
+enum class EInputUsageSlot {
+  position = 0,
+  uvCoord  = 1,
+  normal   = 2,
+  tangent  = 3,
+  color    = 4,
+};
+
 struct SPipelineInputDescription {
   const char*     name;
   EGraphicsFormat format;
+  uint32          inputSlot;
 };
 
 struct SPipelineDesc {

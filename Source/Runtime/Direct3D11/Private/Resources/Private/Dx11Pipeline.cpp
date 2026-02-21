@@ -32,7 +32,7 @@ static D3D11_INPUT_ELEMENT_DESC translateInput(SPipelineInputDescription param_d
   _retVal.SemanticName         = param_desc.name;
   _retVal.SemanticIndex        = 0;
   _retVal.Format               = translateDXGIFormat(param_desc.format);
-  _retVal.InputSlot            = 0;
+  _retVal.InputSlot            = param_desc.inputSlot;
   _retVal.AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
   _retVal.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
   _retVal.InstanceDataStepRate = 0;

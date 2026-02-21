@@ -378,15 +378,18 @@ void Application::ApplicationStart() {
 
     SPipelineInputDescription inputPosition{
       .name = "POSITION",
-      .format = EGraphicsFormat::r32g32b32_float
+      .format = EGraphicsFormat::r32g32b32_float,
+      .inputSlot = 0
     };
     SPipelineInputDescription inputUv{
       .name = "TEXCOORD",
-      .format = EGraphicsFormat::r32g32_float
+      .format = EGraphicsFormat::r32g32_float,
+      .inputSlot = 1
     };
     SPipelineInputDescription inputNorm{
       .name = "NORMAL",
-      .format = EGraphicsFormat::r32g32b32_float
+      .format = EGraphicsFormat::r32g32b32_float,
+      .inputSlot = 2
     };
 
     std::vector<SPipelineInputDescription> pipeLineInputs = {
