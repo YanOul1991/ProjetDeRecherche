@@ -13,22 +13,6 @@ enum class EPipelinePrimitiveTopology : unsigned char {
   TriangleStrip,
 };
 
-enum class EPipelineVertexLayout : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-enum class EPipelineDepthDesc : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-enum class EPipelineBlendDesc : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
-enum class EPipelineRenderTargetFormat : unsigned char {
-  // ENUM_NOT_DEFINED_YET
-};
-
 /* **************************************
  * RASTERIZER DESCIRPTIONS
  ************************************** */

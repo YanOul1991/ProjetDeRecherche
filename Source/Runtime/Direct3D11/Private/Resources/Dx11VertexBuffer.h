@@ -25,16 +25,17 @@ class Dx11VertexBuffer final : public IDx11Resource
 
   uint32 bufferElementCount{};
 
-  ComPtr<ID3D11Buffer> pBuffer{};
-  ComPtr<ID3D11Buffer> uvStream{};
-  ComPtr<ID3D11Buffer> normalStream{};
+  VertexStream vertexStreams[8];
 
-  uint32 stride{};
-  uint32 uvStreamStride{};
-  uint32 normalStreamStride{};
+  //ComPtr<ID3D11Buffer> pBuffer{};
+  //ComPtr<ID3D11Buffer> uvStream{};
+  //ComPtr<ID3D11Buffer> normalStream{};
 
-  //VertexStream streams[8];
+  //uint32 stride{};
+  //uint32 uvStreamStride{};
+  //uint32 normalStreamStride{};
 
-  uint32 offset{};
+
+  //uint32 offset{};
   //uint32 inputSlot{};
 };

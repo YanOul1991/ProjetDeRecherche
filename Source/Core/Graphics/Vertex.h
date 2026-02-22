@@ -18,6 +18,7 @@ struct Vertex {
   float3  position;
   UVCoord uvCoord;
   float3  normal;
+  float4  color{0.0f, 1.0f, 0.0f, 1.0f};
 
   void print() const {
     printf("---- Position: <%f, %f, %f>\n---- UV coord: <%f, %f>\n---- Normal  : <%f, %f, %f>\n",

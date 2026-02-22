@@ -144,7 +144,7 @@ CompactNamespaces: true
 
 ContinuationIndentWidth: 2
 
-Cpp11BracedListStyle: true # https://clang.llvm.org/docs/ClangFormatStyleOptions.html#cpp11bracedliststyle
+Cpp11BracedListStyle: false # https://clang.llvm.org/docs/ClangFormatStyleOptions.html#cpp11bracedliststyle
 
 FixNamespaceComments: true # https://clang.llvm.org/docs/ClangFormatStyleOptions.html#experimentalautodetectbinpacking
 
