@@ -12,6 +12,8 @@
 #include "Core/Defines/Windows/windowsAPI.h"
 #include "Core/OptimEngine.h"
 
+#include <vector>
+
 class Dx11ConstantBuffer final : public IDx11Resource
 {
  public:
