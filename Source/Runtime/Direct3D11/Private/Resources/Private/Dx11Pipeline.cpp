@@ -53,8 +53,12 @@ static EShaderBindResourceType translateShaderInputType(D3D_SHADER_INPUT_TYPE d3
   else if (d3dShader == D3D_SIT_STRUCTURED) {
     return EShaderBindResourceType::StructuredBuffer;
   }
+  else {
+    return EShaderBindResourceType::CBuffer;
+  }
 }
 
+/*
 static constexpr DXGI_FORMAT translateDXGIFormat(EGraphicsFormat format) {
   switch (format) {
   case EGraphicsFormat::r32g32b32a32_typeless: return DXGI_FORMAT_R32G32B32A32_TYPELESS;
@@ -86,6 +90,7 @@ static D3D11_INPUT_ELEMENT_DESC translateInput(SPipelineInputDescription param_d
 
   return _retVal;
 }
+*/
 
 /**
  * \brief
@@ -151,34 +156,19 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   std::vector<D3D11_INPUT_ELEMENT_DESC> ieds;
 
-  std::cout << "\n\nPrinting all for shader semantics paramerter resources (input Layout): \n";
+  // std::cout << "\n\nPrinting all for shader semantics paramerter resources (input Layout): \n";
 
   for (auto& param : shaderParameters) {
+    /*
     EInputUsageSlot semanticUsage = _sematicsUsage.at(param.name.value());
     ::printf("Name : %s\n", param.name.value());
     ::printf("  Register : %d\n", param.regist);
     ::printf("  [Usage = %d]\n", (int)semanticUsage);
+    */
 
     ieds.push_back(static_createInputElementDesc(param));
-
-    inputFlags |= 1 << static_cast<uint32>(semanticUsage);
-    /*
-    try {
-    }
-    catch (const std::exception&) {
-      ::printf("[EXCEPTION - Dx11Pipeline] Unsupported semantic: %s\n", param.name.value());
-    }
-    */
+    inputFlags |= 1 << static_cast<uint32>(_sematicsUsage.at(param.name.value()));
   }
-
-  // INPUT CONSTRUCTION LIST
-  /*
-  for (auto& input : pipelineDesc.inputs) {
-    ieds.push_back(translateInput(input));
-
-    inputFlags |= 1 << static_cast<uint32>(input.inputUsage);
-  }
-  */
 
   OPTIM_TRY_DX(pDevice->CreateInputLayout(
     ieds.data(),
@@ -212,8 +202,6 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   pDevice->CreateSamplerState(&samplerDesc, &samplerState);
 
-  // printf("[Dx11Pipeline] Sampler state resource created...\n");
-
   // RASTERIZER STATE CREATION
 
   D3D11_RASTERIZER_DESC l_rastDesc{};
@@ -230,8 +218,6 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   pDevice->CreateRasterizerState(&l_rastDesc, &rasterizerState);
 
-  // printf("[Dx11Pipeline] Rasterizer state resource created...\n");
-
   // DEPTH STENCIL STATE CREATION
 
   D3D11_DEPTH_STENCIL_DESC l_dsDesc{};
@@ -241,8 +227,6 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
   l_dsDesc.StencilEnable  = false;
 
   pDevice->CreateDepthStencilState(&l_dsDesc, &depthStencilState);
-
-  // printf("[Dx11Pipeline] Depth stencil state resource created...\n");
 
   std::cout << "\n\nPrinting all for shader input bind resources : \n";
   for (auto& input : shadersInputBind) {
@@ -276,36 +260,45 @@ void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** 
   Dx11RHI::StaticUpdateActivePipelineInputs(inputFlags);
 }
 
-void Dx11Pipeline::reflectShader(const std::string& shaderName, ComPtr<ID3DBlob>& byteCode, EShaderStage stage) {
-  // printf("[Dx11Pipeline] Getting shader reflection for %s\n", shaderName.c_str());
+void Dx11Pipeline::CreateVertexShader(ID3D11Device* pDevice, const char* shaderPath) {
+}
 
+void Dx11Pipeline::CreatePixelShader(ID3D11Device* pDevice, const char* shaderPath) {
+}
+
+void Dx11Pipeline::CreateRasterizerState(ID3D11Device* pDevice, const SRasterizerDescription& rastDesc) {
+}
+
+void Dx11Pipeline::CreateDSV(ID3D11Device* pDevice, const SDepthStencilDescription& dsvDesc) {
+}
+
+void Dx11Pipeline::reflectShader(const std::string& shaderName, ComPtr<ID3DBlob>& byteCode, EShaderStage stage) {
   ComPtr<ID3D11ShaderReflection> shaderReflection;
   D3DReflect(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), __uuidof(ID3D11ShaderReflection), &shaderReflection);
 
   D3D11_SHADER_DESC desc{};
   shaderReflection->GetDesc(&desc);
 
-  std::cout << "Shader Signature Parameters:\n";
-
   for (UINT i = 0; i < desc.InputParameters; i++) {
+    D3D11_SIGNATURE_PARAMETER_DESC sigDesc{};
+    shaderReflection->GetInputParameterDesc(i, &sigDesc);
+
     if (stage == EShaderStage::Vertex) {
-      D3D11_SIGNATURE_PARAMETER_DESC sigDesc{};
-      shaderReflection->GetInputParameterDesc(i, &sigDesc);
+      SShaderParameters shaderParam;
 
-      SShaderParameters _outShaderParam;
+      shaderParam.name   = sigDesc.SemanticName;
+      shaderParam.regist = sigDesc.Register;
 
-      _outShaderParam.name   = sigDesc.SemanticName;
-      _outShaderParam.regist = sigDesc.Register;
-
-      shaderParameters.push_back(_outShaderParam);
-      /*
-       std::cout << "  Sematic name:      " << sigDesc.SemanticName << "\n";
-       std::cout << "  Sematic index:     " << sigDesc.SemanticIndex << "\n";
-       std::cout << "  Sematic Register:  " << sigDesc.Register << "\n";
-       std::cout << "  System Value type: " << sigDesc.SystemValueType << "\n";
-       std::cout << "  Component type:    " << sigDesc.ComponentType << "\n";
-      */
+      shaderParameters.push_back(shaderParam);
     }
+
+    /*
+     std::cout << "  Sematic name:      " << sigDesc.SemanticName << "\n";
+     std::cout << "  Sematic index:     " << sigDesc.SemanticIndex << "\n";
+     std::cout << "  Sematic Register:  " << sigDesc.Register << "\n";
+     std::cout << "  System Value type: " << sigDesc.SystemValueType << "\n";
+     std::cout << "  Component type:    " << sigDesc.ComponentType << "\n";
+    */
   }
 
   // std::cout << "Shader Bound Resources: " << desc.BoundResources << "\n";
