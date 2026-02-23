@@ -360,6 +360,8 @@ void Application::ApplicationStart() {
 
     g_uptrSystemWindow->showWindow();
 
+    // //////////////////////////////////// GIZMO initalization
+
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
@@ -367,6 +369,17 @@ void Application::ApplicationStart() {
     for (auto& gizmo : arrayGizmoSelection) {
       gizmo.init();
       OptimEditor::loadFbxModel((*gizmo), "Assets/gizmoSelectionArrow.fbx");
+    }
+
+    for (size_t i = 0; i < arrayGizmoSelection[0]->vertexCount; i++) {
+      arrayGizmoSelection[0]->vertices[i].color = float4(0.0f, 0.0f, 1.0f, 1.0f);
+    }
+
+    for (size_t i = 0; i < arrayGizmoSelection[2]->vertexCount; i++) {
+      arrayGizmoSelection[2]->vertices[i].color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    for (auto& gizmo : arrayGizmoSelection) {
       gizmo->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(gizmo->vertices, gizmo->vertexCount);
       gizmo->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(gizmo->indices, gizmo->indexCount);
     }
@@ -374,30 +387,35 @@ void Application::ApplicationStart() {
     arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({1, 0, 0}, -Optim::Constants::pi / 2.0f);
     arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({0, 1, 0}, Optim::Constants::pi / 2.0f);
 
+    // //////////////////////////////////// GIZMO initalization - END
+
     //////////////////////////////// TEST NEW PIPELINE SYSTEM
 
-    SPipelineInputDescription inputPosition{
+    SPipelineInputDescription inputPosition {
       .name = "POSITION",
-      .format = EGraphicsFormat::r32g32b32_float
+      .format = EGraphicsFormat::r32g32b32_float,
+      .inputSlot = 0,
+      .inputUsage = EInputUsageSlot::position
     };
     SPipelineInputDescription inputUv{
       .name = "TEXCOORD",
-      .format = EGraphicsFormat::r32g32_float
+      .format = EGraphicsFormat::r32g32_float,
+      .inputSlot = 1,
+      .inputUsage = EInputUsageSlot::textCoord
     };
     SPipelineInputDescription inputNorm{
       .name = "NORMAL",
-      .format = EGraphicsFormat::r32g32b32_float
+      .format = EGraphicsFormat::r32g32b32_float,
+      .inputSlot = 2,
+      .inputUsage = EInputUsageSlot::normal
     };
 
     std::vector<SPipelineInputDescription> pipeLineInputs = {
       inputPosition, inputUv, inputNorm
     };
 
-    /*
-     * -----------------------------------------------------------------------------
-     * ---------------------------- PHONG SHADER  PIPELINE -------------------------
-     * -----------------------------------------------------------------------------
-     */
+    // ---------------------------------------------------------------------
+    // PIPELINE - PHONG / DEFAULT
 
     SPipelineDesc testBasicPipelineDesc{};
 
@@ -426,14 +444,9 @@ void Application::ApplicationStart() {
 
     _newPipelineHandleTest = Graphics::RHI()->createPipeline(&testBasicPipelineDesc);
 
-    /////////////////////////////////////////////////////////
+    // ---------------------------------------------------------------------
+    // PIPELINE - WIRFRAME
 
-
-    /*
-     * -----------------------------------------------------------------------------
-     * ---------------------------- WIREFRAME  PIPELINE ----------------------------
-     * -----------------------------------------------------------------------------
-     */
     SPipelineDesc l_wirframePipelineDesc = {
       .vertexShader   = "bin/WireframeVS.cso",
       .fragmentShader = "bin/WireframePS.cso",
@@ -456,13 +469,12 @@ void Application::ApplicationStart() {
 
       .inputs = pipeLineInputs
     };
+
     _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
 
-    /*
-     * -----------------------------------------------------------------------------
-     * ----------------------------- OUTLINE  PIPELINE -----------------------------
-     * -----------------------------------------------------------------------------
-     */
+    // ---------------------------------------------------------------------
+    // PIPELINE - OUTLINE
+
     SPipelineDesc l_outlinePipelineDesc = {
       .vertexShader   = "bin/OutlineVS.cso",
       .fragmentShader = "bin/OutlinePS.cso",
@@ -487,14 +499,31 @@ void Application::ApplicationStart() {
     };
     _handlePipelineOutline = Graphics::RHI()->createPipeline(&l_outlinePipelineDesc);
 
-    /*
-     * -----------------------------------------------------------------------------
-     * -------------------------- Line Rendering pipeline --------------------------
-     * -----------------------------------------------------------------------------
-     */
+    // ---------------------------------------------------------------------
+    // PIPELINE
+
+    SPipelineInputDescription pipelineGizmoInputPosition{
+      .name = "POSITION",
+      .format = EGraphicsFormat::r32g32b32_float,
+      .inputSlot = 0,
+      .inputUsage = EInputUsageSlot::position
+    };
+
+    SPipelineInputDescription pipelineGizmoInputColor{
+      .name = "COLOR",
+      .format = EGraphicsFormat::r32g32b32a32_float,
+      .inputSlot = 1,
+      .inputUsage = EInputUsageSlot::color
+    };
+
+    std::vector<SPipelineInputDescription> pipelineGizmoInput = {
+      pipelineGizmoInputPosition,
+      pipelineGizmoInputColor
+    };
+
     SPipelineDesc l_pipelineLineDesc = {
-      .vertexShader   = "bin/WireframeVS.cso",
-      .fragmentShader = "bin/WireframePS.cso",
+      .vertexShader   = "bin/TransformGizmoVS.cso",
+      .fragmentShader = "bin/TransformGizmoPS.cso",
 
       .rasterizerDescription = {
         .fillMode             = ERasterizerFillMode::Solid,
@@ -512,20 +541,9 @@ void Application::ApplicationStart() {
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
 
-      .inputs = pipeLineInputs
+      .inputs = pipelineGizmoInput
     };
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
-
-
-    /*
-     * -----------------------------------------------------------------------------
-     * -------------------------- TRANSFORM GIZMOS PIPELINE --------------------------
-     * -----------------------------------------------------------------------------
-    */
-
-    //std::vector<SPipelineDesc>
-
-
 
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
@@ -617,8 +635,6 @@ void Application::ApplicationLoop() {
     Graphics::RHI()->cmdBindPipeline(&_newPipelineHandleTest);
     Graphics::RHI()->cmdBindTexture(&_handleTextureResource);
 
-    // Graphics::RHI()->bindSampler(_TEST_pSampler);
-
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
       float mouseDx{};
       float mouseDy{};
@@ -634,8 +650,6 @@ void Application::ApplicationLoop() {
         float3 worldVector = (mouseDx * Camera::right) + (-mouseDy * Camera::up);
 
         float dot = dotProduct(normalize(worldVector), controlGizmoDirection);
-
-        // printf("Camera dot value %f:\n", dot);
 
         float3 vectorToCam = Camera::position - (*g_ppSelectedMesh)->position;
 

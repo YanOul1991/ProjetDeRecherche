@@ -7,7 +7,7 @@ Dx11IndexBuffer::~Dx11IndexBuffer() {
 }
 
 void Dx11IndexBuffer::create(ID3D11Device* pDevice, uint32* pIndices, uint32 elementCount) {
-  HRESULT hr{S_OK};
+  OPTIM_WIN_COM_CHECK_START();
 
   bufferElementCount = elementCount;
   stride             = 0;

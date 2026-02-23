@@ -1,7 +1,7 @@
 Mesh=(
   position=(
     x=-3.613390,
-    y=1.796507,
+    y=-0.385050,
     z=-9.741566
     ),
   rotation=(
@@ -25,18 +25,4 @@ Mesh=(
     z=0.000000
     ),
   sourcePath="Assets\monkey.fbx"
-  ),
-Mesh=(
-  position=(
-    x=0.000000,
-    y=-0.284549,
-    z=-4.140773
-    ),
-  rotation=(
-    w=1.000000,
-    x=0.000000,
-    y=0.000000,
-    z=0.000000
-    ),
-  sourcePath="Assets\cube.fbx\"
   )

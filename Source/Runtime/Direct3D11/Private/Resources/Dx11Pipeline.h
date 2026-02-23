@@ -18,6 +18,8 @@ class Dx11Pipeline final : public IDx11Resource
 
   virtual void bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) override final;
 
+  uint32 inputFlags = 0;
+
   D3D_PRIMITIVE_TOPOLOGY          primitiveTopology{}; // [x] - [x]
   ComPtr<ID3D11InputLayout>       inputLayout{};       // [x] - [x]
   ComPtr<ID3D11VertexShader>      vertexShader{};      // [x] - [x]
