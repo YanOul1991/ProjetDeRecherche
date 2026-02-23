@@ -29,8 +29,6 @@ extern "C" DIRECTX11_API Dx11RHI* CreateDirect3D11Module() {
   return new Dx11RHI;
 }
 
-std::vector<uint32> Dx11RHI::staticActivePipelineInputs{};
-
 static std::wstring towstr(std::string& str) {
   uint32       size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
   std::wstring wstr(size, 0);
@@ -41,6 +39,8 @@ static std::wstring towstr(std::string& str) {
 static std::vector<Dx11DepthStencilViewTexture*> g_depthStencilViewTextureResources{};
 
 static GraphicResourceRegistery g_registery{};
+
+std::vector<uint32> Dx11RHI::staticActivePipelineInputs{};
 
 CommandBuffer Dx11RHI::cmdBuffer{};
 
@@ -61,25 +61,11 @@ void Dx11RHI::StaticUpdateActivePipelineInputs(uint32 inputMask) {
     staticActivePipelineInputs.push_back(i);
     _mask &= _mask - 1;
   }
-
-  //for (uint32 i = 0; i < sizeof(inputMask) * 8; i++) {
-  //  if (((inputMask >> i) & 1)) {
-  //    staticActivePipelineInputs.push_back(i);
-  //  }
-  //}
-
-  //if (!init) {
-  //  std::cout << "[Dx11RHI] Checking active pipeline with _tzcnt_u32 mask: \n";
-  //  for (auto& i : staticActivePipelineInputs) {
-  //    std::cout << "    " << i << '\n';
-  //  }
-  //  init = true;
-  //}
 }
 
 Dx11RHI::Dx11RHI() :
-    m_outputWindow{nullptr},
-    pDx11RHIDevice{nullptr} {
+    m_outputWindow{ nullptr },
+    pDx11RHIDevice{ nullptr } {
 }
 
 Dx11RHI::~Dx11RHI() {
@@ -141,43 +127,30 @@ void Dx11RHI::freeResource(ResourceHandle handle) {
  * ################################################################
  *    RESOURCE CREATION FUNCTIONS
  * ################################################################
- *
- * Each of the functions that creates a resources does so by allocating
- * memory on the heap for each apporpriate Dx11[XYZ] ressource
- *
- * Each of those functions, then calls the appropriate functions to
- * create the necessary ressources from the passed in paramters.
- *
- * Then they are finally added to a registery and by passing in
- * the type of the ressource and the pointer to the Dx11 object
- * casted as a void*.
- *
- * The function returns a generic ResourceHandle object, where the
- * data value is passed in as the data value for the correct
- * resource handle type.
- *
- * ################################################################
  */
 
 VertexBufferHandle Dx11RHI::createResourceVertexBuffer(Vertex* pVertices, const uint32 elementCount) {
   Dx11VertexBuffer* l_pResource = new Dx11VertexBuffer;
   l_pResource->create(pDx11RHIDevice->m_pDevice.Get(), pVertices, elementCount);
   return VertexBufferHandle{
-    .data = g_registery.registerResource(EResourceTypes::VertexBuffer, l_pResource).data};
+    .data = g_registery.registerResource(EResourceTypes::VertexBuffer, l_pResource).data
+  };
 }
 
 IndexBufferHandle Dx11RHI::createResourceIndexBuffer(uint32* pIndices, const uint32 elementCount) {
   Dx11IndexBuffer* l_pResource = new Dx11IndexBuffer;
   l_pResource->create(pDx11RHIDevice->m_pDevice.Get(), pIndices, elementCount);
   return IndexBufferHandle{
-    .data = g_registery.registerResource(EResourceTypes::IndexBuffer, l_pResource).data};
+    .data = g_registery.registerResource(EResourceTypes::IndexBuffer, l_pResource).data
+  };
 }
 
 PipelineHandle Dx11RHI::createPipeline(SPipelineDesc* pPipelineDesc) {
   Dx11Pipeline* pResource = new Dx11Pipeline;
   pResource->create(pDx11RHIDevice->m_pDevice.Get(), *pPipelineDesc);
   return PipelineHandle{
-    .data = g_registery.registerResource(EResourceTypes::Pipeline, pResource).data};
+    .data = g_registery.registerResource(EResourceTypes::Pipeline, pResource).data
+  };
 }
 
 DepthRTHandle Dx11RHI::createDepthRT() {
@@ -187,32 +160,29 @@ DepthRTHandle Dx11RHI::createDepthRT() {
   g_depthStencilViewTextureResources.push_back(pResource);
 
   return DepthRTHandle{
-    .data = g_registery.registerResource(EResourceTypes::DepthRT, pResource).data};
+    .data = g_registery.registerResource(EResourceTypes::DepthRT, pResource).data
+  };
 }
 
 ConstantBufferHandle Dx11RHI::createConstantBuffer(uint64 objectByteSize) {
   Dx11ConstantBuffer* pResource = new Dx11ConstantBuffer;
   pResource->create(pDx11RHIDevice->m_pDevice.Get(), (uint32)objectByteSize);
   return ConstantBufferHandle{
-    .data = g_registery.registerResource(EResourceTypes::ConstantBuffer, pResource).data};
+    .data = g_registery.registerResource(EResourceTypes::ConstantBuffer, pResource).data
+  };
 }
 
 TextureResourceHandle Dx11RHI::createTextureResource(const Image* pImage) {
   Dx11TextureResource* pResource = new Dx11TextureResource;
   pResource->create(pDx11RHIDevice->m_pDevice.Get(), pImage);
   return TextureResourceHandle{
-    .data = g_registery.registerResource(EResourceTypes::Texture, pResource).data};
+    .data = g_registery.registerResource(EResourceTypes::Texture, pResource).data
+  };
 }
 
 /**
  * ################################################################
  *    CONSTANT BUFFER UPDATES
- * ################################################################
- *
- * Constant buffers have a special function that allows them
- * to be updated at any time through the RHI when binded to
- * shader pipelines.
- *
  * ################################################################
  */
 
@@ -233,7 +203,7 @@ void Dx11RHI::cmdBindPipeline(PipelineHandle* pPipeline) {
     printf("The handle is not a PipelineHandle or the resource as been destroyed.\n");
     return;
   }
-  // uintptr_t dataAddress = (uintptr_t)g_registery[(ResourceHandle*)pPipeline]->pResource;
+
   cmdBuffer.push(
     ECommandType::BindPipeline,
     &g_registery[(ResourceHandle*)pPipeline]->pResource,
@@ -341,9 +311,12 @@ void Dx11RHI::excecuteCommands() {
     }
 
     if (cmd.type == ECommandType::BindConstantBufferTransformMatrix) {
-      float4x4 transform                               = *reinterpret_cast<float4x4*>(data);
+      float4x4 transform = *reinterpret_cast<float4x4*>(data);
+
       pDx11RHIDevice->vsInputConstBufferData.transform = transform.transpose();
+
       updateConstantBuffer(&pDx11RHIDevice->constantBufferTransformView, &pDx11RHIDevice->vsInputConstBufferData);
+
       continue;
     }
 

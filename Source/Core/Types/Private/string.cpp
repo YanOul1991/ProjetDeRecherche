@@ -18,7 +18,6 @@
 #include <vector>
 
 uint32 String::getLiteralSize(const char* str, uint64 maxSize) {
-  //setlocale(LC_ALL, "");
   return static_cast<uint32>(strnlen(str, maxSize));
 }
 
@@ -83,23 +82,29 @@ String::String() noexcept :
 }
 
 String::~String() noexcept {
-  printf("String has been deleted :D At following address:\n0x%02x\n", this);
+  //printf("String has been deleted :D At following address:\n0x%02x\n", this);
   freeBuffer();
 }
 
 String::String(const char* str) noexcept :
     m_length{String::getLiteralSize(str)},
     m_buffer{nullptr} {
+  //printf("[String] C-String constructor...\n");
   m_buffer = new char[m_length + 1];
   memcpy(m_buffer, str, sizeof(*str) * (m_length + 1));
+  m_buffer[m_length] = '\0';
+
+  //printf("[String] Value: %s\n", m_buffer);
 }
 
 String::String(const String& other) noexcept :
     m_length{0},
     m_buffer{nullptr} {
+  //printf("[String] Copy constructor...\n");
   m_length = other.length();
   m_buffer = new char[m_length];
   memcpy(m_buffer, other.value(), sizeof(char) * m_length);
+  m_buffer[m_length] = '\0';
 }
 
 String::String(String&& other) noexcept :
@@ -116,6 +121,7 @@ uint32 String::capacity() const {
   return 0;
 }
 const char* String::value() const {
+  //printf("[String] Returning buffer value: %s\n", m_buffer);
   return m_buffer;
 }
 
@@ -124,12 +130,13 @@ const char* String::value() const {
 ####################################### */
 
 String& String::operator=(const char* str) noexcept {
-  printf("Using overload: operator=(const char* str)\n");
+  //printf("Using overload: operator=(const char* str)\n");
   freeBuffer();
   int size = getLiteralSize(str);
   m_length = size;
   m_buffer = new char[size + 1];
   memcpy(m_buffer, str, sizeof(*m_buffer) * (size + 1));
+  m_buffer[m_length] = '\0';
   return *this;
 }
 
@@ -139,6 +146,7 @@ String& String::operator=(const String& other) noexcept {
     m_length = other.m_length;
     m_buffer = new char[m_length + 1];
     memcpy(m_buffer, other.m_buffer, sizeof(*m_buffer) * (m_length + 1));
+    m_buffer[m_length] = '\0';
   }
   return *this;
 }

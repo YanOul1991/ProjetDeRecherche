@@ -21,7 +21,8 @@ struct VSOut
   float4 pos : SV_POSITION;
 };
 
-Texture2D tex : register(t0);
+Texture2D colorTexture : register(t0);
+
 SamplerState smplr : register(s0);
 
 float4 main(VSOut input) : SV_Target
@@ -43,9 +44,7 @@ float4 main(VSOut input) : SV_Target
   // Final pixel value
   float3 finalValue = diffuse * diffuseColor;
   
-  float3 litMaterialColor = tex.Sample(smplr, input.tex).xyz * finalValue;
+  float3 litMaterialColor = colorTexture.Sample(smplr, input.tex).xyz * finalValue;
   
   return float4(litMaterialColor, 1.0f);
-  // return tex.Sample(smplr, input.tex) * float4(finalValue, 1.0f);
-  // return tex.Sample(smplr, input.tex);
 }

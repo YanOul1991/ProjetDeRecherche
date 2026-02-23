@@ -1,6 +1,6 @@
 // PHONG VERTX SHADER
 
-cbuffer CBuf
+cbuffer TransformBuffer : register(b0)
 {
   float4x4 transform;         // The transform of the vertex
   float4x4 lookAtMatrix;      // The viewprojection matrix
@@ -25,9 +25,6 @@ VSOut main(float3 pos : POSITION, float2 tex : TEXCOORD, float3 normal : NORMAL)
   // W = 0 -> no translation
   vso.norm = mul(float4(normal, 0), transform).xyz;
   
-  // The position of the model's vertices from the camera perspective (position in screen space)
-  // vso.pos = mul(float4(pos, 1.0f), mul(transform, mul(cameraLookAt, PerspectiveView)));
-  // vso.pos = mul(mul(mul(float4(pos, 1.0f), transform), perspectiveMatrix), perspectiveMatrix);
   vso.pos = mul(float4(pos, 1.0f), mul(transform, mul(lookAtMatrix, perspectiveMatrix)));
   
   vso.tex = tex;

@@ -1,4 +1,18 @@
-// Dx11Pipeline.cpp
+/**
+ * Dx11Pipeline.cpp
+ *
+ * Par:
+ *  Yanis Oulmane
+ *
+ * Shader Reflection
+ *
+ * [D3D11_SIGNATURE_PARAMETER_DESC]
+ * https://learn.microsoft.com/en-us/windows/win32/api/d3d11shader/ns-d3d11shader-d3d11_signature_parameter_desc
+ *
+ * [D3D11_SHADER_INPUT_BIND_DESC]
+ * https://learn.microsoft.com/en-us/windows/win32/api/d3d11shader/ns-d3d11shader-d3d11_shader_input_bind_desc
+ *
+ */
 
 #include "../Dx11Pipeline.h"
 
@@ -8,7 +22,38 @@
 #include <cstdlib>
 #include <cwchar>
 #include <iostream>
+#include <unordered_map>
 #include <vector>
+
+static const std::unordered_map<std::string, DXGI_FORMAT> _semanticsFormat = {
+  { "POSITION",    DXGI_FORMAT_R32G32B32_FLOAT },
+  { "TEXCOORD",       DXGI_FORMAT_R32G32_FLOAT },
+  {   "NORMAL",    DXGI_FORMAT_R32G32B32_FLOAT },
+  {    "COLOR", DXGI_FORMAT_R32G32B32A32_FLOAT },
+};
+
+static const std::unordered_map<std::string, EInputUsageSlot> _sematicsUsage = {
+  { "POSITION",  EInputUsageSlot::position },
+  { "TEXCOORD", EInputUsageSlot::textCoord },
+  {   "NORMAL",    EInputUsageSlot::normal },
+  {  "TANGENT",   EInputUsageSlot::tangent },
+  {    "COLOR",     EInputUsageSlot::color },
+};
+
+static EShaderBindResourceType translateShaderInputType(D3D_SHADER_INPUT_TYPE d3dShader) {
+  if (d3dShader == D3D_SIT_CBUFFER) {
+    return EShaderBindResourceType::CBuffer;
+  }
+  else if (d3dShader == D3D_SIT_TEXTURE) {
+    return EShaderBindResourceType::Texture;
+  }
+  else if (d3dShader == D3D_SIT_SAMPLER) {
+    return EShaderBindResourceType::Sampler;
+  }
+  else if (d3dShader == D3D_SIT_STRUCTURED) {
+    return EShaderBindResourceType::StructuredBuffer;
+  }
+}
 
 static constexpr DXGI_FORMAT translateDXGIFormat(EGraphicsFormat format) {
   switch (format) {
@@ -42,6 +87,28 @@ static D3D11_INPUT_ELEMENT_DESC translateInput(SPipelineInputDescription param_d
   return _retVal;
 }
 
+/**
+ * \brief
+ * Utility function to convert shader parameters reflection data into
+ * D3D11_INPUT_ELEMENT_DESC element.
+ *
+ * \param param_shaderParam
+ * A SSHaderParameters structure object describing the semantic.
+ */
+static D3D11_INPUT_ELEMENT_DESC static_createInputElementDesc(const SShaderParameters& param_shaderParam) {
+  D3D11_INPUT_ELEMENT_DESC retVal{};
+
+  retVal.SemanticName         = param_shaderParam.name.value();
+  retVal.SemanticIndex        = 0;
+  retVal.Format               = _semanticsFormat.at(param_shaderParam.name.value());
+  retVal.InputSlot            = param_shaderParam.regist;
+  retVal.AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
+  retVal.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+  retVal.InstanceDataStepRate = 0;
+
+  return retVal;
+}
+
 static std::wstring optim_towstr(std::string& str) {
   uint32       size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
   std::wstring wstr(size, 0);
@@ -52,6 +119,16 @@ static std::wstring optim_towstr(std::string& str) {
 Dx11Pipeline::~Dx11Pipeline() {
 }
 
+/**
+ * \brief
+ * Crate a pipeline resource object.
+ *
+ * \param pDevice
+ * A pointer to a ID3D11Device
+ *
+ * \param pipelineDesc
+ * A SPipelineDesc object.
+ */
 void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDesc) {
   OPTIM_CHECK_WIN_COM();
 
@@ -59,33 +136,49 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   ComPtr<ID3DBlob> pBlob;
 
-  // -----------------------------------------------
-  // ------------------------ VERTEX SHADER CREATION
-  // -----------------------------------------------
+  // VERTEX SHADER INIT
 
   std::string  pathVertexShader = pipelineDesc.vertexShader;
   std::wstring vertexShaderPath = optim_towstr(pathVertexShader);
   D3DReadFileToBlob(vertexShaderPath.c_str(), &pBlob);
 
+  // Initalize reflection for vertex shader
+  reflectShader(pathVertexShader, pBlob, EShaderStage::Vertex);
+
   OPTIM_TRY_DX(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &vertexShader));
 
-  printf("[Dx11Pipeline] Vertex Shader resource created...\n");
+  // INPUT LAYOUT
 
-  // -----------------------------------------------
-  // ------------------------  INPUT LAYOUT CREATION
-  // -----------------------------------------------
-
-  /**
-   * Translate the inputs list from the SPipelineDesc
-   * object into a list of D3D11_INPUT_ELEMENT_DESC
-   */
   std::vector<D3D11_INPUT_ELEMENT_DESC> ieds;
 
+  std::cout << "\n\nPrinting all for shader semantics paramerter resources (input Layout): \n";
+
+  for (auto& param : shaderParameters) {
+    EInputUsageSlot semanticUsage = _sematicsUsage.at(param.name.value());
+    ::printf("Name : %s\n", param.name.value());
+    ::printf("  Register : %d\n", param.regist);
+    ::printf("  [Usage = %d]\n", (int)semanticUsage);
+
+    ieds.push_back(static_createInputElementDesc(param));
+
+    inputFlags |= 1 << static_cast<uint32>(semanticUsage);
+    /*
+    try {
+    }
+    catch (const std::exception&) {
+      ::printf("[EXCEPTION - Dx11Pipeline] Unsupported semantic: %s\n", param.name.value());
+    }
+    */
+  }
+
+  // INPUT CONSTRUCTION LIST
+  /*
   for (auto& input : pipelineDesc.inputs) {
     ieds.push_back(translateInput(input));
 
     inputFlags |= 1 << static_cast<uint32>(input.inputUsage);
   }
+  */
 
   OPTIM_TRY_DX(pDevice->CreateInputLayout(
     ieds.data(),
@@ -94,15 +187,14 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
     pBlob->GetBufferSize(),
     &inputLayout));
 
-  printf("[Dx11Pipeline] Input layout resource created...\n");
-
-  // -----------------------------------------------
-  // ------------------------  PIXEL SHADER CREATION
-  // -----------------------------------------------
+  // PIXEL SHADER CREATION
 
   std::string  pathPixelShader = pipelineDesc.fragmentShader;
   std::wstring pixelShaderPath = optim_towstr(pathPixelShader);
   D3DReadFileToBlob(pixelShaderPath.c_str(), &pBlob);
+
+  // Initalize reflection for pixel shader
+  reflectShader(pathPixelShader, pBlob, EShaderStage::Fragment);
 
   OPTIM_TRY_DX(pDevice->CreatePixelShader(
     pBlob->GetBufferPointer(),
@@ -110,11 +202,7 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
     nullptr,
     &pixelShader));
 
-  printf("[Dx11Pipeline] Vertex Shader resource created...\n");
-
-  // ------------------------------------------------
-  // ------------------------  SAMPLER STATE CREATION
-  // ------------------------------------------------
+  // SAMPLER STATE CREATION
 
   D3D11_SAMPLER_DESC samplerDesc{};
   samplerDesc.Filter   = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -124,11 +212,9 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   pDevice->CreateSamplerState(&samplerDesc, &samplerState);
 
-  printf("[Dx11Pipeline] Sampler state resource created...\n");
+  // printf("[Dx11Pipeline] Sampler state resource created...\n");
 
-  // -------------------------------------------------------------
-  // ------------------------  RASTERIZER STATE RESOURCE  CREATION
-  // -------------------------------------------------------------
+  // RASTERIZER STATE CREATION
 
   D3D11_RASTERIZER_DESC l_rastDesc{};
   l_rastDesc.FillMode              = static_cast<D3D11_FILL_MODE>(static_cast<int32>(pipelineDesc.rasterizerDescription.fillMode) + 2);
@@ -144,11 +230,9 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   pDevice->CreateRasterizerState(&l_rastDesc, &rasterizerState);
 
-  printf("[Dx11Pipeline] Rasterizer state resource created...\n");
+  // printf("[Dx11Pipeline] Rasterizer state resource created...\n");
 
-  // ----------------------------------------------------------------
-  // ------------------------  DEPTH STENCIL STATE RESOURCE  CREATION
-  // ----------------------------------------------------------------
+  // DEPTH STENCIL STATE CREATION
 
   D3D11_DEPTH_STENCIL_DESC l_dsDesc{};
   l_dsDesc.DepthEnable    = pipelineDesc.depthStencilDescription.depthTestEnabled;
@@ -158,28 +242,95 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   pDevice->CreateDepthStencilState(&l_dsDesc, &depthStencilState);
 
-  printf("[Dx11Pipeline] Depth stencil state resource created...\n");
+  // printf("[Dx11Pipeline] Depth stencil state resource created...\n");
+
+  std::cout << "\n\nPrinting all for shader input bind resources : \n";
+  for (auto& input : shadersInputBind) {
+    String::printf("Name: %s\n", input.name.value());
+    std::cout << "  Stage         : " << (int)input.shaderStage << "\n";
+    std::cout << "  Resource Type : " << (int)input.resType << "\n";
+    std::cout << "  Input slot    : " << input.inputSlot << "\n";
+  }
+  printf("\n\n");
 }
 
 /**
- * @brief
- * Binds resources of the pipeline, param_descibing how to
- * perform rendering.
+ * \brief
+ * Bind the Dx11Pipeline.
+ *
+ * \param pContext
+ * Pointer to a ID3D11DeviceContext object.
+ *
+ * \param ppRenderTargetView
+ * A pointer to a pointer to ID3D11RenderTargetView
  */
 void Dx11Pipeline::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
   pContext->IASetPrimitiveTopology(primitiveTopology);
-
   pContext->IASetInputLayout(inputLayout.Get());
-
   pContext->VSSetShader(vertexShader.Get(), nullptr, 0);
-
   pContext->PSSetShader(pixelShader.Get(), nullptr, 0);
-
   pContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
-
   pContext->RSSetState(rasterizerState.Get());
-
   pContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 
   Dx11RHI::StaticUpdateActivePipelineInputs(inputFlags);
+}
+
+void Dx11Pipeline::reflectShader(const std::string& shaderName, ComPtr<ID3DBlob>& byteCode, EShaderStage stage) {
+  // printf("[Dx11Pipeline] Getting shader reflection for %s\n", shaderName.c_str());
+
+  ComPtr<ID3D11ShaderReflection> shaderReflection;
+  D3DReflect(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), __uuidof(ID3D11ShaderReflection), &shaderReflection);
+
+  D3D11_SHADER_DESC desc{};
+  shaderReflection->GetDesc(&desc);
+
+  std::cout << "Shader Signature Parameters:\n";
+
+  for (UINT i = 0; i < desc.InputParameters; i++) {
+    if (stage == EShaderStage::Vertex) {
+      D3D11_SIGNATURE_PARAMETER_DESC sigDesc{};
+      shaderReflection->GetInputParameterDesc(i, &sigDesc);
+
+      SShaderParameters _outShaderParam;
+
+      _outShaderParam.name   = sigDesc.SemanticName;
+      _outShaderParam.regist = sigDesc.Register;
+
+      shaderParameters.push_back(_outShaderParam);
+      /*
+       std::cout << "  Sematic name:      " << sigDesc.SemanticName << "\n";
+       std::cout << "  Sematic index:     " << sigDesc.SemanticIndex << "\n";
+       std::cout << "  Sematic Register:  " << sigDesc.Register << "\n";
+       std::cout << "  System Value type: " << sigDesc.SystemValueType << "\n";
+       std::cout << "  Component type:    " << sigDesc.ComponentType << "\n";
+      */
+    }
+  }
+
+  // std::cout << "Shader Bound Resources: " << desc.BoundResources << "\n";
+  for (UINT i = 0; i < desc.BoundResources; i++) {
+
+    D3D11_SHADER_INPUT_BIND_DESC bindDesc{};
+    shaderReflection->GetResourceBindingDesc(i, &bindDesc);
+
+    /*
+    std::cout << "  Name       : " << bindDesc.Name << "\n";
+    std::cout << "  Type       : " << bindDesc.Type << "\n";
+    std::cout << "  BindPoint  : " << bindDesc.BindPoint << "\n";
+    std::cout << "  BindCount  : " << bindDesc.BindCount << "\n";
+    std::cout << "  uFlags     : " << bindDesc.uFlags << "\n";
+    std::cout << "  ReturnType : " << bindDesc.ReturnType << "\n";
+    std::cout << "  Dimension  : " << bindDesc.Dimension << "\n";
+    std::cout << "  NumSamples : " << bindDesc.NumSamples << "\n";
+    */
+    SShaderBindResource _outShaderBind;
+
+    _outShaderBind.name        = bindDesc.Name;
+    _outShaderBind.shaderStage = stage;
+    _outShaderBind.resType     = translateShaderInputType(bindDesc.Type);
+    _outShaderBind.inputSlot   = bindDesc.BindPoint;
+
+    shadersInputBind.push_back(_outShaderBind);
+  }
 }

@@ -46,7 +46,7 @@ static UniquePtr<SystemWindow> g_uptrSystemWindow{};
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
 static std::vector<UniquePtr<Mesh>> _list_Rays{};
 
-static UniquePtr<Mesh>* g_ppSelectedMesh{nullptr};
+static UniquePtr<Mesh>* g_ppSelectedMesh{ nullptr };
 
 static float3 controlGizmoDirection{};
 
@@ -56,7 +56,7 @@ static std::vector<Mesh> g_objectMeshes;
 
 static PipelineHandle _newPipelineHandleTest;
 
-//static PipelineHandle _handlePipeline{};
+// static PipelineHandle _handlePipeline{};
 static PipelineHandle _handlePipelineWirframeView{};
 static PipelineHandle _handlePipelineOutline{};
 static PipelineHandle _handlePipelineLineRendering{};
@@ -65,16 +65,16 @@ static TextureResourceHandle _handleTextureResource{};
 
 static DepthRTHandle _handle_depthRT{};
 
-static bool _bool_drawWireframe{false};
-static bool _bool_drawOutline{false};
-static bool _bool_manipulate_selected{false};
+static bool _bool_drawWireframe{ false };
+static bool _bool_drawOutline{ false };
+static bool _bool_manipulate_selected{ false };
 
 extern "C" CORE_API Application* CreateApplicationProc() {
   return new Application;
 }
 
-float Application::m_runtime{0.0f};
-float Application::m_deltaTime{1.0f};
+float Application::m_runtime{ 0.0f };
+float Application::m_deltaTime{ 1.0f };
 
 Application::Application() {
 }
@@ -110,7 +110,7 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
       for (int i = 0; i < (int)((float)mesh->indexCount / 3); i++) {
         float tHit = 0;
 
-        float3 O = float3{0, 0, 0};
+        float3 O = float3{ 0, 0, 0 };
         float3 D = rayDirection;
 
         float4 v0Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i]].position);
@@ -160,7 +160,7 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
 
         if (tHit > EPS) {
           _bool_drawOutline     = true;
-          controlGizmoDirection = mesh->rotation.rotate({0, 0, 1});
+          controlGizmoDirection = mesh->rotation.rotate({ 0, 0, 1 });
           printf("GizmoTouched!\n");
           _bool_manipulate_selected = true;
           // controlGizmoDirection.print();
@@ -177,7 +177,7 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
     for (int i = 0; i < (int)((float)mesh->indexCount / 3); i++) {
       float tHit = 0;
 
-      float3 O = float3{0, 0, 0};
+      float3 O = float3{ 0, 0, 0 };
       float3 D = rayDirection;
 
       float4 v0Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i]].position);
@@ -264,13 +264,15 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
     ndcX,
     ndcY,
     0.0f,
-    1.0f};
+    1.0f
+  };
 
   float4 farPoint = {
     ndcX,
     ndcY,
     1.0f,
-    1.0f};
+    1.0f
+  };
 
   float4x4 viewMatrix = Camera::getViewMatrix();
 
@@ -283,11 +285,8 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
   constexpr float f      = 1000.0f;
   float           yScale = 1.0f / (tan(fov / 2.0f));
 
-  float4x4 perspectiveMatrix = float4x4 {
-    yScale / a, 0, 0, 0, 
-    0, yScale, 0, 0, 
-    0, 0, f / (n - f), -1, 
-    0, 0, (n * f) / (n - f), 0
+  float4x4 perspectiveMatrix = float4x4{
+    yScale / a, 0, 0, 0, 0, yScale, 0, 0, 0, 0, f / (n - f), -1, 0, 0, (n * f) / (n - f), 0
   };
 
   perspectiveMatrix = Optim::Mathematics::getMatrixTranspose(perspectiveMatrix);
@@ -384,29 +383,29 @@ void Application::ApplicationStart() {
       gizmo->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(gizmo->indices, gizmo->indexCount);
     }
 
-    arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({1, 0, 0}, -Optim::Constants::pi / 2.0f);
-    arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({0, 1, 0}, Optim::Constants::pi / 2.0f);
+    arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({ 1, 0, 0 }, -Optim::Constants::pi / 2.0f);
+    arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({ 0, 1, 0 }, Optim::Constants::pi / 2.0f);
 
     // //////////////////////////////////// GIZMO initalization - END
 
     //////////////////////////////// TEST NEW PIPELINE SYSTEM
 
-    SPipelineInputDescription inputPosition {
-      .name = "POSITION",
-      .format = EGraphicsFormat::r32g32b32_float,
-      .inputSlot = 0,
+    SPipelineInputDescription inputPosition{
+      .name       = "POSITION",
+      .format     = EGraphicsFormat::r32g32b32_float,
+      .inputSlot  = 0,
       .inputUsage = EInputUsageSlot::position
     };
     SPipelineInputDescription inputUv{
-      .name = "TEXCOORD",
-      .format = EGraphicsFormat::r32g32_float,
-      .inputSlot = 1,
+      .name       = "TEXCOORD",
+      .format     = EGraphicsFormat::r32g32_float,
+      .inputSlot  = 1,
       .inputUsage = EInputUsageSlot::textCoord
     };
     SPipelineInputDescription inputNorm{
-      .name = "NORMAL",
-      .format = EGraphicsFormat::r32g32b32_float,
-      .inputSlot = 2,
+      .name       = "NORMAL",
+      .format     = EGraphicsFormat::r32g32b32_float,
+      .inputSlot  = 2,
       .inputUsage = EInputUsageSlot::normal
     };
 
@@ -545,9 +544,11 @@ void Application::ApplicationStart() {
     };
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
 
+    /*
+    */
+
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
-
 
     // Load image for texture
     Image srcImage;
@@ -558,49 +559,33 @@ void Application::ApplicationStart() {
     /// ------------------------------ LOADING SCENE ------------------------------
 
     std::vector<Object*> l_registeredObjects;
-
-    printf("Loading scene...\n");
-
+    // printf("Loading scene...\n");
     Parser meshParser(Token::Tokenize("Scenes/myScene.oescene"));
-
-    printf("Pasing files...\n");
-
+    // printf("Pasing files...\n");
     while (!meshParser.isEnd()) {
       l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
     }
-
-    printf("Creating objects...\n");
-
+    // printf("Creating objects...\n");
     for (auto& i : l_registeredObjects) {
       if (i->isChildOf(Mesh::StaticTypeInfo())) {
-        printf("Creating mesh...\n");
-
+        // printf("Creating mesh...\n");
         Mesh* objMesh = reinterpret_cast<Mesh*>(i);
-
-        printf("Creating loading model...\n");
+        // printf("Creating loading model...\n");
         OptimEditor::loadFbxModel(*objMesh, objMesh->sourcePath.c_str());
-
-        printf("Loading creating buffers...\n");
+        // printf("Loading creating buffers...\n");
         objMesh->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(objMesh->vertices, objMesh->vertexCount);
         objMesh->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(objMesh->indices, objMesh->indexCount);
-
-        printf("Making unique...\n");
+        // printf("Making unique...\n");
         UniquePtr<Mesh> _meshRef(objMesh);
-
-        printf("Making pushing to list...\n");
+        // printf("Making pushing to list...\n");
         _list_meshes.push_back(_meshRef.move());
-
-        printf("Mesh added...\n");
+        // printf("Mesh added...\n");
       }
     }
 
     m_shouldRun = true;
 
-    printf("----------------------- APPLICATION START END -----------------------\n");
-
-    String _testString = String::sprintf("This is a test String::sprintf: dirLocation: %s\n", staticWorkingDirectory.c_str());
-    String::printf(_testString.value());
-
+    printf("--- APPLICATION LOOP BEGIN ---\n");
   }
   catch (const Exception& e) {
     String fullMessage = String(e.whatDescriptive());
@@ -612,7 +597,7 @@ void Application::ApplicationStart() {
     Quit();
   }
   catch (...) {
-    MessageBoxW(0, TEXT("Unknown details, for exception thrown"), TEXT("Exception..."), MB_OK + MB_ICONEXCLAMATION);
+    MessageBoxA(0, "Unknown details, for exception thrown", "Exception...", MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
 }
@@ -641,7 +626,7 @@ void Application::ApplicationLoop() {
 
       g_uptrSystemWindow->getMouseDelta(&mouseDx, &mouseDy);
 
-      float mouseMag = magnitude(float2{mouseDx, mouseDy});
+      float mouseMag = magnitude(float2{ mouseDx, mouseDy });
 
       if (mouseMag != 0) {
         float3 cameraVectorDx = mouseDx * Camera::right;
@@ -719,6 +704,8 @@ void Application::ApplicationLoop() {
         Graphics::RHI()->cmdDrawIndexed(pGizmo->indexCount);
       }
     }
+    /*
+    */
 
     // Execute the commands
     Graphics::RHI()->draw();
@@ -739,7 +726,7 @@ void Application::ApplicationLoop() {
     Quit();
   }
   catch (...) {
-    MessageBoxW(0, TEXT("Unknown details, for exception thrown"), TEXT("Exception..."), MB_OK + MB_ICONEXCLAMATION);
+    MessageBoxA(0, "Unknown details, for exception thrown", "Exception...", MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
 }
@@ -780,8 +767,8 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
 
   OptimEditor::loadFbxModel(*l_uptrMesh, droppedFilePath.c_str());
 
-  l_uptrMesh->rotation = {1.0f, 0.0, 0.0, 0.0f};
-  l_uptrMesh->position = {0, 0, 0};
+  l_uptrMesh->rotation = { 1.0f, 0.0, 0.0, 0.0f };
+  l_uptrMesh->position = { 0, 0, 0 };
 
   g_ppSelectedMesh = nullptr;
 

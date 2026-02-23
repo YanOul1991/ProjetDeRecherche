@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Graphics/Resource/GraphicResourceHandle.h"
+#include "Core/Types/String.h"
 
 #include <vector>
 
@@ -12,10 +13,6 @@ enum class EPipelinePrimitiveTopology : unsigned char {
   TriangleList,
   TriangleStrip,
 };
-
-/* **************************************
- * RASTERIZER DESCIRPTIONS
- ************************************** */
 
 enum class ERasterizerFillMode : unsigned char {
   Wireframe,
@@ -40,10 +37,6 @@ struct SRasterizerDescription {
   int32                  depthBias;
   float                  slopeScaledDepthBias;
 };
-
-/* **************************************
- * DEPTH STENCIL DESCIRPTIONS
- ************************************** */
 
 enum class EDepthStencilComparisonFunction : unsigned char {
   Never,
@@ -101,6 +94,19 @@ struct SPipelineInputDescription {
   EInputUsageSlot inputUsage;
 };
 
+enum class EShaderStage {
+  Vertex,
+  Geometry,
+  Fragment
+};
+
+enum class EShaderBindResourceType {
+  CBuffer,
+  Texture,
+  Sampler,
+  StructuredBuffer
+};
+
 struct SPipelineDesc {
   const char*                            vertexShader;
   const char*                            fragmentShader;
@@ -108,4 +114,16 @@ struct SPipelineDesc {
   SDepthStencilDescription               depthStencilDescription;
   EPipelinePrimitiveTopology             primitiveTopology;
   std::vector<SPipelineInputDescription> inputs;
+};
+
+struct SShaderParameters {
+  String name;
+  uint32 regist;
+};
+
+struct SShaderBindResource {
+  String                  name;
+  EShaderStage            shaderStage;
+  EShaderBindResourceType resType;
+  uint32                  inputSlot;
 };

@@ -68,7 +68,7 @@ void Dx11VertexBuffer::create(ID3D11Device* pDevice, Vertex* pVertexBuffer, uint
   subres.pSysMem           = bufferColors.data();
   OPTIM_TRY_DX(pDevice->CreateBuffer(&desc, &subres, &vertexStreams[(int)EInputUsageSlot::color].buffer));
 
-  printf("[Dx11VertexBuffer] Vertex Buffer resource created\n");
+  //printf("[Dx11VertexBuffer] Vertex Buffer resource created\n");
 }
 
 void Dx11VertexBuffer::bind(ID3D11DeviceContext* pContext, ID3D11RenderTargetView** ppRenderTargetView) {
