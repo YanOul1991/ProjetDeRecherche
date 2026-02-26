@@ -34,6 +34,7 @@ class CORE_API Application final
 
   // Event management functions
 
+  void manageKeyDownEvent(uint32 keycode);
   void mangeWindowClickEvent(float posX, float posY, int32 buttonID);
   void manageSysWinMouseUp(float posX, float posY, int32 buttonID);
   void manageWindowResizeEvent(uint32 width, uint32 height);

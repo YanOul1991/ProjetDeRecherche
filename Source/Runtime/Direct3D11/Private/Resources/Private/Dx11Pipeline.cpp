@@ -1,9 +1,6 @@
 /**
  * Dx11Pipeline.cpp
  *
- * Par:
- *  Yanis Oulmane
- *
  * Shader Reflection
  *
  * [D3D11_SIGNATURE_PARAMETER_DESC]

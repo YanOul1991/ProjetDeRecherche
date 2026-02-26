@@ -1,8 +1,5 @@
 /**
  * Dx11Pipeline.h
- *
- * Par:
- *  Yanis Oulmane.
  */
 
 #pragma once

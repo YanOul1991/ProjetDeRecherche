@@ -1,9 +1,8 @@
-﻿/* ======================================================================================
- *  Application.cpp:
+﻿/**
+ * Application.cpp
  *
- *  By:
- *    Yanis Oulmane
-====================================================================================== */
+ * Yanis Oulmane
+ */
 
 #pragma once
 
@@ -28,6 +27,7 @@
 #include "Core/Utilities/Pointer/UniquePtr.h"
 #include "Core/Utilities/Random/Random.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -161,7 +161,7 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
         if (tHit > EPS) {
           _bool_drawOutline     = true;
           controlGizmoDirection = mesh->rotation.rotate({ 0, 0, 1 });
-          printf("GizmoTouched!\n");
+          // printf("GizmoTouched!\n");
           _bool_manipulate_selected = true;
           // controlGizmoDirection.print();
           //(*g_ppSelectedMesh)->position = (*g_ppSelectedMesh)->position + (0.25f * controlGizmoDirection);
@@ -239,8 +239,29 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
     } // for loop end - single mesh indices loop
   } // For loop end - mesh list iteration
 
-  printf("No collision detected with any mesh.\n");
+  // printf("No collision detected with any mesh.\n");
   g_ppSelectedMesh = nullptr;
+}
+
+void Application::manageKeyDownEvent(uint32 keycode) {
+  // std::cout << "[Application] Keydown event : " << keycode << "\n";
+
+  if (keycode == 8) {
+    // std::cout << "[Application] Backspace clicked.\n";
+
+    if (g_ppSelectedMesh != nullptr) {
+      std::erase_if(_list_meshes, [](const UniquePtr<Mesh>& element) {
+        // printf("Comparaison: %p : %p\n", g_ppSelectedMesh->address(), element.address());
+        if (element.address() != nullptr) {
+          if (element.address() == g_ppSelectedMesh->address()) {
+            g_ppSelectedMesh = nullptr;
+            return true;
+          }
+        }
+        return false;
+      });
+    }
+  }
 }
 
 void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) {
@@ -352,14 +373,17 @@ void Application::ApplicationStart() {
     g_uptrSystemWindow->initialize("Optim Engine");
     Graphics::initalize();
 
+    // Subscribe to window delegates
     g_uptrSystemWindow->onSystemWindowClick.subscribe<Application, &Application::mangeWindowClickEvent>(this);
     g_uptrSystemWindow->onWindowResize.subscribe<Application, &Application::manageWindowResizeEvent>(this);
     g_uptrSystemWindow->onSystemWindowMouseUp.subscribe<Application, &Application::manageSysWinMouseUp>(this);
     g_uptrSystemWindow->onSaveEvent.subscribe<Application, &Application::manageOnSaveEvent>(this);
+    g_uptrSystemWindow->onKeyDown.subscribe<Application, &Application::manageKeyDownEvent>(this);
 
+    // Display the window
     g_uptrSystemWindow->showWindow();
 
-    // //////////////////////////////////// GIZMO initalization
+    ////////////////////////////////////// GIZMO initalization
 
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
@@ -369,6 +393,11 @@ void Application::ApplicationStart() {
       gizmo.init();
       OptimEditor::loadFbxModel((*gizmo), "Assets/gizmoSelectionArrow.fbx");
     }
+
+    // Set the vertices color of the X axis facing gizmo to red
+    // and forward facing gizmo to blue.
+    // No need for Y since by defualt vertice's colors are initalized
+    // as green.
 
     for (size_t i = 0; i < arrayGizmoSelection[0]->vertexCount; i++) {
       arrayGizmoSelection[0]->vertices[i].color = float4(0.0f, 0.0f, 1.0f, 1.0f);
@@ -389,6 +418,12 @@ void Application::ApplicationStart() {
     // //////////////////////////////////// GIZMO initalization - END
 
     //////////////////////////////// TEST NEW PIPELINE SYSTEM
+
+    
+    // IMPORTANT: 
+    // With new shader reflection implementation started,
+    // this system of manually writing inputs could be
+    // removed.
 
     SPipelineInputDescription inputPosition{
       .name       = "POSITION",
@@ -451,18 +486,17 @@ void Application::ApplicationStart() {
       .fragmentShader = "bin/WireframePS.cso",
 
       .rasterizerDescription = {
-        .fillMode             = ERasterizerFillMode::Wireframe,
-        .cullMode             = ERasterizerCullMode::None,
-        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-        .depthBias            = -1,
-        .slopeScaledDepthBias = -1.0f
-      },
+                                .fillMode             = ERasterizerFillMode::Wireframe,
+                                .cullMode             = ERasterizerCullMode::None,
+                                .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+                                .depthBias            = -1,
+                                .slopeScaledDepthBias = -1.0f },
 
       .depthStencilDescription = {
-        .depthTestEnabled        = true,
-        .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
-        .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
-      },
+                                .depthTestEnabled        = true,
+                                .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+                                .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
+                                },
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
 
@@ -479,18 +513,17 @@ void Application::ApplicationStart() {
       .fragmentShader = "bin/OutlinePS.cso",
 
       .rasterizerDescription = {
-        .fillMode             = ERasterizerFillMode::Solid,
-        .cullMode             = ERasterizerCullMode::Back,
-        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-        .depthBias            = -1,
-        .slopeScaledDepthBias = -10.0f
-      },
+                                .fillMode             = ERasterizerFillMode::Solid,
+                                .cullMode             = ERasterizerCullMode::Back,
+                                .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+                                .depthBias            = -1,
+                                .slopeScaledDepthBias = -10.0f },
 
       .depthStencilDescription = {
-        .depthTestEnabled        = true,
-        .depthComparisonFunction = EDepthStencilComparisonFunction::Greater,
-        .depthWriteMask          = EDepthStencilDepthWriteMask::WriteNone,
-      },
+                                .depthTestEnabled        = true,
+                                .depthComparisonFunction = EDepthStencilComparisonFunction::Greater,
+                                .depthWriteMask          = EDepthStencilDepthWriteMask::WriteNone,
+                                },
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
 
@@ -502,16 +535,16 @@ void Application::ApplicationStart() {
     // PIPELINE
 
     SPipelineInputDescription pipelineGizmoInputPosition{
-      .name = "POSITION",
-      .format = EGraphicsFormat::r32g32b32_float,
-      .inputSlot = 0,
+      .name       = "POSITION",
+      .format     = EGraphicsFormat::r32g32b32_float,
+      .inputSlot  = 0,
       .inputUsage = EInputUsageSlot::position
     };
 
     SPipelineInputDescription pipelineGizmoInputColor{
-      .name = "COLOR",
-      .format = EGraphicsFormat::r32g32b32a32_float,
-      .inputSlot = 1,
+      .name       = "COLOR",
+      .format     = EGraphicsFormat::r32g32b32a32_float,
+      .inputSlot  = 1,
       .inputUsage = EInputUsageSlot::color
     };
 
@@ -525,18 +558,17 @@ void Application::ApplicationStart() {
       .fragmentShader = "bin/TransformGizmoPS.cso",
 
       .rasterizerDescription = {
-        .fillMode             = ERasterizerFillMode::Solid,
-        .cullMode             = ERasterizerCullMode::Back,
-        .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-        .depthBias            = 0,
-        .slopeScaledDepthBias = 0
-      },
+                                .fillMode             = ERasterizerFillMode::Solid,
+                                .cullMode             = ERasterizerCullMode::Back,
+                                .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
+                                .depthBias            = 0,
+                                .slopeScaledDepthBias = 0 },
 
       .depthStencilDescription = {
-        .depthTestEnabled        = false,
-        .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
-        .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
-      },
+                                .depthTestEnabled        = false,
+                                .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
+                                .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll,
+                                },
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
 
@@ -545,7 +577,7 @@ void Application::ApplicationStart() {
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
 
     /*
-    */
+     */
 
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
@@ -611,10 +643,8 @@ void Application::ApplicationLoop() {
       return;
     }
 
-    /*
-     * Set default render targets and pipeline
-     * and textures.
-     */
+    // Set default render targets and pipeline
+    // and textures.
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
     Graphics::RHI()->cmdBindPipeline(&_newPipelineHandleTest);
@@ -644,12 +674,10 @@ void Application::ApplicationLoop() {
       }
     }
 
-    /**
-     * Iterates through all instanciated mesh objects
-     * and render them in the scene
-     *
-     * If wireframe view is activated also draw their conressponding wirferame.
-     */
+    // Iterates through all instanciated mesh objects
+    // and render them in the scene
+    //
+    // If wireframe view is activated also draw their conressponding wirferame.
 
     for (auto& pMesh : _list_meshes) {
       float4x4 worldTransform = pMesh->getWorldMatrix();
@@ -704,8 +732,6 @@ void Application::ApplicationLoop() {
         Graphics::RHI()->cmdDrawIndexed(pGizmo->indexCount);
       }
     }
-    /*
-    */
 
     // Execute the commands
     Graphics::RHI()->draw();
@@ -715,10 +741,12 @@ void Application::ApplicationLoop() {
     m_runtime  += m_deltaTime;
   }
   catch (const Exception& e) {
-    String fullMessage = String(e.type());
-    fullMessage       += String("\n\n[Description]\n") + String(e.what()) + String("\n[File]\n") + e.getFile();
+    String msg = String::sprintf("[Exception]\n%s\n[Exception Description]\n%s\n[Exception File]\n%s\n", e.type(), e.what(), e.getFile());
 
-    MessageBoxA(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
+    // String fullMessage = String(e.type());
+    // fullMessage       += String("\n\n[Description]\n") + String(e.what()) + String("\n[File]\n") + e.getFile();
+
+    MessageBoxA(0, msg.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
   catch (const std::exception& e) {
@@ -737,7 +765,6 @@ void Application::ApplicationQuit() {
 
 void OptimEditor::processFile(const char* param_cstrFilePath) {
   std::string droppedFilePath = param_cstrFilePath;
-  droppedFilePath            += "\\";
 
   std::filesystem::path filePath = param_cstrFilePath;
 
@@ -754,29 +781,30 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
   }
 
   if (fileExtension == ".fbx") {
-    std::cout << "The file is an fbx file.\n";
+    std::cout << "Dropped fbx file.\n";
+    UniquePtr<Mesh> l_uptrMesh;
+
+    l_uptrMesh.init();
+
+    OptimEditor::loadFbxModel(*l_uptrMesh, droppedFilePath.c_str());
+
+    l_uptrMesh->rotation = { 1.0f, 0.0, 0.0, 0.0f };
+    l_uptrMesh->position = { 0, 0, 0 };
+
+    g_ppSelectedMesh = nullptr;
+
+    (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
+    (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
+    (*l_uptrMesh).sourcePath         = droppedFilePath;
+
+    _list_meshes.push_back(l_uptrMesh.move());
+
+    g_ppSelectedMesh = &_list_meshes.back();
+  }
+  else if (fileExtension == ".png") {
+    std::cout << "Dropped png file\n";
   }
   else {
     std::cout << "Unkownd or unsupported file type.\n";
-    return;
   }
-
-  UniquePtr<Mesh> l_uptrMesh;
-
-  l_uptrMesh.init();
-
-  OptimEditor::loadFbxModel(*l_uptrMesh, droppedFilePath.c_str());
-
-  l_uptrMesh->rotation = { 1.0f, 0.0, 0.0, 0.0f };
-  l_uptrMesh->position = { 0, 0, 0 };
-
-  g_ppSelectedMesh = nullptr;
-
-  (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
-  (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
-  (*l_uptrMesh).sourcePath         = droppedFilePath;
-
-  _list_meshes.push_back(l_uptrMesh.move()); // Add Mesh to list
-
-  g_ppSelectedMesh = &_list_meshes.back();   // Make the newly created mesh the selected one.
 }

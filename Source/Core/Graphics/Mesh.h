@@ -32,7 +32,8 @@ class CORE_API Mesh : public Object
   float3     position{};
   Quaternion rotation{};
 
-  std::string sourcePath{""};
+  std::string sourcePath{ "" };
+  std::string texturePath{ "" };
 
   Vertex* vertices{};
   uint32* indices{};
@@ -40,6 +41,7 @@ class CORE_API Mesh : public Object
   uint32 vertexCount{};
   uint32 indexCount{};
 
-  VertexBufferHandle vertexBufferHandle{};
-  IndexBufferHandle  indexBufferHandle{};
+  VertexBufferHandle    vertexBufferHandle{};
+  IndexBufferHandle     indexBufferHandle{};
+  TextureResourceHandle textureHandle{};
 };

@@ -27,8 +27,13 @@ SamplerState smplr : register(s0);
 
 float4 main(VSOut input) : SV_Target
 {
+    
+    while ()
+    {
+        
+    }
   // Vector from fragment to light source
-  float3 L = normalize(lightPosition - input.worldPosition);
+        float3 L = normalize(lightPosition - input.worldPosition);
   
   // Normalize the vector normal (as it was interpolated across primitive)
   float3 N = normalize(input.norm);

@@ -28,6 +28,8 @@ class SystemWindow final
    */
   static void* getSystemPointer();
 
+  static void ShowMessageBox(const char* windowTitle, const char* windowMessage);
+
   /*
    * @brief
    * SystemWindow class constructor.
@@ -117,6 +119,15 @@ class SystemWindow final
    *  - uint32 height: New hieght in pixels
    */
   Delegate<uint32, uint32> onWindowResize{};
+
+  /**
+   * \brief
+   * Window event triggered when pressing down a keyboard key.
+   *
+   * Callback parameters:
+   *  - uint32 the keycode of the pressed down key.
+   */
+  Delegate<uint32> onKeyDown;
 
   /**
    * @brief

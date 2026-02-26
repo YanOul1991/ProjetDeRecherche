@@ -43,8 +43,13 @@ void* SystemWindow::getSystemPointer() {
   return SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, 0);
 }
 
+void SystemWindow::ShowMessageBox(const char* windowTitle, const char* windowMessage) {
+  SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, windowTitle, windowMessage, 0);
+}
+
 SystemWindow::SystemWindow() {
 }
+
 SystemWindow::~SystemWindow() {
 }
 
@@ -68,11 +73,11 @@ void SystemWindow::initialize(const char* windowTitle) {
   InterfaceImGui::initWindow(window);
 
   // Camera initial data.
-  Camera::forward = Camera::rotation.rotate({0.0f, 0.0f, -1.0f});
-  Camera::right   = Camera::rotation.rotate({1.0f, 0.0f, 0.0f});
-  Camera::up      = Camera::rotation.rotate({0.0f, 1.0f, 0.0f});
+  Camera::forward = Camera::rotation.rotate({ 0.0f, 0.0f, -1.0f });
+  Camera::right   = Camera::rotation.rotate({ 1.0f, 0.0f, 0.0f });
+  Camera::up      = Camera::rotation.rotate({ 0.0f, 1.0f, 0.0f });
 
-  Camera::position = {0.0f, 0.0f, 5.0f};
+  Camera::position = { 0.0f, 0.0f, 5.0f };
 }
 
 bool SystemWindow::loop() {
@@ -103,6 +108,7 @@ bool SystemWindow::loop() {
     case SDL_EVENT_DROP_FILE: {
       const char* path = evt.drop.data;
       printf("File dropped: %s\n", path);
+      printf("File droppe position (%f, %f)\n", evt.drop.x, evt.drop.y);
       OptimEditor::processFile(path);
       break;
     }
@@ -119,6 +125,8 @@ bool SystemWindow::loop() {
       break;
     }
     case SDL_EVENT_KEY_DOWN: {
+      onKeyDown.broadcast(evt.key.key);
+
       if (evt.key.key == SDLK_S) {
         if (evt.key.mod & SDL_KMOD_CTRL) {
           printf("CTRL+S ACTION\n");
@@ -145,16 +153,16 @@ bool SystemWindow::loop() {
       Camera::position = Camera::position + (mouseDy * 0.01f * Camera::up);
     }
     else {
-      Quaternion qYaw  = Quaternion::fromAxisAngle({0.0f, 1.0f, 0.0f}, -mouseDx * 0.005f);
+      Quaternion qYaw  = Quaternion::fromAxisAngle({ 0.0f, 1.0f, 0.0f }, -mouseDx * 0.005f);
       Camera::rotation = qYaw * Camera::rotation;
 
-      Camera::right     = Camera::rotation.rotate({1.0f, 0.0f, 0.0f});
+      Camera::right     = Camera::rotation.rotate({ 1.0f, 0.0f, 0.0f });
       Quaternion qPitch = Quaternion::fromAxisAngle(Camera::right, -mouseDy * 0.005f);
       Camera::rotation  = qPitch * Camera::rotation;
 
-      Camera::forward = Camera::rotation.rotate({0.0f, 0.0f, -1.0f});
-      Camera::right   = Camera::rotation.rotate({1.0f, 0.0f, 0.0f});
-      Camera::up      = Camera::rotation.rotate({0.0f, 1.0f, 0.0f});
+      Camera::forward = Camera::rotation.rotate({ 0.0f, 0.0f, -1.0f });
+      Camera::right   = Camera::rotation.rotate({ 1.0f, 0.0f, 0.0f });
+      Camera::up      = Camera::rotation.rotate({ 0.0f, 1.0f, 0.0f });
     }
   }
 
