@@ -119,6 +119,9 @@
     <ClInclude Include="..\Source\Core\Physics\Physics.h">
       <Filter>Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\System\System.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -311,6 +314,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Physics\Physics.cpp">
       <Filter>Physics\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\System\private\System.cpp">
+      <Filter>System\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

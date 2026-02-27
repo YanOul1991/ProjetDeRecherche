@@ -1,10 +1,6 @@
-/* ======================================================================================
- *  string.h:
- *
- *  By:
- *    Yanis Oulmane
- *
-====================================================================================== */
+/*
+  String.h
+*/
 
 #pragma once
 
@@ -17,7 +13,7 @@ class CORE_API String final
   static void   printf(const char* format, ...);
   static bool   compare(const String& string1, const String& string2);
   static bool   isEmpty(const String& other);
-  static uint32 getLiteralSize(const char* str, uint64 maxSize= 1024);
+  static uint32 getLiteralSize(const char* str, uint64 maxSize = 1024);
 
   String() noexcept;
   ~String() noexcept;
@@ -47,7 +43,6 @@ class CORE_API String final
  private:
   char*  m_buffer;
   uint32 m_length;
-  // uint32 m_capacity;
 
   void freeBuffer();
 };

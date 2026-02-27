@@ -1,12 +1,20 @@
-﻿/**
- * Application.cpp
- *
- * Yanis Oulmane
+﻿/*
+  Application.cpp
+  
+  Yanis Oulmane
  */
 
 #pragma once
 
 #include "Core/System/Application.h"
+
+#include "../FileStream.h"
+#include "../ModelLoader.h"
+#include "../System.h"
+#include "../SystemWindow.h"
+// #include "Core/System/FileStream.h"
+// #include "Core/System/ModelLoader.h"
+// #include "Core/System/SystemWindow.h"
 
 #include "Core/Exception/exception.h"
 #include "Core/Graphics/Graphics.h"
@@ -19,11 +27,7 @@
 #include "Core/Serialization/Parser.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Tokenizer.h"
-#include "Core/System/FileStream.h"
-#include "Core/System/ModelLoader.h"
-#include "Core/System/SystemWindow.h"
 #include "Core/Time/Time.h"
-// #include "Core/Types/Color.h"
 #include "Core/Types/string.h"
 #include "Core/Utilities/Pointer/UniquePtr.h"
 #include "Core/Utilities/Random/Random.h"
@@ -33,9 +37,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
-// The path of the running exe file.
-static const std::string staticWorkingDirectory = std::filesystem::current_path().string().append("\\");
 
 // A UniquePtr to the default SystemWindow class object
 static UniquePtr<SystemWindow> g_uptrSystemWindow{};
@@ -72,10 +73,12 @@ static std::string GetFileExtension(std::string strPath) {
 
 static std::string GetRelativePath(std::string strAbsolutePath) {
   std::string droppedFilePath = strAbsolutePath;
-  uint64      pos             = droppedFilePath.find(staticWorkingDirectory);
+  std::string workingDir      = System::GetWorkingDirectory();
+
+  uint64 pos = droppedFilePath.find(workingDir);
 
   if (pos != std::string::npos) {
-    return droppedFilePath.erase(pos, staticWorkingDirectory.length());
+    return droppedFilePath.erase(pos, workingDir.length());
   }
   else {
     std::cout << "Could not get relative path of file.\n";
@@ -174,7 +177,7 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
   const std::string fileRelativePath = GetRelativePath(path);
 
   if (fileRelativePath.empty()) {
-    String::printf("[Application] WARNING - The dropped file's location must be inside the project folder:\n %s\n", staticWorkingDirectory.c_str());
+    String::printf("[Application] WARNING - The dropped file's location must be inside the project folder:\n %s\n", System::GetWorkingDirectory());
     return;
   }
 
@@ -271,6 +274,11 @@ void Application::Quit() {
 void Application::ApplicationStart() {
   try {
     Time::onNewFrame();
+
+    System::Initalize();
+
+    printf("Current Working dir: %s\n", System::GetWorkingDirectory());
+
     // Load system window.
     // Load graphics then display the window.
     g_uptrSystemWindow.init();

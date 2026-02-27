@@ -17,6 +17,10 @@
 #include <cstring>
 #include <vector>
 
+/**
+ * \brief
+ * Get the length of a string literal. The length does NOT include the null terminator '\0'.
+ */
 uint32 String::getLiteralSize(const char* str, uint64 maxSize) {
   return static_cast<uint32>(strnlen(str, maxSize));
 }
@@ -31,8 +35,6 @@ String String::sprintf(const char* format, ...) {
   va_copy(argsCpy, args);
   int needed = ::vsnprintf(nullptr, 0, format, argsCpy);
   va_end(argsCpy);
-
-  printf("[String::sprintf] Need count: %d\n", needed);
 
   // In case of formatting error
   // return empty string
@@ -82,7 +84,7 @@ String::String() noexcept :
 }
 
 String::~String() noexcept {
-  //printf("String has been deleted :D At following address:\n0x%02x\n", this);
+  //printf("String has been deleted at following address:\n0x%02x\n", this);
   freeBuffer();
 }
 
@@ -91,7 +93,7 @@ String::String(const char* str) noexcept :
     m_buffer{nullptr} {
   //printf("[String] C-String constructor...\n");
   m_buffer = new char[m_length + 1];
-  memcpy(m_buffer, str, sizeof(*str) * (m_length + 1));
+  memcpy(m_buffer, str, sizeof(char) * m_length);
   m_buffer[m_length] = '\0';
 
   //printf("[String] Value: %s\n", m_buffer);
@@ -135,7 +137,7 @@ String& String::operator=(const char* str) noexcept {
   int size = getLiteralSize(str);
   m_length = size;
   m_buffer = new char[size + 1];
-  memcpy(m_buffer, str, sizeof(*m_buffer) * (size + 1));
+  memcpy(m_buffer, str, sizeof(char) * m_length);
   m_buffer[m_length] = '\0';
   return *this;
 }
@@ -145,7 +147,7 @@ String& String::operator=(const String& other) noexcept {
     freeBuffer();
     m_length = other.m_length;
     m_buffer = new char[m_length + 1];
-    memcpy(m_buffer, other.m_buffer, sizeof(*m_buffer) * (m_length + 1));
+    memcpy(m_buffer, other.m_buffer, sizeof(char) * m_length);
     m_buffer[m_length] = '\0';
   }
   return *this;
@@ -171,7 +173,7 @@ String& String::operator+=(const char* str) noexcept {
     // Alloc new buffer memeory
     char* newbuffer = new char[_bufferStrLength + 1];
 
-    memcpy(newbuffer, m_buffer, sizeof(*m_buffer) * m_length);
+    memcpy(newbuffer, m_buffer, sizeof(char) * m_length);
     memcpy(newbuffer + m_length, str, sizeof(char) * strSize);
 
     newbuffer[_bufferStrLength] = '\0';

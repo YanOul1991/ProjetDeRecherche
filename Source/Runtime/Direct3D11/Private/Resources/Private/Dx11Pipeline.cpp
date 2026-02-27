@@ -55,40 +55,6 @@ static EShaderBindResourceType translateShaderInputType(D3D_SHADER_INPUT_TYPE d3
   }
 }
 
-/*
-static constexpr DXGI_FORMAT translateDXGIFormat(EGraphicsFormat format) {
-  switch (format) {
-  case EGraphicsFormat::r32g32b32a32_typeless: return DXGI_FORMAT_R32G32B32A32_TYPELESS;
-  case EGraphicsFormat::r32g32b32a32_float   : return DXGI_FORMAT_R32G32B32A32_FLOAT;
-  case EGraphicsFormat::r32g32b32a32_uint    : return DXGI_FORMAT_R32G32B32A32_UINT;
-  case EGraphicsFormat::r32g32b32a32_sint    : return DXGI_FORMAT_R32G32B32A32_SINT;
-  case EGraphicsFormat::r32g32b32_typeless   : return DXGI_FORMAT_R32G32B32_TYPELESS;
-  case EGraphicsFormat::r32g32b32_float      : return DXGI_FORMAT_R32G32B32_FLOAT;
-  case EGraphicsFormat::r32g32b32_uint       : return DXGI_FORMAT_R32G32B32_UINT;
-  case EGraphicsFormat::r32g32b32_sint       : return DXGI_FORMAT_R32G32B32_SINT;
-  case EGraphicsFormat::r32g32_typeless      : return DXGI_FORMAT_R32G32_TYPELESS;
-  case EGraphicsFormat::r32g32_float         : return DXGI_FORMAT_R32G32_FLOAT;
-  case EGraphicsFormat::r32g32_uint          : return DXGI_FORMAT_R32G32_UINT;
-  case EGraphicsFormat::r32g32_sint          : return DXGI_FORMAT_R32G32_SINT;
-  default                                    : return DXGI_FORMAT_UNKNOWN;
-  }
-}
-
-static D3D11_INPUT_ELEMENT_DESC translateInput(SPipelineInputDescription param_desc) {
-  D3D11_INPUT_ELEMENT_DESC _retVal{};
-
-  _retVal.SemanticName         = param_desc.name;
-  _retVal.SemanticIndex        = 0;
-  _retVal.Format               = translateDXGIFormat(param_desc.format);
-  _retVal.InputSlot            = param_desc.inputSlot;
-  _retVal.AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
-  _retVal.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-  _retVal.InstanceDataStepRate = 0;
-
-  return _retVal;
-}
-*/
-
 /**
  * \brief
  * Utility function to convert shader parameters reflection data into
@@ -152,8 +118,6 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
   // INPUT LAYOUT
 
   std::vector<D3D11_INPUT_ELEMENT_DESC> ieds;
-
-  // std::cout << "\n\nPrinting all for shader semantics paramerter resources (input Layout): \n";
 
   for (auto& param : shaderParameters) {
     /*

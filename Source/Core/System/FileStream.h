@@ -29,6 +29,16 @@ enum class FileStreamStatus : uint8 {
   unknownError  // An unknown error occured
 };
 
+using byte = uint8_t;
+
+struct FileHandle {
+  byte data[128];
+};
+
+class CORE_API SystemIO
+{
+};
+
 class CORE_API FileStream
 {
  private:

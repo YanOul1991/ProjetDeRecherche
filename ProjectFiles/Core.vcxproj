@@ -46,6 +46,7 @@
     <ClInclude Include="..\Source\Core\System\Application.h" />
     <ClInclude Include="..\Source\Core\System\FileStream.h" />
     <ClInclude Include="..\Source\Core\System\ModelLoader.h" />
+    <ClInclude Include="..\Source\Core\System\System.h" />
     <ClInclude Include="..\Source\Core\System\SystemWindow.h" />
     <ClInclude Include="..\Source\Core\Time\Time.h" />
     <ClInclude Include="..\Source\Core\Types\Color.h" />
@@ -77,6 +78,7 @@
     <ClCompile Include="..\Source\Core\System\private\Application.cpp" />
     <ClCompile Include="..\Source\Core\System\private\FileStream.cpp" />
     <ClCompile Include="..\Source\Core\System\private\ModelLoader.cpp" />
+    <ClCompile Include="..\Source\Core\System\private\System.cpp" />
     <ClCompile Include="..\Source\Core\System\private\SystemWindow.cpp" />
     <ClCompile Include="..\Source\Core\Time\Time.cpp" />
     <ClCompile Include="..\Source\Core\Types\Private\String.cpp" />
