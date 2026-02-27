@@ -423,45 +423,6 @@ void Application::ApplicationStart() {
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
 
-    /*
-    /// ---------------------------------------------------------------------------
-    /// ------------------------------ LOADING SCENE ------------------------------
-
-    std::vector<Object*> l_registeredObjects;
-
-    Parser meshParser(Token::Tokenize("Scenes/myScene.oescene"));
-
-    while (!meshParser.isEnd()) {
-      l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
-    }
-
-    for (auto& i : l_registeredObjects) {
-      if (i->isChildOf(Mesh::StaticTypeInfo())) {
-
-        Mesh* objMesh = reinterpret_cast<Mesh*>(i);
-
-        OptimEditor::loadFbxModel(*objMesh, objMesh->sourcePath.c_str());
-
-        objMesh->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(objMesh->vertices, objMesh->vertexCount);
-        objMesh->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(objMesh->indices, objMesh->indexCount);
-
-        if (objMesh->texturePath.empty()) {
-          objMesh->textureHandle = Graphics::GetDefaultTexture();
-          printf("The mesh has not texture assigned to it.\n");
-        }
-        else {
-          Image dataImage;
-          FileStream::readPngImage(objMesh->texturePath.c_str(), dataImage);
-          objMesh->textureHandle = Graphics::RHI()->createTextureResource(&dataImage);
-        }
-
-        UniquePtr<Mesh> _meshRef(objMesh);
-
-        _list_meshes.push_back(_meshRef.move());
-      }
-    }
-    */
-
     m_shouldRun = true;
 
     Time::onFrameEnd();
