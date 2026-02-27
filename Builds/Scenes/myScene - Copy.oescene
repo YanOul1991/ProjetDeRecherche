@@ -11,7 +11,7 @@ Mesh=(
     z=0.000000
     ),
   sourcePath="Assets\monkey.fbx\",
-  texturePath="images\checker_2.png"
+  texturePath=""
   ),
 Mesh=(
   position=(
@@ -30,7 +30,7 @@ Mesh=(
   ),
 Mesh=(
   position=(
-    x=1.014335,
+    x=0.000000,
     y=0.000000,
     z=-3.661063
     ),
@@ -41,7 +41,7 @@ Mesh=(
     z=0.000000
     ),
   sourcePath="Assets\jeffSphere.fbx\",
-  texturePath="images\jeff2.png"
+  texturePath=""
   ),
 Mesh=(
   position=(
@@ -56,5 +56,5 @@ Mesh=(
     z=0.000000
     ),
   sourcePath="Assets\cube.fbx\",
-  texturePath="images\jeff2.png"
+  texturePath=""
   )

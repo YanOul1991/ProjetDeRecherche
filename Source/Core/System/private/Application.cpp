@@ -69,6 +69,23 @@ static bool _bool_drawWireframe{ false };
 static bool _bool_drawOutline{ false };
 static bool _bool_manipulate_selected{ false };
 
+static std::string GetFileExtension(std::string strPath) {
+  std::filesystem::path filePath = strPath;
+  return filePath.extension().string();
+}
+
+static std::string GetRelativePath(std::string strAbsolutePath) {
+  std::string droppedFilePath = strAbsolutePath;
+  uint64      pos             = droppedFilePath.find(staticWorkingDirectory);
+
+  if (pos != std::string::npos) {
+    return droppedFilePath.erase(pos, staticWorkingDirectory.length());
+  }
+  else {
+    std::cout << "Could not get relative path of file.\n";
+  }
+}
+
 extern "C" CORE_API Application* CreateApplicationProc() {
   return new Application;
 }
@@ -118,156 +135,10 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
     else {
       _bool_manipulate_selected = false;
     }
-
-    /*
-    for (auto& mesh : arrayGizmoSelection) {
-      float4x4 worldTransform = mesh->getWorldMatrix().transpose();
-
-      for (int i = 0; i < (int)((float)mesh->indexCount / 3); i++) {
-        float tHit = 0;
-
-        float3 O = float3{ 0, 0, 0 };
-        float3 D = rayDirection;
-
-        float4 v0Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i]].position);
-        float4 v1Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 1]].position);
-        float4 v2Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 2]].position);
-
-        float3 v0 = Optim::Mathematics::getFloat3Part(worldTransform * v0Local);
-        float3 v1 = Optim::Mathematics::getFloat3Part(worldTransform * v1Local);
-        float3 v2 = Optim::Mathematics::getFloat3Part(worldTransform * v2Local);
-
-        // Compute triangle edges
-        float3 e1 = v1 - v0;
-        float3 e2 = v2 - v0;
-
-        constexpr float EPS = 1E-8F;
-
-        float3 p   = cross(rayDirection, e2); // Get Vector perpendicular to ray direction and second triangle edge
-        float  det = dotProduct(e1, p);       // Get determinant to check if ray is parallel to triangle
-
-        if (fabsf(det) < EPS) {
-          // Ray is parralel to the triangle
-          _bool_drawOutline = false;
-          continue;
-        }
-
-        float invDet = 1.0f / det;
-
-        float3 t = rayOrigin - v0; // Vector from triangle first vertex to ray origin
-
-        // Compute barycentric coordinate u
-        float u = dotProduct(t, p) * invDet;
-
-        if (u < 0.0f || u > 1.0f) {
-          _bool_drawOutline = false;
-          continue;
-        }
-
-        float3 q = cross(t, e1);
-
-        float v = dotProduct(rayDirection, q) * invDet;
-        if (v < 0.0f || u + v > 1.0f) {
-          _bool_drawOutline = false;
-          continue;
-        }
-
-        tHit = dotProduct(e2, q) * invDet;
-
-        if (tHit > EPS) {
-          _bool_drawOutline         = true;
-          controlGizmoDirection     = mesh->rotation.rotate({ 0, 0, 1 });
-          _bool_manipulate_selected = true;
-          return;
-        }
-      } // for loop end - single mesh indices loop
-    } // For loop end - gizmos list iteration
-    */
   }
 
-  auto selectedMesh = Optim::Physics::GetCollision(raycast, _list_meshes);
-
-  if (selectedMesh) {
-    _bool_drawOutline = true;
-    g_ppSelectedMesh = selectedMesh;
-  }
-  else {
-    _bool_drawOutline = false;
-    g_ppSelectedMesh = nullptr;
-  }
-
-  /*
-  for (auto& mesh : _list_meshes) {
-    float4x4 worldTransform = mesh->getWorldMatrix().transpose();
-
-    for (int i = 0; i < (int)((float)mesh->indexCount / 3); i++) {
-      float tHit = 0;
-
-      float3 O = float3{ 0, 0, 0 };
-      float3 D = rayDirection;
-
-      float4 v0Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i]].position);
-      float4 v1Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 1]].position);
-      float4 v2Local = Optim::Mathematics::getFloat4FromFloat3(mesh->vertices[mesh->indices[3 * i + 2]].position);
-
-      float3 v0 = Optim::Mathematics::getFloat3Part(worldTransform * v0Local);
-      float3 v1 = Optim::Mathematics::getFloat3Part(worldTransform * v1Local);
-      float3 v2 = Optim::Mathematics::getFloat3Part(worldTransform * v2Local);
-
-      // printf("Triangle: V1(%f, %f, %f) | V2(%f, %f, %f) | V3(%f, %f, %f)\n", v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
-
-      // Compute triangle edges
-      float3 e1 = v1 - v0;
-      float3 e2 = v2 - v0;
-
-      constexpr float EPS = 1E-8F;
-
-      float3 p   = cross(rayDirection, e2); // Get Vector perpendicular to ray direction and second triangle edge
-      float  det = dotProduct(e1, p);       // Get determinant to check if ray is parallel to triangle
-
-      if (fabsf(det) < EPS) {
-        // Ray is parralel to the triangle
-        _bool_drawOutline = false;
-        continue;
-      }
-
-      float invDet = 1.0f / det;
-
-      float3 t = rayOrigin - v0; // Vector from triangle first vertex to ray origin
-
-      // Compute barycentric coordinate u
-      float u = dotProduct(t, p) * invDet;
-
-      if (u < 0.0f || u > 1.0f) {
-        _bool_drawOutline = false;
-        continue;
-      }
-
-      float3 q = cross(t, e1);
-
-      float v = dotProduct(rayDirection, q) * invDet;
-      if (v < 0.0f || u + v > 1.0f) {
-        _bool_drawOutline = false;
-        continue;
-      }
-
-      tHit = dotProduct(e2, q) * invDet;
-
-      if (tHit > EPS) {
-        _bool_drawOutline = true;
-        // printf("Collision with mesh detected distance: %f\n", tHit);
-        g_ppSelectedMesh = &mesh;
-
-        // printf("Selected Mesh info:\n");
-        // printFields((uint8*)(*g_ppSelectedMesh).address(), (*g_ppSelectedMesh)->GetTypeInfo(), 2);
-        return;
-      }
-    } // for loop end - single mesh indices loop
-  } // For loop end - mesh list iteration
-
-  // printf("No collision detected with any mesh.\n");
-  g_ppSelectedMesh = nullptr;
-  */
+  g_ppSelectedMesh  = Optim::Physics::GetCollision(raycast, _list_meshes);
+  _bool_drawOutline = g_ppSelectedMesh;
 }
 
 void Application::manageKeyDownEvent(uint32 keycode) {
@@ -326,8 +197,32 @@ void Application::manageOnSaveEvent() {
 }
 
 void Application::manageOnFileDropped(const char* path, float posX, float posY) {
-  String::printf("[Application] File dropped: %s\n", path);
-  String::printf("[Application] Drop location (%f, %f)\n", posX, posY);
+  const std::string fileExtension    = GetFileExtension(path);
+  const std::string fileRelativePath = GetRelativePath(path);
+
+  if (fileRelativePath.empty()) {
+    String::printf("[Application] WARNING - The dropped file's location must be inside the project folder:\n %s\n", staticWorkingDirectory.c_str());
+    return;
+  }
+
+  if (fileExtension == ".png") {
+    String::printf("[Application] Dropped png file: %s\n", fileRelativePath.c_str());
+
+    int32 width;
+    int32 height;
+    g_uptrSystemWindow->getWindowSize(&width, &height);
+
+    Raycast raycast = Optim::Physics::ScreenToRaycast(posX, posY, (float)width, (float)height);
+
+    auto target = Optim::Physics::GetCollision(raycast, _list_meshes);
+
+    if (target) {
+      Image pngData;
+      FileStream::readPngImage(fileRelativePath.c_str(), pngData);
+      (*target)->texturePath = fileRelativePath;
+      (*target)->textureHandle = Graphics::RHI()->createTextureResource(&pngData);
+    }
+  }
 }
 
 void Application::Quit() {
@@ -482,8 +377,8 @@ void Application::ApplicationStart() {
                                 .fillMode             = ERasterizerFillMode::Solid,
                                 .cullMode             = ERasterizerCullMode::Back,
                                 .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
-                                .depthBias            = -1,
-                                .slopeScaledDepthBias = -10.0f },
+                                .depthBias            = 0,
+                                .slopeScaledDepthBias = 0.0f },
 
       .depthStencilDescription = {
                                 .depthTestEnabled        = true,
@@ -573,6 +468,11 @@ void Application::ApplicationStart() {
           objMesh->textureHandle = Graphics::GetDefaultTexture();
           printf("The mesh has not texture assigned to it.\n");
         }
+        else {
+          Image dataImage;
+          FileStream::readPngImage(objMesh->texturePath.c_str(), dataImage);
+          objMesh->textureHandle = Graphics::RHI()->createTextureResource(&dataImage);
+        }
 
         UniquePtr<Mesh> _meshRef(objMesh);
 
@@ -613,7 +513,6 @@ void Application::ApplicationLoop() {
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
     Graphics::RHI()->cmdBindPipeline(&_newPipelineHandleTest);
-    // Graphics::RHI()->cmdBindTexture(&_handleTextureResource);
 
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
       float mouseDx{};
@@ -708,11 +607,8 @@ void Application::ApplicationLoop() {
   }
   catch (const Exception& e) {
     String msg = String::sprintf("[Exception]\n%s\n[Exception Description]\n%s\n[Exception File]\n%s\n", e.type(), e.what(), e.getFile());
-
-    // String fullMessage = String(e.type());
-    // fullMessage       += String("\n\n[Description]\n") + String(e.what()) + String("\n[File]\n") + e.getFile();
-
-    MessageBoxA(0, msg.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
+    SystemWindow::ShowMessageBox(e.what(), msg.value());
+    // MessageBoxA(0, msg.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
   catch (const std::exception& e) {
@@ -730,29 +626,15 @@ void Application::ApplicationQuit() {
 }
 
 void OptimEditor::processFile(const char* param_cstrFilePath) {
-  std::string droppedFilePath = param_cstrFilePath;
+  const std::string fileExtension = GetFileExtension(param_cstrFilePath);
+  const std::string relativePath  = GetRelativePath(param_cstrFilePath);
 
-  std::filesystem::path filePath = param_cstrFilePath;
-
-  const std::string fileExtension = filePath.extension().string();
-
-  uint64 pos = droppedFilePath.find(staticWorkingDirectory);
-
-  if (pos != std::string::npos) {
-    droppedFilePath.erase(pos, staticWorkingDirectory.length());
-    std::cout << "Relative file location: " << droppedFilePath << "\n";
-  }
-  else {
-    std::cout << "Could not get relative path of file.\n";
-  }
-
-  if (fileExtension == ".fbx") {
-    std::cout << "Dropped fbx file.\n";
+  if (fileExtension == ".fbx" && !relativePath.empty()) {
     UniquePtr<Mesh> l_uptrMesh;
 
     l_uptrMesh.init();
 
-    OptimEditor::loadFbxModel(*l_uptrMesh, droppedFilePath.c_str());
+    OptimEditor::loadFbxModel(*l_uptrMesh, relativePath.c_str());
 
     l_uptrMesh->rotation = { 1.0f, 0.0, 0.0, 0.0f };
     l_uptrMesh->position = { 0, 0, 0 };
@@ -761,16 +643,10 @@ void OptimEditor::processFile(const char* param_cstrFilePath) {
 
     (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
     (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
-    (*l_uptrMesh).sourcePath         = droppedFilePath;
+    (*l_uptrMesh).sourcePath         = relativePath;
 
     _list_meshes.push_back(l_uptrMesh.move());
 
     g_ppSelectedMesh = &_list_meshes.back();
-  }
-  else if (fileExtension == ".png") {
-    std::cout << "Dropped png file\n";
-  }
-  else {
-    std::cout << "Unkownd or unsupported file type.\n";
   }
 }

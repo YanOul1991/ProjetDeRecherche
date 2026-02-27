@@ -48,7 +48,7 @@ UniquePtr<Mesh>* Optim::Physics::GetCollision(const Raycast& raycast, std::vecto
   for (auto& pMesh : meshList) {
     float4x4 worldTransform = pMesh->getWorldMatrix().transpose();
 
-    // !!!
+    // ***
     // this loop section could be put inside
     // a helper function for readability.
 
@@ -73,7 +73,7 @@ UniquePtr<Mesh>* Optim::Physics::GetCollision(const Raycast& raycast, std::vecto
       constexpr float EPS = 1E-8F;
 
       float3 p   = cross(raycast.direction, e2); // Get Vector perpendicular to ray direction and second triangle edge
-      float  det = dotProduct(e1, p);       // Get determinant to check if ray is parallel to triangle
+      float  det = dotProduct(e1, p);            // Get determinant to check if ray is parallel to triangle
 
       if (fabsf(det) < EPS) {
         // Ray is parralel to the triangle
