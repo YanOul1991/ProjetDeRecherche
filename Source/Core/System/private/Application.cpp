@@ -23,7 +23,7 @@
 #include "Core/System/ModelLoader.h"
 #include "Core/System/SystemWindow.h"
 #include "Core/Time/Time.h"
-#include "Core/Types/Color.h"
+// #include "Core/Types/Color.h"
 #include "Core/Types/string.h"
 #include "Core/Utilities/Pointer/UniquePtr.h"
 #include "Core/Utilities/Random/Random.h"
@@ -34,36 +34,32 @@
 #include <iostream>
 #include <string>
 
-#if defined(_WIN32) | defined(_WIN64)
-  #include "Core/Defines/Windows/windowsAPI.h"
-#endif // _WIN32 || _WIN64
-
-// WINDOW API
-
+// The path of the running exe file.
 static const std::string staticWorkingDirectory = std::filesystem::current_path().string().append("\\");
 
+// A UniquePtr to the default SystemWindow class object
 static UniquePtr<SystemWindow> g_uptrSystemWindow{};
 
+// List of all active Mesh objects in the scene
+//
+// TODO: Make a new scene module to manage acrive objects
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
 
+// A Pointer to a UniquePtr<Mesh> for a selected object in the scene.
 static UniquePtr<Mesh>* g_ppSelectedMesh{ nullptr };
 
+// The pointing direction of the translation Gizmo
+// when being manipulated.
 static float3 controlGizmoDirection{};
 
+// List of Translation Gizmo Mesh objects.
 static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
-// static std::vector<Mesh> g_objectMeshes;
-
-static PipelineHandle _newPipelineHandleTest;
-
-// static PipelineHandle _handlePipeline{};
-static PipelineHandle _handlePipelineWirframeView{};
-static PipelineHandle _handlePipelineOutline{};
-static PipelineHandle _handlePipelineLineRendering{};
-
-// static TextureResourceHandle _handleTextureResource{};
-
-static DepthRTHandle _handle_depthRT{};
+static PipelineHandle pipelineHandleDefault;    // Default Shaders pipeline
+static PipelineHandle pipelineHandleWirframe{}; // Wirframe Shaders pipeline
+static PipelineHandle pipelineHandleOutline{};  // Outline Shaders pipeline
+static PipelineHandle pipelineHandleGizmo{};    // Gizmo Shaders pipeline
+static DepthRTHandle  _handle_depthRT{};
 
 static bool _bool_drawWireframe{ false };
 static bool _bool_drawOutline{ false };
@@ -183,8 +179,6 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
   }
 
   if (fileExtension == ".png") {
-    String::printf("[Application] Dropped png file: %s\n", fileRelativePath.c_str());
-
     int32 width;
     int32 height;
     g_uptrSystemWindow->getWindowSize(&width, &height);
@@ -202,7 +196,6 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
   }
   else if (fileExtension == ".fbx") {
     UniquePtr<Mesh> l_uptrMesh;
-
     l_uptrMesh.init();
 
     OptimEditor::loadFbxModel(*l_uptrMesh, fileRelativePath.c_str());
@@ -226,7 +219,6 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
     }
 
     _list_meshes.push_back(l_uptrMesh.move());
-
     g_ppSelectedMesh = &_list_meshes.back();
   }
   else {
@@ -296,6 +288,7 @@ void Application::ApplicationStart() {
     // this system of manually writing inputs could be
     // removed.
 
+    /*
     SPipelineInputDescription inputPosition{
       .name       = "POSITION",
       .format     = EGraphicsFormat::r32g32b32_float,
@@ -318,16 +311,17 @@ void Application::ApplicationStart() {
     std::vector<SPipelineInputDescription> pipeLineInputs = {
       inputPosition, inputUv, inputNorm
     };
+    */
 
     // ---------------------------------------------------------------------
     // PIPELINE - PHONG / DEFAULT
 
-    SPipelineDesc testBasicPipelineDesc{};
+    SPipelineDesc pipelineDefaultDesc{};
 
-    testBasicPipelineDesc.vertexShader   = "bin/PhongVertexShader.cso";
-    testBasicPipelineDesc.fragmentShader = "bin/PhongPixelShader.cso";
+    pipelineDefaultDesc.vertexShader   = "bin/PhongVertexShader.cso";
+    pipelineDefaultDesc.fragmentShader = "bin/PhongPixelShader.cso";
 
-    testBasicPipelineDesc.rasterizerDescription = {
+    pipelineDefaultDesc.rasterizerDescription = {
       .fillMode             = ERasterizerFillMode::Solid,
       .cullMode             = ERasterizerCullMode::Back,
       .faceWinding          = ERasterizerFaceWinding::CounterClockWise,
@@ -335,24 +329,24 @@ void Application::ApplicationStart() {
       .slopeScaledDepthBias = 0
     };
 
-    testBasicPipelineDesc.depthStencilDescription = {
+    pipelineDefaultDesc.depthStencilDescription = {
       .depthTestEnabled        = true,
       .depthComparisonFunction = EDepthStencilComparisonFunction::Less,
       .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll
     };
 
-    testBasicPipelineDesc.inputs = pipeLineInputs;
+    //pipelineDefaultDesc.inputs = pipeLineInputs;
 
-    testBasicPipelineDesc.primitiveTopology = EPipelinePrimitiveTopology::TriangleList;
+    pipelineDefaultDesc.primitiveTopology = EPipelinePrimitiveTopology::TriangleList;
 
-    testBasicPipelineDesc.inputs = pipeLineInputs;
+    //pipelineDefaultDesc.inputs = pipeLineInputs;
 
-    _newPipelineHandleTest = Graphics::RHI()->createPipeline(&testBasicPipelineDesc);
+    pipelineHandleDefault = Graphics::RHI()->createPipeline(&pipelineDefaultDesc);
 
     // ---------------------------------------------------------------------
     // PIPELINE - WIRFRAME
 
-    SPipelineDesc l_wirframePipelineDesc = {
+    SPipelineDesc pipelineWirframeDesc = {
       .vertexShader   = "bin/WireframeVS.cso",
       .fragmentShader = "bin/WireframePS.cso",
 
@@ -371,15 +365,15 @@ void Application::ApplicationStart() {
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
 
-      .inputs = pipeLineInputs
+      //.inputs = pipeLineInputs
     };
 
-    _handlePipelineWirframeView = Graphics::RHI()->createPipeline(&l_wirframePipelineDesc);
+    pipelineHandleWirframe = Graphics::RHI()->createPipeline(&pipelineWirframeDesc);
 
     // ---------------------------------------------------------------------
     // PIPELINE - OUTLINE
 
-    SPipelineDesc l_outlinePipelineDesc = {
+    SPipelineDesc pipelineOutlineDesc = {
       .vertexShader   = "bin/OutlineVS.cso",
       .fragmentShader = "bin/OutlinePS.cso",
 
@@ -398,33 +392,33 @@ void Application::ApplicationStart() {
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
 
-      .inputs = pipeLineInputs
+      //.inputs = pipeLineInputs
     };
-    _handlePipelineOutline = Graphics::RHI()->createPipeline(&l_outlinePipelineDesc);
+    pipelineHandleOutline = Graphics::RHI()->createPipeline(&pipelineOutlineDesc);
 
     // ---------------------------------------------------------------------
     // PIPELINE
 
-    SPipelineInputDescription pipelineGizmoInputPosition{
-      .name       = "POSITION",
-      .format     = EGraphicsFormat::r32g32b32_float,
-      .inputSlot  = 0,
-      .inputUsage = EInputUsageSlot::position
-    };
+    //SPipelineInputDescription pipelineGizmoInputPosition{
+    //  .name       = "POSITION",
+    //  .format     = EGraphicsFormat::r32g32b32_float,
+    //  .inputSlot  = 0,
+    //  .inputUsage = EInputUsageSlot::position
+    //};
 
-    SPipelineInputDescription pipelineGizmoInputColor{
-      .name       = "COLOR",
-      .format     = EGraphicsFormat::r32g32b32a32_float,
-      .inputSlot  = 1,
-      .inputUsage = EInputUsageSlot::color
-    };
+    //SPipelineInputDescription pipelineGizmoInputColor{
+    //  .name       = "COLOR",
+    //  .format     = EGraphicsFormat::r32g32b32a32_float,
+    //  .inputSlot  = 1,
+    //  .inputUsage = EInputUsageSlot::color
+    //};
 
-    std::vector<SPipelineInputDescription> pipelineGizmoInput = {
-      pipelineGizmoInputPosition,
-      pipelineGizmoInputColor
-    };
+    //std::vector<SPipelineInputDescription> pipelineGizmoInput = {
+    //  pipelineGizmoInputPosition,
+    //  pipelineGizmoInputColor
+    //};
 
-    SPipelineDesc l_pipelineLineDesc = {
+    SPipelineDesc pipelineGizmoDesc = {
       .vertexShader   = "bin/TransformGizmoVS.cso",
       .fragmentShader = "bin/TransformGizmoPS.cso",
 
@@ -443,9 +437,10 @@ void Application::ApplicationStart() {
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
 
-      .inputs = pipelineGizmoInput
+      //.inputs = pipelineGizmoInput
     };
-    _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
+
+    pipelineHandleGizmo = Graphics::RHI()->createPipeline(&pipelineGizmoDesc);
 
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
@@ -516,7 +511,7 @@ void Application::ApplicationLoop() {
     // and textures.
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
-    Graphics::RHI()->cmdBindPipeline(&_newPipelineHandleTest);
+    Graphics::RHI()->cmdBindPipeline(&pipelineHandleDefault);
 
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
       float mouseDx{};
@@ -557,7 +552,7 @@ void Application::ApplicationLoop() {
     }
 
     if (_bool_drawWireframe) {
-      Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
+      Graphics::RHI()->cmdBindPipeline(&pipelineHandleWirframe);
 
       for (UniquePtr<Mesh>& pMesh : _list_meshes) {
         float4x4 worldTransform = pMesh->getWorldMatrix();
@@ -570,7 +565,7 @@ void Application::ApplicationLoop() {
     }
 
     if (g_ppSelectedMesh != nullptr) {
-      Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
+      Graphics::RHI()->cmdBindPipeline(&pipelineHandleOutline);
 
       const UniquePtr<Mesh>& selectedMesh = (*g_ppSelectedMesh);
 
@@ -581,7 +576,7 @@ void Application::ApplicationLoop() {
       Graphics::RHI()->cmdBindIndexBuffer(&selectedMesh->indexBufferHandle);
       Graphics::RHI()->cmdDrawIndexed(selectedMesh->indexCount);
 
-      Graphics::RHI()->cmdBindPipeline(&_handlePipelineLineRendering);
+      Graphics::RHI()->cmdBindPipeline(&pipelineHandleGizmo);
       for (UniquePtr<Mesh>& pGizmo : arrayGizmoSelection) {
         float3 dir = normalize(selectedMesh->position - Camera::position);
 

@@ -60,6 +60,9 @@ struct SDepthStencilDescription {
   EDepthStencilDepthWriteMask     depthWriteMask;
 };
 
+/*
+* \deprecated
+*/
 enum class EGraphicsFormat {
   Unkown,
 
@@ -79,6 +82,9 @@ enum class EGraphicsFormat {
   r32g32_sint,
 };
 
+/*
+* \deprecated
+*/
 enum class EInputUsageSlot {
   position  = 0,
   textCoord = 1,
@@ -87,6 +93,14 @@ enum class EInputUsageSlot {
   color     = 4,
 };
 
+/**
+ * \deprecated
+ * This struct object is no longer needed for pipeline
+ * object creation, as shader reflection is startng to
+ * be implemented.
+ * 
+ * Remove it once shift to Shader reflection is properly implemented.
+ */
 struct SPipelineInputDescription {
   const char*     name;
   EGraphicsFormat format;
@@ -108,11 +122,18 @@ enum class EShaderBindResourceType {
 };
 
 struct SPipelineDesc {
-  const char*                            vertexShader;
-  const char*                            fragmentShader;
-  SRasterizerDescription                 rasterizerDescription;
-  SDepthStencilDescription               depthStencilDescription;
-  EPipelinePrimitiveTopology             primitiveTopology;
+  const char*                vertexShader;
+  const char*                fragmentShader;
+  SRasterizerDescription     rasterizerDescription;
+  SDepthStencilDescription   depthStencilDescription;
+  EPipelinePrimitiveTopology primitiveTopology;
+
+  /**
+   * \deprecated
+   * As the SPipelineInputDescription struct object is depecrecated
+   * this field will also be removed once shader reflection is more
+   * properly implemented.
+   */
   std::vector<SPipelineInputDescription> inputs;
 };
 

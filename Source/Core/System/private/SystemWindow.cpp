@@ -12,8 +12,6 @@
   #pragma comment(lib, "version.lib")
 #endif
 
-// #include "Core/Defines/Windows/windowsAPI.h"
-
 #include "Core/System/SystemWindow.h"
 
 #include "Core/Math/OptimMathematics.h"
@@ -103,10 +101,6 @@ bool SystemWindow::loop() {
       break;
     }
     case SDL_EVENT_DROP_FILE: {
-      // const char* path = evt.drop.data;
-      // printf("File dropped: %s\n", path);
-      // printf("File droppe position (%f, %f)\n", evt.drop.x, evt.drop.y);
-      // OptimEditor::processFile(path);
       onFileDroppedDelegate.broadcast(evt.drop.data, evt.drop.x, evt.drop.y);
       break;
     }
