@@ -185,7 +185,7 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
 
     Raycast raycast = Optim::Physics::ScreenToRaycast(posX, posY, (float)width, (float)height);
 
-    auto target = Optim::Physics::GetCollision(raycast, _list_meshes);
+    UniquePtr<Mesh>* target = Optim::Physics::GetCollision(raycast, _list_meshes);
 
     if (target) {
       Image pngData;
@@ -220,6 +220,43 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
 
     _list_meshes.push_back(l_uptrMesh.move());
     g_ppSelectedMesh = &_list_meshes.back();
+  }
+  else if (fileExtension == ".oescene") {
+    String::printf("[Application] Importing scene object.\n");
+
+    std::vector<Object*> l_registeredObjects;
+
+    Parser meshParser(Token::Tokenize(fileRelativePath));
+
+    while (!meshParser.isEnd()) {
+      l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
+    }
+
+    for (auto& i : l_registeredObjects) {
+      if (i->isChildOf(Mesh::StaticTypeInfo())) {
+
+        Mesh* objMesh = reinterpret_cast<Mesh*>(i);
+
+        OptimEditor::loadFbxModel(*objMesh, objMesh->sourcePath.c_str());
+
+        objMesh->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(objMesh->vertices, objMesh->vertexCount);
+        objMesh->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(objMesh->indices, objMesh->indexCount);
+
+        if (objMesh->texturePath.empty()) {
+          objMesh->textureHandle = Graphics::GetDefaultTexture();
+          printf("The mesh has not texture assigned to it.\n");
+        }
+        else {
+          Image dataImage;
+          FileStream::readPngImage(objMesh->texturePath.c_str(), dataImage);
+          objMesh->textureHandle = Graphics::RHI()->createTextureResource(&dataImage);
+        }
+
+        UniquePtr<Mesh> _meshRef(objMesh);
+
+        _list_meshes.push_back(_meshRef.move());
+      }
+    }
   }
   else {
     String::printf("Unsupported file extension.\n");
@@ -283,36 +320,6 @@ void Application::ApplicationStart() {
     arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({ 1, 0, 0 }, -Optim::Constants::pi / 2.0f);
     arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({ 0, 1, 0 }, Optim::Constants::pi / 2.0f);
 
-    // IMPORTANT:
-    // With new shader reflection implementation started,
-    // this system of manually writing inputs could be
-    // removed.
-
-    /*
-    SPipelineInputDescription inputPosition{
-      .name       = "POSITION",
-      .format     = EGraphicsFormat::r32g32b32_float,
-      .inputSlot  = 0,
-      .inputUsage = EInputUsageSlot::position
-    };
-    SPipelineInputDescription inputUv{
-      .name       = "TEXCOORD",
-      .format     = EGraphicsFormat::r32g32_float,
-      .inputSlot  = 1,
-      .inputUsage = EInputUsageSlot::textCoord
-    };
-    SPipelineInputDescription inputNorm{
-      .name       = "NORMAL",
-      .format     = EGraphicsFormat::r32g32b32_float,
-      .inputSlot  = 2,
-      .inputUsage = EInputUsageSlot::normal
-    };
-
-    std::vector<SPipelineInputDescription> pipeLineInputs = {
-      inputPosition, inputUv, inputNorm
-    };
-    */
-
     // ---------------------------------------------------------------------
     // PIPELINE - PHONG / DEFAULT
 
@@ -335,11 +342,7 @@ void Application::ApplicationStart() {
       .depthWriteMask          = EDepthStencilDepthWriteMask::WriteAll
     };
 
-    //pipelineDefaultDesc.inputs = pipeLineInputs;
-
     pipelineDefaultDesc.primitiveTopology = EPipelinePrimitiveTopology::TriangleList;
-
-    //pipelineDefaultDesc.inputs = pipeLineInputs;
 
     pipelineHandleDefault = Graphics::RHI()->createPipeline(&pipelineDefaultDesc);
 
@@ -364,8 +367,6 @@ void Application::ApplicationStart() {
                                 },
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
-
-      //.inputs = pipeLineInputs
     };
 
     pipelineHandleWirframe = Graphics::RHI()->createPipeline(&pipelineWirframeDesc);
@@ -391,32 +392,11 @@ void Application::ApplicationStart() {
                                 },
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
-
-      //.inputs = pipeLineInputs
     };
     pipelineHandleOutline = Graphics::RHI()->createPipeline(&pipelineOutlineDesc);
 
     // ---------------------------------------------------------------------
     // PIPELINE
-
-    //SPipelineInputDescription pipelineGizmoInputPosition{
-    //  .name       = "POSITION",
-    //  .format     = EGraphicsFormat::r32g32b32_float,
-    //  .inputSlot  = 0,
-    //  .inputUsage = EInputUsageSlot::position
-    //};
-
-    //SPipelineInputDescription pipelineGizmoInputColor{
-    //  .name       = "COLOR",
-    //  .format     = EGraphicsFormat::r32g32b32a32_float,
-    //  .inputSlot  = 1,
-    //  .inputUsage = EInputUsageSlot::color
-    //};
-
-    //std::vector<SPipelineInputDescription> pipelineGizmoInput = {
-    //  pipelineGizmoInputPosition,
-    //  pipelineGizmoInputColor
-    //};
 
     SPipelineDesc pipelineGizmoDesc = {
       .vertexShader   = "bin/TransformGizmoVS.cso",
@@ -436,8 +416,6 @@ void Application::ApplicationStart() {
                                 },
 
       .primitiveTopology = EPipelinePrimitiveTopology::TriangleList,
-
-      //.inputs = pipelineGizmoInput
     };
 
     pipelineHandleGizmo = Graphics::RHI()->createPipeline(&pipelineGizmoDesc);
@@ -445,6 +423,7 @@ void Application::ApplicationStart() {
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
 
+    /*
     /// ---------------------------------------------------------------------------
     /// ------------------------------ LOADING SCENE ------------------------------
 
@@ -481,6 +460,7 @@ void Application::ApplicationStart() {
         _list_meshes.push_back(_meshRef.move());
       }
     }
+    */
 
     m_shouldRun = true;
 
@@ -514,8 +494,8 @@ void Application::ApplicationLoop() {
     Graphics::RHI()->cmdBindPipeline(&pipelineHandleDefault);
 
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
-      float mouseDx{};
-      float mouseDy{};
+      float mouseDx;
+      float mouseDy;
 
       g_uptrSystemWindow->getMouseDelta(&mouseDx, &mouseDy);
 

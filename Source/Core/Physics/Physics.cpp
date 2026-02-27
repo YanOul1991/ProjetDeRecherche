@@ -4,8 +4,46 @@
 
 #include "./Physics.h"
 
+#include "Core/Graphics/Mesh.h"
 #include "Core/Math/OptimMathematics.h"
 #include "Core/Object/Camera/Camera.h"
+
+struct RaycastHit {
+  RaycastHit(const float3& _origin, const float3& _point, const float& _distance, UniquePtr<Mesh>* _mesh) :
+      origin(_origin), point(_point), distance(_distance), mesh(_mesh) {
+  }
+
+  RaycastHit& operator=(const RaycastHit& other) {
+    if (this != &other) {
+      origin   = other.origin;
+      point    = other.point;
+      distance = other.distance;
+      mesh     = other.mesh;
+    }
+
+    return *this;
+  }
+
+  float3 origin;   // The origin of the ray.
+  float3 point;    // The point where the collision occured.
+  float  distance; // Distance from origin to collision.
+
+  // Reference to UniquePtr<Mesh> of the
+  // Mesh object that was hit
+  UniquePtr<Mesh>* mesh;
+};
+
+static UniquePtr<Mesh>* GetClosestRaycastHit(std::vector<RaycastHit>& hits) {
+  RaycastHit closestHit = hits[0];
+
+  for (auto& hit : hits) {
+    if (hit.distance < closestHit.distance) {
+      closestHit = hit;
+    }
+  }
+
+  return closestHit.mesh;
+}
 
 Raycast Optim::Physics::ScreenToRaycast(float posX, float posY, float width, float height) {
   float ndcX = (2 * (posX) / static_cast<float>(width)) - 1.0f;
@@ -44,7 +82,10 @@ Raycast Optim::Physics::ScreenToRaycast(float posX, float posY, float width, flo
   return Raycast(rayOrigin, rayFarPosition, rayDirection);
 }
 
+
 UniquePtr<Mesh>* Optim::Physics::GetCollision(const Raycast& raycast, std::vector<UniquePtr<Mesh>>& meshList) {
+  std::vector<RaycastHit> hits;
+
   for (auto& pMesh : meshList) {
     float4x4 worldTransform = pMesh->getWorldMatrix().transpose();
 
@@ -98,12 +139,18 @@ UniquePtr<Mesh>* Optim::Physics::GetCollision(const Raycast& raycast, std::vecto
         continue;
       }
 
+      // Collision distance from camera
       tHit = dotProduct(e2, q) * invDet;
 
       if (tHit > EPS) {
-        return &pMesh;
+        RaycastHit hit(raycast.origin, tHit * Camera::forward, tHit, &pMesh);
+        hits.push_back(hit);
       }
     }
+  }
+
+  if (hits.size() > 0) {
+    return GetClosestRaycastHit(hits);
   }
 
   return nullptr;
