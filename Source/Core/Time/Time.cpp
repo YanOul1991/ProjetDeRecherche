@@ -5,6 +5,7 @@
 
 static uint64 tick      = 0;
 static double deltaTime = 0;
+static double runtime   = 0;
 
 double Time::getMachineFrequency() {
 #ifdef OS_WINDOWS
@@ -47,12 +48,12 @@ uint64 Time::getEpoch() {
   return msTime;
 }
 
-/*
- * @brief
- * Returns the delta time in seconds.
- */
 double Time::getDeltaTime() {
   return deltaTime;
+}
+
+float Time::getRuntime() {
+  return static_cast<float>(runtime);
 }
 
 void Time::onNewFrame() {
@@ -61,4 +62,5 @@ void Time::onNewFrame() {
 
 void Time::onFrameEnd() {
   deltaTime = static_cast<double>(getNow() - tick) / getMachineFrequency();
+  runtime  += deltaTime;
 }

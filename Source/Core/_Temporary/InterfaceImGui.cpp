@@ -6,6 +6,7 @@
 ====================================================================================== */
 
 #include "Core/Object/Camera/Camera.h"
+#include "Core/Time/Time.h"
 #include "ThirdParty/imgui/imgui.h"
 #include "ThirdParty/imgui/imgui_impl_dx11.h"
 #include "ThirdParty/imgui/imgui_impl_sdl3.h"
@@ -44,9 +45,9 @@ void InterfaceImGui::update() {
   ImGui::SetWindowFontScale(1.05f);
 
   if (ImGui::CollapsingHeader("System Stats")) {
-    ImGui::Text("\tRuntime    : %.2f", Application::getRuntime());
-    ImGui::Text("\tDelta Time : %.8f", Application::getDeltaTime());
-    ImGui::Text("\tFrameRate  : %d", static_cast<int>(1.0f / Application::getDeltaTime()));
+    ImGui::Text("\tRuntime    : %.2f", Time::getRuntime());
+    ImGui::Text("\tDelta Time : %.8f", Time::getDeltaTime());
+    ImGui::Text("\tFrameRate  : %d", static_cast<int>(1.0f / Time::getDeltaTime()));
   }
 
   if (ImGui::CollapsingHeader("Camera")) {

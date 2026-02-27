@@ -83,15 +83,13 @@ static std::string GetRelativePath(std::string strAbsolutePath) {
   }
   else {
     std::cout << "Could not get relative path of file.\n";
+    return std::string();
   }
 }
 
 extern "C" CORE_API Application* CreateApplicationProc() {
   return new Application;
 }
-
-float Application::m_runtime{ 0.0f };
-float Application::m_deltaTime{ 1.0f };
 
 Application::Application() {
 }
@@ -103,37 +101,21 @@ bool Application::ShouldRun() const {
   return m_shouldRun;
 }
 
-float Application::getRuntime() {
-  return m_runtime;
-}
-
-float Application::getDeltaTime() {
-  return m_deltaTime;
-}
-
 void Application::getMainWindowSize(int32* pWidth, int32* pHeight) {
   g_uptrSystemWindow->getWindowSize(pWidth, pHeight);
 }
 
-static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
-  float3 rayDirection = normalize(rayFarPosition - rayOrigin);
-
-  Raycast raycast(rayOrigin, rayFarPosition, rayDirection);
-
-  // If an object is selected, then prioritize the selected
+static void getClickSelection(Raycast raycast) {
+  // If an object is selected, then prioritize collision detection with gizmo
+  // If transform gizmo has indeed touched, then manupulate selected object's
+  // transformation and no need to check for other collisions.
   if (g_ppSelectedMesh != nullptr) {
-    auto targetMesh = Optim::Physics::GetCollision(raycast, arrayGizmoSelection);
+    UniquePtr<Mesh>* targetMesh = Optim::Physics::GetCollision(raycast, arrayGizmoSelection);
+    _bool_manipulate_selected   = targetMesh;
 
     if (targetMesh) {
-      _bool_manipulate_selected = true;
-      controlGizmoDirection     = (*targetMesh)->rotation.rotate({ 0, 0, 1 });
-
-      // If transform gizmo has indeed touched, then manupulate selected object's
-      // transformation and no need to check for other collisions.
+      controlGizmoDirection = (*targetMesh)->rotation.rotate({ 0, 0, 1 });
       return;
-    }
-    else {
-      _bool_manipulate_selected = false;
     }
   }
 
@@ -142,7 +124,6 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
 }
 
 void Application::manageKeyDownEvent(uint32 keycode) {
-
   // If key is backaspace.
   // Check if a mesh object is selected in the scene.
   // If so find it in the mesh list and if found delete it.
@@ -162,22 +143,18 @@ void Application::manageKeyDownEvent(uint32 keycode) {
 }
 
 void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) {
+  if (buttonID == 1) {
+    int32 width, height;
+    getMainWindowSize(&width, &height);
+
+    Raycast raycast = Optim::Physics::ScreenToRaycast(posX, posY, (float)width, (float)height);
+
+    getClickSelection(raycast);
+  }
+
   if (buttonID == 3) {
     _bool_drawWireframe = !_bool_drawWireframe;
   }
-
-  if (buttonID != 1) {
-    return;
-  }
-
-  int32 width{};
-  int32 height{};
-
-  getMainWindowSize(&width, &height);
-
-  Raycast raycast = Optim::Physics::ScreenToRaycast(posX, posY, (float)width, (float)height);
-
-  getClickSelection(raycast.origin, raycast.farPosition);
 }
 
 void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
@@ -219,9 +196,41 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
     if (target) {
       Image pngData;
       FileStream::readPngImage(fileRelativePath.c_str(), pngData);
-      (*target)->texturePath = fileRelativePath;
+      (*target)->texturePath   = fileRelativePath;
       (*target)->textureHandle = Graphics::RHI()->createTextureResource(&pngData);
     }
+  }
+  else if (fileExtension == ".fbx") {
+    UniquePtr<Mesh> l_uptrMesh;
+
+    l_uptrMesh.init();
+
+    OptimEditor::loadFbxModel(*l_uptrMesh, fileRelativePath.c_str());
+
+    l_uptrMesh->rotation = { 1.0f, 0.0, 0.0, 0.0f };
+    l_uptrMesh->position = { 0, 0, 0 };
+
+    g_ppSelectedMesh = nullptr;
+
+    (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
+    (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
+    (*l_uptrMesh).sourcePath         = fileRelativePath;
+
+    if (!(*l_uptrMesh).texturePath.empty()) {
+      Image imgData;
+      FileStream::readPngImage((*l_uptrMesh).texturePath.c_str(), imgData);
+      (*l_uptrMesh).textureHandle = Graphics::RHI()->createTextureResource(&imgData);
+    }
+    else {
+      (*l_uptrMesh).textureHandle = Graphics::GetDefaultTexture();
+    }
+
+    _list_meshes.push_back(l_uptrMesh.move());
+
+    g_ppSelectedMesh = &_list_meshes.back();
+  }
+  else {
+    String::printf("Unsupported file extension.\n");
   }
 }
 
@@ -232,6 +241,7 @@ void Application::Quit() {
 // Initialize apporpriate ressources when starting an application
 void Application::ApplicationStart() {
   try {
+    Time::onNewFrame();
     // Load system window.
     // Load graphics then display the window.
     g_uptrSystemWindow.init();
@@ -437,9 +447,6 @@ void Application::ApplicationStart() {
     };
     _handlePipelineLineRendering = Graphics::RHI()->createPipeline(&l_pipelineLineDesc);
 
-    /*
-     */
-
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
 
@@ -482,19 +489,16 @@ void Application::ApplicationStart() {
 
     m_shouldRun = true;
 
+    Time::onFrameEnd();
     printf("--- APPLICATION LOOP BEGIN ---\n");
   }
   catch (const Exception& e) {
-    String fullMessage = String(e.whatDescriptive());
-    MessageBoxA(0, fullMessage.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
+    String msg = String::sprintf("[Exception]\n%s\n[Exception Description]\n%s\n[Exception File]\n%s\n", e.type(), e.what(), e.getFile());
+    SystemWindow::ShowMessageBox(e.what(), msg.value());
     Quit();
   }
   catch (const std::exception& e) {
-    MessageBoxA(0, e.what(), "Error", MB_OK + MB_ICONEXCLAMATION);
-    Quit();
-  }
-  catch (...) {
-    MessageBoxA(0, "Unknown details, for exception thrown", "Exception...", MB_OK + MB_ICONEXCLAMATION);
+    SystemWindow::ShowMessageBox(e.what(), "[Error]");
     Quit();
   }
 }
@@ -540,8 +544,7 @@ void Application::ApplicationLoop() {
 
     // Iterates through all instanciated mesh objects
     // and render them in the scene
-    //
-    // If wireframe view is activated also draw their conressponding wirferame.
+    // If wireframe view is activated also draw their wireframes.
 
     for (auto& pMesh : _list_meshes) {
       float4x4 worldTransform = pMesh->getWorldMatrix();
@@ -552,8 +555,6 @@ void Application::ApplicationLoop() {
       Graphics::RHI()->cmdBindTexture(&pMesh->textureHandle);
       Graphics::RHI()->cmdDrawIndexed(pMesh->indexCount);
     }
-
-    // Draw wireframe for all meshes if required
 
     if (_bool_drawWireframe) {
       Graphics::RHI()->cmdBindPipeline(&_handlePipelineWirframeView);
@@ -569,21 +570,20 @@ void Application::ApplicationLoop() {
     }
 
     if (g_ppSelectedMesh != nullptr) {
-
       Graphics::RHI()->cmdBindPipeline(&_handlePipelineOutline);
 
       const UniquePtr<Mesh>& selectedMesh = (*g_ppSelectedMesh);
 
-      float4x4 worldTransform = (*g_ppSelectedMesh)->getWorldMatrix();
+      float4x4 worldTransform = selectedMesh->getWorldMatrix();
 
       Graphics::RHI()->cmdSetNextMeshTransform(&worldTransform);
-      Graphics::RHI()->cmdBindVertexBuffer(&(*g_ppSelectedMesh)->vertexBufferHandle);
-      Graphics::RHI()->cmdBindIndexBuffer(&(*g_ppSelectedMesh)->indexBufferHandle);
-      Graphics::RHI()->cmdDrawIndexed((*g_ppSelectedMesh)->indexCount);
+      Graphics::RHI()->cmdBindVertexBuffer(&selectedMesh->vertexBufferHandle);
+      Graphics::RHI()->cmdBindIndexBuffer(&selectedMesh->indexBufferHandle);
+      Graphics::RHI()->cmdDrawIndexed(selectedMesh->indexCount);
 
       Graphics::RHI()->cmdBindPipeline(&_handlePipelineLineRendering);
       for (UniquePtr<Mesh>& pGizmo : arrayGizmoSelection) {
-        float3 dir = normalize((*g_ppSelectedMesh)->position - Camera::position);
+        float3 dir = normalize(selectedMesh->position - Camera::position);
 
         dir = 17 * dir;
 
@@ -600,53 +600,19 @@ void Application::ApplicationLoop() {
 
     // Execute the commands
     Graphics::RHI()->draw();
-
     Time::onFrameEnd();
-    m_deltaTime = static_cast<float>(Time::getDeltaTime());
-    m_runtime  += m_deltaTime;
   }
   catch (const Exception& e) {
     String msg = String::sprintf("[Exception]\n%s\n[Exception Description]\n%s\n[Exception File]\n%s\n", e.type(), e.what(), e.getFile());
     SystemWindow::ShowMessageBox(e.what(), msg.value());
-    // MessageBoxA(0, msg.value(), e.type(), MB_OK + MB_ICONEXCLAMATION);
     Quit();
   }
   catch (const std::exception& e) {
-    MessageBoxA(0, e.what(), "Error", MB_OK + MB_ICONEXCLAMATION);
-    Quit();
-  }
-  catch (...) {
-    MessageBoxA(0, "Unknown details, for exception thrown", "Exception...", MB_OK + MB_ICONEXCLAMATION);
+    SystemWindow::ShowMessageBox(e.what(), "[Error]");
     Quit();
   }
 }
 
 void Application::ApplicationQuit() {
   printf("Application quitting...\n");
-}
-
-void OptimEditor::processFile(const char* param_cstrFilePath) {
-  const std::string fileExtension = GetFileExtension(param_cstrFilePath);
-  const std::string relativePath  = GetRelativePath(param_cstrFilePath);
-
-  if (fileExtension == ".fbx" && !relativePath.empty()) {
-    UniquePtr<Mesh> l_uptrMesh;
-
-    l_uptrMesh.init();
-
-    OptimEditor::loadFbxModel(*l_uptrMesh, relativePath.c_str());
-
-    l_uptrMesh->rotation = { 1.0f, 0.0, 0.0, 0.0f };
-    l_uptrMesh->position = { 0, 0, 0 };
-
-    g_ppSelectedMesh = nullptr;
-
-    (*l_uptrMesh).vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(l_uptrMesh->vertices, l_uptrMesh->vertexCount);
-    (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
-    (*l_uptrMesh).sourcePath         = relativePath;
-
-    _list_meshes.push_back(l_uptrMesh.move());
-
-    g_ppSelectedMesh = &_list_meshes.back();
-  }
 }

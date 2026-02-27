@@ -103,10 +103,10 @@ bool SystemWindow::loop() {
       break;
     }
     case SDL_EVENT_DROP_FILE: {
-      const char* path = evt.drop.data;
+      // const char* path = evt.drop.data;
       // printf("File dropped: %s\n", path);
       // printf("File droppe position (%f, %f)\n", evt.drop.x, evt.drop.y);
-      OptimEditor::processFile(path);
+      // OptimEditor::processFile(path);
       onFileDroppedDelegate.broadcast(evt.drop.data, evt.drop.x, evt.drop.y);
       break;
     }
@@ -127,7 +127,6 @@ bool SystemWindow::loop() {
 
       if (evt.key.key == SDLK_S) {
         if (evt.key.mod & SDL_KMOD_CTRL) {
-          // printf("CTRL+S ACTION\n");
           onSaveEvent.broadcast();
         }
       }

@@ -11,6 +11,7 @@ class CORE_API Time final
   static uint64 getNow();
   static uint64 getEpoch();
   static double getDeltaTime();
+  static float  getRuntime();
 
   static constexpr uint64 UnitSecond   = static_cast<uint64>(1 * 1e0);
   static constexpr uint64 UnitMillisec = static_cast<uint64>(1 * 1e3);

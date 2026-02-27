@@ -35,24 +35,6 @@ class CORE_API Application final
 
   /**
    * \brief
-   * Get the total runtime of the program in seconds.
-   *
-   * \return
-   * The program total runtime.
-   */
-  static float getRuntime();
-
-  /**
-   * \brief
-   * Get the time in seconds it took for the last frame to render.
-   *
-   * \return
-   * The last frame delta time.
-   */
-  static float getDeltaTime();
-
-  /**
-   * \brief
    * Get the size of the main window.
    *
    * \param pWidth
@@ -64,11 +46,7 @@ class CORE_API Application final
   static void getMainWindowSize(int32* pWidth, int32* pHeight);
 
  private:
-  static float m_runtime;            // Total runtime of the program
-  static float m_deltaTime;          // The time in seconds the last frame took.
-  bool         m_shouldRun{ false }; // Should the program continue to run or exit.
-
-  // Event management functions
+  bool m_shouldRun{ false }; // Should the program continue to run or exit.
 
   /**
    * \brief
@@ -150,9 +128,3 @@ class CORE_API Application final
 };
 
 extern "C" CORE_API Application* CreateApplicationProc();
-
-namespace OptimEditor {
-
-CORE_API void processFile(const char* cstrFilePath);
-
-} // namespace OptimEditor
