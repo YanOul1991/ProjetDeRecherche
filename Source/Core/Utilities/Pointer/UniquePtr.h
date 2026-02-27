@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Core/OptimEngine.h"
+#include "Core/Types/String.h"
 
 template <typename T> class UniquePtr final
 {
@@ -36,7 +37,7 @@ template <typename T> class UniquePtr final
   UniquePtr& operator=(const UniquePtr&) = delete;
 
   UniquePtr(UniquePtr&& other) noexcept :
-      ptr{other.ptr} {
+      ptr{ other.ptr } {
     // String::printf("SmartPointer ownership transform by RVALUE INITIALIZATION. Now holding: 0x%02x\n", other.ptr);
     other.ptr = nullptr;
   }
@@ -93,5 +94,5 @@ template <typename T> class UniquePtr final
   }
 
  private:
-  T* ptr{nullptr};
+  T* ptr{ nullptr };
 };

@@ -101,9 +101,25 @@ void Application::getMainWindowSize(int32* pWidth, int32* pHeight) {
 static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
   float3 rayDirection = normalize(rayFarPosition - rayOrigin);
 
+  Raycast raycast(rayOrigin, rayFarPosition, rayDirection);
+
   // If an object is selected, then prioritize the selected
   if (g_ppSelectedMesh != nullptr) {
+    auto targetMesh = Optim::Physics::GetCollision(raycast, arrayGizmoSelection);
 
+    if (targetMesh) {
+      _bool_manipulate_selected = true;
+      controlGizmoDirection     = (*targetMesh)->rotation.rotate({ 0, 0, 1 });
+
+      // If transform gizmo has indeed touched, then manupulate selected object's
+      // transformation and no need to check for other collisions.
+      return;
+    }
+    else {
+      _bool_manipulate_selected = false;
+    }
+
+    /*
     for (auto& mesh : arrayGizmoSelection) {
       float4x4 worldTransform = mesh->getWorldMatrix().transpose();
 
@@ -159,18 +175,28 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
         tHit = dotProduct(e2, q) * invDet;
 
         if (tHit > EPS) {
-          _bool_drawOutline     = true;
-          controlGizmoDirection = mesh->rotation.rotate({ 0, 0, 1 });
-          // printf("GizmoTouched!\n");
+          _bool_drawOutline         = true;
+          controlGizmoDirection     = mesh->rotation.rotate({ 0, 0, 1 });
           _bool_manipulate_selected = true;
-          // controlGizmoDirection.print();
-          //(*g_ppSelectedMesh)->position = (*g_ppSelectedMesh)->position + (0.25f * controlGizmoDirection);
           return;
         }
       } // for loop end - single mesh indices loop
     } // For loop end - gizmos list iteration
+    */
   }
 
+  auto selectedMesh = Optim::Physics::GetCollision(raycast, _list_meshes);
+
+  if (selectedMesh) {
+    _bool_drawOutline = true;
+    g_ppSelectedMesh = selectedMesh;
+  }
+  else {
+    _bool_drawOutline = false;
+    g_ppSelectedMesh = nullptr;
+  }
+
+  /*
   for (auto& mesh : _list_meshes) {
     float4x4 worldTransform = mesh->getWorldMatrix().transpose();
 
@@ -241,6 +267,7 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
 
   // printf("No collision detected with any mesh.\n");
   g_ppSelectedMesh = nullptr;
+  */
 }
 
 void Application::manageKeyDownEvent(uint32 keycode) {
@@ -277,48 +304,9 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
 
   getMainWindowSize(&width, &height);
 
-  Raycast raycast = Optim::Physics::ScreenToRaycast(posX, posY, width, height);
+  Raycast raycast = Optim::Physics::ScreenToRaycast(posX, posY, (float)width, (float)height);
 
   getClickSelection(raycast.origin, raycast.farPosition);
-
-  /*
-  float ndcX = (2 * (posX) / static_cast<float>(width)) - 1.0f;
-  float ndcY = 1.0f - (2 * (posY) / static_cast<float>(height));
-
-  float4 nearPoint = { ndcX, ndcY, 0.0f, 1.0f };
-
-  float4 farPoint = { ndcX, ndcY, 1.0f, 1.0f };
-
-  float4x4 viewMatrix = Camera::getViewMatrix().transpose();
-
-  // viewMatrix = Optim::Mathematics::getMatrixTranspose(viewMatrix);
-
-  const float a = (float)width / float(height);     // aspect ratio ratio
-  constexpr float fov    = mathConst::PI / 3.0f;    // Field of view
-  constexpr float n      = 0.1f;                    // near clip
-  constexpr float f      = 1000.0f;                 // far clip
-  const float     yScale = 1.0f / (tan(fov / 2.0f));
-
-  float4x4 perspectiveMatrix = float4x4{
-    yScale / a, 0, 0, 0,
-    0, yScale, 0, 0, 0,
-    0, f / (n - f), -1,
-    0, 0, (n * f) / (n - f), 0
-  };
-
-  perspectiveMatrix = Optim::Mathematics::getMatrixTranspose(perspectiveMatrix);
-
-  float4x4 viewProjInverse = Optim::Mathematics::getMatrixInverse(perspectiveMatrix * viewMatrix);
-
-  float4 posNear = viewProjInverse * nearPoint;
-  float4 posFar  = viewProjInverse * farPoint;
-
-  float3 rayOrigin      = { posNear.x / posNear.w, posNear.y / posNear.w, posNear.z / posNear.w };
-  float3 rayFarPosition = { posFar.x / posFar.w, posFar.y / posFar.w, posFar.z / posFar.w };
-
-  float3 rayDirection = normalize(rayFarPosition - rayOrigin);
-  */
-
 }
 
 void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {

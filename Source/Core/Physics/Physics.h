@@ -5,7 +5,11 @@
 #pragma once
 
 #include "./Raycast.h"
+#include "Core/Graphics/Mesh.h"
 #include "Core/OptimEngine.h"
+#include "Core/Utilities/Pointer/UniquePtr.h"
+
+#include <vector>
 
 namespace Optim::Physics {
 
@@ -29,5 +33,7 @@ namespace Optim::Physics {
  * A Raycast struct object.
  */
 Raycast ScreenToRaycast(float posX, float posY, float width, float height);
+
+UniquePtr<Mesh>* GetCollision(const Raycast& raycast, std::vector<UniquePtr<Mesh>>& meshList);
 
 } // namespace Optim::Physics
