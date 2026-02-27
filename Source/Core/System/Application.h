@@ -39,6 +39,7 @@ class CORE_API Application final
   void manageSysWinMouseUp(float posX, float posY, int32 buttonID);
   void manageWindowResizeEvent(uint32 width, uint32 height);
   void manageOnSaveEvent();
+  void manageOnFileDropped(const char* path, float posX, float posY);
 };
 
 extern "C" {

@@ -1,9 +1,6 @@
-/* ======================================================================================
- *  SystemWindow.h:
- *
- *  By:
- *    Yanis Oulmane
-====================================================================================== */
+/**
+ * SystemWindow.h
+ */
 
 #pragma once
 
@@ -11,10 +8,6 @@
 
 #include <Core/OptimEngine.h>
 
-/*
- * @brief
- * This class represent an OS managed window.
- */
 class SystemWindow final
 {
  public:
@@ -134,4 +127,15 @@ class SystemWindow final
    * User used CTRL+S action.
    */
   Delegate<> onSaveEvent{};
+
+  /**
+  * \brief
+  * File dropped into application window event delegate.
+  * 
+  * Callback parameters:
+  *   - const char* : The absolute path of the file being dropped
+  *   - float       : The relative x position when the file was dropped
+  *   - float       : The relative y position when the file was dropped
+  */
+  Delegate<const char*, float, float> onFileDroppedDelegate;
 };

@@ -113,6 +113,12 @@
     <ClInclude Include="..\Source\Core\Graphics\Resource\GraphicResourceHandle.h">
       <Filter>Graphics\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\Physics\Raycast.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Physics\Physics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -217,6 +223,12 @@
     <Filter Include="Serialization\Private">
       <UniqueIdentifier>{bf4737d0-a85a-4de2-8830-e392a519e813}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{3cdae60c-a8ee-4e46-b231-07eee637d0e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics\Source">
+      <UniqueIdentifier>{d74e0e25-3b71-4b4c-a29d-cfb6d40a0772}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\private\Application.cpp">
@@ -296,6 +308,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Core\Serialization\Parser.cpp">
       <Filter>Serialization\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Physics\Physics.cpp">
+      <Filter>Physics\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

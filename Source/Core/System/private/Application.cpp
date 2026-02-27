@@ -15,6 +15,7 @@
 #include "Core/Object/Camera/Camera.h"
 #include "Core/Object/Image/Image.h"
 #include "Core/Object/Object.h"
+#include "Core/Physics/Physics.h"
 #include "Core/Serialization/Parser.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Tokenizer.h"
@@ -44,7 +45,6 @@ static const std::string staticWorkingDirectory = std::filesystem::current_path(
 static UniquePtr<SystemWindow> g_uptrSystemWindow{};
 
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
-static std::vector<UniquePtr<Mesh>> _list_Rays{};
 
 static UniquePtr<Mesh>* g_ppSelectedMesh{ nullptr };
 
@@ -52,7 +52,7 @@ static float3 controlGizmoDirection{};
 
 static std::vector<UniquePtr<Mesh>> arrayGizmoSelection;
 
-static std::vector<Mesh> g_objectMeshes;
+// static std::vector<Mesh> g_objectMeshes;
 
 static PipelineHandle _newPipelineHandleTest;
 
@@ -61,7 +61,7 @@ static PipelineHandle _handlePipelineWirframeView{};
 static PipelineHandle _handlePipelineOutline{};
 static PipelineHandle _handlePipelineLineRendering{};
 
-static TextureResourceHandle _handleTextureResource{};
+// static TextureResourceHandle _handleTextureResource{};
 
 static DepthRTHandle _handle_depthRT{};
 
@@ -244,14 +244,13 @@ static void getClickSelection(float3 rayOrigin, float3 rayFarPosition) {
 }
 
 void Application::manageKeyDownEvent(uint32 keycode) {
-  // std::cout << "[Application] Keydown event : " << keycode << "\n";
 
+  // If key is backaspace.
+  // Check if a mesh object is selected in the scene.
+  // If so find it in the mesh list and if found delete it.
   if (keycode == 8) {
-    // std::cout << "[Application] Backspace clicked.\n";
-
     if (g_ppSelectedMesh != nullptr) {
       std::erase_if(_list_meshes, [](const UniquePtr<Mesh>& element) {
-        // printf("Comparaison: %p : %p\n", g_ppSelectedMesh->address(), element.address());
         if (element.address() != nullptr) {
           if (element.address() == g_ppSelectedMesh->address()) {
             g_ppSelectedMesh = nullptr;
@@ -278,36 +277,33 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
 
   getMainWindowSize(&width, &height);
 
+  Raycast raycast = Optim::Physics::ScreenToRaycast(posX, posY, width, height);
+
+  getClickSelection(raycast.origin, raycast.farPosition);
+
+  /*
   float ndcX = (2 * (posX) / static_cast<float>(width)) - 1.0f;
   float ndcY = 1.0f - (2 * (posY) / static_cast<float>(height));
 
-  float4 nearPoint = {
-    ndcX,
-    ndcY,
-    0.0f,
-    1.0f
-  };
+  float4 nearPoint = { ndcX, ndcY, 0.0f, 1.0f };
 
-  float4 farPoint = {
-    ndcX,
-    ndcY,
-    1.0f,
-    1.0f
-  };
+  float4 farPoint = { ndcX, ndcY, 1.0f, 1.0f };
 
-  float4x4 viewMatrix = Camera::getViewMatrix();
+  float4x4 viewMatrix = Camera::getViewMatrix().transpose();
 
-  viewMatrix = Optim::Mathematics::getMatrixTranspose(viewMatrix);
+  // viewMatrix = Optim::Mathematics::getMatrixTranspose(viewMatrix);
 
-  float a = (float)width / float(height);
-
-  constexpr float fov    = mathConst::PI / 3.0f;
-  constexpr float n      = 0.1f;
-  constexpr float f      = 1000.0f;
-  float           yScale = 1.0f / (tan(fov / 2.0f));
+  const float a = (float)width / float(height);     // aspect ratio ratio
+  constexpr float fov    = mathConst::PI / 3.0f;    // Field of view
+  constexpr float n      = 0.1f;                    // near clip
+  constexpr float f      = 1000.0f;                 // far clip
+  const float     yScale = 1.0f / (tan(fov / 2.0f));
 
   float4x4 perspectiveMatrix = float4x4{
-    yScale / a, 0, 0, 0, 0, yScale, 0, 0, 0, 0, f / (n - f), -1, 0, 0, (n * f) / (n - f), 0
+    yScale / a, 0, 0, 0,
+    0, yScale, 0, 0, 0,
+    0, f / (n - f), -1,
+    0, 0, (n * f) / (n - f), 0
   };
 
   perspectiveMatrix = Optim::Mathematics::getMatrixTranspose(perspectiveMatrix);
@@ -317,21 +313,12 @@ void Application::mangeWindowClickEvent(float posX, float posY, int32 buttonID) 
   float4 posNear = viewProjInverse * nearPoint;
   float4 posFar  = viewProjInverse * farPoint;
 
-  float3 rayOrigin = {
-    posNear.x / posNear.w,
-    posNear.y / posNear.w,
-    posNear.z / posNear.w,
-  };
-
-  float3 rayFarPosition = {
-    posFar.x / posFar.w,
-    posFar.y / posFar.w,
-    posFar.z / posFar.w,
-  };
+  float3 rayOrigin      = { posNear.x / posNear.w, posNear.y / posNear.w, posNear.z / posNear.w };
+  float3 rayFarPosition = { posFar.x / posFar.w, posFar.y / posFar.w, posFar.z / posFar.w };
 
   float3 rayDirection = normalize(rayFarPosition - rayOrigin);
+  */
 
-  getClickSelection(rayOrigin, rayFarPosition);
 }
 
 void Application::manageSysWinMouseUp(float posX, float posY, int32 buttonID) {
@@ -342,22 +329,17 @@ void Application::manageWindowResizeEvent(uint32 width, uint32 height) {
   Graphics::RHI()->updateSystemWindowSize(width, height);
 }
 
-/**
- * @brief
- * Response to a SystemWindow's onSaveEvent being triggered.
- */
 void Application::manageOnSaveEvent() {
-  printf("Saving...\n");
-
   std::vector<Object*> objectList;
-
   for (auto& refMesh : _list_meshes) {
     objectList.push_back(refMesh.address());
   }
-
   Serializer::SaveScene(objectList, "myScene");
+}
 
-  printf("Scene saved!\n");
+void Application::manageOnFileDropped(const char* path, float posX, float posY) {
+  String::printf("[Application] File dropped: %s\n", path);
+  String::printf("[Application] Drop location (%f, %f)\n", posX, posY);
 }
 
 void Application::Quit() {
@@ -379,6 +361,7 @@ void Application::ApplicationStart() {
     g_uptrSystemWindow->onSystemWindowMouseUp.subscribe<Application, &Application::manageSysWinMouseUp>(this);
     g_uptrSystemWindow->onSaveEvent.subscribe<Application, &Application::manageOnSaveEvent>(this);
     g_uptrSystemWindow->onKeyDown.subscribe<Application, &Application::manageKeyDownEvent>(this);
+    g_uptrSystemWindow->onFileDroppedDelegate.subscribe<Application, &Application::manageOnFileDropped>(this);
 
     // Display the window
     g_uptrSystemWindow->showWindow();
@@ -415,12 +398,7 @@ void Application::ApplicationStart() {
     arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({ 1, 0, 0 }, -Optim::Constants::pi / 2.0f);
     arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({ 0, 1, 0 }, Optim::Constants::pi / 2.0f);
 
-    // //////////////////////////////////// GIZMO initalization - END
-
-    //////////////////////////////// TEST NEW PIPELINE SYSTEM
-
-    
-    // IMPORTANT: 
+    // IMPORTANT:
     // With new shader reflection implementation started,
     // this system of manually writing inputs could be
     // removed.
@@ -582,36 +560,35 @@ void Application::ApplicationStart() {
     // Create DepthStencil state
     _handle_depthRT = Graphics::RHI()->createDepthRT();
 
-    // Load image for texture
-    Image srcImage;
-    FileStream::readPngImage("images/flat.png", srcImage);
-    _handleTextureResource = Graphics::RHI()->createTextureResource(&srcImage);
-
     /// ---------------------------------------------------------------------------
     /// ------------------------------ LOADING SCENE ------------------------------
 
     std::vector<Object*> l_registeredObjects;
-    // printf("Loading scene...\n");
+
     Parser meshParser(Token::Tokenize("Scenes/myScene.oescene"));
-    // printf("Pasing files...\n");
+
     while (!meshParser.isEnd()) {
       l_registeredObjects.push_back(reinterpret_cast<Object*>(Parser::CreateObject(meshParser)));
     }
-    // printf("Creating objects...\n");
+
     for (auto& i : l_registeredObjects) {
       if (i->isChildOf(Mesh::StaticTypeInfo())) {
-        // printf("Creating mesh...\n");
+
         Mesh* objMesh = reinterpret_cast<Mesh*>(i);
-        // printf("Creating loading model...\n");
+
         OptimEditor::loadFbxModel(*objMesh, objMesh->sourcePath.c_str());
-        // printf("Loading creating buffers...\n");
+
         objMesh->vertexBufferHandle = Graphics::RHI()->createResourceVertexBuffer(objMesh->vertices, objMesh->vertexCount);
         objMesh->indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(objMesh->indices, objMesh->indexCount);
-        // printf("Making unique...\n");
+
+        if (objMesh->texturePath.empty()) {
+          objMesh->textureHandle = Graphics::GetDefaultTexture();
+          printf("The mesh has not texture assigned to it.\n");
+        }
+
         UniquePtr<Mesh> _meshRef(objMesh);
-        // printf("Making pushing to list...\n");
+
         _list_meshes.push_back(_meshRef.move());
-        // printf("Mesh added...\n");
       }
     }
 
@@ -648,7 +625,7 @@ void Application::ApplicationLoop() {
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
     Graphics::RHI()->cmdBindPipeline(&_newPipelineHandleTest);
-    Graphics::RHI()->cmdBindTexture(&_handleTextureResource);
+    // Graphics::RHI()->cmdBindTexture(&_handleTextureResource);
 
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
       float mouseDx{};
@@ -685,6 +662,7 @@ void Application::ApplicationLoop() {
       Graphics::RHI()->cmdSetNextMeshTransform(&worldTransform);
       Graphics::RHI()->cmdBindVertexBuffer(&pMesh->vertexBufferHandle);
       Graphics::RHI()->cmdBindIndexBuffer(&pMesh->indexBufferHandle);
+      Graphics::RHI()->cmdBindTexture(&pMesh->textureHandle);
       Graphics::RHI()->cmdDrawIndexed(pMesh->indexCount);
     }
 

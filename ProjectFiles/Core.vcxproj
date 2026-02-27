@@ -36,6 +36,8 @@
     <ClInclude Include="..\Source\Core\Object\Image\Image.h" />
     <ClInclude Include="..\Source\Core\Object\Object.h" />
     <ClInclude Include="..\Source\Core\OptimEngine.h" />
+    <ClInclude Include="..\Source\Core\Physics\Physics.h" />
+    <ClInclude Include="..\Source\Core\Physics\Raycast.h" />
     <ClInclude Include="..\Source\Core\Reflection\Internal\TypeReflection.h" />
     <ClInclude Include="..\Source\Core\Reflection\OptimReflection.h" />
     <ClInclude Include="..\Source\Core\Serialization\Parser.h" />
@@ -68,6 +70,7 @@
     <ClCompile Include="..\Source\Core\Object\Camera\Camera.cpp" />
     <ClCompile Include="..\Source\Core\Object\Image\Image.cpp" />
     <ClCompile Include="..\Source\Core\Object\Object.cpp" />
+    <ClCompile Include="..\Source\Core\Physics\Physics.cpp" />
     <ClCompile Include="..\Source\Core\Serialization\Parser.cpp" />
     <ClCompile Include="..\Source\Core\Serialization\Serializer.cpp" />
     <ClCompile Include="..\Source\Core\Serialization\Tokenizer.cpp" />
