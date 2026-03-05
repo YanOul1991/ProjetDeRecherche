@@ -108,11 +108,11 @@ struct SPipelineInputDescription {
   EInputUsageSlot inputUsage;
 };
 
-enum class EShaderStage {
-  Vertex,
-  Geometry,
-  Fragment
-};
+//enum class EShaderStage {
+//  Vertex,
+//  Geometry,
+//  Fragment
+//};
 
 enum class EShaderBindResourceType {
   CBuffer,

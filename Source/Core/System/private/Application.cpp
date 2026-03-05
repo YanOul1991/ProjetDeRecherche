@@ -1,6 +1,6 @@
 ﻿/*
   Application.cpp
-  
+
   Yanis Oulmane
  */
 
@@ -65,6 +65,12 @@ static DepthRTHandle  _handle_depthRT{};
 static bool _bool_drawWireframe{ false };
 static bool _bool_drawOutline{ false };
 static bool _bool_manipulate_selected{ false };
+
+struct SActiveSceneOptions {
+  ConstantBufferHandle cameraForward;
+};
+
+static inline SActiveSceneOptions SceneOptions;
 
 static std::string GetFileExtension(std::string strPath) {
   std::filesystem::path filePath = strPath;
@@ -296,6 +302,12 @@ void Application::ApplicationStart() {
     // Display the window
     g_uptrSystemWindow->showWindow();
 
+    SCBufferDesc cbufferCameraForwardDesc;
+    cbufferCameraForwardDesc.bufferSlot = 0;
+    cbufferCameraForwardDesc.byteSize   = sizeof(float4);
+    cbufferCameraForwardDesc.shaderStageBind = 1 << (uint32)EShaderStage::Fragment;
+    SceneOptions.cameraForward = Graphics::RHI()->createConstantBuffer(&cbufferCameraForwardDesc);
+
     ////////////////////////////////////// GIZMO initalization
 
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
@@ -461,6 +473,10 @@ void Application::ApplicationLoop() {
 
     Graphics::RHI()->cmdSetRenderTargets(&_handle_depthRT);
     Graphics::RHI()->cmdBindPipeline(&pipelineHandleDefault);
+
+    float4 forwardData = float4(Camera::forward.x, Camera::forward.y, Camera::forward.z, 1.0f);
+    Graphics::RHI()->updateConstantBuffer(&SceneOptions.cameraForward, &forwardData);
+    Graphics::RHI()->cmdBindConstantBuffer(&SceneOptions.cameraForward);
 
     if (g_ppSelectedMesh != nullptr && _bool_manipulate_selected) {
       float mouseDx;

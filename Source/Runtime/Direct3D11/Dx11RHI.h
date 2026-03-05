@@ -90,9 +90,13 @@ class Dx11RHI final : public IGraphicsRHI
 
   virtual DepthRTHandle createDepthRT() override final;
 
+  // @deprecated
   virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) override final;
 
+  virtual ConstantBufferHandle createConstantBuffer(SCBufferDesc* pDesc) override final;
+
   virtual TextureResourceHandle createTextureResource(const Image* pImage) override final;
+
 
   virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) override final;
 

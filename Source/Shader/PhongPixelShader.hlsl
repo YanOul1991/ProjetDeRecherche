@@ -6,7 +6,7 @@ static const float3 ambient = { 0.15f, 0.15f, 0.15f };
 
 // static const float3 diffuseColor = { 1.0f, 0.75f, 0.52f }; // Light Color
 static const float3 diffuseColor = { 1.0f, 1.0f, 1.0f }; // Light Color
-static const float diffuseIntensity = 5.0f; // Light intensity ,k
+static const float diffuseIntensity = 1.25f; // Light intensity ,k
 static const float attenuation_constant = 1.00f;
 static const float attenuation_linear = 0.00f;
 static const float attenuation_quadtraic = 0.02f;
@@ -23,16 +23,25 @@ Texture2D colorTexture : register(t0);
 
 SamplerState smplr : register(s0);
 
+cbuffer lightData : register(b0)
+{
+  float4 cameraForward;
+}
+
 float4 main(VSOut input) : SV_Target
 {
   // Vector from fragment to light source
   float3 L = normalize(lightPosition - input.worldPosition);
   
+  L = -cameraForward.xyz;
+  
   // Normalize the vector normal (as it was interpolated across primitive)
   float3 N = normalize(input.norm);
   
   // Distance to light
-  float distanceToLight = length(lightPosition - input.worldPosition);
+  // float distanceToLight = length(lightPosition - input.worldPosition);\
+  
+  float distanceToLight = 1.0f;
   
   // Light attenuation
   float attenuation = 1.0f / (attenuation_constant + (attenuation_linear * distanceToLight) + (attenuation_quadtraic * (distanceToLight * distanceToLight)));

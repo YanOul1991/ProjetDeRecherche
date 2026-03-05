@@ -172,6 +172,14 @@ ConstantBufferHandle Dx11RHI::createConstantBuffer(uint64 objectByteSize) {
   };
 }
 
+ConstantBufferHandle Dx11RHI::createConstantBuffer(SCBufferDesc* pDesc) {
+  Dx11ConstantBuffer* pResource = new Dx11ConstantBuffer;
+  pResource->Create(pDx11RHIDevice->m_pDevice, *pDesc);
+  return ConstantBufferHandle {
+    .data = g_registery.registerResource(EResourceTypes::ConstantBuffer, pResource).data
+  };
+}
+
 TextureResourceHandle Dx11RHI::createTextureResource(const Image* pImage) {
   Dx11TextureResource* pResource = new Dx11TextureResource;
   pResource->create(pDx11RHIDevice->m_pDevice.Get(), pImage);

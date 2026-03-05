@@ -74,6 +74,8 @@ class CORE_API IGraphicsRHI
 
   virtual ConstantBufferHandle createConstantBuffer(uint64 objectByteSize) = 0;
 
+  virtual ConstantBufferHandle createConstantBuffer(SCBufferDesc* pDesc) = 0;
+
   virtual PipelineHandle createPipeline(SPipelineDesc* pPipelineDesc) = 0;
 
   virtual void updateConstantBuffer(ConstantBufferHandle* pConstantBuffer, void* pNewData) = 0;
