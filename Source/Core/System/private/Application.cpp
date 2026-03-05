@@ -42,8 +42,6 @@
 static UniquePtr<SystemWindow> g_uptrSystemWindow{};
 
 // List of all active Mesh objects in the scene
-//
-// TODO: Make a new scene module to manage acrive objects
 static std::vector<UniquePtr<Mesh>> _list_meshes{};
 
 // A Pointer to a UniquePtr<Mesh> for a selected object in the scene.
@@ -67,10 +65,24 @@ static bool _bool_drawOutline{ false };
 static bool _bool_manipulate_selected{ false };
 
 struct SActiveSceneOptions {
-  ConstantBufferHandle cameraForward;
-};
 
-static inline SActiveSceneOptions SceneOptions;
+  ConstantBufferHandle cameraForward{};
+  PipelineHandle pipelineDefault{};
+  PipelineHandle pipelineWirframe{};
+  PipelineHandle pipelineOutline{};
+  PipelineHandle pipelineGizmo{};
+
+  bool drawWireframe      = false;
+  bool drawOutline        = false;
+  bool manipulateSelected = false;
+
+  float3 controlGizmoDirection{};
+
+  std::vector<UniquePtr<Mesh>> meshList{};
+
+} inline SceneOptions;
+
+// static inline SActiveSceneOptions SceneOptions;
 
 static std::string GetFileExtension(std::string strPath) {
   std::filesystem::path filePath = strPath;
@@ -134,15 +146,13 @@ void Application::manageKeyDownEvent(uint32 keycode) {
   // If so find it in the mesh list and if found delete it.
   if (keycode == 8) {
     if (g_ppSelectedMesh != nullptr) {
-      std::erase_if(_list_meshes, [](const UniquePtr<Mesh>& element) {
-        if (element.address() != nullptr) {
-          if (element.address() == g_ppSelectedMesh->address()) {
-            g_ppSelectedMesh = nullptr;
-            return true;
-          }
-        }
-        return false;
-      });
+      printf("Trying to delete object...\n");
+      auto target = std::find(_list_meshes.begin(), _list_meshes.end(), g_ppSelectedMesh->address());
+
+      if (target != _list_meshes.end()) {
+        g_ppSelectedMesh = nullptr;
+        _list_meshes.erase(target);
+      }
     }
   }
 }
@@ -303,10 +313,10 @@ void Application::ApplicationStart() {
     g_uptrSystemWindow->showWindow();
 
     SCBufferDesc cbufferCameraForwardDesc;
-    cbufferCameraForwardDesc.bufferSlot = 0;
-    cbufferCameraForwardDesc.byteSize   = sizeof(float4);
+    cbufferCameraForwardDesc.bufferSlot      = 0;
+    cbufferCameraForwardDesc.byteSize        = sizeof(float4);
     cbufferCameraForwardDesc.shaderStageBind = 1 << (uint32)EShaderStage::Fragment;
-    SceneOptions.cameraForward = Graphics::RHI()->createConstantBuffer(&cbufferCameraForwardDesc);
+    SceneOptions.cameraForward               = Graphics::RHI()->createConstantBuffer(&cbufferCameraForwardDesc);
 
     ////////////////////////////////////// GIZMO initalization
 

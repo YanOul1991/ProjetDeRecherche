@@ -39,9 +39,9 @@ float4 main(VSOut input) : SV_Target
   float3 N = normalize(input.norm);
   
   // Distance to light
-  // float distanceToLight = length(lightPosition - input.worldPosition);\
+  float distanceToLight = length(lightPosition - input.worldPosition);
   
-  float distanceToLight = 1.0f;
+  distanceToLight = 1.0f;
   
   // Light attenuation
   float attenuation = 1.0f / (attenuation_constant + (attenuation_linear * distanceToLight) + (attenuation_quadtraic * (distanceToLight * distanceToLight)));

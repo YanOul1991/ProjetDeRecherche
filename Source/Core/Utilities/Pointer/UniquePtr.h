@@ -1,3 +1,4 @@
+// UniquePtr.h
 
 #pragma once
 
@@ -22,7 +23,7 @@ template <typename T> class UniquePtr final
       ptr = *pp;
       *pp = nullptr;
     }
-    String::printf("UniquePtr created by pointer to pointer Object 0x%02x\n", ptr);
+    // String::printf("UniquePtr created by pointer to pointer Object 0x%02x\n", ptr);
   }
 
   ~UniquePtr() {
@@ -91,6 +92,14 @@ template <typename T> class UniquePtr final
 
   T& operator*() const {
     return *ptr;
+  }
+
+  explicit operator bool() const {
+    return ptr != nullptr;
+  }
+
+  bool operator ==(const T* p) const {
+    return p == ptr;
   }
 
  private:
