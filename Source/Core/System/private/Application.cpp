@@ -214,9 +214,11 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
     }
   }
   else if (fileExtension == ".fbx") {
+    printf("[Application] IMPORTING FBX...\n");
     UniquePtr<Mesh> l_uptrMesh;
     l_uptrMesh.init();
 
+    printf("[Application] LOADING MODEL...\n");
     OptimEditor::loadFbxModel(*l_uptrMesh, fileRelativePath.c_str());
 
     l_uptrMesh->rotation = { 1.0f, 0.0, 0.0, 0.0f };
@@ -228,17 +230,18 @@ void Application::manageOnFileDropped(const char* path, float posX, float posY) 
     (*l_uptrMesh).indexBufferHandle  = Graphics::RHI()->createResourceIndexBuffer(l_uptrMesh->indices, l_uptrMesh->indexCount);
     (*l_uptrMesh).sourcePath         = fileRelativePath;
 
-    if (!(*l_uptrMesh).texturePath.empty()) {
-      Image imgData;
-      FileStream::readPngImage((*l_uptrMesh).texturePath.c_str(), imgData);
-      (*l_uptrMesh).textureHandle = Graphics::RHI()->createTextureResource(&imgData);
-    }
-    else {
-      (*l_uptrMesh).textureHandle = Graphics::GetDefaultTexture();
-    }
+    //if (!(*l_uptrMesh).texturePath.empty()) {
+    //  Image imgData;
+    //  FileStream::readPngImage((*l_uptrMesh).texturePath.c_str(), imgData);
+    //  (*l_uptrMesh).textureHandle = Graphics::RHI()->createTextureResource(&imgData);
+    //}
+    //else {
+    //}
+    (*l_uptrMesh).textureHandle = Graphics::GetDefaultTexture();
 
     _list_meshes.push_back(l_uptrMesh.move());
     g_ppSelectedMesh = &_list_meshes.back();
+    printf("[Application] MESH OBJECT LOADED\n");
   }
   else if (fileExtension == ".oescene") {
     String::printf("[Application] Importing scene object.\n");
@@ -320,6 +323,8 @@ void Application::ApplicationStart() {
 
     ////////////////////////////////////// GIZMO initalization
 
+    printf("Loading Gizmo...\n");
+
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
     arrayGizmoSelection.push_back(UniquePtr<Mesh>());
@@ -349,6 +354,8 @@ void Application::ApplicationStart() {
 
     arrayGizmoSelection[1]->rotation = Quaternion::fromAxisAngle({ 1, 0, 0 }, -Optim::Constants::pi / 2.0f);
     arrayGizmoSelection[2]->rotation = Quaternion::fromAxisAngle({ 0, 1, 0 }, Optim::Constants::pi / 2.0f);
+
+    printf("Loading pipelines...\n");
 
     // ---------------------------------------------------------------------
     // PIPELINE - PHONG / DEFAULT

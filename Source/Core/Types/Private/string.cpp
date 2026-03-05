@@ -1,10 +1,6 @@
-/* ======================================================================================
- *  String.cpp
- *
- *  By:
- *    Yanis Oulmane
- *
-====================================================================================== */
+/**
+  String.cpp
+ */
 
 #include "Core/Types/String.h"
 
@@ -84,18 +80,17 @@ String::String() noexcept :
 }
 
 String::~String() noexcept {
-  //printf("String has been deleted at following address:\n0x%02x\n", this);
+  //printf("String has been deleted at following address: 0x%02x\n", this);
   freeBuffer();
 }
 
 String::String(const char* str) noexcept :
     m_length{String::getLiteralSize(str)},
     m_buffer{nullptr} {
-  //printf("[String] C-String constructor...\n");
+  //printf("[String] C-String constructor at 0x%02x\n", this);
   m_buffer = new char[m_length + 1];
   memcpy(m_buffer, str, sizeof(char) * m_length);
   m_buffer[m_length] = '\0';
-
   //printf("[String] Value: %s\n", m_buffer);
 }
 
@@ -104,7 +99,7 @@ String::String(const String& other) noexcept :
     m_buffer{nullptr} {
   //printf("[String] Copy constructor...\n");
   m_length = other.length();
-  m_buffer = new char[m_length];
+  m_buffer = new char[m_length + 1];
   memcpy(m_buffer, other.value(), sizeof(char) * m_length);
   m_buffer[m_length] = '\0';
 }
@@ -112,6 +107,7 @@ String::String(const String& other) noexcept :
 String::String(String&& other) noexcept :
     m_length{other.m_length},
     m_buffer{other.m_buffer} {
+  //printf("[String] Move constructor...\n");
   other.m_buffer = nullptr;
   other.m_length = 0;
 }
@@ -143,6 +139,7 @@ String& String::operator=(const char* str) noexcept {
 }
 
 String& String::operator=(const String& other) noexcept {
+  //printf("[String] Copy assignement...");
   if (this != &other) {
     freeBuffer();
     m_length = other.m_length;
@@ -209,7 +206,9 @@ String String::operator+(const String& other) noexcept {
 }
 
 void String::freeBuffer() {
-  delete[] m_buffer;
-  m_buffer = nullptr;
+  if (m_buffer != nullptr) {
+    delete[] m_buffer;
+    m_buffer = nullptr;
+  }
   m_length = 0;
 }

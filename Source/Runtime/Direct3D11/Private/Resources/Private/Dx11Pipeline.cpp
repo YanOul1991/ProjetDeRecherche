@@ -98,6 +98,7 @@ Dx11Pipeline::~Dx11Pipeline() {
  * A SPipelineDesc object.
  */
 void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDesc) {
+  //printf("[Dx11Pipeline] CREATING PIPELINE: %s\n", pipelineDesc.vertexShader);
   OPTIM_CHECK_WIN_COM();
 
   primitiveTopology = static_cast<D3D11_PRIMITIVE_TOPOLOGY>(static_cast<int32>(pipelineDesc.primitiveTopology));
@@ -199,6 +200,8 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
   }
   printf("\n\n");
   */
+
+  //printf("[Dx11Pipeline] PIPELINE CREATED\n");
 }
 
 /**
@@ -280,8 +283,9 @@ void Dx11Pipeline::reflectShader(const std::string& shaderName, ComPtr<ID3DBlob>
     std::cout << "  Dimension  : " << bindDesc.Dimension << "\n";
     std::cout << "  NumSamples : " << bindDesc.NumSamples << "\n";
     */
-    SShaderBindResource _outShaderBind;
 
+    //printf("[Dx11Pipeline] SHADER REFLEXION BINDING\n");
+    SShaderBindResource _outShaderBind;
     _outShaderBind.name        = bindDesc.Name;
     _outShaderBind.shaderStage = stage;
     _outShaderBind.resType     = translateShaderInputType(bindDesc.Type);
