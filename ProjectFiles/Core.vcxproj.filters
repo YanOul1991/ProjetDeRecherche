@@ -122,6 +122,7 @@
     <ClInclude Include="..\Source\Core\System\System.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="System">
@@ -318,5 +319,11 @@
     <ClCompile Include="..\Source\Core\System\private\System.cpp">
       <Filter>System\Private</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Core1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include=".Other\Icon.ico" />
   </ItemGroup>
 </Project>

@@ -60,6 +60,7 @@
     <ClInclude Include="..\Source\ThirdParty\imgui\imgui_impl_dx11.h" />
     <ClInclude Include="..\Source\ThirdParty\imgui\imgui_impl_sdl3.h" />
     <ClInclude Include="..\Source\ThirdParty\imgui\imgui_internal.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Exception\private\exception.cpp" />
@@ -90,6 +91,12 @@
     <ClCompile Include="..\Source\ThirdParty\imgui\imgui_impl_sdl3.cpp" />
     <ClCompile Include="..\Source\ThirdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Source\ThirdParty\imgui\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Core1.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include=".Other\Icon.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

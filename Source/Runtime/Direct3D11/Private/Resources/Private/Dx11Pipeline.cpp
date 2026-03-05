@@ -189,6 +189,7 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
 
   pDevice->CreateDepthStencilState(&l_dsDesc, &depthStencilState);
 
+  /*
   std::cout << "\n\nPrinting all for shader input bind resources : \n";
   for (auto& input : shadersInputBind) {
     String::printf("Name: %s\n", input.name.value());
@@ -197,6 +198,7 @@ void Dx11Pipeline::create(ID3D11Device* pDevice, const SPipelineDesc& pipelineDe
     std::cout << "  Input slot    : " << input.inputSlot << "\n";
   }
   printf("\n\n");
+  */
 }
 
 /**
