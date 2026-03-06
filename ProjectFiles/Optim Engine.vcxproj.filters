@@ -3,13 +3,4 @@
   <ItemGroup>
     <ClCompile Include="..\Source\Core\System\entry\main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include=".Other\Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="resource1.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Optim Engine.rc" />
-  </ItemGroup>
 </Project>

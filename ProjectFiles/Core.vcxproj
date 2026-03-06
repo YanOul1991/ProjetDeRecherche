@@ -92,12 +92,6 @@
     <ClCompile Include="..\Source\ThirdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\Source\ThirdParty\imgui\imgui_widgets.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Core1.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include=".Other\Icon.ico" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

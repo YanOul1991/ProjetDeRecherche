@@ -1,0 +1,35 @@
+# Comment démmarer l'application.
+
+> Étape 1 - Cliquer sur le fichier exe : optimengine.exe
+
+> Étape 2 - Depuis le dossier de l'application, aller dans le dossier Scenes et glisser dans la scène le fichier myScene.oescene
+
+
+# Liste de tout les éléments créer par moi:
+
+## Fichiers FBX
+
+- Release/Assets/Presentation/BrickPile.fbx
+- Release/Assets/Presentation/BricksFloor.fbx
+- Release/Assets/Presentation/ColumnGroupHorizontal_2.fbx
+- Release/Assets/Presentation/ColumnGroup_1.fbx
+- Release/Assets/Presentation/ColumnGroup_2.fbx
+- Release/Assets/Presentation/FloorTiles.fbx
+- Release/Assets/Presentation/IronThingies.fbx
+- Release/Assets/Presentation/Walls.fbx
+- Release/Assets/PannelBorder.fbx
+- Release/Assets/PannelImage.fbx
+
+## Images
+
+- Release/images/Frame1.png
+- Release/images/Frame2.png
+- Release/images/Frame3.png
+- Release/images/Frame4.png
+- Release/images/Frame5.png
+- Release/images/Frame6.png
+- Release/images/Frame7.png
+- Release/images/Frame8.png
+
+## Code (À partir du dossier code)
+
