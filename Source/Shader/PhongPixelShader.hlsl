@@ -46,7 +46,7 @@ float4 main(VSOut input) : SV_Target
   // Light attenuation
   float attenuation = 1.0f / (attenuation_constant + (attenuation_linear * distanceToLight) + (attenuation_quadtraic * (distanceToLight * distanceToLight)));
   
-  float diffuse = attenuation * diffuseIntensity * max(0, dot(N, L));
+  float diffuse = attenuation * diffuseIntensity * max(0.35f, dot(N, L));
   
   // Final pixel value
   float3 finalValue = diffuse * diffuseColor;
